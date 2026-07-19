@@ -1,0 +1,70 @@
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+type Variant = "primary" | "ghost" | "outline";
+type Size = "sm" | "md" | "lg";
+
+const variants: Record<Variant, string> = {
+  primary:
+    "bg-accent-cyan text-ink-950 hover:bg-accent-cyan/90 border border-accent-cyan/40 shadow-glow",
+  ghost: "text-slate-200 hover:text-white hover:bg-white/5 border border-transparent",
+  outline: "border border-white/15 text-slate-100 hover:border-white/30 hover:bg-white/5",
+};
+
+const sizes: Record<Size, string> = {
+  sm: "px-3 py-1.5 text-xs",
+  md: "px-4 py-2 text-sm",
+  lg: "px-6 py-3 text-base",
+};
+
+type CommonProps = {
+  variant?: Variant;
+  size?: Size;
+  className?: string;
+  children: React.ReactNode;
+};
+
+type ButtonAsLink = CommonProps & { href: string };
+type ButtonAsButton = CommonProps & {
+  href?: undefined;
+  onClick?: () => void;
+  type?: "button" | "submit";
+};
+
+export default function Button(props: ButtonAsLink | ButtonAsButton) {
+  const { variant = "primary", size = "md", className, children } = props;
+  const cls = cn(
+    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-tight transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+    variants[variant],
+    sizes[size],
+    className,
+  );
+
+  if (props.href !== undefined) {
+    const ext = props.href.startsWith("http") || props.href.startsWith("#");
+    if (ext && !props.href.startsWith("#")) {
+      return (
+        <a href={props.href} className={cls} target="_blank" rel="noreferrer">
+          {children}
+        </a>
+      );
+    }
+    if (props.href.startsWith("#")) {
+      return (
+        <a href={props.href} className={cls}>
+          {children}
+        </a>
+      );
+    }
+    return (
+      <Link href={props.href} className={cls}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <button type={(props as ButtonAsButton).type ?? "button"} onClick={(props as ButtonAsButton).onClick} className={cls}>
+      {children}
+    </button>
+  );
+}

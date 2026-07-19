@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    color-scheme: dark;
+}
+
+html,
+body {
+    background-color: #05070d;
+    color: #e6ebf5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+::selection {
+    background: rgba(34, 211, 238, 0.25);
+    color: #ffffff;
+}
+
+@layer components {
+    .glass {
+        @apply border border-white/10 bg-white/[0.03] backdrop-blur-md;
+    }
+    .glass-panel {
+        @apply glass rounded-2xl shadow-panel;
+    }
+    .terminal-grid {
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.04) 1px,
+                transparent 1px
+            );
+        background-size: 48px 48px;
+    }
+    .text-balance {
+        text-wrap: balance;
+    }
+    .accent-cyan {
+        color: #22d3ee;
+    }
+    .accent-green {
+        color: #34d399;
+    }
+    .accent-purple {
+        color: #a78bfa;
+    }
+    .accent-amber {
+        color: #fbbf24;
+    }
+    .accent-red {
+        color: #f87171;
+    }
+}
+
+@layer components {
+    .ops-display {
+        @apply font-display font-medium tracking-tight text-white;
+        font-feature-settings: "ss01", "ss02";
+        text-wrap: balance;
+    }
+    .ops-section-title {
+        @apply font-display font-medium tracking-tight text-white;
+        text-wrap: balance;
+    }
+    .ops-interactive-title {
+        @apply font-display font-medium tracking-tight text-white;
+    }
+    /* Primary explanatory copy — bright, readable */
+    .ops-body {
+        @apply font-sans text-slate-200 antialiased;
+        line-height: 1.75;
+    }
+    /* Emphasized explanatory copy / definitions */
+    .ops-body-strong {
+        @apply font-sans text-slate-50 antialiased;
+        line-height: 1.7;
+    }
+    /* Definitions — highly readable on elevated surfaces */
+    .ops-definition {
+        @apply font-sans text-slate-100 antialiased;
+        line-height: 1.7;
+    }
+    /* Secondary notes / captions in prose — reserved for helper text */
+    .ops-muted {
+        @apply font-sans text-slate-400 antialiased;
+        line-height: 1.7;
+    }
+    /* Metadata labels — mono, intentionally muted */
+    .ops-caption {
+        @apply font-mono uppercase tracking-[0.18em] text-slate-500;
+    }
+    .ops-eyebrow {
+        @apply font-mono uppercase tracking-[0.22em] text-slate-400;
+    }
+
+    /* Interactive frame: visually distinct from static explanation panels.
+     Stronger border + surface + a cyan accent edge (cyan = active OPS state). */
+    .ops-interactive-frame {
+        @apply relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.045] shadow-panel backdrop-blur-md;
+    }
+    .ops-interactive-frame::before {
+        content: "";
+        @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(34, 211, 238, 0.65) 50%,
+            transparent 100%
+        );
+    }
+    /* Definition surface — elevated, readable, subtle accent edge */
+    .ops-definition-card {
+        @apply rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.06];
+    }
+}
+
+@layer utilities {
+    .mask-fade-b {
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            black 70%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    }
+    .mask-fade-x {
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 8%,
+            black 92%,
+            transparent
+        );
+        mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 8%,
+            black 92%,
+            transparent
+        );
+    }
+
+    /* Concept color system — guides attention by meaning, not randomly.
+     cyan   = core OPS framework / finance framework / active state
+     amber  = time / present value / caution
+     red    = risk / uncertainty / warning
+     purple = markets / systems / quantitative lens
+     green  = value creation / correct feedback / cash flow */
+    .concept-value {
+        color: #22d3ee;
+    }
+    .concept-time {
+        color: #fbbf24;
+    }
+    .concept-risk {
+        color: #f87171;
+    }
+    .concept-market {
+        color: #a78bfa;
+    }
+    .concept-cashflow {
+        color: #34d399;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

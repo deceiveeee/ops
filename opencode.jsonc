@@ -1,0 +1,56 @@
+// https://deepswe.datacurve.ai/
+// https://arcprize.org/leaderboard
+// https://venturebeat.com/
+
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "autoupdate": true,
+
+  "plugin": ["superpowers@git+https://github.com/obra/superpowers.git"],
+
+  "instructions": ["CODING.md"],
+
+  "agent": {
+    "superpowers-glm-5.2": {
+      "mode": "primary",
+      "model": "zai-coding-plan/glm-5.2",
+      "reasoningEffort": "high",
+      "temperature": 0.5,
+      "textVerbosity": "low",
+      "reasoningSummary": "concise",
+      //"prompt": "{file:./prompts/superpowers.txt}",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow",
+        "task": "allow",
+      },
+    },
+
+    "superpowers-mimo-2.5-pro": {
+      //"disable": true,
+      "mode": "primary",
+      "model": "openrouter/xiaomi/mimo-v2.5-pro",
+      "provider": { "only": ["xiaomi/fp8"], "allow_fallbacks": false },
+      "temperature": 0.5,
+      "textVerbosity": "low",
+      "reasoningSummary": "concise",
+      //"prompt": "{file:./prompts/superpowers.txt}",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "webfetch": "allow",
+        "task": "allow",
+      },
+    },
+
+    "plan": {
+      "disable": true,
+    },
+
+    "build": {
+      "disable": true,
+    },
+  },
+}
