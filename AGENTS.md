@@ -52,7 +52,7 @@ Avoid making every page full-screen. Use immersive layouts for high-impact momen
 
 ---
 
-### 2. Use scroll storytelling, not static explanation
+### 2. Use scroll storytelling, not static explanation 1
 
 When a concept has layers, sequence, or causality, use scroll-driven storytelling.
 
