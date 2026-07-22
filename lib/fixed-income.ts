@@ -120,6 +120,14 @@ export function formatPercent(value: number, digits = 2): string {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
+/**
+ * Same as formatPercent but escapes the % sign for use inside LaTeX math
+ * (KaTeX treats unescaped % as a comment, which truncates the formula).
+ */
+export function formatPercentTex(value: number, digits = 2): string {
+  return formatPercent(value, digits).replace("%", "\\%");
+}
+
 /** Sensible currency formatting. */
 export function formatMoney(value: number): string {
   if (!isFinite(value)) return "—";

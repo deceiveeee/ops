@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { courses, findLesson, getAllLessons } from "@/data/courses";
 import { getLessonComponent } from "@/lib/lessonRegistry";
 import SectionLabel from "@/components/ui/SectionLabel";
-import Button from "@/components/ui/Button";
 
 export function generateStaticParams() {
   return getAllLessons().map((l) => ({ lessonSlug: l.lesson.slug }));
@@ -42,6 +41,12 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
   const prev = idx > 0 ? all[idx - 1] : null;
   const next = idx < all.length - 1 ? all[idx + 1] : null;
 
+  const isComingSoon = lesson.status === "coming-soon";
+  const statusLabel = isComingSoon ? "Coming soon" : "In development";
+  const statusNote = isComingSoon
+    ? "This lesson is on the roadmap. The objectives below preview what it will cover."
+    : "The interactive version of this lesson is still being built. The objectives below describe what it will teach.";
+
   return (
     <div className="relative w-full">
       <div className="pointer-events-none absolute inset-0 terminal-grid opacity-30" />
@@ -59,19 +64,13 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
         <div className="mt-6 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
           <span className="rounded-full border border-white/10 px-2.5 py-0.5">{lesson.type}</span>
           <span className="rounded-full border border-white/10 px-2.5 py-0.5">{lesson.estimatedMinutes} min</span>
-          <span className="rounded-full border border-white/10 px-2.5 py-0.5">{lesson.status.replace(/-/g, " ")}</span>
+          <span className="rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-2.5 py-0.5 text-accent-cyan">{statusLabel}</span>
           <span className="rounded-full border border-white/10 px-2.5 py-0.5">{module.role.replace(/-/g, " ")}</span>
         </div>
 
         <div className="mt-8 glass-panel p-6">
-          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
-            <span>Lesson shell · placeholder</span>
-            <span className="text-accent-cyan">PENDING CONTENT</span>
-          </div>
-          <p className="mt-4 text-balance text-slate-300">
-            This lesson is a structural shell. Its blocks, interactives, and source slots will be built in a
-            separate pass using the patterns defined in AGENTS.md (scroll storytelling, animated diagrams,
-            filing annotations, portfolio visuals, financial simulations, and visual metaphors).
+          <p className="text-balance text-slate-300">
+            {statusNote}
           </p>
 
           <div className="mt-6">
@@ -81,30 +80,6 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
                 <li key={o} className="flex gap-2 text-sm text-slate-300">
                   <span className="text-accent-cyan">·</span>
                   {o}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-6">
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Block structure</div>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {lesson.blocks.map((b, i) => (
-                <div key={b.id} className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-                  <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">{String(i + 1).padStart(2, "0")}</div>
-                  <div className="mt-1 text-sm text-slate-300">{b.type}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Source slots</div>
-            <ul className="mt-3 space-y-2">
-              {lesson.sourceSlots.map((s) => (
-                <li key={s.id} className="flex items-start gap-2 text-xs text-slate-400">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-600">{s.type}</span>
-                  <span>{s.title}{s.required ? " · required" : ""}</span>
                 </li>
               ))}
             </ul>
@@ -131,9 +106,12 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
         </div>
 
         <div className="mt-10">
-          <Button href="/studio" variant="outline" size="md">
-            Try it in the studio
-          </Button>
+          <Link
+            href={`/courses/${course.slug}#module-${module.order}`}
+            className="font-mono text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan"
+          >
+            ← Back to {course.title}
+          </Link>
         </div>
       </div>
     </div>

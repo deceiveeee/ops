@@ -22,8 +22,7 @@ export default function EqSourcePanel({ sources = EQ_SOURCES }: { sources?: stri
         ))}
       </ul>
       <p className="ops-muted mt-4 text-[12px]">
-        Lesson content is adapted from MIT 15.401 Lecture 7 for educational use. No live market data. No external
-        links unless the project already provides a source-link pattern.
+        Lesson content is adapted from MIT 15.401 Lecture 7 for educational use. No live market data.
       </p>
     </aside>
   );

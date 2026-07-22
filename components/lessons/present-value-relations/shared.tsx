@@ -10,7 +10,7 @@ export const PV_SOURCE_BASIS = {
   course: "MIT OCW 15.401 Finance Theory I",
   lecture: "Present Value Relations",
   instructor: "Andrew W. Lo",
-  note: "Source basis for Module 2 of Finance Foundations. No URL fabricated; attach the canonical MIT OpenCourseWare link later.",
+  note: "Adapted from MIT OpenCourseWare 15.401 Finance Theory I for educational use. No live market data.",
 } as const;
 
 export const PV_MODULE_LESSONS = [

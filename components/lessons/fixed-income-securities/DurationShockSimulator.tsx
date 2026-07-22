@@ -9,7 +9,7 @@ import {
   DefinitionCard,
   FormulaExplainer,
 } from "./shared";
-import { formatMoney, formatPercent } from "@/lib/fixed-income";
+import { formatMoney, formatPercent, formatPercentTex } from "@/lib/fixed-income";
 
 /**
  * Lesson 3.3 — Duration shock simulator.
@@ -143,7 +143,7 @@ export default function DurationShockSimulator() {
           tone="amber"
           formula={String.raw`\frac{\Delta P}{P} \approx -D_m^* \, \Delta y`}
           meaning="The percentage price change is approximately minus modified duration times the yield change. This is a first-order (linear) approximation."
-          substitution={String.raw`\frac{\Delta P}{P} \approx -${modDur.toFixed(2)} \times ${formatPercent(deltaY, 2)} = ${formatPercent(pctChange, 3)}`}
+          substitution={String.raw`\frac{\Delta P}{P} \approx -${modDur.toFixed(2)} \times ${formatPercentTex(deltaY, 2)} = ${formatPercentTex(pctChange, 3)}`}
           result={`P_new ≈ ${formatMoney(price)} × (1 + ${formatPercent(pctChange, 3)}) = ${formatMoney(newPrice)}`}
           interpretation="Duration is symmetric and linear — it overestimates gains and underestimates losses for large shocks. Convexity corrects this (see the next interactives)."
         />

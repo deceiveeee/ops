@@ -233,7 +233,28 @@ export const financeFoundations: Course = {
   ],
 };
 
-export const courses: Course[] = [financeFoundations];
+export const investmentFoundations: Course = {
+  slug: "investment-foundations",
+  title: "Investment Foundations",
+  subtitle: "Investment Philosophies, Strategy, and Portfolio Construction",
+  description:
+    "Investment Foundations examines the major ways investors attempt to earn returns. You will learn how to evaluate each approach, test the evidence behind it, and decide whether it fits your risk tolerance, time horizon, resources, and behavior. By the end of the course, you will have evaluated major investment philosophies and built a portfolio supported by research, valuation, quantitative analysis, and explicit decision rules.",
+  estimatedHours: 30,
+  order: 2,
+  modules: [
+    module(
+      "if-m01-introduction-to-investment-philosophies",
+      1,
+      "Introduction to Investment Philosophies",
+      "Map the investment process, distinguish a philosophy from a strategy, and locate where different investment approaches seek an advantage. Begin drafting the philosophy the rest of the course will test.",
+      "Build a working map of the investment process and a provisional investment philosophy.",
+      "investment-philosophy",
+      ["if-1-1-how-an-investor-builds-a-philosophy"],
+    ),
+  ],
+};
+
+export const courses: Course[] = [financeFoundations, investmentFoundations];
 
 export function getCourse(slug: string): Course | undefined {
   return courses.find((c) => c.slug === slug);

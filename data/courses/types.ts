@@ -16,7 +16,8 @@ export type ModuleRole =
   | "asset-pricing"
   | "corporate-finance"
   | "market-efficiency"
-  | "integration";
+  | "integration"
+  | "investment-philosophy";
 
 export type SourceType =
   | "course-note"

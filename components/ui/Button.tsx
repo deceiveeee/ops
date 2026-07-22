@@ -12,9 +12,9 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "px-3 py-1.5 text-xs",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
+  sm: "px-4 py-2 text-sm",
+  md: "px-5 py-2.5 text-[15px]",
+  lg: "px-7 py-3.5 text-[17px]",
 };
 
 type CommonProps = {
@@ -34,7 +34,7 @@ type ButtonAsButton = CommonProps & {
 export default function Button(props: ButtonAsLink | ButtonAsButton) {
   const { variant = "primary", size = "md", className, children } = props;
   const cls = cn(
-    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-tight transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[-0.01em] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
     variants[variant],
     sizes[size],
     className,

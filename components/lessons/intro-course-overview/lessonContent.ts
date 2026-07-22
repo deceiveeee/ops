@@ -2,7 +2,7 @@ export const SOURCE_BASIS = {
   course: "MIT OCW 15.401 Finance Theory I",
   lecture: "Lecture 1: Introduction and Course Overview",
   instructor: "Andrew W. Lo",
-  note: "Source basis for Module 1 of Finance Foundations. No URL fabricated; attach the canonical MIT OpenCourseWare link later.",
+  note: "Adapted from MIT OpenCourseWare 15.401 Finance Theory I for educational use. No live market data.",
 } as const;
 
 export const MODULE1_LESSONS = [

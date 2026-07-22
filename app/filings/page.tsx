@@ -15,8 +15,8 @@ export default function FilingsPage() {
           The 10-K is the source code.
         </h1>
         <p className="mt-5 max-w-xl text-balance text-slate-300">
-          A placeholder for the future filing reader: split-screen document + investor-lens annotations, jump-to-section
-          navigation, and scroll-linked callouts. Below is a mock preview.
+          Split a filing into its investor-relevant sections: business, risk factors, MD&amp;A, and cash flow.
+          Each line below shows how a real investor reads the same document differently than a casual reader.
         </p>
 
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12">
@@ -34,9 +34,9 @@ export default function FilingsPage() {
               </ul>
             </div>
             <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.02] p-4">
-              <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">Coming soon</div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">Concept preview</div>
               <p className="mt-1 text-sm text-slate-400">
-                Real filing ingestion, section pinning, and hover-to-explain terms will land in a later pass.
+                The full filing reader will support section pinning, jump-to-section navigation, and hover-to-explain terms across real SEC filings.
               </p>
             </div>
           </div>
@@ -67,8 +67,8 @@ export default function FilingsPage() {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
-          <Button href="/courses/business-and-financial-statements" variant="outline" size="md">
-            Open the statements module
+          <Button href="/courses/finance-foundations" variant="outline" size="md">
+            Open the course
           </Button>
           <Link href="/studio" className="font-mono text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan">
             → Studio

@@ -1,114 +1,111 @@
 "use client";
 
-import { motion } from "motion/react";
-import SectionLabel from "@/components/ui/SectionLabel";
-import FloatingArtifact from "@/components/marketing/FloatingArtifact";
+import { motion, useReducedMotion, AnimatePresence } from "motion/react";
+import { useState } from "react";
 import { filingLines } from "@/data/marketing";
+import { cn } from "@/lib/utils";
 
-const sectionTone: Record<string, "cyan" | "green" | "purple" | "amber" | "red"> = {
-  Business: "cyan",
-  "Risk Factors": "red",
-  "MD&A": "amber",
-  "Cash Flow": "green",
-};
-
-const toneClasses: Record<string, string> = {
-  cyan: "border-accent-cyan/30 text-accent-cyan",
-  red: "border-accent-red/30 text-accent-red",
-  amber: "border-accent-amber/30 text-accent-amber",
-  green: "border-accent-green/30 text-accent-green",
-};
+/**
+ * Section 04 — 10-K filing reader.
+ *
+ * One selected section, one excerpt, one Investor Lens annotation.
+ * Removed: duplicate document map, multi-section navigation chips,
+ * FORM 10-K · ANNUAL REPORT · MOCK header, all Investor Lens annotations
+ * shown at once.
+ */
+const SECTIONS = filingLines.map((l) => l.section);
 
 export default function FilingReaderTeaser() {
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const line = filingLines[active];
+
   return (
-    <section className="relative w-full overflow-hidden py-24 sm:py-32">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(251,191,36,0.06),transparent_60%)]" />
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        {/* Header — full width, centered eyebrow */}
-        <div className="mx-auto mb-12 max-w-2xl text-center">
-          <SectionLabel index="04" eyebrow="The 10-K is the source code" tone="amber" className="justify-center" />
-          <h2 className="mt-6 text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-            Real investors read source documents.
-          </h2>
-          <p className="mt-5 text-balance text-slate-300">
-            Not headlines. Not summaries. The filing is where the business explains itself — its model, its risks, its
-            cash, and its narrative.
-          </p>
+    <section
+      id="section-filing"
+      className="hp-section-pad relative w-full overflow-hidden border-t border-white/5"
+    >
+      <div className="hp-container">
+        <div className="hp-marker">04 / Filing</div>
+        <motion.h2
+          initial={reduce ? false : { opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 0.6 }}
+          className="hp-section mt-5"
+        >
+          Real investors read source documents.
+        </motion.h2>
+        <p className="hp-lead mt-6">
+          Use the 10-K to examine the business, risks, management commentary,
+          and cash flow.
+        </p>
+
+        {/* Tabs — sans-serif */}
+        <div className="mt-12 flex flex-wrap gap-x-6 gap-y-2 border-b border-white/10 pb-3">
+          {SECTIONS.map((s, i) => {
+            const isActive = i === active;
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-pressed={isActive}
+                className={cn(
+                  "text-[15px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 rounded-md",
+                  isActive
+                    ? "text-white"
+                    : "text-slate-500 hover:text-slate-300",
+                )}
+              >
+                {s}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Split: document map (left, narrow) + filing (right, wide) */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* sticky document map */}
-          <div className="lg:col-span-3">
-            <div className="lg:sticky lg:top-24">
-              <div className="glass-panel p-5">
-                <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Document map</div>
-                <ul className="mt-3 space-y-2">
-                  {filingLines.map((l, i) => (
-                    <li key={l.id} className="flex items-center gap-2 text-sm text-slate-300">
-                      <span className={`h-1.5 w-1.5 rounded-full ${l.section === "Risk Factors" ? "bg-accent-red/70" : l.section === "Cash Flow" ? "bg-accent-green/70" : l.section === "MD&A" ? "bg-accent-amber/70" : "bg-accent-cyan/70"}`} />
-                      {l.section}
-                      <span className="ml-auto font-mono text-[10px] text-slate-600">L{i + 1}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {["Business", "Risk Factors", "MD&A", "Cash Flow"].map((s) => (
-                  <span
-                    key={s}
-                    className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${toneClasses[sectionTone[s]]}`}
-                  >
-                    {s}
+        {/* One excerpt + one annotation */}
+        <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
+          <div>
+            <AnimatePresence mode="wait">
+              <motion.blockquote
+                key={line.id}
+                initial={reduce ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduce ? undefined : { opacity: 0, y: -8 }}
+                transition={{ duration: 0.3 }}
+                className="border-l border-accent-amber/40 pl-6"
+              >
+                <p className="font-sans text-[20px] leading-relaxed text-slate-100 sm:text-[22px]">
+                  {line.text}
+                </p>
+                <footer className="mt-4 text-[13px] text-slate-500">
+                  <span className="font-mono tabular-nums">
+                    10-K · L{String(active + 1).padStart(2, "0")}
                   </span>
-                ))}
-              </div>
-            </div>
+                  <span className="mx-2 text-slate-700">·</span>
+                  <span>{line.section}</span>
+                </footer>
+              </motion.blockquote>
+            </AnimatePresence>
           </div>
 
-          {/* filing document — dimensional stacked slab */}
-          <div className="lg:col-span-9">
-            <FloatingArtifact pages={3}>
-              <div className="relative overflow-hidden rounded-2xl">
-                <div className="flex items-center justify-between border-b border-white/10 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
-                  <span>FORM 10-K · ANNUAL REPORT · MOCK</span>
-                  <span className="text-accent-amber">FILING READER</span>
-                </div>
-
-                <div className="divide-y divide-white/5">
-                  {filingLines.map((l, i) => (
-                    <motion.div
-                      key={l.id}
-                      initial={{ opacity: 0, y: 14 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-15%" }}
-                      transition={{ delay: i * 0.1 }}
-                      className="group relative px-5 py-5"
-                    >
-                      <div className="mb-2 flex items-center gap-2">
-                        <span className={`rounded-full border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] ${toneClasses[sectionTone[l.section]]}`}>
-                          {l.section}
-                        </span>
-                      </div>
-                      <p className="font-mono text-sm leading-relaxed text-slate-200">
-                        <span className="mr-2 text-slate-600">{String(i + 1).padStart(2, "0")}</span>
-                        <span className="rounded bg-accent-amber/10 px-1 py-0.5 ring-1 ring-inset ring-accent-amber/20">
-                          {l.text}
-                        </span>
-                      </p>
-                      <div className="mt-3 flex items-start gap-2 rounded-lg border border-accent-cyan/20 bg-accent-cyan/[0.04] p-3">
-                        <span className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-accent-cyan">
-                          Investor lens
-                        </span>
-                        <span className="text-sm text-slate-300">{l.note}</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="pointer-events-none absolute -right-12 top-10 h-40 w-40 rounded-full bg-accent-amber/10 blur-3xl" />
-              </div>
-            </FloatingArtifact>
+          <div>
+            <div className="text-[13px] font-medium uppercase tracking-[0.06em] text-accent-cyan">
+              Investor lens
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={line.id}
+                initial={reduce ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduce ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.3, delay: 0.05 }}
+                className="mt-3 hp-body max-w-md"
+              >
+                {line.note}
+              </motion.p>
+            </AnimatePresence>
           </div>
         </div>
       </div>

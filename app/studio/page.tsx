@@ -33,13 +33,12 @@ export default function StudioPage() {
       <div className="pointer-events-none absolute inset-0 terminal-grid opacity-30" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(34,211,238,0.08),transparent_55%)]" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-        <SectionLabel index="STUDIO" eyebrow="Portfolio workspace · placeholder" />
+        <SectionLabel index="STUDIO" eyebrow="Portfolio workspace · concept" />
         <h1 className="mt-6 max-w-3xl text-balance text-5xl font-semibold leading-tight tracking-tight text-white sm:text-6xl">
           The lab where you decode, build, and stress-test portfolios.
         </h1>
         <p className="mt-5 max-w-xl text-balance text-slate-300">
-          A preview of the future portfolio workspace. Real calculations, drag-to-allocate, and live scenario engines
-          arrive in a later pass. For now, this is the structural shell.
+          A preview of the portfolio workspace. Use the course lessons to learn each calculation, then return here to compose assets, inspect risk, and stress-test scenarios in one place.
         </p>
 
         <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -50,7 +49,7 @@ export default function StudioPage() {
                 <span className={toneText[p.tone]}>{p.label}</span>
               </div>
               <div className="mt-6 flex h-32 items-center justify-center rounded-lg border border-dashed border-white/10 bg-ink-900/40">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-600">preview · pending</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-600">interactive panel</span>
               </div>
               <p className="mt-4 text-sm text-slate-400">{p.note}</p>
             </div>

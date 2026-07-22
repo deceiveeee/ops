@@ -45,6 +45,7 @@ import Lesson9_1 from "@/components/lessons/efficient-markets/Lesson9_1";
 import Lesson9_2 from "@/components/lessons/efficient-markets/Lesson9_2";
 import Lesson9_3 from "@/components/lessons/efficient-markets/Lesson9_3";
 import Lesson9_4 from "@/components/lessons/efficient-markets/Lesson9_4";
+import LessonIF_1_1 from "@/components/lessons/investment-foundations/LessonIF_1_1";
 
 export type LessonComponentProps = Record<string, never>;
 
@@ -101,6 +102,7 @@ export const lessonRegistry: Record<
   "active-vs-passive-investing": Lesson9_2,
   "anomalies-and-limits-to-arbitrage": Lesson9_3,
   "building-investment-philosophy": Lesson9_4,
+  "if-1-1-how-an-investor-builds-a-philosophy": LessonIF_1_1,
 };
 
 export function getLessonComponent(

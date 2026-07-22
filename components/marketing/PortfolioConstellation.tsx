@@ -1,133 +1,142 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import SectionLabel from "@/components/ui/SectionLabel";
-import PortfolioObject from "@/components/marketing/PortfolioObject";
-import { assetNodes, assetEdges } from "@/data/marketing";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-const toneColor: Record<string, string> = {
-  cyan: "#22d3ee",
-  green: "#34d399",
-  purple: "#a78bfa",
-  amber: "#fbbf24",
-  red: "#f87171",
-};
+/**
+ * Section 07 — Portfolio risk.
+ *
+ * One correlation slider. Two-asset demo. One portfolio volatility readout.
+ * Removed: PORT system labels, relationship-network map, multiple asset cards,
+ * full allocation table, summary ratios, separate correlation legend.
+ *
+ * Deterministic two-asset demo: same volatility, varied correlation.
+ * σp = sqrt(w1²σ1² + w2²σ2² + 2 w1 w2 σ1 σ2 ρ)
+ */
+const W1 = 0.5;
+const W2 = 0.5;
+const SIGMA = 16; // % — both assets at 16% vol for clarity
+
+function portfolioVol(correlation: number): number {
+  const variance =
+    W1 * W1 * SIGMA * SIGMA +
+    W2 * W2 * SIGMA * SIGMA +
+    2 * W1 * W2 * SIGMA * SIGMA * correlation;
+  return Math.sqrt(variance);
+}
 
 export default function PortfolioConstellation() {
   const reduce = useReducedMotion();
+  const [corr, setCorr] = useState(0.8);
+  const vol = portfolioVol(corr);
+  const volAtZero = portfolioVol(0);
 
   return (
-    <section className="relative w-full overflow-hidden py-24 sm:py-32">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_60%_50%,rgba(167,139,250,0.10),transparent_60%)]" />
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        {/* Header — varied layout: stats inline as a terminal strip */}
-        <div className="flex flex-col gap-6 border-b border-white/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-xl">
-            <SectionLabel index="07" eyebrow="Portfolios change risk through interaction" tone="purple" />
-            <h2 className="mt-6 text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-              A portfolio is a system of relationships.
-            </h2>
-            <p className="mt-5 max-w-md text-balance text-slate-300">
-              Risk changes when assets interact. Correlation, volatility, and weights — not just individual names —
-              determine what the portfolio actually does.
-            </p>
-          </div>
-          {/* stat strip */}
-          <div className="flex gap-6 font-mono text-xs">
-            <Stat label="Portfolio vol" value="11.4%" tone="purple" />
-            <Stat label="Avg correlation" value="0.21" tone="purple" />
-            <Stat label="Diversification" value="1.62x" tone="green" />
-          </div>
-        </div>
+    <section
+      id="section-portfolio"
+      className="hp-section-pad relative w-full overflow-hidden border-t border-white/5"
+    >
+      <div className="hp-container">
+        <div className="hp-marker">07 / Portfolio</div>
+        <motion.h2
+          initial={reduce ? false : { opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 0.6 }}
+          className="hp-section mt-5"
+        >
+          Portfolio risk depends on how assets move together.
+        </motion.h2>
+        <p className="hp-lead mt-6">
+          Weights, volatility, and correlation determine portfolio risk.
+        </p>
 
-        {/* Full-bleed constellation canvas with signature object anchor */}
-        <div className="mt-8">
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10 bg-ink-900/40 sm:aspect-[16/9]">
-            {/* subtle grid */}
-            <div className="absolute inset-0 terminal-grid opacity-20" />
-
-            {/* signature portfolio object — floating focal anchor, top-left */}
-            <div className="absolute left-2 top-2 z-20 w-28 opacity-90 sm:w-36 md:w-44">
-              <PortfolioObject className="w-full" />
+        <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* Correlation control */}
+          <div>
+            <div className="flex items-baseline justify-between">
+              <label htmlFor="correlation" className="text-[15px] font-medium text-slate-300">
+                Correlation
+              </label>
+              <span className="hp-numeric text-[24px] text-white sm:text-[28px]">
+                {corr.toFixed(2)}
+              </span>
             </div>
+            <input
+              id="correlation"
+              type="range"
+              min={-1}
+              max={1}
+              step={0.05}
+              value={corr}
+              onChange={(e) => setCorr(parseFloat(e.target.value))}
+              aria-label="Asset correlation"
+              aria-valuemin={-1}
+              aria-valuemax={1}
+              aria-valuenow={corr}
+              aria-valuetext={`${corr.toFixed(2)} correlation`}
+              className="mt-5 w-full accent-accent-cyan"
+            />
+            <div className="mt-2 flex justify-between text-[13px] text-slate-500">
+              <span className="tabular-nums">−1.00</span>
+              <span className="tabular-nums">0.00</span>
+              <span className="tabular-nums">1.00</span>
+            </div>
+            <p className="hp-body mt-6 max-w-sm">
+              Two assets, each at {SIGMA}% volatility, equal weight. Only the
+              correlation changes.
+            </p>
 
-            {/* edges */}
-            <svg viewBox="0 0 100 75" className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
-              {assetEdges.map((e, i) => {
-                const a = assetNodes.find((n) => n.id === e.from)!;
-                const b = assetNodes.find((n) => n.id === e.to)!;
-                const positive = e.corr >= 0;
-                const color = positive
-                  ? `rgba(248,113,113,${0.15 + Math.abs(e.corr) * 0.5})`
-                  : `rgba(52,211,153,${0.15 + Math.abs(e.corr) * 0.5})`;
-                return (
-                  <line
-                    key={i}
-                    x1={a.x}
-                    y1={a.y * 0.75}
-                    x2={b.x}
-                    y2={b.y * 0.75}
-                    stroke={color}
-                    strokeWidth={0.4 + Math.abs(e.corr) * 1.6}
-                    strokeDasharray={positive ? "0" : "1.5 1.5"}
-                  />
-                );
-              })}
-            </svg>
+            {/* Two-asset visual — minimal dots moving together or apart */}
+            <div className="mt-8 h-[80px] rounded-xl border border-white/10 bg-white/[0.02]">
+              <div className="relative h-full w-full">
+                <AssetDot
+                  label="Asset A"
+                  side="left"
+                  corr={corr}
+                  reduce={!!reduce}
+                />
+                <AssetDot
+                  label="Asset B"
+                  side="right"
+                  corr={corr}
+                  reduce={!!reduce}
+                />
+              </div>
+            </div>
+          </div>
 
-            {/* nodes */}
-            {assetNodes.map((n, i) => {
-              const color = toneColor[n.tone];
-              const size = 36 + n.weight / 2;
-              return (
-                <motion.div
-                  key={n.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${n.x}%`, top: `${n.y * 0.75}%` }}
-                  animate={
-                    reduce
-                      ? {}
-                      : {
-                          x: [0, i % 2 === 0 ? 10 : -10, 0],
-                          y: [0, i % 2 === 0 ? -8 : 8, 0],
-                        }
-                  }
-                  transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
-                >
-                  <div className="relative flex flex-col items-center">
-                    <div
-                      className="flex items-center justify-center rounded-full border-2 bg-ink-950/80 backdrop-blur-sm"
-                      style={{
-                        width: `${size}px`,
-                        height: `${size}px`,
-                        borderColor: color,
-                        boxShadow: `0 0 28px -6px ${color}`,
-                      }}
-                    >
-                      <span className="font-mono text-[10px] font-semibold sm:text-xs" style={{ color }}>
-                        {n.weight}%
-                      </span>
-                    </div>
-                    {/* label pill — positioned to avoid overlap */}
-                    <div className="mt-1.5 whitespace-nowrap rounded bg-ink-950/80 px-2 py-0.5 font-mono text-[9px] text-slate-200 backdrop-blur-sm">
-                      {n.label}
-                    </div>
-                    <div className="mt-0.5 font-mono text-[8px] text-slate-500">σ {n.vol}%</div>
-                  </div>
-                </motion.div>
-              );
-            })}
-
-            {/* legend — top-right, compact */}
-            <div className="absolute right-3 top-3 flex flex-col gap-1.5 rounded-lg border border-white/10 bg-ink-950/70 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400 backdrop-blur-sm">
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-accent-red/70" /> positive corr
+          {/* Result — portfolio volatility */}
+          <div className="lg:border-l lg:border-white/10 lg:pl-16">
+            <div className="text-[15px] font-medium text-slate-400">
+              Portfolio volatility
+            </div>
+            <motion.div
+              key={corr.toFixed(2)}
+              initial={reduce ? false : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="hp-numeric mt-2 text-[64px] leading-none text-accent-cyan sm:text-[88px]"
+            >
+              {vol.toFixed(1)}%
+            </motion.div>
+            <div className="mt-5 flex items-baseline gap-4">
+              <span className="text-[14px] text-slate-500">
+                From uncorrelated baseline
               </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-accent-green/70" /> negative corr
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-4 rounded-full bg-white/30" /> size = weight
+              <span
+                className={cn(
+                  "hp-numeric text-[20px]",
+                  vol < volAtZero
+                    ? "text-accent-green"
+                    : vol > volAtZero
+                      ? "text-accent-red"
+                      : "text-slate-300",
+                )}
+              >
+                {vol < volAtZero ? "−" : vol > volAtZero ? "+" : ""}
+                {Math.abs(vol - volAtZero).toFixed(1)}pp
               </span>
             </div>
           </div>
@@ -137,13 +146,33 @@ export default function PortfolioConstellation() {
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string; tone: "purple" | "green" }) {
+function AssetDot({
+  label,
+  side,
+  corr,
+  reduce,
+}: {
+  label: string;
+  side: "left" | "right";
+  corr: number;
+  reduce: boolean;
+}) {
+  // Higher correlation = dots swing together; lower = dots drift apart.
+  // Map correlation [-1, 1] to vertical offset for visual cue.
+  const offset = (1 - Math.abs(corr)) * 18;
+  const dir = side === "left" ? -1 : 1;
   return (
-    <div>
-      <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
-      <div className={`mt-0.5 text-lg font-semibold ${tone === "purple" ? "text-accent-purple" : "text-accent-green"}`}>
-        {value}
-      </div>
-    </div>
+    <motion.div
+      initial={false}
+      animate={reduce ? {} : { y: dir * offset }}
+      transition={{ type: "spring", stiffness: 80, damping: 14 }}
+      className={cn(
+        "absolute top-1/2 flex -translate-y-1/2 flex-col items-center gap-1.5",
+        side === "left" ? "left-[20%]" : "right-[20%]",
+      )}
+    >
+      <span className="h-3 w-3 rounded-full bg-accent-cyan" />
+      <span className="text-[12px] font-medium text-slate-400">{label}</span>
+    </motion.div>
   );
 }

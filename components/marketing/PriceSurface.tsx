@@ -1,146 +1,189 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
-import SectionLabel from "@/components/ui/SectionLabel";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useRef, useState } from "react";
 import { stockChart, chartEvents } from "@/data/marketing";
+import { cn } from "@/lib/utils";
 
+/**
+ * Section 02 — Price.
+ *
+ * One chart. One active event at a time. Quiet sans-serif event names.
+ * Removed: PRICE IS ONLY THE SURFACE label, multi-legend chips, decorative
+ * orbital echo, paragraph, mono chips. Active event is selected, not all-on.
+ */
 const W = 1000;
 const H = 360;
 const PAD = 28;
 
-function buildPath(points: { t: number; p: number }[]) {
-  const xs = points.map((p) => (p.t / (points.length - 1)) * (W - PAD * 2) + PAD);
-  const ys = points.map((p) => p.p);
+export default function PriceSurface() {
+  const reduce = useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const [activeEvent, setActiveEvent] = useState(0);
+
+  const xs = stockChart.map((_, i) => (i / (stockChart.length - 1)) * (W - PAD * 2) + PAD);
+  const ys = stockChart.map((p) => p.p);
   const min = Math.min(...ys);
   const max = Math.max(...ys);
   const range = max - min || 1;
-  return { xs, ys, min, range };
-}
-
-export default function PriceSurface() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const { xs, ys, min, range } = buildPath(stockChart);
   const yFor = (v: number) => H - PAD - ((v - min) / range) * (H - PAD * 2);
 
   const drawLength = useTransform(scrollYProgress, [0.08, 0.5], [0, 1]);
   const labelOpacity = useTransform(scrollYProgress, [0.12, 0.22], [0, 1]);
 
+  const linePath = "M" + xs.map((x, i) => `${x},${yFor(ys[i])}`).join(" L");
+  const areaPath = `${linePath} L${xs[xs.length - 1]},${H} L${xs[0]},${H} Z`;
+
+  const event = chartEvents[activeEvent];
+  const eventColor =
+    event.tone === "up" ? "#34d399" : event.tone === "down" ? "#f87171" : "#a78bfa";
+
   return (
-    <section ref={ref} id="story" className="relative min-h-[140vh] w-full">
-      <div className="sticky top-0 flex h-screen w-full items-center overflow-hidden">
-        {/* full-bleed chart backdrop */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 terminal-grid opacity-20" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,rgba(34,211,238,0.06),transparent_60%)]" />
-          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="h-full w-full" role="img" aria-label="Mock stock price chart as the surface layer">
+    <section
+      id="story"
+      ref={ref}
+      className="hp-section-pad relative w-full overflow-hidden"
+    >
+      <div className="hp-container">
+        {/* Quiet marker — replaces spaced uppercase eyebrow */}
+        <div className="hp-marker">02 / Price</div>
+
+        <motion.h2
+          initial={reduce ? false : { opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 0.6 }}
+          className="hp-section mt-5"
+        >
+          A chart shows what happened.
+          <br />
+          <span className="text-accent-cyan">Finance asks why.</span>
+        </motion.h2>
+
+        <p className="hp-lead mt-6">
+          Select an event to see what changed.
+        </p>
+
+        {/* Single chart */}
+        <div className="mt-12">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="w-full"
+            role="img"
+            aria-label={`Stock chart with the event ${event.label} highlighted.`}
+          >
             <defs>
               <linearGradient id="priceFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.22" />
+                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.18" />
                 <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
               </linearGradient>
             </defs>
-            {/* gridlines */}
-            {[0.2, 0.4, 0.6, 0.8].map((g) => (
-              <line key={g} x1={0} x2={W} y1={PAD + g * (H - PAD * 2)} y2={PAD + g * (H - PAD * 2)} stroke="rgba(255,255,255,0.05)" />
-            ))}
-            {/* area + line */}
             <motion.path
-              d={`M${xs.map((x, i) => `${x},${yFor(ys[i])}`).join(" L")} L${xs[xs.length - 1]},${H} L${xs[0]},${H} Z`}
+              d={areaPath}
               fill="url(#priceFill)"
               style={{ opacity: drawLength }}
             />
             <motion.path
-              d={`M${xs.map((x, i) => `${x},${yFor(ys[i])}`).join(" L")}`}
+              d={linePath}
               fill="none"
               stroke="#22d3ee"
-              strokeWidth="2.5"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
               style={{ pathLength: drawLength }}
             />
-            {/* event markers */}
+            {/* Render all event nodes, but only the active one is prominent */}
             {chartEvents.map((e, i) => {
               const x = xs[e.t];
               const y = yFor(ys[e.t]);
-              const color = e.tone === "up" ? "#34d399" : e.tone === "down" ? "#f87171" : "#a78bfa";
+              const color =
+                e.tone === "up" ? "#34d399" : e.tone === "down" ? "#f87171" : "#a78bfa";
+              const isActive = i === activeEvent;
               return (
-                <motion.g
-                  key={e.t}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true, margin: "-10%" }}
-                  transition={{ delay: 0.4 + i * 0.15 }}
-                >
-                  <line x1={x} x2={x} y1={y} y2={H} stroke={color} strokeOpacity="0.3" strokeDasharray="2 4" />
-                  <circle cx={x} cy={y} r="4" fill={color} />
-                  <circle cx={x} cy={y} r="9" fill="none" stroke={color} strokeOpacity="0.4" />
-                </motion.g>
+                <g key={e.t}>
+                  <line
+                    x1={x}
+                    x2={x}
+                    y1={y}
+                    y2={H}
+                    stroke={color}
+                    strokeOpacity={isActive ? 0.5 : 0.12}
+                    strokeDasharray="2 4"
+                  />
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={isActive ? 5 : 3}
+                    fill={color}
+                    fillOpacity={isActive ? 1 : 0.4}
+                  />
+                  {isActive && (
+                    <circle cx={x} cy={y} r={10} fill="none" stroke={color} strokeOpacity="0.5" />
+                  )}
+                </g>
               );
             })}
           </svg>
-          {/* surface label overlay */}
-          <motion.div style={{ opacity: labelOpacity }} className="pointer-events-none absolute right-5 top-5 sm:right-8 sm:top-8">
-            <div className="rounded-full border border-accent-cyan/30 bg-ink-950/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-accent-cyan backdrop-blur-sm">
-              Surface layer · price
-            </div>
-          </motion.div>
-
-          {/* Echo of the hero orbital sculpture — a faded ring motif that
-              visually connects this section back to the hero object. The
-              chart "resolves" out of the same circular structure. */}
-          <motion.div
-            style={{ opacity: labelOpacity }}
-            className="pointer-events-none absolute -right-20 top-1/2 hidden -translate-y-1/2 lg:block"
-            aria-hidden
-          >
-            <svg viewBox="0 0 300 300" className="w-72 opacity-20">
-              <ellipse cx="150" cy="150" rx="140" ry="50" fill="none" stroke="#22d3ee" strokeWidth="0.8" transform="rotate(-15 150 150)" />
-              <circle cx="150" cy="150" r="100" fill="none" stroke="#22d3ee" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.6" />
-              <circle cx="150" cy="150" r="60" fill="none" stroke="#22d3ee" strokeWidth="0.5" opacity="0.4" />
-              <circle cx="150" cy="150" r="4" fill="#22d3ee" />
-            </svg>
-          </motion.div>
         </div>
 
-        {/* foreground copy */}
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8">
-          <div className="max-w-md">
-            <SectionLabel index="02" eyebrow="Price is only the surface" />
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mt-6 text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl"
-            >
-              A chart shows what happened.
-              <br />
-              <span className="text-accent-cyan">Finance asks why.</span>
-            </motion.h2>
-            <p className="mt-5 max-w-sm text-balance text-slate-300">
-              Every chart is the visible output of decisions, cash flows, expectations, and risk. The events on the
-              timeline are where the story lives.
-            </p>
-          </div>
-        </div>
-
-        {/* event legend rail (mobile-friendly, stacked, no overlap) */}
-        <div className="absolute bottom-6 left-5 right-5 z-10 sm:left-8 sm:right-8">
-          <div className="flex flex-wrap gap-2">
-            {chartEvents.map((e) => (
-              <span
+        {/* Event selector — sans-serif, single-row, no chips */}
+        <motion.div
+          style={{ opacity: labelOpacity }}
+          className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3"
+        >
+          {chartEvents.map((e, i) => {
+            const isActive = i === activeEvent;
+            const toneColor =
+              e.tone === "up"
+                ? "text-accent-green"
+                : e.tone === "down"
+                  ? "text-accent-red"
+                  : "text-accent-purple";
+            return (
+              <button
                 key={e.t}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-[10px] text-slate-300 backdrop-blur-sm"
+                type="button"
+                onClick={() => setActiveEvent(i)}
+                aria-pressed={isActive}
+                className={cn(
+                  "flex items-center gap-2 text-[15px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 rounded-md",
+                  isActive ? "text-white" : "text-slate-500 hover:text-slate-300",
+                )}
               >
-                <span className={e.tone === "up" ? "text-accent-green" : e.tone === "down" ? "text-accent-red" : "text-accent-purple"}>
-                  ●
-                </span>
+                <span
+                  className={cn("h-1.5 w-1.5 rounded-full", isActive ? toneColor : "bg-slate-600")}
+                  aria-hidden
+                />
                 {e.label}
-              </span>
-            ))}
-          </div>
-        </div>
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {/* One active event explanation only */}
+        <motion.div
+          key={event.label}
+          initial={reduce ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mt-6 flex items-baseline gap-4 border-t border-white/10 pt-5"
+        >
+          <span
+            className="hp-numeric text-[28px] sm:text-[32px]"
+            style={{ color: eventColor }}
+          >
+            {event.label}
+          </span>
+          <span className="hp-body">
+            The market moved on this event. The chart records the move; the
+            rest of OPS teaches you to read the cause.
+          </span>
+        </motion.div>
       </div>
     </section>
   );

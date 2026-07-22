@@ -84,7 +84,7 @@ export default function ZeroCouponTranslator() {
             tone="cyan"
             formula="r_{0,T} = \\left(\\frac{1}{P_0}\\right)^{1/T} - 1"
             substitution={`r_{0,${maturity}} = \\left(\\frac{1}{${price.toFixed(3)}}\\right)^{1/${maturity}} - 1`}
-            result={`r_{0,${maturity}} \\approx ${formatPercent(rate, 2)}`}
+            result={`r(0,${maturity}) ≈ ${formatPercent(rate, 2)}`}
             interpretation="A higher price means investors accept a lower rate to wait for that future dollar."
           />
         </div>

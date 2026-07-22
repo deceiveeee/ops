@@ -38,26 +38,26 @@ export default function SiteHeader() {
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
+      <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-6 sm:px-8">
         <Link href="/" className="group flex items-center gap-2.5" aria-label="Open Portfolio Studio home">
           <Logo />
           <span
             className={cn(
-              "font-semibold tracking-tight transition-colors",
+              "text-[17px] font-semibold tracking-[-0.015em] transition-colors",
               solid ? "text-slate-100" : "text-white",
             )}
           >
-            Open Portfolio <span className="text-accent-cyan">Studio</span>
+            Open Portfolio Studio
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {nav.map((n) => (
             <Link
               key={n.href}
               href={n.href}
               className={cn(
-                "rounded-full px-3.5 py-1.5 text-sm transition-colors",
+                "rounded-full px-4 py-2 text-[16px] font-medium transition-colors",
                 solid
                   ? "text-slate-300 hover:bg-white/5 hover:text-white"
                   : "text-slate-200/80 hover:bg-white/10 hover:text-white",
@@ -66,13 +66,10 @@ export default function SiteHeader() {
               {n.label}
             </Link>
           ))}
-        </nav>
+        </div>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Button href="/courses" variant="outline" size="sm">
-            Explore courses
-          </Button>
-          <Button href="/studio" size="sm">
+          <Button href="/studio" size="md">
             Enter the studio
           </Button>
         </div>
@@ -90,14 +87,14 @@ export default function SiteHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-ink-950/95 px-5 py-4 md:hidden">
+        <div className="border-t border-white/10 bg-ink-950/95 px-6 py-4 md:hidden">
           <div className="flex flex-col gap-1">
             {nav.map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+                className="rounded-lg px-3 py-2.5 text-[15px] font-medium text-slate-300 hover:bg-white/5 hover:text-white"
               >
                 {n.label}
               </Link>

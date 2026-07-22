@@ -11,7 +11,7 @@ import {
   BlockMath,
   FormulaExplainer,
 } from "./shared";
-import { solveZeroCouponRate, formatPercent } from "@/lib/fixed-income";
+import { solveZeroCouponRate, formatPercent, formatPercentTex } from "@/lib/fixed-income";
 
 /**
  * Section 3 — Extract spot rates from STRIPS discount bond prices.
@@ -187,7 +187,7 @@ export default function STRIPSSpotRateExtractor() {
                     <InlineMath>{`r = \\left(\\frac{1}{${row.price.toFixed(3)}}\\right)^{1/${row.t}} - 1`}</InlineMath>
                   </div>
                   <div className="rounded-lg border border-accent-cyan/20 bg-accent-cyan/[0.06] px-3 py-2 text-accent-cyan">
-                    <InlineMath>{`r_{0,${row.t}} \\approx ${isFinite(rate) ? formatPercent(rate) : "\\text{—}"}`}</InlineMath>
+                    <InlineMath>{`r_{0,${row.t}} \\approx ${isFinite(rate) ? formatPercentTex(rate) : "\\text{—}"}`}</InlineMath>
                   </div>
                 </div>
               </motion.div>

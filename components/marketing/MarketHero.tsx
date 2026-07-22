@@ -3,177 +3,129 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import Button from "@/components/ui/Button";
-import HeroObject from "@/components/marketing/HeroObject";
-import { marketFragments } from "@/data/marketing";
+import { stockChart } from "@/data/marketing";
 
-// A quieter, more atmospheric subset of fragments — fewer, better placed,
-// kept out of the hero copy column so the headline breathes.
-const heroFragments = marketFragments.filter((_, i) => i % 2 === 0).slice(0, 8);
-
+/**
+ * MarketHero — calm, editorial, one dominant idea.
+ *
+ * Per homepage rebuild spec:
+ *   - Remove MARKET · LIVE FEED · MOCK, Decode · Investigate · Build,
+ *     SIGNAL, STRUCTURE, Scroll to decode, TAPE, See how finance works ↓,
+ *     ticker tape, hero orbital sculpture, "Open Portfolio Studio" eyebrow.
+ *   - Keep: one headline, one short supporting sentence, two CTAs,
+ *     one restrained background visual (a single animated market line).
+ */
 export default function MarketHero() {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
 
-  // Parallax fade-out of the hero as the user scrolls into the story.
-  const copyY = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const fogOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.3]);
+  // Single quiet parallax — no aggressive fade.
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.2]);
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] w-full overflow-hidden">
-      {/* Background layers */}
-      <motion.div style={{ opacity: fogOpacity }} className="absolute inset-0">
-        <div className="absolute inset-0 terminal-grid opacity-40" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_25%,rgba(34,211,238,0.12),transparent_55%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_85%_80%,rgba(167,139,250,0.08),transparent_50%)]" />
-      </motion.div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink-950 via-ink-950/80 to-transparent" />
-
-      {/* Atmospheric fragments — kept to the periphery, away from the copy column */}
-      <div className="pointer-events-none absolute inset-0">
-        {heroFragments.map((f, i) => {
-          const tone =
-            f.tone === "up" ? "text-accent-green" : f.tone === "down" ? "text-accent-red" : "text-slate-400";
-          return (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={
-                reduce
-                  ? { opacity: 0.45 }
-                  : { opacity: [0, 0.55, 0.4, 0.55], y: [10, 0, -10, 0], x: [0, 4, 0] }
-              }
-              transition={{
-                duration: 11,
-                delay: f.delay,
-                repeat: reduce ? 0 : Infinity,
-                repeatType: "mirror",
-                ease: "easeInOut",
-              }}
-              className={`absolute hidden font-mono text-[10px] sm:block ${tone}`}
-              style={{ left: `${f.x}%`, top: `${f.y}%` }}
-            >
-              <span className="rounded border border-white/10 bg-white/[0.02] px-2 py-1 backdrop-blur-sm">
-                {f.text}
-              </span>
-            </motion.span>
-          );
-        })}
-      </div>
-
-      {/* Left terminal rail */}
-      <div className="pointer-events-none absolute left-0 top-16 hidden h-[calc(100svh-4rem)] w-10 flex-col items-center gap-4 border-r border-white/5 pt-8 lg:flex">
-        <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-slate-600 [writing-mode:vertical-rl]">
-          MARKET · LIVE FEED · MOCK
-        </div>
-        <div className="mt-auto mb-8 flex flex-col items-center gap-2">
-          <span className="h-1.5 w-1.5 animate-pulseGlow rounded-full bg-accent-green" />
-          <span className="h-12 w-px bg-gradient-to-b from-accent-cyan/60 to-transparent" />
-        </div>
-      </div>
-
-      {/* Hero copy + sculpture */}
+    <section
+      ref={ref}
+      className="relative min-h-[100svh] w-full overflow-hidden"
+    >
+      {/* ONE background visual — a single restrained market line */}
       <motion.div
-        style={{ y: copyY, opacity: copyOpacity }}
-        className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-center px-5 sm:px-8 lg:pl-16"
+        style={{ y: bgY, opacity: bgOpacity }}
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
       >
-        <div className="grid w-full grid-cols-1 items-center gap-8 lg:grid-cols-12">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="max-w-3xl lg:col-span-7"
-          >
-            <div className="mb-5 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.22em] text-slate-400">
-              <span className="h-1.5 w-1.5 animate-pulseGlow rounded-full bg-accent-cyan" />
-              Open Portfolio Studio
-              <span className="hidden h-px w-10 bg-white/15 sm:block" />
-              <span className="hidden sm:inline">Decode · Investigate · Build</span>
-            </div>
-            <h1 className="text-balance text-[2.6rem] font-semibold leading-[1.03] tracking-tight text-white sm:text-6xl md:text-7xl">
-              Decode the market
-              <br />
-              <span className="bg-gradient-to-r from-accent-cyan via-accent-purple to-accent-cyan bg-clip-text text-transparent">
-                beneath the chart.
-              </span>
-            </h1>
-            <p className="mt-6 max-w-xl text-balance text-base leading-relaxed text-slate-300 sm:text-lg">
-              Learn finance by investigating real companies, real filings, portfolios, and market signals. Not by
-              memorizing definitions.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button href="/studio" size="lg">
-                Enter the studio
-              </Button>
-              <Button href="/courses" variant="outline" size="lg">
-                Explore courses
-              </Button>
-              <Button href="#story" variant="ghost" size="lg">
-                See how finance works
-                <span aria-hidden className="ml-0.5">↓</span>
-              </Button>
-            </div>
-          </motion.div>
-
-          {/* Signature hero object — orbital ring sculpture */}
-          <div className="hidden justify-center lg:col-span-5 lg:flex">
-            <HeroObject scrollYProgress={scrollYProgress} className="w-[26rem] xl:w-[32rem]" />
-          </div>
-        </div>
-
-        {/* Scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="absolute bottom-8 left-5 sm:left-8 lg:left-16"
-        >
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-            <span className="h-8 w-px animate-pulseGlow bg-gradient-to-b from-accent-cyan to-transparent" />
-            Scroll to decode
-          </div>
-        </motion.div>
+        <BackgroundChart reduce={!!reduce} />
       </motion.div>
 
-      {/* Bottom ticker tape — terminal atmosphere */}
-      <div className="absolute inset-x-0 bottom-0 z-10 hidden border-t border-white/5 bg-ink-950/60 backdrop-blur-sm md:block">
-        <div className="flex items-center">
-          <div className="border-r border-white/10 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-accent-cyan">
-            TAPE
-          </div>
-          <div className="relative flex-1 overflow-hidden">
-            <div className="flex animate-[scan_28s_linear_infinite] gap-8 whitespace-nowrap py-1.5 font-mono text-[10px] text-slate-400">
-              {tickerTape.map((t, i) => (
-                <span key={i} className="inline-flex items-center gap-2">
-                  <span className="text-slate-500">{t.sym}</span>
-                  <span className={t.up ? "text-accent-green" : "text-accent-red"}>
-                    {t.up ? "▲" : "▼"} {t.chg}
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* Subtle bottom fade so the chart never collides with content below */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink-950 to-transparent" />
+
+      {/* Hero copy — generous negative space */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl flex-col justify-center px-6 sm:px-8">
+        <motion.h1
+          initial={reduce ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="hp-hero max-w-[900px] text-white"
+        >
+          Decode the market
+          <br />
+          <span className="text-accent-cyan">beneath the chart.</span>
+        </motion.h1>
+
+        <motion.p
+          initial={reduce ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.12, ease: "easeOut" }}
+          className="hp-lead mt-7"
+        >
+          Learn finance through companies, filings, valuation, and portfolios.
+        </motion.p>
+
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.22, ease: "easeOut" }}
+          className="mt-10 flex flex-wrap items-center gap-3"
+        >
+          <Button href="/courses" size="lg">
+            Explore courses
+          </Button>
+          <Button href="/studio" variant="outline" size="lg">
+            Enter the studio
+          </Button>
+        </motion.div>
       </div>
     </section>
   );
 }
 
-const tickerTape = [
-  { sym: "AAPL", chg: "+1.24%", up: true },
-  { sym: "NVDA", chg: "-3.10%", up: false },
-  { sym: "MSFT", chg: "+0.62%", up: true },
-  { sym: "TSLA", chg: "-2.40%", up: false },
-  { sym: "AMZN", chg: "+1.81%", up: true },
-  { sym: "META", chg: "+0.34%", up: true },
-  { sym: "GOOGL", chg: "-0.72%", up: false },
-  { sym: "10Y", chg: "4.31%", up: true },
-  { sym: "2Y", chg: "4.78%", up: false },
-  { sym: "DXY", chg: "104.2", up: true },
-  { sym: "VIX", chg: "17.8", up: false },
-  { sym: "CPI", chg: "3.2%", up: false },
-  { sym: "WTI", chg: "+0.9%", up: true },
-  { sym: "GOLD", chg: "+0.4%", up: true },
-  { sym: "BTC", chg: "-1.2%", up: false },
-];
+/** A single restrained market line. No grid, no glow, no axes, no labels. */
+function BackgroundChart({ reduce }: { reduce: boolean }) {
+  const W = 1440;
+  const H = 800;
+  const xs = stockChart.map((_, i) => (i / (stockChart.length - 1)) * W);
+  const ys = stockChart.map((p) => p.p);
+  const min = Math.min(...ys);
+  const max = Math.max(...ys);
+  const range = max - min || 1;
+  const yFor = (v: number) => H * 0.55 + ((v - min) / range - 0.5) * H * 0.5;
+  const linePath = "M" + xs.map((x, i) => `${x},${yFor(ys[i])}`).join(" L");
+  const areaPath = `${linePath} L${W},${H} L0,${H} Z`;
+
+  return (
+    <div className="absolute inset-0">
+      {/* Very faint radial atmosphere — single subtle accent */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_60%,rgba(34,211,238,0.06),transparent_60%)]" />
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full"
+      >
+        <defs>
+          <linearGradient id="heroLineFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.10" />
+            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d={areaPath} fill="url(#heroLineFill)" />
+        <motion.path
+          d={linePath}
+          fill="none"
+          stroke="#22d3ee"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeOpacity="0.55"
+          initial={reduce ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 2.4, ease: "easeInOut" }}
+        />
+      </svg>
+    </div>
+  );
+}

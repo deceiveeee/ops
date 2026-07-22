@@ -118,7 +118,7 @@ export default function TwoPathForwardRateBuilder() {
         tone="purple"
         formula="1+f_2 = \\frac{(1+r_{0,2})^2}{1+r_{0,1}}"
         substitution={`f_2 = \\frac{${(1 + r2).toFixed(4)}^{2}}{${(1 + r1).toFixed(4)}} - 1`}
-        result={`f_2 \\approx ${f2Label}`}
+        result={`f₂ ≈ ${f2Label}`}
         interpretation="If year 1 is 5%, the implied year-2 forward must be above 7%."
       />
     </InteractiveFrame>

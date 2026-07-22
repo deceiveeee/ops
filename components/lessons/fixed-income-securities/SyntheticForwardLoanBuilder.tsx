@@ -10,7 +10,7 @@ import {
   InlineMath,
   FormulaExplainer,
 } from "./shared";
-import { forwardRateFromSpotRates, formatPercent } from "@/lib/fixed-income";
+import { forwardRateFromSpotRates, formatPercent, formatPercentTex } from "@/lib/fixed-income";
 
 /**
  * Section 7 — Synthetic forward loan builder.
@@ -242,7 +242,7 @@ export default function SyntheticForwardLoanBuilder() {
               <p className="ops-body mt-2 text-[14px] leading-6 text-slate-200">
                 Synthetic return ={" "}
                 <span className="text-accent-green">
-                  <InlineMath>{`\\frac{${SHORT_FACE_4YR.toFixed(3)}}{${FACE_NEED.toFixed(3)}} - 1 = ${formatPercent(F4)}`}</InlineMath>
+                  <InlineMath>{`\\frac{${SHORT_FACE_4YR.toFixed(3)}}{${FACE_NEED.toFixed(3)}} - 1 = ${formatPercentTex(F4)}`}</InlineMath>
                 </span>{" "}
                 = the forward rate <InlineMath>{"f_4"}</InlineMath>. No net cash
                 at Year 0; the bank receives $20MM in Year 3 and the customer
@@ -343,7 +343,7 @@ function StepPanel({
       ),
       answer: (
         <AnswerPill tone="green">
-          <InlineMath>{`${formatPercent(F4)} = f_4`}</InlineMath>
+          <InlineMath>{`${formatPercentTex(F4)} = f_4`}</InlineMath>
         </AnswerPill>
       ),
     },

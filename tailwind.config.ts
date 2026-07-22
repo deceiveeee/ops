@@ -52,8 +52,8 @@ const config: Config = {
           "100%": { transform: "translateX(100%)" },
         },
         pulseGlow: {
-          "0%,100%": { opacity: "0.6" },
-          "50%": { opacity: "1" },
+            "0%,100%": { opacity: "0.6" },
+            "50%": { opacity: "1" },
         },
       },
       animation: {

@@ -9,7 +9,7 @@ import {
   DefinitionCard,
   FormulaExplainer,
 } from "./shared";
-import { formatMoney, formatPercent } from "@/lib/fixed-income";
+import { formatMoney, formatPercent, formatPercentTex } from "@/lib/fixed-income";
 
 /**
  * Lesson 3.3 — Approximation console.
@@ -165,7 +165,7 @@ export default function ApproximationConsole() {
           tone="purple"
           formula={String.raw`P(y_0) \approx P(y)\left[1 - D_m^*(y_0-y) + \frac{1}{2}V_m(y_0-y)^2\right]`}
           meaning="Duration gives the linear slope; convexity adds the curvature correction. The bracket is the price factor applied to P(y)."
-          substitution={String.raw`P(${formatPercent(y0, 0)}) \approx ${pY.toFixed(2)}\left[1 - ${dStar.toFixed(6)}\times ${formatPercent(dy, 2)} + \tfrac{1}{2}\times ${vM.toFixed(6)}\times ${(dy * dy).toFixed(4)}\right]`}
+          substitution={String.raw`P(${formatPercentTex(y0, 0)}) \approx ${pY.toFixed(2)}\left[1 - ${dStar.toFixed(6)}\times ${formatPercentTex(dy, 2)} + \tfrac{1}{2}\times ${vM.toFixed(6)}\times ${(dy * dy).toFixed(4)}\right]`}
           result={`P(${formatPercent(y0, 0)}) ≈ ${formatMoney(pDurConv)}  (exact ≈ ${formatMoney(exact)})`}
           interpretation={`A ${formatMoney(errConv)} error is small for one bond, but meaningful for large portfolios — especially when duration-only alone is off by ${formatMoney(errDur)}.`}
         />

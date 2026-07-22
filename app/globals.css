@@ -101,8 +101,212 @@ html {
         @apply font-mono uppercase tracking-[0.22em] text-slate-400;
     }
 
+    /* ─────────────────────────────────────────────────────────────
+       Homepage typography system — cinematic, editorial, large scale.
+
+       Primary text colors (high contrast on dark):
+         --ops-white:   #F5F5F7  (primary, headlines + active values)
+         --ops-soft:    #D2D2D7  (secondary readable copy)
+         --ops-quiet:   #86868B  (tertiary, NON-essential only)
+
+       Type scale is fluid via clamp(). Aim for visual dominance:
+       hero 88–128px, section 64–92px, body 21px+ desktop.
+       ───────────────────────────────────────────────────────────── */
+    :root {
+        --ops-white: #F5F5F7;
+        --ops-soft: #D2D2D7;
+        --ops-quiet: #86868B;
+        --ops-ink: #05070d;
+        --ops-paper: #F4F1EA;
+        --ops-paper-line: #E0DCD2;
+        --ops-paper-ink: #1A1A1F;
+        --ops-paper-soft: #444450;
+    }
+
+    /* Hero — one idea per viewport. Massive, tight, confident.
+       NOTE: deliberately pure white (no cyan phrase) — cyan is reserved
+       for the focal visual element, not the headline. */
+    .hp-hero {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.045em;
+        line-height: 0.95;
+        font-size: clamp(54px, 8.5vw, 132px);
+        color: var(--ops-white);
+        text-wrap: balance;
+    }
+    /* Section heading — subordinate to hero, still dominant. White. */
+    .hp-section {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1.0;
+        font-size: clamp(44px, 6vw, 96px);
+        color: var(--ops-white);
+        max-width: 1100px;
+        text-wrap: balance;
+    }
+    /* Supporting sentence — readable editorial, NOT whisper gray. */
+    .hp-lead {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        line-height: 1.45;
+        font-size: clamp(19px, 1.7vw, 26px);
+        max-width: 680px;
+        color: var(--ops-soft);
+    }
+    /* Body copy — readable, never below 18px. */
+    .hp-body {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        line-height: 1.5;
+        font-size: clamp(18px, 1.2vw, 21px);
+        color: var(--ops-soft);
+    }
+    /* Large numerical readout — sans + tabular. */
+    .hp-numeric {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.03em;
+        color: var(--ops-white);
+    }
+    .hp-numeric-mega {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.04em;
+        line-height: 0.92;
+        color: var(--ops-white);
+        font-size: clamp(64px, 8vw, 128px);
+    }
+    /* Paper-section variants — warm off-white. */
+    .hp-paper-headline {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1.0;
+        font-size: clamp(44px, 6vw, 96px);
+        color: var(--ops-paper-ink);
+        max-width: 1100px;
+        text-wrap: balance;
+    }
+    .hp-paper-lead {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        line-height: 1.45;
+        font-size: clamp(20px, 1.6vw, 26px);
+        max-width: 700px;
+        color: var(--ops-paper-soft);
+    }
+    .hp-paper-body {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        line-height: 1.55;
+        font-size: clamp(18px, 1.2vw, 21px);
+        color: var(--ops-paper-soft);
+    }
+    /* Course-detail / curriculum typography.
+       Uses the same sans-serif stack as the homepage. No mono. */
+    .course-hero-title {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1.0;
+        font-size: clamp(46px, 6vw, 88px);
+        color: var(--ops-white);
+        text-wrap: balance;
+    }
+    .course-map-hero-title {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.035em;
+        line-height: 1.02;
+        font-size: clamp(46px, 6vw, 84px);
+        color: var(--ops-white);
+        text-wrap: balance;
+    }
+    .course-card-title {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 1.05;
+        font-size: clamp(34px, 3vw, 44px);
+        color: var(--ops-white);
+    }
+    .course-lead {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        line-height: 1.5;
+        font-size: clamp(19px, 1.5vw, 23px);
+        color: var(--ops-soft);
+    }
+    /* Curriculum section (light paper background) */
+    .curric-section {
+        background: #F5F5F7;
+        color: #1D1D1F;
+    }
+    .curric-section-paper {
+        background: #F2F1ED;
+        color: #1D1D1F;
+    }
+    .module-title {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        font-size: clamp(28px, 2.6vw, 38px);
+        color: #1D1D1F;
+    }
+    .module-num {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        font-size: clamp(60px, 7vw, 120px);
+        line-height: 0.9;
+        letter-spacing: -0.04em;
+        color: rgba(29, 29, 31, 0.08);
+    }
+    .module-desc {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        line-height: 1.5;
+        font-size: clamp(17px, 1.2vw, 19px);
+        color: #424245;
+    }
+    .lesson-title {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 500;
+        font-size: clamp(17px, 1.2vw, 20px);
+        color: #1D1D1F;
+        line-height: 1.3;
+    }
+    .lesson-meta {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 400;
+        font-size: clamp(14px, 0.9vw, 16px);
+        color: #6E6E73;
+        font-variant-numeric: tabular-nums;
+    }
+    .stat-numeric {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.025em;
+        color: var(--ops-white);
+        line-height: 0.95;
+    }
+    .stat-numeric-paper {
+        font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.025em;
+        color: #1D1D1F;
+        line-height: 0.95;
+    }
+
     /* Interactive frame: visually distinct from static explanation panels.
-     Stronger border + surface + a cyan accent edge (cyan = active OPS state). */
+      Stronger border + surface + a cyan accent edge (cyan = active OPS state). */
     .ops-interactive-frame {
         @apply relative overflow-hidden rounded-2xl border border-white/15 bg-white/[0.045] shadow-panel backdrop-blur-md;
     }
@@ -123,6 +327,70 @@ html {
 }
 
 @layer utilities {
+    /* Section padding — generous cinematic negative space.
+       Each major chapter occupies roughly one viewport. */
+    .hp-chapter {
+        @apply relative w-full overflow-hidden;
+        padding-top: clamp(96px, 14vh, 200px);
+        padding-bottom: clamp(96px, 14vh, 200px);
+    }
+    .hp-chapter-tight {
+        @apply relative w-full overflow-hidden py-32 sm:py-40;
+    }
+    /* Wider canvas — 1200–1400px instead of 540px column. */
+    .hp-canvas {
+        @apply mx-auto w-full;
+        max-width: 1400px;
+        padding-left: clamp(20px, 4vw, 64px);
+        padding-right: clamp(20px, 4vw, 64px);
+    }
+    .hp-canvas-narrow {
+        @apply mx-auto w-full;
+        max-width: 920px;
+        padding-left: clamp(20px, 4vw, 48px);
+        padding-right: clamp(20px, 4vw, 48px);
+    }
+    .hp-canvas-full {
+        @apply mx-auto w-full;
+        max-width: 1560px;
+        padding-left: clamp(20px, 3vw, 48px);
+        padding-right: clamp(20px, 3vw, 48px);
+    }
+
+    /* Paper grain texture — subtle multi-layer noise via SVG filter.
+       Apply to paper-colored sections to create tactile feel without
+       using a bitmap image. */
+    .hp-paper-grain {
+        position: relative;
+    }
+    .hp-paper-grain::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        opacity: 0.6;
+        mix-blend-mode: multiply;
+    }
+
+    /* Cinematic dark atmosphere — used by dark immersive chapters. */
+    .hp-atmosphere-deep {
+        background:
+            radial-gradient(ellipse at 50% 0%, rgba(34, 211, 238, 0.04) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 100%, rgba(167, 139, 250, 0.03) 0%, transparent 60%),
+            #05070d;
+    }
+    .hp-atmosphere-graphite {
+        background:
+            radial-gradient(ellipse at 80% 30%, rgba(34, 211, 238, 0.05) 0%, transparent 55%),
+            linear-gradient(180deg, #060810 0%, #0a0e18 100%);
+    }
+    .hp-atmosphere-teal {
+        background:
+            radial-gradient(ellipse at 20% 60%, rgba(34, 211, 238, 0.06) 0%, transparent 55%),
+            linear-gradient(180deg, #06080f 0%, #07111a 50%, #06080f 100%);
+    }
+
     .mask-fade-b {
         -webkit-mask-image: linear-gradient(
             to bottom,
@@ -180,4 +448,16 @@ html {
         transition-duration: 0.001ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+/* CSS Motion Path animation for the homepage decoder-map dot.
+   Animating offset-distance via CSS avoids the React DOM warning that
+   occurs when motion.circle passes offsetDistance as a DOM attribute. */
+@keyframes ops-path-dot {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+}
+.ops-path-dot {
+    offset-path: path("M60,80 C200,80 200,30 360,30 C520,30 520,130 680,130 C840,130 840,50 1000,50 C1080,50 1120,80 1140,80");
+    animation: ops-path-dot 9s linear infinite;
 }

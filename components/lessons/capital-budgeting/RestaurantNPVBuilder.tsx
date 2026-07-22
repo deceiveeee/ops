@@ -234,7 +234,7 @@ export default function RestaurantNPVBuilder() {
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
           <BlockMath>
-            {String.raw`NPV = \sum_{t=1}^{5} \frac{CF_t}{(1+r)^t} - C_0 = ${fmtK(Math.round(projectNPV))}`}
+            {String.raw`NPV = \sum_{t=1}^{5} \frac{CF_t}{(1+r)^t} - C_0 = ${fmtK(Math.round(projectNPV)).replace("$", "\\$")}`}
           </BlockMath>
         </div>
       </div>

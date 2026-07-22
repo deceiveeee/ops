@@ -15,6 +15,7 @@ import {
   annualMacaulay,
   annualModifiedDuration,
   formatPercent,
+  formatPercentTex,
 } from "@/lib/fixed-income";
 
 /**
@@ -176,7 +177,7 @@ export default function PaymentFrequencySwitch() {
           label="Annual modified duration"
           tone="amber"
           formula={String.raw`D_m^{*,annual} = \frac{D_m^{annual}}{1+y/q}`}
-          substitution={String.raw`D_m^{*,annual} = \frac{${macAnnual.toFixed(2)}}{1 + ${formatPercent(ytm, 2)}/${freq}} = ${modAnnual.toFixed(2)}`}
+          substitution={String.raw`D_m^{*,annual} = \frac{${macAnnual.toFixed(2)}}{1 + ${formatPercentTex(ytm, 2)}/${freq}} = ${modAnnual.toFixed(2)}`}
           result={`Modified (annual) = ${modAnnual.toFixed(2)} years`}
           interpretation="More frequent coupons mean a finer compounding grid; once annualized, duration is comparable across bonds regardless of frequency."
         />

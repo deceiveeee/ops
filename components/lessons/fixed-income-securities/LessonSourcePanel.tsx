@@ -22,8 +22,7 @@ export default function LessonSourcePanel({ sources = FI_SOURCES }: { sources?: 
         ))}
       </ul>
       <p className="ops-muted mt-4 text-[12px]">
-        Market data shown is a historical MIT snapshot for teaching and is not current market data. No external
-        links are embedded unless the project already provides a source-link pattern.
+        Market data shown is a historical MIT snapshot for teaching and is not current market data.
       </p>
     </aside>
   );
