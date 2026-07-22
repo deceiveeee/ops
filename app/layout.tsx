@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import SiteHeader from "@/components/layout/SiteHeader";
-import SiteFooter from "@/components/layout/SiteFooter";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -41,12 +39,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${plexMono.variable}`}>
-      <body className="min-h-screen bg-ink-950 font-sans text-slate-100 antialiased selection:bg-accent-cyan/30">
-        <div className="relative flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
+      <body className="min-h-screen font-sans antialiased">
+        {children}
       </body>
     </html>
   );
