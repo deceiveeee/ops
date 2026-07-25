@@ -272,20 +272,20 @@ html {
         font-weight: 400;
         line-height: 1.5;
         font-size: clamp(17px, 1.2vw, 19px);
-        color: #424245;
+        color: #2E3137;
     }
     .lesson-title {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
         font-weight: 500;
         font-size: clamp(17px, 1.2vw, 20px);
-        color: #1D1D1F;
+        color: #111214;
         line-height: 1.3;
     }
     .lesson-meta {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
         font-weight: 400;
         font-size: clamp(14px, 0.9vw, 16px);
-        color: #6E6E73;
+        color: #555A61;
         font-variant-numeric: tabular-nums;
     }
     .stat-numeric {
@@ -488,4 +488,358 @@ html {
 .site-main {
   flex: 1;
   min-width: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIGHT LEARNING THEME
+   Scoped to `.ops-theme-light` (applied by SiteShell on /courses,
+   course-detail, and every lesson page). Homepage, /studio and /filings
+   keep the dark shell and are unaffected.
+
+   Strategy: redefine the OPS CSS variables + flip the shared primitive
+   classes + override the pervasive dark Tailwind utilities that lesson
+   bodies use. This avoids rewriting every lesson file. Specificity
+   (.ops-theme-light .x = 0,2,0) beats Tailwind utilities (0,1,0), and
+   these rules sit outside @layer so they also win the cascade-layer
+   order against Tailwind's layered utilities.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ops-theme-light {
+    --ops-bg: #F5F5F7;
+    --ops-surface: #FFFFFF;
+    --ops-surface-2: #EFEFF2;
+    --ops-surface-border: rgba(0,0,0,0.10);
+
+    --ops-text-primary: #111214;
+    --ops-text-secondary: #2E3137;
+    --ops-text-tertiary: #555A61;
+    --ops-accent-strong: #007A8A;
+    --ops-accent-soft: rgba(34,211,238,0.10);
+    --ops-accent-warm-strong: #8A5A00;
+    --ops-accent-warm-soft: rgba(251,191,36,0.12);
+
+    /* Redirect the homepage/course typography variables so the same
+       classes (hp-section, course-lead, course-hero-title, etc.) render
+       dark-on-light without per-page edits. Body/lead copy follows
+       --ops-soft (secondary); quiet metadata follows --ops-quiet
+       (tertiary, still AAA on white). */
+    --ops-white: #111214;
+    --ops-soft: #2E3137;
+    --ops-quiet: #555A61;
+    --ops-ink: #FFFFFF;
+}
+
+/* ── Shared primitive classes ─────────────────────────────────────── */
+
+.ops-theme-light .glass,
+.ops-theme-light .glass-panel {
+    background: var(--ops-surface);
+    border-color: var(--ops-surface-border);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.ops-theme-light .glass-panel {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 12px 32px -20px rgba(0,0,0,0.18);
+}
+
+/* Interactive frame: white card, restrained cyan top edge, no neon. */
+.ops-theme-light .ops-interactive-frame {
+    background: var(--ops-surface);
+    border-color: var(--ops-surface-border);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 18px 40px -24px rgba(0,0,0,0.18);
+}
+.ops-theme-light .ops-interactive-frame::before {
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 122, 138, 0.45) 50%,
+        transparent 100%
+    );
+}
+
+/* Definition card: white surface with a soft cyan wash. */
+.ops-theme-light .ops-definition-card {
+    background: var(--ops-accent-soft);
+    border-color: rgba(0, 122, 138, 0.22);
+}
+
+/* Terminal grid is a dark-theme texture — remove it entirely in light scope. */
+.ops-theme-light .terminal-grid {
+    background-image: none;
+}
+
+/* Glow shadows are dark-theme only — collapse to neutral elevation. */
+.ops-theme-light .shadow-glow {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 10px 28px -18px rgba(0,0,0,0.22);
+}
+.ops-theme-light .shadow-panel {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 18px 40px -24px rgba(0,0,0,0.16);
+}
+
+/* ── OPS typography classes ───────────────────────────────────────── */
+
+.ops-theme-light .ops-display,
+.ops-theme-light .ops-section-title,
+.ops-theme-light .ops-interactive-title {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .ops-body {
+    color: var(--ops-text-secondary);
+}
+.ops-theme-light .ops-body-strong {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .ops-definition {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .ops-muted {
+    color: var(--ops-text-tertiary);
+}
+.ops-theme-light .ops-caption,
+.ops-theme-light .ops-eyebrow {
+    color: var(--ops-text-tertiary);
+}
+
+/* hp-* / course-* typography follows --ops-white / --ops-soft, which are
+   redirected above. Atmosphere backgrounds become light. */
+.ops-theme-light .hp-atmosphere-deep,
+.ops-theme-light .hp-atmosphere-graphite,
+.ops-theme-light .hp-atmosphere-teal {
+    background: var(--ops-bg);
+}
+
+/* Paper sections stay light; just clamp the paper-ink variable. */
+.ops-theme-light {
+    --ops-paper-ink: #111214;
+    --ops-paper-soft: #2E3137;
+}
+
+/* ── Pervasive dark Tailwind utilities used across lesson bodies ────
+   Flip text, border, surface and ring utilities so lesson content
+   authored against the dark shell renders as dark-on-light.
+
+   Contrast mapping (on #FFFFFF):
+     primary   #111214  → headings, titles, strong copy
+     secondary #2E3137  → body copy, list items, captions (~13:1)
+     tertiary  #555A61  → metadata, labels, eyebrows (~7.5:1, AAA)
+   Body-tier grays (slate-200..400) collapse to secondary so paragraph
+   copy is never faint; only true metadata (slate-500/600) is tertiary. */
+
+/* Text color */
+.ops-theme-light .text-white {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .text-slate-50,
+.ops-theme-light .text-slate-100,
+.ops-theme-light .text-slate-200 {
+    color: var(--ops-text-primary);
+}
+/* slate-300/400 are used heavily for paragraph and helper copy → secondary */
+.ops-theme-light .text-slate-300,
+.ops-theme-light .text-slate-400 {
+    color: var(--ops-text-secondary);
+}
+/* slate-500/600 are metadata/labels → tertiary (still AAA on white) */
+.ops-theme-light .text-slate-500,
+.ops-theme-light .text-slate-600,
+.ops-theme-light .text-slate-700 {
+    color: var(--ops-text-tertiary);
+}
+/* Zinc / neutral equivalents — same tiering. */
+.ops-theme-light .text-zinc-100,
+.ops-theme-light .text-zinc-200,
+.ops-theme-light .text-zinc-300 {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .text-zinc-400,
+.ops-theme-light .text-zinc-500 {
+    color: var(--ops-text-secondary);
+}
+.ops-theme-light .text-zinc-600,
+.ops-theme-light .text-zinc-700 {
+    color: var(--ops-text-tertiary);
+}
+.ops-theme-light .text-neutral-100,
+.ops-theme-light .text-neutral-200,
+.ops-theme-light .text-neutral-300 {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .text-neutral-400,
+.ops-theme-light .text-neutral-500 {
+    color: var(--ops-text-secondary);
+}
+.ops-theme-light .text-neutral-600,
+.ops-theme-light .text-neutral-700 {
+    color: var(--ops-text-tertiary);
+}
+
+/* Border color (white-with-opacity → neutral) */
+.ops-theme-light .border-white\/5,
+.ops-theme-light .border-white\/10,
+.ops-theme-light .border-white\/15,
+.ops-theme-light .border-white\/20,
+.ops-theme-light .border-white\/25,
+.ops-theme-light .border-white\/30,
+.ops-theme-light .border-white\/40,
+.ops-theme-light .border-white {
+    border-color: var(--ops-surface-border);
+}
+
+/* Surface backgrounds: ink → white surface; faint white washes → light grey */
+.ops-theme-light .bg-ink-950,
+.ops-theme-light .bg-ink-950\/30,
+.ops-theme-light .bg-ink-950\/40,
+.ops-theme-light .bg-ink-950\/50,
+.ops-theme-light .bg-ink-950\/60,
+.ops-theme-light .bg-ink-950\/70,
+.ops-theme-light .bg-ink-950\/80,
+.ops-theme-light .bg-ink-950\/90,
+.ops-theme-light .bg-ink-950\/95,
+.ops-theme-light .bg-ink-900,
+.ops-theme-light .bg-ink-900\/40,
+.ops-theme-light .bg-ink-900\/80 {
+    background-color: var(--ops-surface);
+}
+.ops-theme-light .bg-ink-800,
+.ops-theme-light .bg-ink-700,
+.ops-theme-light .bg-ink-600 {
+    background-color: var(--ops-surface-2);
+}
+
+.ops-theme-light .bg-white\/5,
+.ops-theme-light .bg-white\/\[0\.02\],
+.ops-theme-light .bg-white\/\[0\.03\],
+.ops-theme-light .bg-white\/\[0\.04\],
+.ops-theme-light .bg-white\/\[0\.045\],
+.ops-theme-light .bg-white\/10 {
+    background-color: var(--ops-surface-2);
+}
+
+/* Ring color used around timeline dots — match surface, not ink. */
+.ops-theme-light .ring-ink-950,
+.ops-theme-light .ring-ink-900 {
+    --tw-ring-color: var(--ops-surface);
+}
+
+/* Hover / group-hover variants of the same dark utilities. */
+.ops-theme-light .hover\:text-white:hover,
+.ops-theme-light .hover\:text-slate-50:hover,
+.ops-theme-light .hover\:text-slate-100:hover,
+.ops-theme-light .hover\:text-slate-200:hover {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .hover\:text-slate-300:hover,
+.ops-theme-light .hover\:text-slate-400:hover {
+    color: var(--ops-text-secondary);
+}
+.ops-theme-light .hover\:text-slate-500:hover,
+.ops-theme-light .hover\:text-slate-600:hover {
+    color: var(--ops-text-tertiary);
+}
+.ops-theme-light .group-hover\:text-white:hover,
+.ops-theme-light .group-hover\:text-slate-100:hover,
+.ops-theme-light .group-hover\:text-slate-200:hover {
+    color: var(--ops-text-primary);
+}
+.ops-theme-light .group-hover\:text-slate-300:hover,
+.ops-theme-light .group-hover\:text-slate-400:hover {
+    color: var(--ops-text-secondary);
+}
+.ops-theme-light .group-hover\:text-slate-500:hover {
+    color: var(--ops-text-tertiary);
+}
+.ops-theme-light .hover\:border-white\/10:hover,
+.ops-theme-light .hover\:border-white\/15:hover,
+.ops-theme-light .hover\:border-white\/20:hover,
+.ops-theme-light .hover\:border-white\/25:hover,
+.ops-theme-light .hover\:border-white\/30:hover,
+.ops-theme-light .hover\:border-white\/40:hover,
+.ops-theme-light .group-hover\:border-white\/10:hover,
+.ops-theme-light .group-hover\:border-white\/20:hover,
+.ops-theme-light .group-hover\:border-white\/30:hover,
+.ops-theme-light .group-hover\:border-white\/40:hover {
+    border-color: rgba(0, 0, 0, 0.16);
+}
+.ops-theme-light .hover\:bg-white\/5:hover,
+.ops-theme-light .hover\:bg-white\/10:hover,
+.ops-theme-light .hover\:bg-white\/\[0\.03\]:hover {
+    background-color: var(--ops-surface-2);
+}
+/* Plain hover:bg-white stays white — it reads fine on the light grey canvas. */
+
+/* ── Accent text utilities ──────────────────────────────────────────
+   The vivid accent colors (cyan #22d3ee, amber #fbbf24, green #34d399,
+   red #f87171, purple #a78bfa) are designed for dark backgrounds. On
+   white they sit near 1.4–3:1 and read as washed-out grey/faint color.
+   In light scope each accent text utility is remapped to a darker
+   sibling that keeps the same hue family and clears AA for normal text.
+   This also covers the matching hover variants and the legacy
+   `.accent-*` / `.concept-*` helper classes. */
+.ops-theme-light .text-accent-cyan,
+.ops-theme-light .hover\:text-accent-cyan:hover,
+.ops-theme-light .group-hover\:text-accent-cyan:hover,
+.ops-theme-light .accent-cyan,
+.ops-theme-light .concept-value {
+    color: #007A8A; /* teal, ~5.6:1 */
+}
+.ops-theme-light .text-accent-amber,
+.ops-theme-light .hover\:text-accent-amber:hover,
+.ops-theme-light .group-hover\:text-accent-amber:hover,
+.ops-theme-light .accent-amber,
+.ops-theme-light .concept-time {
+    color: #8A5A00; /* dark amber, ~5.9:1 */
+}
+.ops-theme-light .text-accent-green,
+.ops-theme-light .hover\:text-accent-green:hover,
+.ops-theme-light .group-hover\:text-accent-green:hover,
+.ops-theme-light .accent-green,
+.ops-theme-light .concept-cashflow {
+    color: #15803D; /* dark green, ~5.1:1 */
+}
+.ops-theme-light .text-accent-red,
+.ops-theme-light .hover\:text-accent-red:hover,
+.ops-theme-light .group-hover\:text-accent-red:hover,
+.ops-theme-light .accent-red,
+.ops-theme-light .concept-risk {
+    color: #B91C1C; /* dark red, ~5.5:1 */
+}
+.ops-theme-light .text-accent-purple,
+.ops-theme-light .hover\:text-accent-purple:hover,
+.ops-theme-light .group-hover\:text-accent-purple:hover,
+.ops-theme-light .accent-purple,
+.ops-theme-light .concept-market {
+    color: #6D28D9; /* dark violet, ~6.1:1 */
+}
+
+/* KaTeX inline fallback color stays readable. */
+.ops-theme-light .katex {
+    color: var(--ops-text-primary);
+}
+
+/* ── SVG / chart text ───────────────────────────────────────────────
+   Charts authored for dark surfaces use presentation-attribute fills
+   like rgba(148,163,184,0.85) (slate axis labels) or rgba(255,255,255,
+   0.6) (white labels). On white frames the slate reads as faded grey
+   and the white labels vanish. CSS `fill` overrides SVG presentation
+   attributes, so one rule makes every in-chart <text> dark and
+   recognizable. */
+.ops-theme-light svg text {
+    fill: var(--ops-text-secondary);
+}
+/* Colored data labels that carry meaning stay readable by falling back
+   to secondary if their authored accent is overridden elsewhere; keep
+   ticks/titles uniform. */
+
+/* Chart axis/tick <text> authored at 8–10px is too small to read.
+   React renders fontSize as a presentation attribute, which any author
+   CSS rule overrides — floor these at 12px without touching larger labels. */
+svg text[font-size="8"],
+svg text[font-size="9"],
+svg text[font-size="10"],
+svg tspan[font-size="8"],
+svg tspan[font-size="9"],
+svg tspan[font-size="10"] {
+    font-size: 12px;
 }

@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { MathText } from "@/components/ui/MathText";
 
 export function Reveal({
   children,
@@ -43,7 +44,7 @@ export function SectionHeading({
         <span>{eyebrow}</span>
       </div>
       <h2 className="ops-section-title mt-4 text-3xl leading-tight sm:text-4xl">
-        {title}
+        <MathText>{title}</MathText>
       </h2>
     </div>
   );
@@ -85,7 +86,7 @@ export function DefinitionCard({
     <div className={`ops-definition-card p-5 sm:p-6 ${className ?? ""}`}>
       {term && (
         <div className="ops-caption text-[11px] text-accent-cyan">
-          Definition · {term}
+          Definition · <MathText>{term}</MathText>
         </div>
       )}
       <div className="ops-definition mt-2.5 text-[17px] sm:text-lg">

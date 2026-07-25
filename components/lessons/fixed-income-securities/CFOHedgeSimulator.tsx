@@ -203,8 +203,8 @@ export default function CFOHedgeSimulator() {
                   className="mt-4"
                   label="Why the lock equals the forward rate"
                   tone="purple"
-                  formula="1+f_2 = \\frac{(1+r_{0,2})^2}{1+r_{0,1}}"
-                  substitution="f_2 = \\frac{1.07^2}{1.05} - 1 \\approx 9.04\\%"
+                  formula={"1+f_2 = \\frac{(1+r_{0,2})^2}{1+r_{0,1}}"}
+                  substitution={"f_2 = \\frac{1.07^2}{1.05} - 1 \\approx 9.04\\%"}
                   result="Locked rate = 9.04%"
                 />
               </div>

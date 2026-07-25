@@ -15,6 +15,7 @@ import FILayout from "./FILayout";
 import FIModuleMap from "./FIModuleMap";
 import LessonSourcePanel from "./LessonSourcePanel";
 import PVHero from "@/components/lessons/present-value-relations/PVHero";
+import { MathText } from "@/components/ui/MathText";
 import { useReportFIComplete } from "@/lib/fi-progress";
 
 // Chapter 1 components
@@ -265,7 +266,7 @@ export default function Lesson3_2() {
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
-                  {o}
+                  <MathText>{o}</MathText>
                 </span>
               </li>
             ))}

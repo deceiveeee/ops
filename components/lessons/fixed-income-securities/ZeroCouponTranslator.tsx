@@ -82,7 +82,7 @@ export default function ZeroCouponTranslator() {
           <FormulaExplainer
             label="Solve the spot rate"
             tone="cyan"
-            formula="r_{0,T} = \\left(\\frac{1}{P_0}\\right)^{1/T} - 1"
+            formula={"r_{0,T} = \\left(\\frac{1}{P_0}\\right)^{1/T} - 1"}
             substitution={`r_{0,${maturity}} = \\left(\\frac{1}{${price.toFixed(3)}}\\right)^{1/${maturity}} - 1`}
             result={`r(0,${maturity}) ≈ ${formatPercent(rate, 2)}`}
             interpretation="A higher price means investors accept a lower rate to wait for that future dollar."

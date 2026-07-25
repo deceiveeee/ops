@@ -88,7 +88,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
 
   return (
     <div className="w-full">
-      {/* ─── Course hero — dark, course-colored ─── */}
+      {/* ─── Course hero — light, course-colored tint ─── */}
       <section
         className="relative w-full overflow-hidden"
         style={{
@@ -96,8 +96,8 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
           paddingBottom: "clamp(60px, 10vh, 120px)",
           background:
             course.slug === "finance-foundations"
-              ? "radial-gradient(ellipse at 70% 30%, rgba(34,211,238,0.10), transparent 55%), linear-gradient(180deg, #060810 0%, #05070d 100%)"
-              : "radial-gradient(ellipse at 70% 30%, rgba(251,191,36,0.10), transparent 55%), linear-gradient(180deg, #0a0805 0%, #05070d 100%)",
+              ? "radial-gradient(ellipse at 70% 30%, rgba(34,211,238,0.10), transparent 55%), linear-gradient(180deg, #FAFBFC 0%, #F2F2F4 100%)"
+              : "radial-gradient(ellipse at 70% 30%, rgba(251,191,36,0.12), transparent 55%), linear-gradient(180deg, #FBF9F4 0%, #F2F2F4 100%)",
         }}
       >
         <div className="hp-canvas">
@@ -167,14 +167,14 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-16">
             {outcomes.map((col) => (
               <div key={col.title}>
-                <h2 className="text-[clamp(22px,1.8vw,28px)] font-semibold leading-tight tracking-[-0.015em] text-[#1D1D1F]">
+                <h2 className="text-[clamp(22px,1.8vw,28px)] font-semibold leading-tight tracking-[-0.015em] text-[#111214]">
                   {col.title}
                 </h2>
                 <ul className="mt-5 space-y-3">
                   {col.points.map((p) => (
                     <li
                       key={p}
-                      className="flex items-start gap-3 text-[17px] leading-relaxed text-[#424245]"
+                      className="flex items-start gap-3 text-[17px] leading-relaxed text-[#2E3137]"
                     >
                       <span
                         className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -223,9 +223,9 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
                 <a
                   key={m.id}
                   href={`#module-${m.order}`}
-                  className="flex-shrink-0 rounded-full border border-black/10 bg-white px-4 py-2 text-[14px] font-medium text-[#1D1D1F]"
+                  className="flex-shrink-0 rounded-full border border-black/10 bg-white px-4 py-2 text-[14px] font-medium text-[#111214]"
                 >
-                  <span className="tabular-nums text-[#6E6E73]">
+                  <span className="tabular-nums text-[#555A61]">
                     {String(m.order).padStart(2, "0")}
                   </span>
                   <span className="ml-2">{m.title}</span>
@@ -335,7 +335,7 @@ function CourseFlowVisual({ slug, accent }: { slug: string; accent: string }) {
               x={x}
               y="80"
               textAnchor="middle"
-              fill="#D2D2D7"
+              fill="#2E3137"
               fontSize="13"
               fontFamily="var(--font-sans), system-ui, sans-serif"
             >

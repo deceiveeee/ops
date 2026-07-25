@@ -1,6 +1,7 @@
 "use client";
 
 import { InlineMath, BlockMath } from "@/components/ui/Math";
+import { MathText } from "@/components/ui/MathText";
 import { cn } from "@/lib/utils";
 
 export type FormulaVariable = { symbol: string; description: string };
@@ -62,7 +63,9 @@ export default function FormulaExplainer({
       </div>
 
       {meaning && (
-        <p className="ops-definition mt-4 text-[16px] leading-7">{meaning}</p>
+        <p className="ops-definition mt-4 text-[16px] leading-7">
+          <MathText>{meaning}</MathText>
+        </p>
       )}
 
       {variables && variables.length > 0 && (
@@ -72,7 +75,9 @@ export default function FormulaExplainer({
               <dt className="mt-0.5 flex-shrink-0 font-mono text-[15px] text-slate-200">
                 <InlineMath>{v.symbol}</InlineMath>
               </dt>
-              <dd className="ops-body text-[14px] leading-6 text-slate-300">{v.description}</dd>
+              <dd className="ops-body text-[14px] leading-6 text-slate-300">
+                <MathText>{v.description}</MathText>
+              </dd>
             </div>
           ))}
         </dl>
@@ -87,14 +92,18 @@ export default function FormulaExplainer({
           )}
           {result && (
             <p className="ops-body-strong mt-2 text-center text-[16px]">
-              <span className="text-accent-green">{result}</span>
+              <span className="text-accent-green">
+                <MathText>{result}</MathText>
+              </span>
             </p>
           )}
         </div>
       )}
 
       {interpretation && (
-        <p className="ops-body mt-4 text-[15px] leading-7 text-slate-300">{interpretation}</p>
+        <p className="ops-body mt-4 text-[15px] leading-7 text-slate-300">
+          <MathText>{interpretation}</MathText>
+        </p>
       )}
     </div>
   );

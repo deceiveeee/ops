@@ -130,7 +130,7 @@ export default function OnePaymentBondRecap() {
           className="mt-5"
           label="Pure discount bond"
           tone="cyan"
-          formula="P_0 = \\frac{F}{(1+r)^T}"
+          formula={"P_0 = \\frac{F}{(1+r)^T}"}
           variables={[
             { symbol: "P_0", description: "price today" },
             { symbol: "F", description: "face value at maturity" },

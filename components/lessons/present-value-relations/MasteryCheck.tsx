@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { InteractiveFrame, TryItTag, Feedback } from "@/components/lessons/intro-course-overview/shared";
 import Button from "@/components/ui/Button";
+import { MathText } from "@/components/ui/MathText";
 
 export type MasteryQuestion =
   | {
@@ -132,7 +133,7 @@ export default function MasteryCheck({
                   {String(qi + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="ops-body-strong text-[16px] text-slate-50">{q.prompt}</p>
+                  <p className="ops-body-strong text-[16px] text-slate-50"><MathText>{q.prompt}</MathText></p>
 
                   {q.type === "single" && (
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -161,7 +162,7 @@ export default function MasteryCheck({
                               submitted && !picked && !isCorrect && "border-white/10 text-slate-500",
                             )}
                           >
-                            {c.label}
+                            <MathText>{c.label}</MathText>
                           </button>
                         );
                       })}
@@ -191,7 +192,7 @@ export default function MasteryCheck({
                               submitted && !isCorrect && !chosen && "border-white/10 text-slate-500",
                             )}
                           >
-                            {c.label}
+                            <MathText>{c.label}</MathText>
                           </button>
                         );
                       })}
@@ -223,7 +224,7 @@ export default function MasteryCheck({
                         ? "Correct."
                         : (
                           <span>
-                            Not quite. <span className="text-slate-300">{q.hint}</span>
+                            Not quite. <span className="text-slate-300"><MathText>{q.hint}</MathText></span>
                           </span>
                         )}
                     </Feedback>

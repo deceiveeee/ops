@@ -133,7 +133,7 @@ export default function CoursesPage() {
               num="3"
               title="Portfolio Studio"
               note="Research companies, value securities, and construct a defensible portfolio."
-              accent="#F5F5F7"
+              accent="#555A61"
               href="/studio"
             />
           </div>

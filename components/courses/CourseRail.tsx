@@ -61,7 +61,7 @@ export default function CourseRail({
         <div>
           <Link
             href={`/courses/${course.slug}`}
-            className="text-[14px] font-medium text-[#6E6E73] transition-colors hover:text-[#1D1D1F]"
+            className="text-[14px] font-medium text-[#555A61] transition-colors hover:text-[#111214]"
           >
             ← Course overview
           </Link>
@@ -78,14 +78,14 @@ export default function CourseRail({
                   className={cn(
                     "flex items-baseline gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors",
                     isActive
-                      ? "bg-white text-[#1D1D1F]"
-                      : "text-[#6E6E73] hover:bg-white/50 hover:text-[#1D1D1F]",
+                      ? "bg-white text-[#111214]"
+                      : "text-[#555A61] hover:bg-white/50 hover:text-[#111214]",
                   )}
                 >
                   <span
                     className={cn(
                       "text-[13px] font-semibold tabular-nums",
-                      isActive ? "" : "text-[#aeaeb2]",
+                      isActive ? "" : "text-[#555A61]",
                     )}
                     style={isActive ? { color: accentColor } : undefined}
                   >

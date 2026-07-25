@@ -38,12 +38,12 @@ export type CourseCardProps = {
 };
 
 const variantBg: Record<string, string> = {
-  cyan: "bg-[#0a0e18]",
-  amber: "bg-[#13100a]",
+  cyan: "bg-white",
+  amber: "bg-white",
 };
 const variantBorder: Record<string, string> = {
-  cyan: "border-white/5",
-  amber: "border-white/5",
+  cyan: "border-black/[0.08]",
+  amber: "border-black/[0.08]",
 };
 const variantAccentText: Record<string, string> = {
   cyan: "text-accent-cyan",
@@ -79,6 +79,17 @@ export default function CourseCard({
         {recommended && (
           <div
             className={`absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] font-medium ${variantRecommend[variant]}`}
+            style={{
+              color: variant === "cyan" ? "#22d3ee" : "#fbbf24",
+              background:
+                variant === "cyan"
+                  ? "rgba(34,211,238,0.16)"
+                  : "rgba(251,191,36,0.16)",
+              borderColor:
+                variant === "cyan"
+                  ? "rgba(34,211,238,0.45)"
+                  : "rgba(251,191,36,0.45)",
+            }}
           >
             Start here
           </div>

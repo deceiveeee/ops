@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/ui/Button";
+import { MathText } from "@/components/ui/MathText";
 
 export default function LessonSummary({
   recapTitle = "Lesson summary",
@@ -29,7 +30,7 @@ export default function LessonSummary({
             <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
               {i + 1}
             </span>
-            {p}
+            <MathText>{p}</MathText>
           </li>
         ))}
       </ol>

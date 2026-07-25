@@ -55,7 +55,7 @@ export default function ModuleSection({
           </div>
           <h2 className="module-title mt-3">{module.title}</h2>
           <p className="module-desc mt-4 max-w-[640px]">{module.description}</p>
-          <div className="mt-5 flex items-center gap-3 text-[15px] text-[#6E6E73]">
+          <div className="mt-5 flex items-center gap-3 text-[15px] text-[#555A61]">
             <span className="font-medium tabular-nums">
               {module.lessonSlugs.length}{" "}
               {module.lessonSlugs.length === 1 ? "lesson" : "lessons"}

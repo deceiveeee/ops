@@ -96,8 +96,8 @@ export default function SyntheticForwardLoanBuilder() {
       <FormulaExplainer
         label="Forward rate f₄ (Year 3 → Year 4)"
         tone="purple"
-        formula="f_4 = \\frac{(1+r_{0,4})^4}{(1+r_{0,3})^3} - 1"
-        substitution="f_4 = \\frac{1.07^4}{1.065^3} - 1 \\approx 8.51\\%"
+        formula={"f_4 = \\frac{(1+r_{0,4})^4}{(1+r_{0,3})^3} - 1"}
+        substitution={"f_4 = \\frac{1.07^4}{1.065^3} - 1 \\approx 8.51\\%"}
         result="f₄ ≈ 8.51%"
       />
 

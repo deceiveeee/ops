@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { InteractiveFrame, TryItTag, FormulaExplainer } from "./shared";
+import { MathText } from "@/components/ui/MathText";
 
 /**
  * Compresses a chain of one-year rates R1..R_T into a single r_{0,T}.
@@ -31,7 +32,7 @@ export default function RateChainCompressor() {
           aria-pressed={compressed}
           className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
         >
-          {compressed ? "Expand back into chain" : "Compress into r_{0,T}"}
+          <MathText>{compressed ? "Expand back into chain" : "Compress into r_{0,T}"}</MathText>
         </button>
       </div>
 
@@ -103,13 +104,13 @@ export default function RateChainCompressor() {
         <FormulaExplainer
           label="If future one-year rates were known"
           tone="purple"
-          formula="P_0 = \\frac{F}{(1+R_1)(1+R_2)\\cdots(1+R_T)}"
+          formula={"P_0 = \\frac{F}{(1+R_1)(1+R_2)\\cdots(1+R_T)}"}
           meaning="If future one-year rates were known."
         />
         <FormulaExplainer
           label="We observe today's price"
           tone="cyan"
-          formula="P_0 = \\frac{F}{(1+r_{0,T})^T}"
+          formula={"P_0 = \\frac{F}{(1+r_{0,T})^T}"}
           meaning="We observe today's price, so define r_{0,T}."
         />
       </div>

@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import { MathText } from "@/components/ui/MathText";
 
 export default function PVHero({
   index,
@@ -97,7 +98,7 @@ export default function PVHero({
                   className="mt-2.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-cyan"
                   aria-hidden
                 />
-                {b}
+                <MathText>{b}</MathText>
               </li>
             ))}
           </motion.ul>

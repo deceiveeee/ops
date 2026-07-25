@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { InteractiveFrame, TryItTag, DefinitionCard } from "./shared";
 import { InlineMath } from "./shared";
+import { MathText } from "@/components/ui/MathText";
 
 /**
  * THE key conceptual component of the lesson.
@@ -129,7 +130,7 @@ export default function RateNotationSplitScreen() {
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-accent-purple/25 bg-accent-purple/[0.05] p-5">
             <div className="ops-caption text-[11px] text-accent-purple">
-              Capital R_t
+              Capital <MathText>R_t</MathText>
             </div>
             <p className="ops-body mt-2 text-[15px] leading-7 text-slate-200">
               <InlineMath>{"R_t"}</InlineMath> is the one-year rate that applies

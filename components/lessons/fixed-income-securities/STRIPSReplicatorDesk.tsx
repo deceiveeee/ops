@@ -10,6 +10,7 @@ import {
   FormulaExplainer,
 } from "./shared";
 import { formatMoney } from "@/lib/fixed-income";
+import { MathText } from "@/components/ui/MathText";
 
 /**
  * Lesson 3.3 — STRIPS replicator desk.
@@ -414,7 +415,7 @@ function NumInput({
 }) {
   return (
     <label className="block">
-      <span className="ops-caption text-[10px] text-slate-500">{label}</span>
+      <span className="ops-caption text-[10px] text-slate-500"><MathText>{label}</MathText></span>
       <input
         type="number"
         value={value}

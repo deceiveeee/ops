@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { InteractiveFrame, TryItTag } from "./shared";
+import { MathText } from "@/components/ui/MathText";
 
 /**
  * Lesson 4.4 — Multi-Stage Valuation Builder.
@@ -92,7 +93,7 @@ export default function MultiStageValuationBuilder() {
           </span>
         </div>
         <span className="ops-caption font-mono text-[11px] text-slate-500">
-          P₀ = Σ Dₜ/(1+r)ᵗ + TV_N/(1+r)ᴺ
+          <MathText>P₀ = Σ Dₜ/(1+r)ᵗ + TV_N/(1+r)ᴺ</MathText>
         </span>
       </div>
 
@@ -103,8 +104,8 @@ export default function MultiStageValuationBuilder() {
         Set the most recent dividend{" "}
         <span className="text-slate-50">D₀</span>, the number of high-growth
         years <span className="text-slate-50">N</span>, the high-growth rate{" "}
-        <span className="text-slate-50">g_H</span>, the stable growth rate{" "}
-        <span className="text-slate-50">g_S</span>, and the cost of equity{" "}
+        <span className="text-slate-50"><MathText>g_H</MathText></span>, the stable growth rate{" "}
+        <span className="text-slate-50"><MathText>g_S</MathText></span>, and the cost of equity{" "}
         <span className="text-slate-50">r</span>. The builder forecasts each
         dividend, attaches a Gordon terminal value at year N, and discounts
         everything back to today.
@@ -358,7 +359,7 @@ function SliderField({
   return (
     <div>
       <div className="flex items-center justify-between gap-1">
-        <span className="ops-caption text-[11px] text-slate-400">{label}</span>
+        <span className="ops-caption text-[11px] text-slate-400"><MathText>{label}</MathText></span>
         <span
           className={cn(
             "font-mono text-[12px]",
@@ -411,7 +412,7 @@ function OutputCard({
       className={cn("rounded-xl border bg-white/[0.02] p-4", toneBorder)}
     >
       <div className="ops-caption font-mono text-[11px] text-slate-400">
-        {label}
+        <MathText>{label}</MathText>
       </div>
       <div
         className={cn(

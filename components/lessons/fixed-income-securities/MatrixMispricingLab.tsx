@@ -10,6 +10,7 @@ import {
   InlineMath,
 } from "./shared";
 import { formatMoney } from "@/lib/fixed-income";
+import { MathText } from "@/components/ui/MathText";
 
 /**
  * Lesson 3.3 — Matrix mispricing lab.
@@ -274,7 +275,7 @@ function BondCard({
           {formatMoney(price)}
         </span>
       </div>
-      <div className="ops-caption mt-2 text-[11px] text-slate-500">{note}</div>
+      <div className="ops-caption mt-2 text-[11px] text-slate-500"><MathText>{note}</MathText></div>
     </div>
   );
 }

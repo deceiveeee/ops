@@ -51,7 +51,7 @@ export default function LessonRow({
         className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border text-[15px] font-semibold tabular-nums"
         style={{
           borderColor: "rgba(0,0,0,0.10)",
-          color: "#6E6E73",
+          color: "#555A61",
           background: "rgba(0,0,0,0.02)",
         }}
       >
@@ -84,16 +84,16 @@ export default function LessonRow({
       <div className="hidden flex-shrink-0 text-right sm:block">
         <div
           className="text-[15px] font-semibold tabular-nums"
-          style={{ color: "#1D1D1F" }}
+          style={{ color: "#111214" }}
         >
           {lesson.estimatedMinutes}
-          <span className="ml-0.5 text-[13px] font-normal text-[#6E6E73]">min</span>
+          <span className="ml-0.5 text-[13px] font-normal text-[#555A61]">min</span>
         </div>
       </div>
       <span
         aria-hidden
         className="flex-shrink-0 text-[20px] transition-transform duration-200 group-hover:translate-x-1"
-        style={{ color: "#6E6E73" }}
+        style={{ color: "#555A61" }}
       >
         →
       </span>

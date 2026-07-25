@@ -72,7 +72,7 @@ export default function STRIPSSpotRateExtractor() {
         <FormulaExplainer
           label="Solve for the spot rate (F = 1)"
           tone="cyan"
-          formula="r_{0,T} = \\left(\\frac{1}{P_0}\\right)^{1/T} - 1"
+          formula={"r_{0,T} = \\left(\\frac{1}{P_0}\\right)^{1/T} - 1"}
           variables={[
             { symbol: "P_0", description: "price today (per $1 face)" },
             { symbol: "T", description: "maturity in years" },

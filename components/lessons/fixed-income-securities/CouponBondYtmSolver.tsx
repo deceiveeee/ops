@@ -77,7 +77,7 @@ export default function CouponBondYtmSolver() {
       <FormulaExplainer
         label="Yield-to-maturity"
         tone="cyan"
-        formula="P_0 = \\sum_{k=1}^{T}\\frac{C_k}{(1+y)^k}"
+        formula={"P_0 = \\sum_{k=1}^{T}\\frac{C_k}{(1+y)^k}"}
         meaning="The single discount rate that makes PV of all cash flows equal the market price."
         variables={[
           { symbol: "P_0", description: "market price" },

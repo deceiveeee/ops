@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { MathText } from "@/components/ui/MathText";
 
 export default function ExpandableQA({
   question,
@@ -24,7 +25,7 @@ export default function ExpandableQA({
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
       >
-        <span className="ops-body-strong text-[15px] text-slate-50">{question}</span>
+        <span className="ops-body-strong text-[15px] text-slate-50"><MathText>{question}</MathText></span>
         <span
           className={cn(
             "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-sm text-accent-cyan transition-transform",

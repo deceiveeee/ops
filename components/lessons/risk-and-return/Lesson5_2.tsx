@@ -459,13 +459,13 @@ export default function Lesson5_2() {
                     t
                   </th>
                   <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
-                    R_t
+                    Rₜ
                   </th>
                   <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
-                    R_t − R̄
+                    Rₜ − R̄
                   </th>
                   <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
-                    (R_t − R̄)²
+                    (Rₜ − R̄)²
                   </th>
                 </tr>
               </thead>

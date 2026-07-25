@@ -18,6 +18,7 @@ import EqLayout from "./EqLayout";
 import EqSourcePanel from "./EqSourcePanel";
 import ExpandableQA from "./ExpandableQA";
 import PVHero from "@/components/lessons/present-value-relations/PVHero";
+import { MathText } from "@/components/ui/MathText";
 import { useReportEqComplete } from "@/lib/eq-progress";
 import { useState } from "react";
 import MultiStageValuationBuilder from "./MultiStageValuationBuilder";
@@ -150,7 +151,7 @@ export default function Lesson4_4() {
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
-                  {o}
+                  <MathText>{o}</MathText>
                 </span>
               </li>
             ))}

@@ -84,7 +84,7 @@ export default function SpotVsForwardTimeline() {
               money moves t₁ → t₂ (dashed)
             </text>
             <text x={(xAt(2) + xAt(4)) / 2} y={fwdY + 24} textAnchor="middle" className="fill-accent-purple font-mono" fontSize="13">
-              f_t
+              fₜ
             </text>
           </svg>
         </div>

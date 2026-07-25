@@ -281,9 +281,9 @@ function SteepnessBadge({ points }: { points: Point[] }) {
         : "border-white/30 bg-white/5 text-slate-200";
   return (
     <div className={cn("rounded-xl border p-4", tone)}>
-      <div className="ops-caption text-[11px] opacity-80">Shape</div>
+      <div className="ops-caption text-[11px]">Shape</div>
       <div className="mt-1 font-mono text-[22px]">{label}</div>
-      <div className="ops-muted mt-1 font-mono text-[12px] opacity-80">
+      <div className="ops-muted mt-1 font-mono text-[12px]">
         {short.toFixed(2)}% → {long.toFixed(2)}% (Δ {slope >= 0 ? "+" : "−"}
         {Math.abs(slope).toFixed(2)} pp)
       </div>

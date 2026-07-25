@@ -8,6 +8,7 @@ import {
   FormulaExplainer,
 } from "./shared";
 import { forwardRateFromSpotRates, formatPercent } from "@/lib/fixed-income";
+import { MathText } from "@/components/ui/MathText";
 
 /**
  * Two paths to Year 2.
@@ -116,7 +117,7 @@ export default function TwoPathForwardRateBuilder() {
         className="mt-5"
         label="No-arbitrage forward"
         tone="purple"
-        formula="1+f_2 = \\frac{(1+r_{0,2})^2}{1+r_{0,1}}"
+        formula={"1+f_2 = \\frac{(1+r_{0,2})^2}{1+r_{0,1}}"}
         substitution={`f_2 = \\frac{${(1 + r2).toFixed(4)}^{2}}{${(1 + r1).toFixed(4)}} - 1`}
         result={`f₂ ≈ ${f2Label}`}
         interpretation="If year 1 is 5%, the implied year-2 forward must be above 7%."
@@ -181,7 +182,7 @@ function PathCard({
   return (
     <div className={`rounded-2xl border ${border} ${bg} p-5`}>
       <div className={`ops-caption text-[11px] ${text}`}>{tag}</div>
-      <div className="mt-1 font-mono text-[16px] text-slate-100">{title}</div>
+      <div className="mt-1 font-mono text-[16px] text-slate-100"><MathText>{title}</MathText></div>
       <div className="mt-4 space-y-2">
         {steps.map((s, i) => (
           <div
