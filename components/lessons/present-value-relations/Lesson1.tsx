@@ -13,6 +13,7 @@ import {
   InteractiveFrame,
   TryItTag,
 } from "@/components/lessons/intro-course-overview/shared";
+import { Subsection, BodyLead } from "@/components/lessons/typography";
 import { FormulaCard, Var, Sub, Sup, Frac, Inline } from "./FormulaCard";
 import PVLayout from "./PVLayout";
 import PVHero from "./PVHero";
@@ -460,7 +461,7 @@ export default function Lesson1() {
       </Reveal>
 
       {/* Part I */}
-      <Reveal className="mt-12">
+      <Reveal className="mt-section">
         <SectionHeading
           index="02"
           eyebrow="Part I"
@@ -474,29 +475,29 @@ export default function Lesson1() {
           <div className="ops-caption text-[11px] text-slate-400">
             Lesson objectives
           </div>
-          <h3 className="ops-interactive-title mt-2 text-2xl text-white">
+          <Subsection className="mt-2">
             What you should understand in this lesson
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             Finance starts by translating assets into cashflows. A factory, a
             patent, a stock, a bond, a business, a brand, and a career are
             different on the surface, but from a finance perspective they can
             all be analyzed as current and future cashflows.
-          </p>
+          </BodyLead>
         </Panel>
       </Reveal>
 
       {/* 2. What is an asset? */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             What is an asset?
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             In everyday language, an asset sounds like something you own. In
             finance, that is not precise enough. A finance analyst asks: What
             cash will this asset generate, and when will that cash arrive?
-          </p>
+          </BodyLead>
           <div className="mt-5">
             <DefinitionCard term="Asset">
               An asset is a sequence of current and future cashflows.
@@ -530,15 +531,15 @@ export default function Lesson1() {
       {/* 4. Timeline rule */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             Always draw a timeline
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             Before calculating anything, draw a timeline. A cashflow today is
             not the same as a cashflow in Year 1 or Year 2. If the cashflow is
             placed on the wrong date, the formula may look correct but the
             answer will be wrong.
-          </p>
+          </BodyLead>
           <div className="mt-6 rounded-2xl border border-white/10 bg-ink-950/40 p-6">
             <div className="relative flex items-start justify-between gap-2">
               <div
@@ -575,14 +576,14 @@ export default function Lesson1() {
       {/* 6. Present value operator */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             The present value operator
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             The present value operator takes a sequence of cashflows and returns
             a value at a chosen date. In this lesson, the chosen date is usually
             today.
-          </p>
+          </BodyLead>
         </Panel>
         <div className="mt-6">
           <FormulaCard
@@ -603,15 +604,15 @@ export default function Lesson1() {
       {/* 7. Currency analogy */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             Cashflows at different dates are different currencies
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             You would not directly add ¥150 and £300. You first convert them
             into the same currency. The same is true for money at different
             dates. You cannot directly add money today and money in Year 2 until
             both are converted into the same date.
-          </p>
+          </BodyLead>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center rounded-lg border border-accent-amber/40 bg-accent-amber/10 px-3 py-1.5 font-mono text-[14px] text-accent-amber">
               ¥150 + £300 = ?
@@ -632,13 +633,13 @@ export default function Lesson1() {
       {/* 8. NPV */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             Net present value
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             Present value converts future cashflows into today&apos;s terms. Net
             present value includes the initial cost or investment.
-          </p>
+          </BodyLead>
           <p className="ops-muted mt-4 text-[15px] leading-7 text-slate-300">
             If there is an initial investment,{" "}
             <Inline>
@@ -723,14 +724,14 @@ export default function Lesson1() {
       {/* 9. Discount rate */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             Where does r come from?
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             The discount rate reflects the opportunity cost of capital: what
             investors could earn on comparable opportunities in financial
             markets. It is not chosen arbitrarily.
-          </p>
+          </BodyLead>
           <div className="mt-5 flex flex-wrap gap-2.5">
             <ConceptTag concept="market">Opportunity cost</ConceptTag>
             <ConceptTag concept="risk">Comparable alternatives</ConceptTag>
@@ -752,14 +753,14 @@ export default function Lesson1() {
       {/* 12. Closing note */}
       <Reveal className="mt-12">
         <Panel>
-          <h3 className="ops-interactive-title text-2xl text-white">
+          <Subsection>
             What this lesson gives you
-          </h3>
-          <p className="ops-body mt-4 text-[16px] leading-7 text-slate-200">
+          </Subsection>
+          <BodyLead className="mt-4">
             You can now value known cashflows if cashflow amounts, signs,
             timing, and exchange rates are known and there are no conversion
             frictions. Later lessons relax these assumptions.
-          </p>
+          </BodyLead>
         </Panel>
       </Reveal>
 

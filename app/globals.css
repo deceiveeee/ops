@@ -588,6 +588,9 @@ html {
     }
 }
 
+/* ── Layout utilities ─────────────────────────────────────────────── */
+.mt-section { margin-top: var(--space-section); }
+
 /* ── Shared primitive classes ─────────────────────────────────────── */
 
 .ops-theme-light .glass,
