@@ -186,7 +186,7 @@ export default function PhilosophyOpeningCards() {
       </Reveal>
 
       <Reveal delay={0.05} className="mt-8">
-        <Panel tone="light" className="bg-accent-amber/[0.04]">
+        <Panel className="bg-accent-amber/[0.04]">
           <p className="ops-body-strong text-[17px] text-white">
             The important question is not simply <em>what</em> an investor buys.
           </p>

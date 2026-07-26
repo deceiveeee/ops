@@ -31,19 +31,30 @@ export function SectionHeading({
   index,
   eyebrow,
   title,
+  emphasis = false,
 }: {
   index: string;
   eyebrow: string;
   title: string;
+  emphasis?: boolean;
 }) {
   return (
     <div>
-      <div className="ops-eyebrow flex items-center gap-3 text-xs">
-        <span className="tabular-nums text-accent-cyan">{index}</span>
-        <span className="h-px w-8 bg-white/25" />
-        <span>{eyebrow}</span>
+      <div className="ops-eyebrow flex items-center gap-3" style={{ fontSize: "var(--type-eyebrow-size)", fontWeight: 600, letterSpacing: "var(--type-eyebrow-track)" }}>
+        <span className="tabular-nums" style={{ color: emphasis ? "var(--ops-accent-strong)" : "var(--ops-text-tertiary)" }}>{index}</span>
+        <span className="h-px w-8" style={{ background: "var(--ops-surface-border)" }} />
+        <span style={{ color: "var(--ops-text-tertiary)" }}>{eyebrow}</span>
       </div>
-      <h2 className="ops-section-title mt-4 text-3xl leading-tight sm:text-4xl">
+      <h2
+        className="font-display mt-4"
+        style={{
+          fontSize: "var(--type-d-section-size)",
+          lineHeight: "var(--type-d-section-lh)",
+          letterSpacing: "var(--type-d-section-track)",
+          fontWeight: 600,
+          color: "var(--ops-text-primary)",
+        }}
+      >
         <MathText>{title}</MathText>
       </h2>
     </div>
@@ -53,20 +64,12 @@ export function SectionHeading({
 export function Panel({
   children,
   className,
-  tone = "dark",
 }: {
   children: React.ReactNode;
   className?: string;
-  tone?: "dark" | "light";
 }) {
   return (
-    <div
-      className={
-        tone === "light"
-          ? `rounded-2xl border border-slate-200 bg-slate-50 p-6 text-slate-800 sm:p-7 ${className ?? ""}`
-          : `glass-panel p-6 sm:p-7 ${className ?? ""}`
-      }
-    >
+    <div className={cn("glass-panel p-6 sm:p-7", className)}>
       {children}
     </div>
   );
@@ -83,13 +86,34 @@ export function DefinitionCard({
   className?: string;
 }) {
   return (
-    <div className={`ops-definition-card p-5 sm:p-6 ${className ?? ""}`}>
+    <div
+      className={cn("ops-definition-card p-6 sm:p-7", className)}
+      style={{
+        background: "var(--ops-surface)",
+        border: "1px solid var(--ops-surface-border)",
+        borderRadius: "16px",
+      }}
+    >
       {term && (
-        <div className="ops-caption text-[11px] text-accent-cyan">
+        <div
+          style={{
+            fontSize: "var(--type-eyebrow-size)",
+            fontWeight: 600,
+            letterSpacing: "var(--type-eyebrow-track)",
+            color: "var(--ops-accent-strong)",
+          }}
+        >
           Definition · <MathText>{term}</MathText>
         </div>
       )}
-      <div className="ops-definition mt-2.5 text-[17px] sm:text-lg">
+      <div
+        className="mt-2.5"
+        style={{
+          fontSize: "var(--type-definition-size)",
+          lineHeight: "var(--type-definition-lh)",
+          color: "var(--ops-text-secondary)",
+        }}
+      >
         {children}
       </div>
     </div>
@@ -115,12 +139,17 @@ export function InteractiveFrame({
 export function TryItTag({ className }: { className?: string }) {
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan",
-        className,
-      )}
+      className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1", className)}
+      style={{
+        background: "var(--ops-accent-soft)",
+        border: "1px solid color-mix(in srgb, var(--ops-accent-strong) 25%, transparent)",
+        fontSize: "var(--type-eyebrow-size)",
+        fontWeight: 600,
+        letterSpacing: "var(--type-eyebrow-track)",
+        color: "var(--ops-accent-strong)",
+      }}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-accent-cyan" aria-hidden />
+      <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--ops-accent-strong)" }} aria-hidden />
       Try it
     </span>
   );
@@ -136,6 +165,14 @@ const CONCEPT_TEXT: Record<ConceptKey, string> = {
   cashflow: "concept-cashflow",
 };
 
+const CONCEPT_STYLES: Record<ConceptKey, { bg: string; border: string; color: string; icon: string }> = {
+  value:    { bg: "var(--ops-accent-soft)",           border: "var(--ops-accent-strong)",       color: "var(--ops-accent-strong)",       icon: "•" },
+  time:     { bg: "var(--ops-accent-warm-soft)",      border: "var(--ops-accent-warm-strong)",  color: "var(--ops-accent-warm-strong)",  icon: "•" },
+  risk:     { bg: "color-mix(in srgb, var(--ops-error-strong) 8%, transparent)",   border: "var(--ops-error-strong)",   color: "var(--ops-error-strong)",   icon: "⚠" },
+  market:   { bg: "var(--ops-surface-2)",             border: "var(--ops-surface-border)",      color: "var(--ops-text-primary)",        icon: "◆" },
+  cashflow: { bg: "color-mix(in srgb, var(--ops-success-strong) 8%, transparent)", border: "var(--ops-success-strong)", color: "var(--ops-success-strong)", icon: "+" },
+};
+
 /** Colored tag whose color communicates a finance concept. */
 export function ConceptTag({
   concept = "value",
@@ -146,22 +183,20 @@ export function ConceptTag({
   children: React.ReactNode;
   className?: string;
 }) {
-  const color = {
-    value: "border-accent-cyan/30 bg-accent-cyan/10 text-accent-cyan",
-    time: "border-accent-amber/30 bg-accent-amber/10 text-accent-amber",
-    risk: "border-accent-red/30 bg-accent-red/10 text-accent-red",
-    market: "border-accent-purple/30 bg-accent-purple/10 text-accent-purple",
-    cashflow: "border-accent-green/30 bg-accent-green/10 text-accent-green",
-  }[concept];
+  const s = CONCEPT_STYLES[concept];
   return (
     <span
-      className={cn(
-        "inline-flex items-center rounded-full border px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
-        color,
-        CONCEPT_TEXT[concept],
-        className,
-      )}
+      className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1", CONCEPT_TEXT[concept], className)}
+      style={{
+        background: s.bg,
+        border: `1px solid color-mix(in srgb, ${s.border} 25%, transparent)`,
+        fontSize: "var(--type-eyebrow-size)",
+        fontWeight: 600,
+        letterSpacing: "var(--type-eyebrow-track)",
+        color: s.color,
+      }}
     >
+      <span aria-hidden>{s.icon}</span>
       {children}
     </span>
   );
@@ -175,30 +210,41 @@ export function Feedback({
   children: React.ReactNode;
 }) {
   const map = {
-    correct: {
-      label: "Correct",
-      cls: "border-accent-green/40 bg-accent-green/10 text-accent-green",
-    },
-    incorrect: {
-      label: "Try again",
-      cls: "border-accent-red/40 bg-accent-red/10 text-accent-red",
-    },
-    info: { label: "Note", cls: "border-white/15 bg-white/5 text-slate-200" },
+    correct:   { label: "Correct",   token: "var(--ops-success-strong)" },
+    incorrect: { label: "Try again", token: "var(--ops-error-strong)" },
+    info:      { label: "Note",      token: "var(--ops-text-tertiary)" },
   } as const;
   const m = map[status];
   return (
-    <div className={`mt-4 rounded-xl border px-4 py-3.5 ${m.cls}`}>
+    <div
+      className="feedback mt-4 rounded-xl px-4 py-3.5"
+      style={{
+        background: `color-mix(in srgb, ${m.token} 8%, transparent)`,
+        border: `1px solid color-mix(in srgb, ${m.token} 25%, transparent)`,
+        color: m.token,
+      }}
+    >
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center rounded-full border border-current px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em] opacity-90">
-          {status === "correct" && (
-            <span className="mr-1" aria-hidden>
-              ✓
-            </span>
-          )}
+        <span
+          className="inline-flex items-center rounded-full border border-current px-2 py-0.5"
+          style={{
+            fontSize: "var(--type-eyebrow-size)",
+            fontWeight: 600,
+            letterSpacing: "var(--type-eyebrow-track)",
+          }}
+        >
+          {status === "correct" && <span className="mr-1" aria-hidden>✓</span>}
           {m.label}
         </span>
       </div>
-      <p className="ops-body mt-2.5 text-[15px] leading-7 text-slate-100">
+      <p
+        className="mt-2.5"
+        style={{
+          fontSize: "var(--type-body-size)",
+          lineHeight: "var(--type-body-lh)",
+          color: "var(--ops-text-secondary)",
+        }}
+      >
         {children}
       </p>
     </div>
