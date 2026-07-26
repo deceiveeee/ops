@@ -939,3 +939,62 @@ svg tspan[font-size="12"] {
     opacity: 0.55;
     cursor: not-allowed;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Button variants — spec §6.3
+   Pill shape retained. Glow removed. Solid teal primary.
+   ───────────────────────────────────────────────────────────── */
+.ops-theme-light .ops-btn.variant-primary {
+    background: var(--ops-accent-strong);
+    color: #ffffff;
+    border: none;
+    box-shadow: none;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.ops-theme-light .ops-btn.variant-primary:hover {
+    background: color-mix(in srgb, var(--ops-accent-strong) 92%, #000);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -8px rgba(0,0,0,0.12);
+}
+
+.ops-theme-light .ops-btn.variant-secondary {
+    background: transparent;
+    color: var(--ops-accent-strong);
+    border: none;
+    padding: 8px 0;
+    font-weight: 500;
+    text-decoration: none;
+    transition: text-decoration 0.15s ease;
+}
+.ops-theme-light .ops-btn.variant-secondary::after {
+    content: " →";
+    display: inline-block;
+    transition: transform 0.15s ease;
+}
+.ops-theme-light .ops-btn.variant-secondary:hover {
+    text-decoration: underline;
+}
+.ops-theme-light .ops-btn.variant-secondary:hover::after {
+    transform: translateX(2px);
+}
+
+.ops-theme-light .ops-btn.variant-outline {
+    background: transparent;
+    color: var(--ops-text-primary);
+    border: 1px solid rgba(0,0,0,0.15);
+    transition: background 0.2s ease;
+}
+.ops-theme-light .ops-btn.variant-outline:hover {
+    background: var(--ops-surface-2);
+}
+
+.ops-theme-light .ops-btn.variant-ghost {
+    background: transparent;
+    color: var(--ops-text-secondary);
+    border: none;
+    padding: 8px 12px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.ops-theme-light .ops-btn.variant-ghost:hover {
+    background: var(--ops-surface-2);
+    color: var(--ops-text-primary);
+}
