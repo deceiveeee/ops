@@ -238,7 +238,7 @@ export default function MasteryCheck({
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         {!passed ? (
-          <Button size="md" onClick={submit} className={cn(!allAnswered && "opacity-60")}>
+          <Button size="md" onClick={submit} disabled={!allAnswered}>
             {submitted ? "Re-check" : "Check answers"}
           </Button>
         ) : null}

@@ -68,6 +68,7 @@ export default function CashFlowValueChapter() {
   const isPVStage = activeIdx >= 4;
   const displayValue = isPVStage ? `$${currentPV}B` : stage.value;
   const displayLabel = isPVStage ? "Present value" : stage.label;
+  const isRangeStage = !isPVStage && stage.label === "Future cash flows";
   const displayNote = isPVStage
     ? `Discounted at r = ${currentRate}% · ${rateLabel}`
     : stage.note;
@@ -83,8 +84,8 @@ export default function CashFlowValueChapter() {
         <div className="hp-canvas relative z-10 w-full">
           {/* Top headline — visible throughout the chapter */}
           <motion.h2
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={reduce ? false : { opacity: 0, y: 14, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.8 }}
             className="hp-section"
@@ -133,25 +134,59 @@ export default function CashFlowValueChapter() {
               <div className="text-[16px] font-medium uppercase tracking-[0.06em] text-slate-400">
                 {displayLabel}
               </div>
-              <div
-                key={displayValue}
-                className="hp-numeric mt-4"
-                style={{ fontSize: "clamp(80px, 11vw, 180px)", lineHeight: 0.9 }}
-              >
-                <motion.span
-                  initial={reduce ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className={isPVStage ? "text-accent-cyan" : ""}
+              {isRangeStage ? (
+                <div
+                  className="hp-numeric mt-4 flex flex-col items-start"
+                  style={{ fontSize: "clamp(44px, 6vw, 96px)", lineHeight: 0.98 }}
                 >
-                  {displayValue}
-                </motion.span>
-              </div>
+                  <motion.span
+                    initial={reduce ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="block"
+                  >
+                    Year 1
+                  </motion.span>
+                  <motion.span
+                    aria-hidden
+                    initial={reduce ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.08 }}
+                    className="block text-slate-500"
+                    style={{ fontSize: "0.4em", lineHeight: 1.15, marginLeft: "0.06em" }}
+                  >
+                    →
+                  </motion.span>
+                  <motion.span
+                    initial={reduce ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.16 }}
+                    className="block"
+                  >
+                    Year N
+                  </motion.span>
+                </div>
+              ) : (
+                <div
+                  key={displayValue}
+                  className="hp-numeric mt-4"
+                  style={{ fontSize: "clamp(60px, 8.5vw, 140px)", lineHeight: 0.9 }}
+                >
+                  <motion.span
+                    initial={reduce ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className={isPVStage ? "text-accent-cyan" : ""}
+                  >
+                    {displayValue}
+                  </motion.span>
+                </div>
+              )}
               <p className="hp-body mt-8 max-w-[440px]">{displayNote}</p>
             </motion.div>
 
             {/* Visual side — the cash flow → PV pipeline */}
-            <CashFlowPipeline reduce={!!reduce} activeIdx={activeIdx} currentRate={currentRate} currentPV={currentPV} />
+            <CashFlowPipeline reduce={!!reduce} activeIdx={activeIdx} />
           </div>
         </div>
       </div>
@@ -192,13 +227,9 @@ function FlowStreamBackground({ reduce }: { reduce: boolean }) {
 function CashFlowPipeline({
   reduce,
   activeIdx,
-  currentRate,
-  currentPV,
 }: {
   reduce: boolean;
   activeIdx: number;
-  currentRate: number;
-  currentPV: number;
 }) {
   // Render a series of future cash flow bars; in the early stages they're at the right side.
   // As user advances to stage 4-5, the bars collapse toward PV (single value at left).
@@ -261,12 +292,6 @@ function CashFlowPipeline({
           >
             <circle cx="60" cy="180" r="8" fill="#22d3ee" />
             <circle cx="60" cy="180" r="20" fill="none" stroke="#22d3ee" strokeOpacity="0.4" strokeWidth="1.5" />
-            <text x="60" y="130" textAnchor="middle" fill="#F5F5F7" fontSize="24" fontWeight="600" fontFamily="var(--font-sans), system-ui, sans-serif">
-              ${currentPV}B
-            </text>
-            <text x="60" y="105" textAnchor="middle" fill="rgba(245,245,247,0.55)" fontSize="13" fontFamily="var(--font-sans), system-ui, sans-serif">
-              at r = {currentRate}%
-            </text>
           </motion.g>
         )}
       </svg>

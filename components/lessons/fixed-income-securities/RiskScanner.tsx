@@ -187,7 +187,7 @@ export default function RiskScanner() {
                     <div className="ops-body-strong text-[15px] text-slate-100">
                       {r.label}
                       {locked && (
-                        <span className="ml-2 rounded border border-accent-green/40 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">
+                        <span className="ml-2 rounded border border-accent-green/40 px-1.5 py-0.5 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-green">
                           off · riskless
                         </span>
                       )}

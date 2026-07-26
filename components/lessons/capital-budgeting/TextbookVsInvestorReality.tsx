@@ -140,11 +140,11 @@ export default function TextbookVsInvestorReality() {
                   ) : (
                     <motion.span
                       key="hidden"
-                      initial={reduce ? false : { opacity: 0.4 }}
-                      animate={{ opacity: 0.4 }}
-                      className="text-slate-500"
+                      initial={reduce ? false : { opacity: 0.55 }}
+                      animate={{ opacity: 0.55 }}
+                      className="font-mono text-[13px] uppercase tracking-[0.14em] text-slate-500"
                     >
-                      {r.reality}
+                      — reveal to compare —
                     </motion.span>
                   )}
                 </AnimatePresence>

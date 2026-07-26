@@ -34,14 +34,24 @@ export default function HeroChapter() {
       className="relative min-h-[100svh] w-full overflow-hidden hp-atmosphere-deep"
     >
       <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          opacity: bgOpacity,
+          background:
+            "radial-gradient(ellipse 72% 50% at 48% 42%, rgba(34,211,238,0.07), rgba(12,29,40,0.035) 44%, transparent 74%)",
+        }}
+      />
+
+      <motion.div
         style={{ y: bgY, opacity: bgOpacity }}
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[62svh]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[72svh]"
         aria-hidden
       >
         <HeroVisual reduce={!!reduce} />
       </motion.div>
 
-      <div className="hp-canvas relative z-10 flex min-h-[100svh] flex-col justify-center pt-[68px]">
+      <div className="hp-canvas relative z-10 flex min-h-[100svh] flex-col justify-start pt-[clamp(120px,17vh,180px)]">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -106,9 +116,9 @@ function HeroVisual({ reduce }: { reduce: boolean }) {
   const min = Math.min(...ys);
   const max = Math.max(...ys);
   const range = max - min || 1;
-  const yFor = (v: number) => H * 0.32 + ((v - min) / range) * H * 0.30;
+  const yFor = (v: number) => H * 0.24 + ((v - min) / range) * H * 0.19;
   const linePath = "M" + xs.map((x, i) => `${x},${yFor(ys[i])}`).join(" L");
-  const areaPath = `${linePath} L${W},${H * 0.62} L0,${H * 0.62} Z`;
+  const areaPath = `${linePath} L${W},${H * 0.60} L0,${H * 0.60} Z`;
 
   return (
     <svg
@@ -118,7 +128,7 @@ function HeroVisual({ reduce }: { reduce: boolean }) {
     >
       <defs>
         <linearGradient id="heroArea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.30" />
+          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.25" />
           <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="heroLine" x1="0" y1="0" x2="1" y2="0">
@@ -127,19 +137,19 @@ function HeroVisual({ reduce }: { reduce: boolean }) {
           <stop offset="100%" stopColor="#67e8f9" />
         </linearGradient>
         <linearGradient id="driverRevenue" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#34d399" stopOpacity="0.42" />
-          <stop offset="100%" stopColor="#34d399" stopOpacity="0.06" />
+          <stop offset="0%" stopColor="#36a083" stopOpacity="0.24" />
+          <stop offset="100%" stopColor="#36a083" stopOpacity="0.03" />
         </linearGradient>
         <linearGradient id="driverMargin" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.36" />
-          <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.05" />
+          <stop offset="0%" stopColor="#8275c4" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#8275c4" stopOpacity="0.03" />
         </linearGradient>
         <linearGradient id="driverCash" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.36" />
-          <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.05" />
+          <stop offset="0%" stopColor="#c89a3a" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#c89a3a" stopOpacity="0.03" />
         </linearGradient>
         <filter id="heroGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="5" result="blur" />
+          <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -171,9 +181,9 @@ function HeroVisual({ reduce }: { reduce: boolean }) {
         label="Revenue"
         value="$24.6B"
         color="url(#driverRevenue)"
-        strokeColor="#34d399"
-        topY={H * 0.50}
-        bottomY={H * 0.66}
+        strokeColor="#36a083"
+        topY={H * 0.46}
+        bottomY={H * 0.60}
         reduce={reduce}
       />
       <DriverBand
@@ -181,9 +191,9 @@ function HeroVisual({ reduce }: { reduce: boolean }) {
         label="Gross margin"
         value="41.2%"
         color="url(#driverMargin)"
-        strokeColor="#a78bfa"
-        topY={H * 0.68}
-        bottomY={H * 0.82}
+        strokeColor="#8275c4"
+        topY={H * 0.62}
+        bottomY={H * 0.76}
         reduce={reduce}
       />
       <DriverBand
@@ -191,16 +201,16 @@ function HeroVisual({ reduce }: { reduce: boolean }) {
         label="Free cash flow"
         value="$5.1B"
         color="url(#driverCash)"
-        strokeColor="#fbbf24"
-        topY={H * 0.84}
-        bottomY={H * 0.98}
+        strokeColor="#c89a3a"
+        topY={H * 0.78}
+        bottomY={H * 0.96}
         reduce={reduce}
       />
 
       {/* 3. Price chart surface — draws in first, then lifts and fades to reveal drivers */}
       <motion.g
         initial={reduce ? false : { y: 0, opacity: 0 }}
-        animate={{ y: [0, 0, -28], opacity: [0, 1, 0.55] }}
+        animate={{ y: [0, 0, -28], opacity: [0, 1, 0.85] }}
         transition={{
           duration: 3.2,
           times: [0, 0.35, 1],
@@ -289,27 +299,28 @@ function DriverBand({
         y1={topY}
         y2={topY}
         stroke={strokeColor}
-        strokeOpacity="0.35"
-        strokeWidth="1.25"
+        strokeOpacity="0.18"
+        strokeWidth="1"
       />
       <text
         x={36}
         y={topY + 28}
         fill={strokeColor}
-        fontSize="15"
+        fontSize="14"
         fontFamily="var(--font-sans), system-ui, sans-serif"
         fontWeight="500"
-        opacity="0.85"
+        opacity="0.55"
       >
         {label}
       </text>
       <text
         x={36}
-        y={topY + 56}
-        fill="#F5F5F7"
-        fontSize="28"
+        y={topY + 54}
+        fill="#D2D2D7"
+        fontSize="24"
         fontFamily="var(--font-sans), system-ui, sans-serif"
         fontWeight="600"
+        opacity="0.8"
       >
         {value}
       </text>

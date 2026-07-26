@@ -1,0 +1,320 @@
+{
+  "results": [
+    {
+      "kind": "bench",
+      "file": "apple-home-desktop.png",
+      "bytes": 3587279
+    },
+    {
+      "kind": "bench",
+      "file": "apple-product-desktop.png",
+      "bytes": 4463400
+    },
+    {
+      "kind": "bench",
+      "file": "apple-typography-desktop.png",
+      "bytes": 7570028
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-home-desktop.png",
+      "bytes": 2596853
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-courses-desktop.png",
+      "bytes": 852023
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-course-desktop.png",
+      "bytes": 847230
+    },
+    {
+      "kind": "bench",
+      "file": "khan-home-desktop.png",
+      "bytes": 1083282
+    },
+    {
+      "kind": "bench",
+      "file": "khan-course-desktop.png",
+      "bytes": 2927691
+    },
+    {
+      "kind": "bench",
+      "file": "khan-lesson-desktop.png",
+      "bytes": 932460
+    },
+    {
+      "kind": "ops",
+      "file": "ops-home-desktop.png",
+      "bytes": 4520486,
+      "title": "Open Portfolio Studio — Decode the market beneath the chart"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-courses-desktop.png",
+      "bytes": 531021,
+      "title": "Courses — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-course-finance-foundations-desktop.png",
+      "bytes": 1472691,
+      "title": "Finance Foundations — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-course-investment-foundations-desktop.png",
+      "bytes": 614277,
+      "title": "Investment Foundations — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-what-is-finance-desktop.png",
+      "bytes": 684558,
+      "title": "What Is Finance? Value, Time, and Risk — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-fixed-income-iou-riskscanner-purediscount-desktop.png",
+      "bytes": 1129270,
+      "title": "Fixed-Income Securities I: Bond Markets, Cash Flows, and Discount Bonds — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-portfolio-covariance-desktop.png",
+      "bytes": 822737,
+      "title": "Portfolio Risk, Covariance, and Correlation — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-investment-foundations-desktop.png",
+      "bytes": 1260033,
+      "title": "How an Investor Builds a Philosophy — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-studio-desktop.png",
+      "bytes": 523184,
+      "title": "Studio — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-filings-desktop.png",
+      "bytes": 177325,
+      "title": "Filing reader — Open Portfolio Studio"
+    },
+    {
+      "kind": "bench",
+      "file": "apple-home-tablet.png",
+      "bytes": 2423187
+    },
+    {
+      "kind": "bench",
+      "file": "apple-product-tablet.png",
+      "bytes": 3607124
+    },
+    {
+      "kind": "bench",
+      "file": "apple-typography-tablet.png",
+      "bytes": 5767333
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-home-tablet.png",
+      "bytes": 1926291
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-courses-tablet.png",
+      "bytes": 664044
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-course-tablet.png",
+      "bytes": 656028
+    },
+    {
+      "kind": "bench",
+      "file": "khan-home-tablet.png",
+      "bytes": 1022836
+    },
+    {
+      "kind": "bench",
+      "file": "khan-course-tablet.png",
+      "bytes": 3166527
+    },
+    {
+      "kind": "bench",
+      "file": "khan-lesson-tablet.png",
+      "bytes": 963509
+    },
+    {
+      "kind": "ops",
+      "file": "ops-home-tablet.png",
+      "bytes": 3366956,
+      "title": "Open Portfolio Studio — Decode the market beneath the chart"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-courses-tablet.png",
+      "bytes": 431072,
+      "title": "Courses — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-course-finance-foundations-tablet.png",
+      "bytes": 1328625,
+      "title": "Finance Foundations — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-course-investment-foundations-tablet.png",
+      "bytes": 508243,
+      "title": "Investment Foundations — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-what-is-finance-tablet.png",
+      "bytes": 696984,
+      "title": "What Is Finance? Value, Time, and Risk — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-fixed-income-iou-riskscanner-purediscount-tablet.png",
+      "bytes": 1017372,
+      "title": "Fixed-Income Securities I: Bond Markets, Cash Flows, and Discount Bonds — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-portfolio-covariance-tablet.png",
+      "bytes": 732065,
+      "title": "Portfolio Risk, Covariance, and Correlation — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-investment-foundations-tablet.png",
+      "bytes": 1194921,
+      "title": "How an Investor Builds a Philosophy — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-studio-tablet.png",
+      "bytes": 438834,
+      "title": "Studio — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-filings-tablet.png",
+      "bytes": 173691,
+      "title": "Filing reader — Open Portfolio Studio"
+    },
+    {
+      "kind": "bench",
+      "file": "apple-home-mobile.png",
+      "bytes": 1268619
+    },
+    {
+      "kind": "bench",
+      "file": "apple-product-mobile.png",
+      "bytes": 2361205
+    },
+    {
+      "kind": "bench",
+      "file": "apple-typography-mobile.png",
+      "bytes": 2744065
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-home-mobile.png",
+      "bytes": 988956
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-courses-mobile.png",
+      "bytes": 416703
+    },
+    {
+      "kind": "bench",
+      "file": "brilliant-course-mobile.png",
+      "bytes": 421084
+    },
+    {
+      "kind": "bench",
+      "file": "khan-home-mobile.png",
+      "bytes": 773815
+    },
+    {
+      "kind": "bench",
+      "file": "khan-course-mobile.png",
+      "bytes": 2452287
+    },
+    {
+      "kind": "bench",
+      "file": "khan-lesson-mobile.png",
+      "bytes": 676316
+    },
+    {
+      "kind": "ops",
+      "file": "ops-home-mobile.png",
+      "bytes": 1876205,
+      "title": "Open Portfolio Studio — Decode the market beneath the chart"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-courses-mobile.png",
+      "bytes": 376159,
+      "title": "Courses — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-course-finance-foundations-mobile.png",
+      "bytes": 1054218,
+      "title": "Finance Foundations — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-course-investment-foundations-mobile.png",
+      "bytes": 351208,
+      "title": "Investment Foundations — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-what-is-finance-mobile.png",
+      "bytes": 407225,
+      "title": "What Is Finance? Value, Time, and Risk — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-fixed-income-iou-riskscanner-purediscount-mobile.png",
+      "bytes": 976592,
+      "title": "Fixed-Income Securities I: Bond Markets, Cash Flows, and Discount Bonds — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-portfolio-covariance-mobile.png",
+      "bytes": 628810,
+      "title": "Portfolio Risk, Covariance, and Correlation — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-lesson-investment-foundations-mobile.png",
+      "bytes": 1024321,
+      "title": "How an Investor Builds a Philosophy — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-studio-mobile.png",
+      "bytes": 364486,
+      "title": "Studio — Open Portfolio Studio"
+    },
+    {
+      "kind": "ops",
+      "file": "ops-filings-mobile.png",
+      "bytes": 151997,
+      "title": "Filing reader — Open Portfolio Studio"
+    }
+  ],
+  "failed": []
+}

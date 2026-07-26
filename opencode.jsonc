@@ -11,6 +11,21 @@
 
   "instructions": ["CODING.md"],
 
+  "mcp": {
+    // Z.AI Vision MCP — GLM-4.6V vision tools (image/video analysis, OCR, UI->code, etc.)
+    // Docs: https://docs.z.ai/devpack/mcp/vision-mcp-server
+    // Key read from the launcher environment via {env:} interpolation so it is never committed.
+    "zai-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@z_ai/mcp-server@latest"],
+      "environment": {
+        "Z_AI_API_KEY": "{env:Z_AI_API_KEY}",
+        "Z_AI_MODE": "ZAI",
+      },
+      "timeout": 300000,
+    },
+  },
+
   "agent": {
     "superpowers-glm-5.2": {
       "mode": "primary",
@@ -25,6 +40,9 @@
         "bash": "allow",
         "webfetch": "allow",
         "task": "allow",
+      },
+      "tools": {
+        "zai-mcp-server_*": true,
       },
     },
 

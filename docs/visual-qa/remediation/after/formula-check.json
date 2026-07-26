@@ -1,0 +1,20 @@
+{
+  "desktop": {
+    "katexErrors": 0,
+    "foundPureDiscount": true,
+    "textSample": "Pure discount bond priceP0=F(1 + r)T",
+    "hasFracBar": true,
+    "hasSub": true,
+    "hasSup": true,
+    "rawLatex": false
+  },
+  "mobile": {
+    "katexErrors": 0,
+    "foundPureDiscount": true,
+    "textSample": "Pure discount bond priceP0=F(1 + r)T",
+    "hasFracBar": true,
+    "hasSub": true,
+    "hasSup": true,
+    "rawLatex": false
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-07-22T07:36:33.988Z",
+  "chromeVersion": "Chrome/150.0.7871.129",
+  "devServer": "http://localhost:3001",
+  "route": "/courses",
+  "viewportsCaptured": [
+    "1440x900",
+    "768x1024",
+    "375x812"
+  ],
+  "reducedMotionEmulated": true,
+  "reducedMotionApplied": true,
+  "consoleMessages": [],
+  "pageErrors": [],
+  "keyboardNav": {
+    "tabPresses": 10,
+    "focusTrail": [
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "group flex items-center gap-2.5",
+        "text": "Open Portfolio Studio",
+        "href": "http://localhost:3001/"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "rounded-full px-4 py-2 text-[16px] font-medium transition-colors text-slate-300 ",
+        "text": "Courses",
+        "href": "http://localhost:3001/courses"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "rounded-full px-4 py-2 text-[16px] font-medium transition-colors text-slate-300 ",
+        "text": "Filings",
+        "href": "http://localhost:3001/filings"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "rounded-full px-4 py-2 text-[16px] font-medium transition-colors text-slate-300 ",
+        "text": "Studio",
+        "href": "http://localhost:3001/studio"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-",
+        "text": "Enter the studio",
+        "href": "http://localhost:3001/studio"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "group relative flex flex-col overflow-hidden rounded-3xl border border-white/5 b",
+        "text": "Start here\nFinance Foundations\n\nLearn how value, risk, markets and portfolios co",
+        "href": "http://localhost:3001/courses/finance-foundations"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "group relative flex flex-col overflow-hidden rounded-3xl border border-white/5 b",
+        "text": "Investment Foundations\n\nEvaluate investments, compare strategies and build a def",
+        "href": "http://localhost:3001/courses/investment-foundations"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "group block border-t border-white/10 pt-6 transition-colors hover:border-white/2",
+        "text": "Step 1\nFinance Foundations\n\nBuild the financial language — value, time, risk, an",
+        "href": "http://localhost:3001/courses/finance-foundations"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "group block border-t border-white/10 pt-6 transition-colors hover:border-white/2",
+        "text": "Step 2\nInvestment Foundations\n\nApply it to investment decisions, philosophies, a",
+        "href": "http://localhost:3001/courses/investment-foundations"
+      },
+      {
+        "tag": "A",
+        "id": "",
+        "cls": "group block border-t border-white/10 pt-6 transition-colors hover:border-white/2",
+        "text": "Step 3\nPortfolio Studio\n\nResearch companies, value securities, and construct a d",
+        "href": "http://localhost:3001/studio"
+      }
+    ]
+  },
+  "enterActivation": {
+    "targetLink": {
+      "href": "/courses/finance-foundations",
+      "text": "Start here\nFinance Foundations\n\nLearn how value, risk, markets and portfolios co"
+    },
+    "keyboardEnter": {
+      "landedPath": "/courses",
+      "navigated": false
+    },
+    "clickFallback": {
+      "attemptedHref": "/courses/finance-foundations",
+      "landedPath": "/courses/finance-foundations",
+      "navigated": true
+    },
+    "keyboardAccessibilityEstablished": true
+  }
+}

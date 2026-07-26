@@ -108,8 +108,8 @@ export default function FinancialSystemFlow({
         </div>
         <div className="overflow-x-auto">
           <svg
-            viewBox="0 0 900 440"
-            className="w-full min-w-[640px]"
+            viewBox="0 0 900 460"
+            className="w-full min-w-[680px]"
             role="img"
             aria-label="Financial system flow diagram with six participants"
           >
@@ -121,14 +121,14 @@ export default function FinancialSystemFlow({
               height="360"
               rx="18"
               fill="none"
-              stroke="rgba(255,255,255,0.18)"
+              stroke="rgba(148,163,184,0.5)"
               strokeDasharray="4 6"
             />
             <text
               x="34"
               y="24"
-              className="fill-slate-400 font-mono"
-              fontSize="10"
+              className="fill-slate-500 font-mono"
+              fontSize="13"
               letterSpacing="2"
             >
               FINANCIAL SYSTEM
@@ -154,7 +154,7 @@ export default function FinancialSystemFlow({
                     stroke={
                       isActive
                         ? "rgba(34,211,238,0.85)"
-                        : "rgba(255,255,255,0.18)"
+                        : "rgba(148,163,184,0.55)"
                     }
                     strokeWidth={isActive ? 2.5 : 1.4}
                     strokeDasharray={isActive ? "0" : "3 5"}
@@ -191,39 +191,49 @@ export default function FinancialSystemFlow({
                       isActive
                         ? "rgba(34,211,238,0.22)"
                         : isVisited
-                          ? "rgba(34,211,238,0.08)"
-                          : "rgba(15,20,34,0.95)"
+                          ? "rgba(34,211,238,0.12)"
+                          : "rgba(255,255,255,1)"
                     }
                     stroke={
                       isActive
                         ? "#22d3ee"
                         : isVisited
-                          ? "rgba(34,211,238,0.7)"
-                          : "rgba(255,255,255,0.4)"
+                          ? "rgba(34,211,238,0.85)"
+                          : "rgba(0,0,0,0.35)"
                     }
-                    strokeWidth={isActive ? 2.5 : 1.6}
+                    strokeWidth={isActive ? 2.5 : 1.8}
                     className="transition-all"
                   />
                   <text
                     x={n.x}
-                    y={n.y + 54}
+                    y={n.y + (n.label.includes(" ") ? 50 : 58)}
                     textAnchor="middle"
                     className={cn(
-                      "font-mono",
+                      "font-sans",
                       isActive ? "fill-accent-cyan" : "fill-slate-200",
                     )}
-                    fontSize="13"
-                    fontWeight="500"
-                    letterSpacing="0.4"
+                    fontSize="17"
+                    fontWeight={isActive ? 700 : 600}
                   >
-                    {n.label}
+                    {n.label.includes(" ") ? (
+                      <>
+                        <tspan x={n.x}>
+                          {n.label.slice(0, n.label.indexOf(" "))}
+                        </tspan>
+                        <tspan x={n.x} dy={17}>
+                          {n.label.slice(n.label.indexOf(" ") + 1)}
+                        </tspan>
+                      </>
+                    ) : (
+                      n.label
+                    )}
                   </text>
                   {isVisited && (
                     <text
                       x={n.x + 24}
                       y={n.y - 20}
                       className="fill-accent-green font-mono"
-                      fontSize="12"
+                      fontSize="13"
                       aria-hidden
                     >
                       ✓

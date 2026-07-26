@@ -146,11 +146,11 @@ export default function IOUMachine() {
             </AnimatePresence>
 
             {/* baseline direction labels */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between text-[13px] font-medium text-slate-500">
               <span>← price</span>
               <span>promised →</span>
             </div>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-between text-[13px] font-medium text-slate-500">
               <span>investor</span>
               <span>issuer</span>
             </div>
@@ -362,7 +362,7 @@ function TimelineNode({
       />
       <div
         className={cn(
-          "mt-3 font-mono text-[12px]",
+          "mt-3 font-mono text-[13px]",
           active ? "text-slate-200" : "text-slate-500",
         )}
       >

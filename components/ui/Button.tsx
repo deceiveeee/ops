@@ -21,6 +21,7 @@ type CommonProps = {
   variant?: Variant;
   size?: Size;
   className?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 };
 
@@ -32,9 +33,9 @@ type ButtonAsButton = CommonProps & {
 };
 
 export default function Button(props: ButtonAsLink | ButtonAsButton) {
-  const { variant = "primary", size = "md", className, children } = props;
+  const { variant = "primary", size = "md", className, disabled } = props;
   const cls = cn(
-    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[-0.01em] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[-0.01em] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-55 disabled:shadow-none disabled:hover:bg-accent-cyan disabled:hover:text-ink-950",
     variants[variant],
     sizes[size],
     className,
@@ -42,29 +43,41 @@ export default function Button(props: ButtonAsLink | ButtonAsButton) {
 
   if (props.href !== undefined) {
     const ext = props.href.startsWith("http") || props.href.startsWith("#");
+    if (disabled) {
+      return (
+        <span aria-disabled="true" className={cls}>
+          {props.children}
+        </span>
+      );
+    }
     if (ext && !props.href.startsWith("#")) {
       return (
         <a href={props.href} className={cls} target="_blank" rel="noreferrer">
-          {children}
+          {props.children}
         </a>
       );
     }
     if (props.href.startsWith("#")) {
       return (
         <a href={props.href} className={cls}>
-          {children}
+          {props.children}
         </a>
       );
     }
     return (
       <Link href={props.href} className={cls}>
-        {children}
+        {props.children}
       </Link>
     );
   }
   return (
-    <button type={(props as ButtonAsButton).type ?? "button"} onClick={(props as ButtonAsButton).onClick} className={cls}>
-      {children}
+    <button
+      type={(props as ButtonAsButton).type ?? "button"}
+      onClick={(props as ButtonAsButton).onClick}
+      disabled={disabled}
+      className={cls}
+    >
+      {props.children}
     </button>
   );
 }

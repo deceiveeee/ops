@@ -87,7 +87,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
   const outcomes = courseOutcomes[course.slug] ?? courseOutcomes["finance-foundations"];
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-hidden">
       {/* ─── Course hero — light, course-colored tint ─── */}
       <section
         className="relative w-full overflow-hidden"

@@ -23,8 +23,8 @@ export default function FinalCTAChapter() {
     >
       <div className="hp-canvas-narrow relative z-10 text-center">
         <motion.h2
-          initial={reduce ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={reduce ? false : { opacity: 0, y: 16, filter: "blur(12px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-15%" }}
           transition={{ duration: 0.9 }}
           className="hp-hero mx-auto"
@@ -45,8 +45,8 @@ export default function FinalCTAChapter() {
         />
 
         <motion.p
-          initial={reduce ? false : { opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={reduce ? false : { opacity: 0, y: 12, filter: "blur(10px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-15%" }}
           transition={{ duration: 0.8, delay: 0.1 }}
           className="hp-lead mx-auto mt-10 text-balance"

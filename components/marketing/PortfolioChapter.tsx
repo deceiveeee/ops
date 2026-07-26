@@ -117,8 +117,8 @@ export default function PortfolioChapter() {
         <div className="hp-canvas w-full">
           {/* Headline — white, no cyan */}
           <motion.h2
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={reduce ? false : { opacity: 0, y: 14, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.8 }}
             className="hp-section"
@@ -168,7 +168,7 @@ export default function PortfolioChapter() {
                 <div className="text-[16px] font-medium uppercase tracking-[0.06em] text-slate-400">
                   State
                 </div>
-                <div className="mt-2 text-[clamp(32px,3.6vw,56px)] font-semibold leading-[1.05] tracking-[-0.025em] text-white">
+                <div className="mt-2 text-[clamp(28px,3vw,48px)] font-semibold leading-[1.05] tracking-[-0.025em] text-white">
                   {state.label}
                 </div>
 
@@ -182,7 +182,7 @@ export default function PortfolioChapter() {
                   transition={{ duration: 0.5 }}
                   className="hp-numeric mt-2"
                   style={{
-                    fontSize: "clamp(64px, 7vw, 112px)",
+                    fontSize: "clamp(54px, 6vw, 94px)",
                     lineHeight: 0.95,
                     color: state.portfolioColor,
                   }}

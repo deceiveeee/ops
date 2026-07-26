@@ -68,8 +68,8 @@ export default function BusinessChapter() {
         {/* Headline + lead — anchored top, pure white */}
         <div className="max-w-[1100px]">
           <motion.h2
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={reduce ? false : { opacity: 0, y: 16, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.8 }}
             className="hp-section"
@@ -77,8 +77,8 @@ export default function BusinessChapter() {
             Behind every ticker is a business.
           </motion.h2>
           <motion.p
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={reduce ? false : { opacity: 0, y: 12, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.8, delay: 0.1 }}
             className="hp-lead mt-8"
@@ -119,7 +119,7 @@ export default function BusinessChapter() {
                   transition={{ duration: 0.7, delay: 0.1 }}
                   className="hp-numeric mt-3"
                   style={{
-                    fontSize: "clamp(56px, 7vw, 104px)",
+                    fontSize: "clamp(48px, 6vw, 88px)",
                     lineHeight: 0.95,
                     color: m.color,
                   }}

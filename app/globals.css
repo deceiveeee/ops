@@ -131,7 +131,7 @@ html {
         font-weight: 600;
         letter-spacing: -0.045em;
         line-height: 0.95;
-        font-size: clamp(54px, 8.5vw, 132px);
+        font-size: clamp(46px, 7vw, 110px);
         color: var(--ops-white);
         text-wrap: balance;
     }
@@ -141,7 +141,7 @@ html {
         font-weight: 600;
         letter-spacing: -0.035em;
         line-height: 1.0;
-        font-size: clamp(44px, 6vw, 96px);
+        font-size: clamp(38px, 5vw, 80px);
         color: var(--ops-white);
         max-width: 1100px;
         text-wrap: balance;
@@ -151,7 +151,7 @@ html {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
         font-weight: 400;
         line-height: 1.45;
-        font-size: clamp(19px, 1.7vw, 26px);
+        font-size: clamp(17px, 1.5vw, 23px);
         max-width: 680px;
         color: var(--ops-soft);
     }
@@ -160,7 +160,7 @@ html {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
         font-weight: 400;
         line-height: 1.5;
-        font-size: clamp(18px, 1.2vw, 21px);
+        font-size: clamp(16px, 1.1vw, 19px);
         color: var(--ops-soft);
     }
     /* Large numerical readout — sans + tabular. */
@@ -178,7 +178,7 @@ html {
         letter-spacing: -0.04em;
         line-height: 0.92;
         color: var(--ops-white);
-        font-size: clamp(64px, 8vw, 128px);
+        font-size: clamp(54px, 7vw, 110px);
     }
     /* Paper-section variants — warm off-white. */
     .hp-paper-headline {
@@ -186,7 +186,7 @@ html {
         font-weight: 600;
         letter-spacing: -0.035em;
         line-height: 1.0;
-        font-size: clamp(44px, 6vw, 96px);
+        font-size: clamp(38px, 5vw, 80px);
         color: var(--ops-paper-ink);
         max-width: 1100px;
         text-wrap: balance;
@@ -195,7 +195,7 @@ html {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
         font-weight: 400;
         line-height: 1.45;
-        font-size: clamp(20px, 1.6vw, 26px);
+        font-size: clamp(18px, 1.4vw, 23px);
         max-width: 700px;
         color: var(--ops-paper-soft);
     }
@@ -203,7 +203,7 @@ html {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
         font-weight: 400;
         line-height: 1.55;
-        font-size: clamp(18px, 1.2vw, 21px);
+        font-size: clamp(16px, 1.1vw, 19px);
         color: var(--ops-paper-soft);
     }
     /* Course-detail / curriculum typography.
@@ -832,14 +832,51 @@ html {
    to secondary if their authored accent is overridden elsewhere; keep
    ticks/titles uniform. */
 
-/* Chart axis/tick <text> authored at 8–10px is too small to read.
+/* Chart axis/tick <text> authored at 8–12px is too small to read.
    React renders fontSize as a presentation attribute, which any author
-   CSS rule overrides — floor these at 12px without touching larger labels. */
+   CSS rule overrides — floor every instructional chart label at 13px
+   (the OPS minimum for chart/diagram labels). Important chart labels
+   should be authored at 14px at the source; this is the readability
+   safety net for every other SVG across all lessons. */
 svg text[font-size="8"],
 svg text[font-size="9"],
 svg text[font-size="10"],
+svg text[font-size="11"],
+svg text[font-size="12"],
 svg tspan[font-size="8"],
 svg tspan[font-size="9"],
-svg tspan[font-size="10"] {
-    font-size: 12px;
+svg tspan[font-size="10"],
+svg tspan[font-size="11"],
+svg tspan[font-size="12"] {
+    font-size: 13px;
+}
+
+/* Reading-width rule (course/lesson pages only).
+   Prose paragraphs cap at ~68 characters so lines stay comfortable to read.
+   Wide teaching content (diagrams, tables, .ops-interactive-frame, .glass-panel,
+   figure/svg) is intentionally NOT constrained — it keeps the full lesson
+   column width. max-width on a block <p> leaves sibling wide elements full-width,
+   giving separate prose and wide-content lanes inside the same column. */
+.ops-theme-light .ops-body,
+.ops-theme-light .ops-body-strong,
+.ops-theme-light .ops-definition {
+    max-width: 68ch;
+}
+.ops-theme-light .ops-interactive-frame .ops-body,
+.ops-theme-light .ops-interactive-frame .ops-body-strong,
+.ops-theme-light .ops-interactive-frame .ops-definition,
+.ops-theme-light .glass-panel .ops-body,
+.ops-theme-light .glass-panel .ops-body-strong,
+.ops-theme-light .glass-panel .ops-definition {
+    max-width: none;
+}
+
+/* Disabled / locked interactive controls — a clear, deliberate disabled state
+   instead of faint text. Used by buttons/inputs that gate on state. */
+.ops-theme-light .ops-disabled,
+.ops-theme-light button[disabled],
+.ops-theme-light input[disabled],
+.ops-theme-light textarea[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
