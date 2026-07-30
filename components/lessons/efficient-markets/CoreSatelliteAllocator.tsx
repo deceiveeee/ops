@@ -13,7 +13,7 @@ export default function CoreSatelliteAllocator() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
           <span>Core (broad, passive) allocation</span>
           <span className="text-[14px] tabular-nums text-accent-cyan">{core}%</span>
         </label>
@@ -26,20 +26,20 @@ export default function CoreSatelliteAllocator() {
 
       {/* Visual bar */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400 mb-3">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400 mb-3">
           Portfolio structure
         </div>
         <div className="flex h-12 overflow-hidden rounded-xl border border-white/10">
           <div className="flex items-center justify-center bg-accent-cyan/25 transition-all" style={{ width: `${core}%` }}>
             <div className="text-center">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Core</div>
-              <div className="font-mono text-[14px] text-white">{core}%</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Core</div>
+              <div className="font-sans text-[14px] text-white">{core}%</div>
             </div>
           </div>
           <div className="flex items-center justify-center bg-accent-amber/25 transition-all" style={{ width: `${satellite}%` }}>
             <div className="text-center">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Satellite</div>
-              <div className="font-mono text-[14px] text-white">{satellite}%</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Satellite</div>
+              <div className="font-sans text-[14px] text-white">{satellite}%</div>
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@ export default function CoreSatelliteAllocator() {
       {/* Description */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Core</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Core</div>
           <ul className="mt-2 space-y-1.5 text-[13px] text-slate-100">
             {["Broad market exposure", "Low-cost index funds", "Diversified across sectors", "Generally passive"].map((x) => (
               <li key={x} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-cyan" aria-hidden />{x}</li>
@@ -56,7 +56,7 @@ export default function CoreSatelliteAllocator() {
           </ul>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">Satellite</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Satellite</div>
           <ul className="mt-2 space-y-1.5 text-[13px] text-slate-100">
             {["Smaller active allocations", "Specialized objectives", "Strategies with a claimed edge", "Deliberate and measurable"].map((x) => (
               <li key={x} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-amber" aria-hidden />{x}</li>

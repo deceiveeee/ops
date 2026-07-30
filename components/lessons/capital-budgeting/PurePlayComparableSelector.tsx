@@ -102,7 +102,7 @@ export default function PurePlayComparableSelector() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           The analytical problem
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.65] text-slate-100">
@@ -131,7 +131,7 @@ export default function PurePlayComparableSelector() {
           >
             <div className="flex items-center justify-between gap-2">
               <span className="font-display text-[15px] font-medium text-white">{c.name}</span>
-              <span className={cn("font-mono text-[11px]", selected === c.key ? fitTone[c.fit].text : "text-slate-400")}>
+              <span className={cn("font-sans text-[11px]", selected === c.key ? fitTone[c.fit].text : "text-slate-400")}>
                 β = {c.beta}
               </span>
             </div>
@@ -151,10 +151,10 @@ export default function PurePlayComparableSelector() {
             className={cn("rounded-2xl border p-5 sm:p-6", tone.border, tone.bg)}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", tone.text)}>
+              <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", tone.text)}>
                 {tone.label}
               </span>
-              <span className="font-mono text-[13px] tabular-nums text-slate-300">
+              <span className="font-sans text-[13px] tabular-nums text-slate-300">
                 required return ≈ {RF}% + {comp.beta}×{MRP}% = {(RF + comp.beta * MRP).toFixed(1)}%
               </span>
             </div>
@@ -188,7 +188,7 @@ export default function PurePlayComparableSelector() {
       </AnimatePresence>
 
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Practical sequence
         </div>
         <ol className="mt-4 space-y-2">
@@ -201,7 +201,7 @@ export default function PurePlayComparableSelector() {
             "Test whether the investment conclusion changes across the range.",
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="mt-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1 font-mono text-[11px] text-accent-amber">
+              <span className="mt-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1 font-sans text-[11px] text-accent-amber">
                 {i + 1}
               </span>
               <span className="text-[15px] leading-[1.6] text-slate-200">{step}</span>
@@ -216,7 +216,7 @@ export default function PurePlayComparableSelector() {
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-ink-950/40 px-3 py-2.5">
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
       <div className="mt-1 text-[13px] text-slate-100">{value}</div>
     </div>
   );

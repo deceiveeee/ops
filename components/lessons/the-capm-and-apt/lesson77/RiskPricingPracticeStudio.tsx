@@ -34,7 +34,7 @@ function CategoryBlock({
 
 function ProblemLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+    <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
       {children}
     </div>
   );
@@ -87,13 +87,13 @@ function SetupTable({
               <td
                 className={cn(
                   "py-2.5 pr-4",
-                  r.head ? "font-mono text-[12px] uppercase tracking-[0.12em] text-slate-400" : "text-slate-300",
+                  r.head ? "font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400" : "text-slate-300",
                 )}
               >
                 {r.label}
               </td>
               {r.values.map((v, j) => (
-                <td key={j} className="py-2.5 pr-4 font-mono tabular-nums text-slate-100">
+                <td key={j} className="py-2.5 pr-4 font-sans tabular-nums text-slate-100">
                   {v}
                 </td>
               ))}
@@ -579,16 +579,16 @@ function CategoryD({ onComplete }: { onComplete: () => void }) {
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">R²</div>
-            <div className="mt-1 font-mono text-[15px] text-slate-100">30%</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">R²</div>
+            <div className="mt-1 font-sans text-[15px] text-slate-100">30%</div>
           </div>
           <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">SE(β̂)</div>
-            <div className="mt-1 font-mono text-[15px] text-slate-100">0.16</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">SE(β̂)</div>
+            <div className="mt-1 font-sans text-[15px] text-slate-100">0.16</div>
           </div>
           <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">β̂</div>
-            <div className="mt-1 font-mono text-[15px] text-slate-100">1.35</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">β̂</div>
+            <div className="mt-1 font-sans text-[15px] text-slate-100">1.35</div>
           </div>
         </div>
         <div className="mt-3 space-y-3">
@@ -694,13 +694,13 @@ function CategoryD({ onComplete }: { onComplete: () => void }) {
         <ProblemLabel>Problem D3 · Slope versus fit</ProblemLabel>
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-white/12 bg-white/[0.02] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">Pair 1 — same beta</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">Pair 1 — same beta</div>
             <DatumRow label="Asset A · β / R²" value="1.2 / 70%" />
             <DatumRow label="Asset B · β / R²" value="1.2 / 18%" />
             <p className="mt-2 text-[13px] text-slate-400">Same sensitivity; very different tightness around the line.</p>
           </div>
           <div className="rounded-xl border border-white/12 bg-white/[0.02] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">Pair 2 — same R²</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">Pair 2 — same R²</div>
             <DatumRow label="Asset C · β / R²" value="0.6 / 45%" />
             <DatumRow label="Asset D · β / R²" value="1.5 / 45%" />
             <p className="mt-2 text-[13px] text-slate-400">Same fit; different response magnitude.</p>
@@ -852,7 +852,7 @@ function CategoryE({ onComplete }: { onComplete: () => void }) {
           )}
           {e2Step >= 1 && (
             <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-4 text-[15px] leading-[1.6] text-slate-200">
-              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">New evidence</span>
+              <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">New evidence</span>
               <ul className="mt-2 space-y-1.5">
                 <li>• Beta has a large standard error.</li>
                 <li>• The fund has substantial small-company (size) exposure.</li>
@@ -934,13 +934,13 @@ function CategoryF({ onComplete }: { onComplete: () => void }) {
         <ProblemLabel>Problem F1 · Multifactor required return</ProblemLabel>
         <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="rounded-xl border border-white/12 bg-white/[0.02] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">Factor premiums</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">Factor premiums</div>
             <DatumRow label={<span>λ_M (market)</span>} value="5%" />
             <DatumRow label={<span>λ_S (size)</span>} value="2%" />
             <DatumRow label={<span>λ_V (value)</span>} value="1.5%" />
           </div>
           <div className="rounded-xl border border-white/12 bg-white/[0.02] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">Asset exposures</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">Asset exposures</div>
             <DatumRow label={<span>β_M</span>} value="1.1" />
             <DatumRow label={<span>β_S</span>} value="0.5" />
             <DatumRow label={<span>β_V</span>} value="−0.2" />
@@ -1063,14 +1063,14 @@ export default function RiskPricingPracticeStudio() {
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
               Guided mixed practice
             </div>
             <p className="mt-1 text-[15px] leading-[1.55] text-slate-200">
               Six categories. Calculate, submit, then interpret. Progress is saved as you go.
             </p>
           </div>
-          <div className="font-mono text-[15px] tabular-nums text-slate-200">
+          <div className="font-sans text-[15px] tabular-nums text-slate-200">
             <span className="text-accent-green">{categoriesDoneCount}</span>
             <span className="text-slate-500"> / {total} complete</span>
           </div>

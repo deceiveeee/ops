@@ -91,7 +91,7 @@ export default function SpreadDecompositionMixer() {
               Spread decomposition mixer
             </span>
           </div>
-          <div className="font-mono text-[12px] text-slate-400">
+          <div className="font-sans text-[12px] text-slate-400">
             Total spread target: {TOTAL} bps
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function SpreadDecompositionMixer() {
             </span>
             <span
               className={cn(
-                "font-mono text-[14px]",
+                "font-sans text-[14px]",
                 over ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -146,7 +146,7 @@ export default function SpreadDecompositionMixer() {
                   {c.label}
                 </span>
                 <span
-                  className={cn("font-mono text-[13px]", TONE_TEXT[c.tone])}
+                  className={cn("font-sans text-[13px]", TONE_TEXT[c.tone])}
                 >
                   {vals[c.id]} bps
                 </span>
@@ -213,7 +213,7 @@ export default function SpreadDecompositionMixer() {
             <span className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
               Research Lens
             </span>
-            <span className="font-mono text-[12px] text-slate-400">
+            <span className="font-sans text-[12px] text-slate-400">
               {showResearch ? "Hide" : "Expand"}
             </span>
           </button>
@@ -231,7 +231,7 @@ export default function SpreadDecompositionMixer() {
                       key={r.study}
                       className="rounded-lg border border-white/10 bg-ink-950/40 p-4"
                     >
-                      <div className="font-mono text-[13px] text-accent-purple">
+                      <div className="font-sans text-[13px] text-accent-purple">
                         {r.study}
                       </div>
                       <p className="ops-body mt-1 text-[14px] leading-6 text-slate-200">

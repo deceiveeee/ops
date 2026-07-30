@@ -8,7 +8,7 @@ export default function GoodCompanyVsGoodInvestment() {
     <div className="space-y-6">
       {/* Formula */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           The surprise formula
         </div>
         <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
@@ -26,7 +26,7 @@ export default function GoodCompanyVsGoodInvestment() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Company A */}
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
             Company A · the faster grower
           </div>
           <div className="mt-3 space-y-2 text-[14px]">
@@ -48,7 +48,7 @@ export default function GoodCompanyVsGoodInvestment() {
 
         {/* Company B */}
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Company B · the positive surprise
           </div>
           <div className="mt-3 space-y-2 text-[14px]">
@@ -89,7 +89,7 @@ function Row({ label, value, tone = "neutral" }: { label: string; value: string;
   return (
     <div className="flex items-baseline justify-between">
       <span className="text-slate-300">{label}</span>
-      <span className={cn("font-mono tabular-nums", text)}>{value}</span>
+      <span className={cn("font-sans tabular-nums", text)}>{value}</span>
     </div>
   );
 }

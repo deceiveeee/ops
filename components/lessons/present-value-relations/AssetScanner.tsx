@@ -138,7 +138,7 @@ function ScannerCard({ card }: { card: Card }) {
       <p className="ops-body mt-2.5 text-[15px] leading-7 text-slate-300">{card.content}</p>
 
       <div className="mt-4 flex items-center gap-2">
-        <span className="inline-flex items-center rounded-md border border-white/15 bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-300">
+        <span className="inline-flex items-center rounded-md border border-white/15 bg-white/[0.03] px-2.5 py-1 font-sans text-[12px] font-medium tracking-[0.01em] text-slate-300">
           {card.prompt}
         </span>
       </div>

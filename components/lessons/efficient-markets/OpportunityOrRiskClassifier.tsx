@@ -125,7 +125,7 @@ export default function OpportunityOrRiskClassifier() {
             Classify each case. Some cases admit more than one defensible answer — when in doubt,
             the lesson is to identify what additional information would resolve the question.
           </p>
-          <span className="font-mono text-[12px] text-slate-400">{doneCount}/{CASES.length}</span>
+          <span className="font-sans text-[12px] text-slate-400">{doneCount}/{CASES.length}</span>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export default function OpportunityOrRiskClassifier() {
           return (
             <div key={card.id} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <div className="flex items-baseline gap-2">
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">{card.label}</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-500">{card.label}</span>
               </div>
               <p className="mt-1.5 text-[14px] leading-[1.55] text-slate-100">{card.scenario}</p>
 
@@ -180,7 +180,7 @@ export default function OpportunityOrRiskClassifier() {
                         </p>
                       )}
                       <p className="mt-1.5 text-[12px] leading-[1.5] text-slate-300">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-cyan">What you would need · </span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-cyan">What you would need · </span>
                         {card.moreInfo}
                       </p>
                     </div>

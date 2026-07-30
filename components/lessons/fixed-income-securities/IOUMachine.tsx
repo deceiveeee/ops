@@ -67,7 +67,7 @@ export default function IOUMachine() {
           <div className="ops-caption text-[11px] text-accent-cyan">
             Bond contract
           </div>
-          <div className="mt-2 space-y-2 font-mono text-[12px] text-slate-300">
+          <div className="mt-2 space-y-2 font-sans text-[12px] text-slate-300">
             <ContractRow k="Face value" v="$1,000" />
             <ContractRow k="Coupon" v="$50 / year" />
             <ContractRow k="Maturity" v="3 years" />
@@ -289,7 +289,7 @@ function RoleCard({
         {chips.map((c) => (
           <span
             key={c}
-            className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 font-mono text-[11px] text-slate-300"
+            className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 font-sans text-[11px] text-slate-300"
           >
             {c}
           </span>
@@ -326,7 +326,7 @@ function FlowToken({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+        "inline-flex items-center rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
         c,
       )}
     >
@@ -362,7 +362,7 @@ function TimelineNode({
       />
       <div
         className={cn(
-          "mt-3 font-mono text-[13px]",
+          "mt-3 font-sans text-[13px]",
           active ? "text-slate-200" : "text-slate-500",
         )}
       >

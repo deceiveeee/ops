@@ -106,7 +106,7 @@ export default function CorrectButBankruptSimulation() {
     <div className="space-y-6">
       {/* Setup */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           The trade · deterministic price path
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -117,7 +117,7 @@ export default function CorrectButBankruptSimulation() {
         </div>
         <p className="ops-body mt-3 text-[14px] leading-[1.6] text-slate-100">
           The investor shorts the stock at <span className="text-accent-amber">$100</span>. The
-          stock follows a fixed path: <span className="font-mono text-accent-red">100 → 115 → 135 → 160 → 90 → 65</span>.
+          stock follows a fixed path: <span className="font-sans text-accent-red">100 → 115 → 135 → 160 → 90 → 65</span>.
           Eventually the price reaches <span className="text-accent-green">$65</span>, below the
           intrinsic-value estimate. The investor was right. The question is whether the investor
           survives long enough to benefit.
@@ -126,7 +126,7 @@ export default function CorrectButBankruptSimulation() {
 
       {/* Scenario presets */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
           Choose a scenario
         </div>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -160,7 +160,7 @@ export default function CorrectButBankruptSimulation() {
 
       {/* Chart */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Price path · {revealStep === 0 ? "press Start to advance" : `Step ${revealStep} of ${PRICE_PATH.length}`}
         </div>
         <div className="mt-3 overflow-x-auto">
@@ -255,7 +255,7 @@ export default function CorrectButBankruptSimulation() {
                   ? "border-accent-amber/40 bg-accent-amber/[0.06]"
                   : "border-accent-green/25 bg-accent-green/[0.05]",
             )}>
-            <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]",
+            <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]",
               liquidated ? "text-accent-red" : current.marginCall ? "text-accent-amber" : "text-accent-green")}>
               {liquidated ? "Forced liquidation" : current.marginCall ? "Margin call" : "Within margin"}
             </div>
@@ -274,7 +274,7 @@ export default function CorrectButBankruptSimulation() {
       <div className="flex flex-wrap gap-2">
         {revealStep < PRICE_PATH.length ? (
           <button type="button" onClick={advance}
-            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
             {revealStep === 0
               ? "Start simulation →"
               : liquidated
@@ -283,13 +283,13 @@ export default function CorrectButBankruptSimulation() {
           </button>
         ) : (
           <button type="button" onClick={reset}
-            className="rounded-full border border-white/20 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+            className="rounded-full border border-white/20 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
             ↻ Run again
           </button>
         )}
         {liquidated && revealStep < PRICE_PATH.length && (
           <button type="button" onClick={() => setRevealStep(PRICE_PATH.length)}
-            className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+            className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
             Skip to outcome →
           </button>
         )}
@@ -306,7 +306,7 @@ export default function CorrectButBankruptSimulation() {
               result.survives
                 ? "border-accent-green/40 bg-gradient-to-br from-accent-green/[0.08] via-white/[0.03] to-transparent"
                 : "border-accent-red/40 bg-gradient-to-br from-accent-red/[0.08] via-white/[0.03] to-transparent")}>
-              <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]",
+              <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]",
                 result.survives ? "text-accent-green" : "text-accent-red")}>
                 {result.survives ? "Survived — and benefited" : "Liquidated — and missed the realization"}
               </div>
@@ -342,7 +342,7 @@ export default function CorrectButBankruptSimulation() {
       </AnimatePresence>
 
       <div className="rounded-2xl border border-white/12 bg-white/[0.02] p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
           How the math works
         </div>
         <p className="ops-body mt-2 text-[13px] leading-[1.6] text-slate-300">
@@ -362,8 +362,8 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: "cya
   const border = tone === "cyan" ? "border-accent-cyan/25" : tone === "amber" ? "border-accent-amber/25" : tone === "red" ? "border-accent-red/25" : tone === "green" ? "border-accent-green/25" : tone === "purple" ? "border-accent-purple/25" : "border-white/10";
   return (
     <div className={cn("rounded-xl border bg-ink-950/40 px-3 py-2.5", border)}>
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className={cn("mt-0.5 font-mono text-[15px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className={cn("mt-0.5 font-sans text-[15px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }
@@ -379,7 +379,7 @@ function PresetButton({ active, onClick, label, detail, tone }: {
     <button type="button" onClick={onClick} aria-pressed={active}
       className={cn("rounded-xl border px-3 py-3 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
         active ? cn(border, bg) : "border-white/10 bg-white/[0.02] hover:border-white/25")}>
-      <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]", active ? text : "text-slate-400")}>{label}</div>
+      <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", active ? text : "text-slate-400")}>{label}</div>
       <div className={cn("mt-1 text-[12px] leading-tight", active ? "text-white" : "text-slate-200")}>{detail}</div>
     </button>
   );
@@ -391,7 +391,7 @@ function Slider({ label, value, min, max, step, suffix, prefix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value.toLocaleString()}{suffix}</span>
       </label>

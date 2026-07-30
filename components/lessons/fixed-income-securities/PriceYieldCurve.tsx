@@ -108,7 +108,7 @@ export default function PriceYieldCurve() {
               Price vs yield · coupon bond
             </span>
           </div>
-          <span className="font-mono text-[13px] text-accent-amber">
+          <span className="font-sans text-[13px] text-accent-amber">
             y = {formatPercent(ytm, 2)} · P = {formatMoney(price)}
           </span>
         </div>
@@ -144,7 +144,7 @@ export default function PriceYieldCurve() {
                   x={xAt(y)}
                   y={H - padY + 16}
                   textAnchor="middle"
-                  className="fill-slate-500 font-mono"
+                  className="fill-slate-500 font-sans"
                   fontSize="10"
                 >
                   {formatPercent(y, 0)}
@@ -161,7 +161,7 @@ export default function PriceYieldCurve() {
                 x={padX - 8}
                 y={yPxAt(p) + 3}
                 textAnchor="end"
-                className="fill-slate-500 font-mono"
+                className="fill-slate-500 font-sans"
                 fontSize="10"
               >
                 {p}
@@ -171,7 +171,7 @@ export default function PriceYieldCurve() {
               x={W - padX}
               y={H - 4}
               textAnchor="end"
-              className="fill-slate-500 font-mono"
+              className="fill-slate-500 font-sans"
               fontSize="10"
             >
               yield →
@@ -180,7 +180,7 @@ export default function PriceYieldCurve() {
               x={padX}
               y={padY - 8}
               textAnchor="start"
-              className="fill-slate-500 font-mono"
+              className="fill-slate-500 font-sans"
               fontSize="10"
             >
               price
@@ -203,7 +203,7 @@ export default function PriceYieldCurve() {
               x={tanX2 - 4}
               y={tanY2 - 6}
               textAnchor="end"
-              className="fill-accent-amber/80 font-mono"
+              className="fill-accent-amber/80 font-sans"
               fontSize="10"
             >
               tangent (duration)
@@ -237,7 +237,7 @@ export default function PriceYieldCurve() {
             <span className="ops-caption text-[11px] text-slate-400">
               Yield (y)
             </span>
-            <span className="font-mono text-[13px] text-accent-amber">
+            <span className="font-sans text-[13px] text-accent-amber">
               {formatPercent(ytm, 2)}
             </span>
           </div>
@@ -251,7 +251,7 @@ export default function PriceYieldCurve() {
             aria-label="Yield percentage"
             className="mt-2 w-full accent-accent-amber"
           />
-          <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+          <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
             <span>2%</span>
             <span>10%</span>
           </div>
@@ -303,7 +303,7 @@ function ReadCard({
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", accent)}>{value}</div>
+      <div className={cn("mt-1 font-sans text-[18px]", accent)}>{value}</div>
       {caption && (
         <div className="ops-caption mt-0.5 text-[11px] text-slate-500">
           {caption}

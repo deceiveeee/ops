@@ -140,7 +140,7 @@ function ForwardLadderInteractive() {
           <div className="ops-caption text-[11px] text-accent-purple">
             Implied one-year forward f₂ (year 1 &rarr; year 2)
           </div>
-          <div className="mt-3 space-y-1.5 font-mono text-[15px] text-slate-100">
+          <div className="mt-3 space-y-1.5 font-sans text-[15px] text-slate-100">
             <div>
               1+<Var>f</Var>
               <Sub>2</Sub> = (1+{formatPercent(r2, 2)})<Sup>2</Sup> / (1+
@@ -195,7 +195,7 @@ function RateSlider({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">
+        <span className="font-sans text-[13px] text-slate-100">
           {value.toFixed(1)}%
         </span>
       </div>
@@ -259,7 +259,7 @@ function ForwardLadderSVG({
             x={xAt(i)}
             y={baseY + 22}
             textAnchor="middle"
-            className="fill-slate-400 font-mono"
+            className="fill-slate-400 font-sans"
             fontSize="12"
           >
             {i === 0 ? "0" : i}
@@ -325,7 +325,7 @@ function ForwardLadderSVG({
         x={W - padX}
         y={28}
         textAnchor="end"
-        className="fill-accent-purple font-mono"
+        className="fill-accent-purple font-sans"
         fontSize="11"
       >
         forward rates (agreed today)
@@ -334,7 +334,7 @@ function ForwardLadderSVG({
         x={W - padX}
         y={H - 4}
         textAnchor="end"
-        className="fill-accent-cyan font-mono"
+        className="fill-accent-cyan font-sans"
         fontSize="11"
       >
         spot rates (today &rarr; t)
@@ -373,7 +373,7 @@ function SpotBracket({
         y={y + 14}
         textAnchor="middle"
         fill={color}
-        className="font-mono"
+        className="font-sans"
         fontSize="11"
       >
         {label} = {value}
@@ -424,7 +424,7 @@ function ForwardBracket({
         y={y - 6}
         textAnchor="middle"
         fill={color}
-        className="font-mono"
+        className="font-sans"
         fontSize="12"
       >
         {label}

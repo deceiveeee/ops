@@ -18,7 +18,7 @@ export default function ObjectiveTracker({
         </span>
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11px] tabular-nums",
+            "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] tabular-nums",
             doneCount === objectives.length
               ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
               : "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan",
@@ -54,7 +54,7 @@ export default function ObjectiveTracker({
               >
                 {o}
                 {done && (
-                  <span className="ml-2 inline-flex rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-cyan">
+                  <span className="ml-2 inline-flex rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-2 py-0.5 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-cyan">
                     Covered
                   </span>
                 )}

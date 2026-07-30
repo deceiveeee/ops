@@ -96,7 +96,7 @@ export default function OneRateOrMultipleRatesDecision() {
     <div className="space-y-6">
       {/* Principle */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           When does complexity help?
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.65] text-slate-100">
@@ -109,7 +109,7 @@ export default function OneRateOrMultipleRatesDecision() {
 
       {/* One-rate checklist */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           One rate may be acceptable when…
         </div>
         <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -131,7 +131,7 @@ export default function OneRateOrMultipleRatesDecision() {
 
       {/* Classification exercise */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           For each investment, which approach is justified?
         </div>
 

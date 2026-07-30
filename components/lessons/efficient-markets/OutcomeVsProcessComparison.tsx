@@ -13,7 +13,7 @@ export default function OutcomeVsProcessComparison() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Scenario A */}
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Scenario A</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Scenario A</div>
           <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-100">
             A diversified investor follows a disciplined process. An unexpected recession causes a loss.
           </p>
@@ -24,7 +24,7 @@ export default function OutcomeVsProcessComparison() {
         </div>
         {/* Scenario B */}
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">Scenario B</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Scenario B</div>
           <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-100">
             An investor concentrates savings in a speculative company based on a rumor. The stock doubles.
           </p>

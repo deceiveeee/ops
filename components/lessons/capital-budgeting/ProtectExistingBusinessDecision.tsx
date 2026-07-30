@@ -40,13 +40,13 @@ export default function ProtectExistingBusinessDecision() {
         : "border-accent-red/25 bg-accent-red/[0.05]")}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Immediate cash saved</div>
-            <div className={cn("mt-1 font-mono text-[20px]", opt.saved > 0 ? "text-accent-green" : "text-white")}>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Immediate cash saved</div>
+            <div className={cn("mt-1 font-sans text-[20px]", opt.saved > 0 ? "text-accent-green" : "text-white")}>
               {opt.saved > 0 ? `+$${opt.saved}M` : "$0"}
             </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Risk to existing operations</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Risk to existing operations</div>
             <div className="mt-1 text-[14px] text-slate-100">{opt.risk}</div>
           </div>
         </div>

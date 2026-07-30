@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -17,13 +17,6 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mono",
-  weight: ["400", "500", "600"],
-});
-
 export const metadata: Metadata = {
   title: "Open Portfolio Studio — Decode the market beneath the chart",
   description:
@@ -38,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         {children}
       </body>

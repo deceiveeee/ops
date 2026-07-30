@@ -72,13 +72,13 @@ export default function InvestmentOrFinancingIRR() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Investment pattern</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Investment pattern</div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Cash outflow today, inflows later. <span className="text-white">Higher IRR is generally preferred.</span>
           </p>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">Financing pattern</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Financing pattern</div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Cash inflow today, outflows later. <span className="text-white">A lower rate is generally preferred</span> — the borrower wants to pay less.
           </p>
@@ -92,7 +92,7 @@ export default function InvestmentOrFinancingIRR() {
           return (
             <div key={s.id} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <p className="text-[15px] leading-[1.55] text-slate-100">{s.text}</p>
-              <p className="mt-1 font-mono text-[12px] text-slate-400">Cash flows: {s.flows}</p>
+              <p className="mt-1 font-sans text-[12px] text-slate-400">Cash flows: {s.flows}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {OPTIONS.map((o) => {
                   const isPicked = pick === o.key;

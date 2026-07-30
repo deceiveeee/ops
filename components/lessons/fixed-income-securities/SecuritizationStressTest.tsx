@@ -206,7 +206,7 @@ function ScenarioCard({
           initial={reduce ? false : { scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className={cn(
-            "rounded-full border px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+            "rounded-full border px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
             ratingCls,
           )}
         >
@@ -241,7 +241,7 @@ function ScenarioCard({
               )}
               aria-hidden
             />
-            <span className="font-mono text-[12px] text-slate-200">
+            <span className="font-sans text-[12px] text-slate-200">
               {REQ_LABELS[k]}
             </span>
           </button>

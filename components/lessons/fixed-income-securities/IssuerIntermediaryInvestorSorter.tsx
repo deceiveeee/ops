@@ -178,7 +178,7 @@ export default function IssuerIntermediaryInvestorSorter() {
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="font-mono text-[12px] text-slate-500"
+              className="font-sans text-[12px] text-slate-500"
             >
               All scenarios placed.
             </motion.span>
@@ -243,7 +243,7 @@ export default function IssuerIntermediaryInvestorSorter() {
             >
               <div
                 className={cn(
-                  "font-mono text-[12px] uppercase tracking-[0.14em]",
+                  "font-sans text-[12px] uppercase tracking-[0.14em]",
                   ROLE_TONE[p.role].text,
                 )}
               >
@@ -294,7 +294,7 @@ function RoleColumn({
     >
       <div
         className={cn(
-          "font-mono text-[12px] uppercase tracking-[0.14em]",
+          "font-sans text-[12px] uppercase tracking-[0.14em]",
           ROLE_TONE[role].text,
         )}
       >
@@ -302,7 +302,7 @@ function RoleColumn({
       </div>
       <div className="mt-3 space-y-2">
         {cards.length === 0 && (
-          <span className="font-mono text-[11px] text-slate-600">empty</span>
+          <span className="font-sans text-[11px] text-slate-600">empty</span>
         )}
         <AnimatePresence>
           {cards.map((c) => {
@@ -332,7 +332,7 @@ function RoleColumn({
                   className="block w-full text-left text-[12px] leading-5 text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
                 >
                   {c.text}
-                  <span className="mt-1 block font-mono text-[10px] text-slate-400">
+                  <span className="mt-1 block font-sans text-[10px] text-slate-400">
                     tap to remove ✕
                   </span>
                 </button>

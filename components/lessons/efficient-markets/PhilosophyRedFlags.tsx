@@ -87,7 +87,7 @@ export default function PhilosophyRedFlags() {
                 onClick={() => setOpen(isOpen ? null : f.id)}
                 className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                 <span className={cn(
-                  "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+                  "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[10px]",
                   isOpen ? "border-accent-cyan text-accent-cyan" : "border-accent-red/40 text-accent-red",
                 )}>
                   {i + 1}
@@ -95,7 +95,7 @@ export default function PhilosophyRedFlags() {
                 <span className="flex-1 text-[15px] font-medium leading-snug text-white">
                   <span className="text-accent-red/80">Flag · </span>&ldquo;{f.weak}&rdquo;
                 </span>
-                <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-sm text-accent-cyan transition-transform",
+                <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-sm text-accent-cyan transition-transform",
                   isOpen && "rotate-45")} aria-hidden>+</span>
               </button>
               <AnimatePresence initial={false}>
@@ -108,15 +108,15 @@ export default function PhilosophyRedFlags() {
                     className="overflow-hidden">
                     <div className="ops-body px-5 pb-5 space-y-3">
                       <div>
-                        <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Why it is insufficient</div>
+                        <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Why it is insufficient</div>
                         <p className="mt-1 text-[14px] leading-[1.6] text-slate-100">{f.why}</p>
                       </div>
                       <div className="rounded-lg border border-accent-amber/20 bg-accent-amber/[0.05] px-3 py-2.5">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Missing evidence · </span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Missing evidence · </span>
                         <span className="text-[13px] leading-[1.55] text-slate-100">{f.missing}</span>
                       </div>
                       <div className="rounded-lg border border-accent-green/25 bg-accent-green/[0.05] px-3 py-2.5">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Stronger replacement · </span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Stronger replacement · </span>
                         <span className="text-[13px] italic leading-[1.55] text-slate-100">{f.stronger}</span>
                       </div>
                     </div>

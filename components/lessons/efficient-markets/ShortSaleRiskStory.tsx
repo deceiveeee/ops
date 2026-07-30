@@ -36,7 +36,7 @@ export default function ShortSaleRiskStory() {
     <div className="space-y-6">
       {/* Setup */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">The setup</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">The setup</div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <Stat label="Current price" value="$100" tone="amber" />
           <Stat label="Est. intrinsic value" value="$60" tone="cyan" />
@@ -83,7 +83,7 @@ export default function ShortSaleRiskStory() {
             )}
           </p>
           <button type="button" onClick={advance}
-            className="mt-4 rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+            className="mt-4 rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
             Step through price path →
           </button>
         </motion.div>
@@ -92,7 +92,7 @@ export default function ShortSaleRiskStory() {
       {/* Price path visualization */}
       {stage > 0 && (
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
             Price path · {current.label}
           </div>
 
@@ -148,12 +148,12 @@ export default function ShortSaleRiskStory() {
           <div className="mt-4 flex flex-wrap gap-2">
             {stage < STAGES.length - 1 ? (
               <button type="button" onClick={advance}
-                className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                 Next stage →
               </button>
             ) : (
               <button type="button" onClick={reset}
-                className="rounded-full border border-white/20 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                className="rounded-full border border-white/20 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                 ↻ Restart
               </button>
             )}
@@ -168,7 +168,7 @@ export default function ShortSaleRiskStory() {
             initial={reduce ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5 sm:p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
               Why a correct short can lose money
             </div>
             <ul className="mt-3 space-y-2">
@@ -216,8 +216,8 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: "cya
   return (
     <div className={cn("rounded-xl border bg-ink-950/40 px-3 py-2.5",
       tone === "cyan" ? "border-accent-cyan/25" : tone === "amber" ? "border-accent-amber/25" : tone === "red" ? "border-accent-red/25" : tone === "green" ? "border-accent-green/25" : "border-white/10")}>
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className={cn("mt-0.5 font-mono text-[16px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className={cn("mt-0.5 font-sans text-[16px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

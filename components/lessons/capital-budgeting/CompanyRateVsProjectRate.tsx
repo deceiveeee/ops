@@ -58,7 +58,7 @@ export default function CompanyRateVsProjectRate() {
 
       {/* Mode toggle */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Which discount rate should the investor use?
         </div>
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Discount rate source">
@@ -104,7 +104,7 @@ export default function CompanyRateVsProjectRate() {
       >
         <div
           className={cn(
-            "font-mono text-[12px] uppercase tracking-[0.16em]",
+            "font-sans text-[12px] uppercase tracking-[0.16em]",
             mode === "company" ? "text-accent-cyan" : "text-accent-amber",
           )}
         >
@@ -137,7 +137,7 @@ export default function CompanyRateVsProjectRate() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
           <span
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-[13px] uppercase tracking-[0.14em]",
+              "inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-sans text-[13px] uppercase tracking-[0.14em]",
               accept
                 ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
                 : "border-accent-red/50 bg-accent-red/10 text-accent-red",
@@ -145,7 +145,7 @@ export default function CompanyRateVsProjectRate() {
           >
             {accept ? "Accept" : "Reject"}
           </span>
-          <span className="font-mono text-[13px] tabular-nums text-slate-300">
+          <span className="font-sans text-[13px] tabular-nums text-slate-300">
             {fmt(requiredReturn)}% required
           </span>
         </div>
@@ -201,10 +201,10 @@ export default function CompanyRateVsProjectRate() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4 text-center">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">
         {label}
       </div>
-      <div className="mt-2 font-mono text-[17px] tabular-nums text-white">{value}</div>
+      <div className="mt-2 font-sans text-[17px] tabular-nums text-white">{value}</div>
     </div>
   );
 }
@@ -230,25 +230,25 @@ function SummaryCard({
         highlight ? "border-accent-amber/30 bg-accent-amber/[0.04]" : "border-white/12 bg-white/[0.02]",
       )}
     >
-      <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+      <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
         {title}
       </div>
       <div className="mt-3 space-y-2">
         <div className="flex items-baseline justify-between">
           <span className="text-[13px] text-slate-300">Beta</span>
-          <span className="font-mono text-[15px] tabular-nums text-white">{beta}</span>
+          <span className="font-sans text-[15px] tabular-nums text-white">{beta}</span>
         </div>
         <div className="flex items-baseline justify-between">
           <span className="text-[13px] text-slate-300">Required return</span>
-          <span className="font-mono text-[15px] tabular-nums text-accent-amber">{fmt(rate)}%</span>
+          <span className="font-sans text-[15px] tabular-nums text-accent-amber">{fmt(rate)}%</span>
         </div>
         <div className="flex items-baseline justify-between">
           <span className="text-[13px] text-slate-300">Present value</span>
-          <span className="font-mono text-[15px] tabular-nums text-white">${fmt(CF1 / (1 + rate / 100))}</span>
+          <span className="font-sans text-[15px] tabular-nums text-white">${fmt(CF1 / (1 + rate / 100))}</span>
         </div>
         <div className="flex items-baseline justify-between border-t border-white/10 pt-2">
           <span className="text-[13px] text-slate-300">NPV</span>
-          <span className={cn("font-mono text-[17px] tabular-nums", accept ? "text-accent-green" : "text-accent-red")}>
+          <span className={cn("font-sans text-[17px] tabular-nums", accept ? "text-accent-green" : "text-accent-red")}>
             ${fmt(npv)}
           </span>
         </div>
@@ -256,7 +256,7 @@ function SummaryCard({
           <span className="text-[13px] text-slate-300">Decision</span>
           <span
             className={cn(
-              "font-mono text-[13px] uppercase tracking-[0.14em]",
+              "font-sans text-[13px] uppercase tracking-[0.14em]",
               accept ? "text-accent-green" : "text-accent-red",
             )}
           >

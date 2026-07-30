@@ -186,7 +186,7 @@ function CouponTimeline({ reduce }: { reduce: boolean | null }) {
             x={xAt(i)}
             y={baseY + 22}
             textAnchor="middle"
-            className="fill-slate-400 font-mono"
+            className="fill-slate-400 font-sans"
             fontSize="12"
           >
             Y{i}
@@ -220,7 +220,7 @@ function CouponTimeline({ reduce }: { reduce: boolean | null }) {
             y={baseY - h - 6}
             textAnchor="middle"
             fill={color}
-            className="font-mono"
+            className="font-sans"
             fontSize="12"
           >
             ${f.amount}
@@ -257,7 +257,7 @@ function StripRow({
         <span className="ops-caption text-[11px] text-accent-purple">
           {count} × ${count >= 1000 ? "1" : "1"} {year}-yr STRIPS
         </span>
-        <span className="font-mono text-[14px] text-accent-green">
+        <span className="font-sans text-[14px] text-accent-green">
           +${count} @ Y{year}
         </span>
       </div>
@@ -312,7 +312,7 @@ function QtyPicker({
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
         <span
           className={cn(
-            "font-mono text-[14px]",
+            "font-sans text-[14px]",
             ok ? "text-accent-green" : "text-slate-100",
           )}
         >

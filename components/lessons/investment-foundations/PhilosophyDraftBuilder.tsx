@@ -110,7 +110,7 @@ export default function PhilosophyDraftBuilder() {
               Investment Philosophy Draft 0.1
             </span>
           </div>
-          <span className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">
+          <span className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">
             Starting hypothesis — not a completed philosophy
           </span>
         </div>
@@ -122,7 +122,7 @@ export default function PhilosophyDraftBuilder() {
           browser and never sent anywhere.
         </p>
 
-        <div className="mt-3 font-mono text-[11px] text-slate-500">
+        <div className="mt-3 font-sans text-[11px] text-slate-500">
           {filledCount}/{totalFields} fields completed
         </div>
 
@@ -274,7 +274,7 @@ export default function PhilosophyDraftBuilder() {
             Clear draft
           </button>
           {local.updatedAt && (
-            <span className="ml-auto font-mono text-[11px] text-slate-500">
+            <span className="ml-auto font-sans text-[11px] text-slate-500">
               Last saved: {new Date(local.updatedAt).toLocaleString()}
             </span>
           )}

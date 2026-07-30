@@ -78,13 +78,13 @@ export default function SyntheticForwardLoanBuilder() {
               { t: 4, p: 0.7629, r: 0.07 },
             ].map((row) => (
               <tr key={row.t} className="border-b border-white/5">
-                <td className="px-4 py-2.5 text-left font-mono text-[14px] text-slate-200">
+                <td className="px-4 py-2.5 text-left font-sans text-[14px] text-slate-200">
                   {row.t}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-[14px] text-slate-200">
+                <td className="px-4 py-2.5 font-sans text-[14px] text-slate-200">
                   {row.p.toFixed(4)}
                 </td>
-                <td className="px-4 py-2.5 font-mono text-[14px] text-accent-cyan">
+                <td className="px-4 py-2.5 font-sans text-[14px] text-accent-cyan">
                   {formatPercent(row.r)}
                 </td>
               </tr>
@@ -118,7 +118,7 @@ export default function SyntheticForwardLoanBuilder() {
                 aria-current={step === n}
                 onClick={() => setStep(n as Step)}
                 className={cn(
-                  "h-7 w-7 rounded-full border font-mono text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                  "h-7 w-7 rounded-full border font-sans text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                   step === n
                     ? "border-accent-cyan/60 bg-accent-cyan/20 text-accent-cyan"
                     : step > n
@@ -205,16 +205,16 @@ export default function SyntheticForwardLoanBuilder() {
                       <td className="px-4 py-3 text-left ops-body-strong text-[13px] text-slate-50">
                         Total
                       </td>
-                      <td className="px-4 py-3 font-mono text-[15px] font-semibold text-accent-green">
+                      <td className="px-4 py-3 font-sans text-[15px] font-semibold text-accent-green">
                         0
                       </td>
-                      <td className="px-4 py-3 font-mono text-[14px] text-slate-600">
+                      <td className="px-4 py-3 font-sans text-[14px] text-slate-600">
                         0
                       </td>
-                      <td className="px-4 py-3 font-mono text-[15px] font-semibold text-accent-green">
+                      <td className="px-4 py-3 font-sans text-[15px] font-semibold text-accent-green">
                         +{FACE_NEED.toFixed(3)}
                       </td>
-                      <td className="px-4 py-3 font-mono text-[15px] font-semibold text-accent-red">
+                      <td className="px-4 py-3 font-sans text-[15px] font-semibold text-accent-red">
                         −{SHORT_FACE_4YR.toFixed(3)}
                       </td>
                     </tr>
@@ -236,7 +236,7 @@ export default function SyntheticForwardLoanBuilder() {
               <div className="ops-caption text-[11px] text-accent-green">
                 Quote for the customer
               </div>
-              <div className="mt-1 font-mono text-[28px] text-accent-green">
+              <div className="mt-1 font-sans text-[28px] text-accent-green">
                 Borrow at {formatPercent(F4)} (Year 3 → Year 4)
               </div>
               <p className="ops-body mt-2 text-[14px] leading-6 text-slate-200">
@@ -288,7 +288,7 @@ function StepPanel({
       body: (
         <p className="ops-body text-[14px] leading-6 text-slate-200">
           The 3-year STRIPS price is{" "}
-          <span className="font-mono text-slate-100">0.8278</span> per $1.{" "}
+          <span className="font-sans text-slate-100">0.8278</span> per $1.{" "}
           <InlineMath>
             {"\\text{Cost} = 20{,}000{,}000 \\times 0.8278"}
           </InlineMath>
@@ -313,7 +313,7 @@ function StepPanel({
       body: (
         <p className="ops-body text-[14px] leading-6 text-slate-200">
           You need $16.556MM of proceeds today. The 4-year price is{" "}
-          <span className="font-mono text-slate-100">0.7629</span>.{" "}
+          <span className="font-sans text-slate-100">0.7629</span>.{" "}
           <InlineMath>
             {"\\text{Face shorted} = \\frac{16.556}{0.7629}"}
           </InlineMath>
@@ -402,7 +402,7 @@ function AnswerPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-lg border px-3 py-1.5 font-mono text-[14px]",
+        "inline-flex items-center rounded-lg border px-3 py-1.5 font-sans text-[14px]",
         tone === "green"
           ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
           : "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan",
@@ -427,7 +427,7 @@ function StepChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.1em] transition-colors",
         active
           ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
           : done
@@ -467,14 +467,14 @@ function CFRow({
       <td className="px-4 py-3 text-left">
         <span className={cn("text-[13px]", toneText)}>{label}</span>
       </td>
-      <td className="px-4 py-3 font-mono text-[14px] text-slate-200">
+      <td className="px-4 py-3 font-sans text-[14px] text-slate-200">
         {fmt(y0)}
       </td>
-      <td className="px-4 py-3 font-mono text-[14px] text-slate-500">{mid}</td>
-      <td className="px-4 py-3 font-mono text-[14px] text-slate-200">
+      <td className="px-4 py-3 font-sans text-[14px] text-slate-500">{mid}</td>
+      <td className="px-4 py-3 font-sans text-[14px] text-slate-200">
         {fmt(y3)}
       </td>
-      <td className="px-4 py-3 font-mono text-[14px] text-slate-200">
+      <td className="px-4 py-3 font-sans text-[14px] text-slate-200">
         {fmt(y4)}
       </td>
     </tr>
@@ -530,7 +530,7 @@ function TimelineVisual({
               x={xAt(i)}
               y={baseY + 22}
               textAnchor="middle"
-              className="fill-slate-400 font-mono"
+              className="fill-slate-400 font-sans"
               fontSize="11"
             >
               {i}
@@ -559,7 +559,7 @@ function TimelineVisual({
               <text
                 x={xAt(0) + 6}
                 y={baseY - 44}
-                className="fill-accent-cyan font-mono"
+                className="fill-accent-cyan font-sans"
                 fontSize="11"
               >
                 Long 3-yr (−{COST_3YR.toFixed(2)} @Y0)
@@ -568,7 +568,7 @@ function TimelineVisual({
                 x={xAt(3)}
                 y={baseY - 44}
                 textAnchor="end"
-                className="fill-accent-cyan font-mono"
+                className="fill-accent-cyan font-sans"
                 fontSize="11"
               >
                 +{FACE_NEED.toFixed(1)} @Y3
@@ -599,7 +599,7 @@ function TimelineVisual({
               <text
                 x={xAt(0) + 6}
                 y={baseY + 52}
-                className="fill-accent-red font-mono"
+                className="fill-accent-red font-sans"
                 fontSize="11"
               >
                 Short 4-yr (+{COST_3YR.toFixed(2)} @Y0)
@@ -608,7 +608,7 @@ function TimelineVisual({
                 x={xAt(4)}
                 y={baseY + 52}
                 textAnchor="end"
-                className="fill-accent-red font-mono"
+                className="fill-accent-red font-sans"
                 fontSize="11"
               >
                 −{SHORT_FACE_4YR.toFixed(2)} @Y4
@@ -627,7 +627,7 @@ function TimelineVisual({
               x={xAt(0)}
               y={baseY - 4}
               textAnchor="middle"
-              className="fill-accent-green font-mono"
+              className="fill-accent-green font-sans"
               fontSize="10"
             >
               net 0

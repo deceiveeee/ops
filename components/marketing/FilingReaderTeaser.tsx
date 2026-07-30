@@ -80,7 +80,7 @@ export default function FilingReaderTeaser() {
                   {line.text}
                 </p>
                 <footer className="mt-4 text-[13px] text-slate-500">
-                  <span className="font-mono tabular-nums">
+                  <span className="font-sans tabular-nums">
                     10-K · L{String(active + 1).padStart(2, "0")}
                   </span>
                   <span className="mx-2 text-slate-700">·</span>

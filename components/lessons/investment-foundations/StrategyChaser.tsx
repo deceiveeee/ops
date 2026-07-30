@@ -181,7 +181,7 @@ export default function StrategyChaser() {
           each period, the recently strongest strategy will be presented as the
           next obvious opportunity.
         </p>
-        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[11px] text-slate-500">
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-sans text-[11px] text-slate-500">
           <span>Starting value: ${STARTING_VALUE.toLocaleString()}</span>
           <span>Initial allocation: Broad market</span>
           <span>Switch cost: {(SWITCH_COST_PCT * 100).toFixed(1)}% of value</span>
@@ -207,7 +207,7 @@ export default function StrategyChaser() {
                     </div>
                     <div
                       className={cn(
-                        "mt-1 font-mono text-[18px] tabular-nums",
+                        "mt-1 font-sans text-[18px] tabular-nums",
                         r.r >= 0 ? "text-accent-green" : "text-accent-red",
                       )}
                     >
@@ -358,7 +358,7 @@ function Results({
         The problem is not that an investor changed strategy. The problem is
         that the investor had no coherent reason for changing. Without a
         philosophy, the decision process becomes:
-        <span className="mt-2 block font-mono text-[13px] text-slate-300">
+        <span className="mt-2 block font-sans text-[13px] text-slate-300">
           recent winner → portfolio switch → disappointment → next recent winner
         </span>
       </DefinitionCard>
@@ -401,7 +401,7 @@ function Stat({
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
       <div className="ops-caption text-[10px] text-slate-500">{label}</div>
-      <div className={cn("mt-1 font-mono text-[16px] tabular-nums", toneText[tone])}>
+      <div className={cn("mt-1 font-sans text-[16px] tabular-nums", toneText[tone])}>
         {value}
       </div>
     </div>

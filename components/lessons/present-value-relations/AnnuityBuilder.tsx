@@ -68,7 +68,7 @@ export default function AnnuityBuilder() {
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Cashflow (C)</span>
-            <span className="font-mono text-accent-green">{fmt(c)}</span>
+            <span className="font-sans text-accent-green">{fmt(c)}</span>
           </span>
           <input
             type="number"
@@ -77,13 +77,13 @@ export default function AnnuityBuilder() {
             value={c}
             aria-label="Annuity cashflow C"
             onChange={(e) => setC(Math.max(0, Number(e.target.value) || 0))}
-            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
+            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
           />
         </label>
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Discount rate (r)</span>
-            <span className="font-mono text-accent-cyan">{r.toFixed(1)}%</span>
+            <span className="font-sans text-accent-cyan">{r.toFixed(1)}%</span>
           </span>
           <input
             type="range"
@@ -146,7 +146,7 @@ export default function AnnuityBuilder() {
                   </span>
                   <span
                     className={cn(
-                      "font-mono text-[15px]",
+                      "font-sans text-[15px]",
                       isSel ? "text-accent-cyan" : "text-slate-300",
                     )}
                   >
@@ -173,7 +173,7 @@ export default function AnnuityBuilder() {
           })}
         </div>
         <p className="ops-muted mt-4 text-[13px] text-slate-400">
-          Selected value: <span className="font-mono text-slate-200">{fmt(data.find((d) => d.key === selected)!.pv)}</span>. The
+          Selected value: <span className="font-sans text-slate-200">{fmt(data.find((d) => d.key === selected)!.pv)}</span>. The
           50-year bar nearly reaches the forever bar; the 20-year bar sits well below it.
         </p>
       </div>

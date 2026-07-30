@@ -57,7 +57,7 @@ export default function CorporateYieldWaterfall() {
               Corporate yield waterfall
             </span>
           </div>
-          <div className="font-mono text-[12px] text-slate-400">
+          <div className="font-sans text-[12px] text-slate-400">
             MIT XYZ · 10yr zero · face {formatMoney(FACE)}
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function CorporateYieldWaterfall() {
             earn {pct(yPromised)}.&rdquo;
           </p>
           <div className="mt-3 rounded-lg border border-accent-green/30 bg-accent-green/10 px-4 py-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">
+            <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">
               Correction
             </span>
             <p className="ops-body mt-1 text-[15px] leading-7 text-slate-100">
@@ -244,7 +244,7 @@ function WaterfallBar({
   }[tone];
   return (
     <div className="flex flex-1 flex-col items-center">
-      <span className={cn("font-mono text-[12px]", text)}>{display}</span>
+      <span className={cn("font-sans text-[12px]", text)}>{display}</span>
       <div
         className={cn(
           "mt-1 w-full rounded-t border-x border-t",
@@ -300,7 +300,7 @@ function WaterfallSlider({
     <div className="rounded-2xl border border-white/10 bg-ink-950/40 p-5">
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className={cn("font-mono text-[13px]", text)}>{display}</span>
+        <span className={cn("font-sans text-[13px]", text)}>{display}</span>
       </div>
       <input
         type="range"

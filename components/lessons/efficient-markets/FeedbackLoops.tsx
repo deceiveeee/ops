@@ -70,7 +70,7 @@ export default function FeedbackLoops() {
           className="space-y-4">
           <div className={cn("rounded-2xl border bg-white/[0.03] p-5 sm:p-6",
             direction === "up" ? "border-accent-green/25" : "border-accent-red/25")}>
-            <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+            <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
               direction === "up" ? "text-accent-green" : "text-accent-red")}>
               {direction === "up" ? "Reinforcing loop · upward" : "Reinforcing loop · downward"}
             </div>
@@ -80,7 +80,7 @@ export default function FeedbackLoops() {
           </div>
 
           <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-            <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+            <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
               Supporting mechanisms
             </div>
             <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">

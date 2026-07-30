@@ -233,7 +233,7 @@ function YtmLab() {
                   aria-pressed={freq === f}
                   onClick={() => setFreq(f)}
                   className={cn(
-                    "flex-1 rounded-md border px-3 py-1.5 font-mono text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                    "flex-1 rounded-md border px-3 py-1.5 font-sans text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                     freq === f
                       ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan"
                       : "border-white/15 text-slate-300 hover:bg-white/5",
@@ -271,7 +271,7 @@ function YtmLab() {
                 <div className="ops-caption text-[11px] text-slate-400">
                   Solved YTM
                 </div>
-                <div className="mt-1 font-mono text-[30px] text-accent-cyan">
+                <div className="mt-1 font-sans text-[30px] text-accent-cyan">
                   {isFinite(ytm) ? formatPercent(ytm, 2) : "—"}
                 </div>
               </div>
@@ -281,7 +281,7 @@ function YtmLab() {
                 </div>
                 <div
                   className={cn(
-                    "mt-1 font-mono text-[18px]",
+                    "mt-1 font-sans text-[18px]",
                     price > face
                       ? "text-accent-green"
                       : price < face
@@ -294,7 +294,7 @@ function YtmLab() {
               </div>
               <span
                 className={cn(
-                  "rounded-full border px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+                  "rounded-full border px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
                   badgeCls,
                 )}
               >
@@ -333,13 +333,13 @@ function YtmLab() {
               </thead>
               <tbody>
                 <tr>
-                  <td className="px-3 py-2 text-left font-mono text-[13px] text-slate-400">
+                  <td className="px-3 py-2 text-left font-sans text-[13px] text-slate-400">
                     Cash flow
                   </td>
                   {cashFlows.map((cf, i) => (
                     <td
                       key={i}
-                      className="px-3 py-2 font-mono text-[13px] text-slate-200"
+                      className="px-3 py-2 font-sans text-[13px] text-slate-200"
                     >
                       ${cf.toFixed(2)}
                     </td>
@@ -376,7 +376,7 @@ function Field({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{value}</span>
+        <span className="font-sans text-[13px] text-slate-100">{value}</span>
       </div>
       <div className="mt-2">{children}</div>
     </div>
@@ -479,7 +479,7 @@ function PriceYieldCurve({
           x={W - 8}
           y={H - 6}
           textAnchor="end"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="10"
         >
           yield y
@@ -487,7 +487,7 @@ function PriceYieldCurve({
         <text
           x={padX + 4}
           y={14}
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="10"
         >
           price P

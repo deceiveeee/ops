@@ -119,7 +119,7 @@ export default function SecuritizationFactory() {
                     : "border-accent-red/50 bg-accent-red/[0.06]",
                 )}
               >
-                <div className="font-mono text-[14px] text-white">POOL</div>
+                <div className="font-sans text-[14px] text-white">POOL</div>
                 <div className="ops-caption mt-1 text-[11px] text-slate-400">
                   securitize
                 </div>
@@ -142,7 +142,7 @@ export default function SecuritizationFactory() {
                   TRANCHE_COLORS.senior,
                 )}
               >
-                <div className="font-mono text-[13px]">Senior</div>
+                <div className="font-sans text-[13px]">Senior</div>
                 <div className="ops-caption text-[10px]">paid first</div>
               </div>
               <div
@@ -151,7 +151,7 @@ export default function SecuritizationFactory() {
                   TRANCHE_COLORS.mezz,
                 )}
               >
-                <div className="font-mono text-[13px]">Mezzanine</div>
+                <div className="font-sans text-[13px]">Mezzanine</div>
                 <div className="ops-caption text-[10px]">middle</div>
               </div>
               <div
@@ -160,7 +160,7 @@ export default function SecuritizationFactory() {
                   TRANCHE_COLORS.junior,
                 )}
               >
-                <div className="font-mono text-[13px]">Junior / equity</div>
+                <div className="font-sans text-[13px]">Junior / equity</div>
                 <div className="ops-caption text-[10px]">absorbs first loss</div>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function SecuritizationFactory() {
                 </span>
                 <span
                   className={cn(
-                    "rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em]",
+                    "rounded-full border px-2.5 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em]",
                     reqs[r.id]
                       ? "border-accent-green/50 text-accent-green"
                       : "border-accent-red/50 text-accent-red",

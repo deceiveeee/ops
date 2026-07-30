@@ -147,7 +147,7 @@ export default function Lesson4_4() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -347,7 +347,7 @@ export default function Lesson4_4() {
             N periods to today.
           </p>
           <div className="mt-5 overflow-x-auto">
-            <div className="flex min-w-[560px] items-center gap-2 font-mono text-[12px]">
+            <div className="flex min-w-[560px] items-center gap-2 font-sans text-[12px]">
               <span className="rounded-md border border-white/30 bg-white/[0.04] px-3 py-1.5 text-slate-100">
                 Time 0 (today)
               </span>
@@ -418,13 +418,13 @@ export default function Lesson4_4() {
           <table className="w-full min-w-[420px] border-collapse text-left">
             <thead>
               <tr className="text-[12px] text-slate-400">
-                <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">t</th>
-                <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">Dₜ</th>
-                <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">(1.20)ᵗ</th>
-                <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">PV(Dₜ)</th>
+                <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">t</th>
+                <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">Dₜ</th>
+                <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">(1.20)ᵗ</th>
+                <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">PV(Dₜ)</th>
               </tr>
             </thead>
-            <tbody className="font-mono text-[14px] text-slate-200">
+            <tbody className="font-sans text-[14px] text-slate-200">
               <tr className="odd:bg-white/[0.015]">
                 <td className="px-4 py-1.5">1</td>
                 <td className="px-4 py-1.5">$1.0600</td>
@@ -469,7 +469,7 @@ export default function Lesson4_4() {
               </tr>
             </tbody>
             <tfoot>
-              <tr className="font-mono text-[14px] text-accent-green">
+              <tr className="font-sans text-[14px] text-accent-green">
                 <td className="border-t border-white/15 px-4 py-2" colSpan={3}>
                   PV of dividends (years 1–7)
                 </td>
@@ -513,18 +513,18 @@ export default function Lesson4_4() {
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Assumption
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Formula
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     P₀
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[14px] text-slate-200">
+              <tbody className="font-sans text-[14px] text-slate-200">
                 <tr className="odd:bg-white/[0.015]">
                   <td className="px-4 py-2">(a) No growth, 0% forever</td>
                   <td className="px-4 py-2 text-slate-400">D₁ / r = 1.06 / 0.20</td>
@@ -631,7 +631,7 @@ export default function Lesson4_4() {
             </div>
           </div>
           <div className="mt-5 overflow-x-auto">
-            <div className="flex min-w-[560px] items-center gap-2 font-mono text-[12px]">
+            <div className="flex min-w-[560px] items-center gap-2 font-sans text-[12px]">
               <span className="rounded-md border border-accent-green/40 bg-accent-green/10 px-3 py-1.5 text-accent-green">
                 15%
               </span>

@@ -124,7 +124,7 @@ export default function NPVBreakEvenSolver() {
 
       {/* Result */}
       <div className="rounded-2xl border border-accent-amber/30 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           {TABS.find((t) => t.key === tab)!.label}
         </div>
         <div className="mt-4">
@@ -132,7 +132,7 @@ export default function NPVBreakEvenSolver() {
             {String.raw`\text{NPV} = 0 \;\;\text{when}\;\; ${tab === "sales" ? `S = \\$${breakEven.toFixed(2)}\\,\\text{M}` : tab === "margin" ? `m = ${breakEven.toFixed(1)}\\%` : tab === "cost" ? `C = \\$${Math.round(breakEven).toLocaleString()}` : `T = ${breakEven.toFixed(1)}\\,\\text{yrs}`}`}
           </BlockMath>
         </div>
-        <div className="mt-4 font-mono text-[28px] tabular-nums text-white sm:text-[32px]">
+        <div className="mt-4 font-sans text-[28px] tabular-nums text-white sm:text-[32px]">
           {TABS.find((t) => t.key === tab)!.format(breakEven)}
         </div>
       </div>
@@ -140,14 +140,14 @@ export default function NPVBreakEvenSolver() {
       {/* Comparison with base case */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-white/10 bg-ink-950/40 p-5">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">Base case</div>
-          <div className="mt-2 font-mono text-[18px] text-white">
+          <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">Base case</div>
+          <div className="mt-2 font-sans text-[18px] text-white">
             {tab === "sales" ? `$${baseSales}M` : tab === "margin" ? `${baseMargin}%` : tab === "cost" ? fmtK(baseConstruction) : `${baseRamp} yrs`}
           </div>
         </div>
         <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-amber">Break-even</div>
-          <div className="mt-2 font-mono text-[18px] text-white">
+          <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-accent-amber">Break-even</div>
+          <div className="mt-2 font-sans text-[18px] text-white">
             {TABS.find((t) => t.key === tab)!.format(breakEven)}
           </div>
         </div>

@@ -55,7 +55,7 @@ export function FormulaCard({
           {label}
         </div>
       )}
-      <div className="font-mono text-[17px] leading-relaxed text-slate-50 sm:text-[19px]">
+      <div className="font-sans text-[17px] leading-relaxed text-slate-50 sm:text-[19px]">
         {children}
       </div>
     </div>
@@ -65,7 +65,7 @@ export function FormulaCard({
 /** A compact inline formula for use inside body copy. */
 export function Inline({ children }: { children: React.ReactNode }) {
   return (
-    <span className="mx-0.5 inline-flex items-center rounded-md border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-mono text-[0.92em] text-slate-100">
+    <span className="mx-0.5 inline-flex items-center rounded-md border border-white/15 bg-white/[0.04] px-1.5 py-0.5 font-sans text-[0.92em] text-slate-100">
       {children}
     </span>
   );

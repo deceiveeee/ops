@@ -43,8 +43,8 @@ export default function ManagerEvaluationChecklist() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Manager evaluation checklist</span>
-          <span className="font-mono text-[12px] text-slate-400">{completed}/{ITEMS.length}</span>
+          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Manager evaluation checklist</span>
+          <span className="font-sans text-[12px] text-slate-400">{completed}/{ITEMS.length}</span>
         </div>
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/8">
           <div className="h-full rounded-full bg-accent-cyan transition-all duration-300" style={{ width: `${(completed / ITEMS.length) * 100}%` }} />
@@ -62,7 +62,7 @@ export default function ManagerEvaluationChecklist() {
                 <span className={cn("mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border text-[11px] transition-colors",
                   isChecked ? "border-accent-green bg-accent-green/20 text-accent-green" : "border-white/20 text-transparent")}>✓</span>
                 <span className={cn("flex-1 text-[14px] leading-[1.5]", isChecked ? "text-slate-300" : "text-white")}>{item.q}</span>
-                <span className={cn("flex h-5 w-5 flex-shrink-0 items-center justify-center font-mono text-xs text-accent-cyan transition-transform", isChecked && "rotate-45")} aria-hidden>+</span>
+                <span className={cn("flex h-5 w-5 flex-shrink-0 items-center justify-center font-sans text-xs text-accent-cyan transition-transform", isChecked && "rotate-45")} aria-hidden>+</span>
               </button>
               <AnimatePresence initial={false}>
                 {isChecked && (

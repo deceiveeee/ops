@@ -74,8 +74,8 @@ function PredictionStep({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {PORTFOLIOS.map((p) => (
           <div key={p.id} className="rounded-xl border border-white/12 bg-white/[0.03] p-4 text-center">
-            <div className={cn("font-mono text-[12px] uppercase tracking-[0.14em]", toneText[p.tone])}>{p.label}</div>
-            <div className="mt-2 font-mono text-[20px] text-slate-100">β = {p.beta.toFixed(1)}</div>
+            <div className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", toneText[p.tone])}>{p.label}</div>
+            <div className="mt-2 font-sans text-[20px] text-slate-100">β = {p.beta.toFixed(1)}</div>
           </div>
         ))}
       </div>
@@ -145,9 +145,9 @@ function ResponseBars({ marketExcess, showShocks }: { marketExcess: number; show
           <div key={p.id}>
             <div className="mb-1 flex items-center justify-between text-[15px]">
               <span className={toneText[p.tone]}>
-                {p.label} <span className="font-mono text-slate-400">β = {p.beta.toFixed(1)}</span>
+                {p.label} <span className="font-sans text-slate-400">β = {p.beta.toFixed(1)}</span>
               </span>
-              <span className="font-mono tabular-nums text-slate-100">
+              <span className="font-sans tabular-nums text-slate-100">
                 {total >= 0 ? "+" : ""}{total.toFixed(1)}%
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function BetaResponseLab() {
       ) : (
         <div className="space-y-6">
           <div>
-            <label className="block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <label className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Market excess return <InlineMath>{String.raw`(R_M - R_f)`}</InlineMath>:{" "}
               <span className={cn(marketExcess >= 0 ? "text-accent-green" : "text-accent-red")}>
                 {marketExcess >= 0 ? "+" : ""}{marketExcess.toFixed(0)}%
@@ -210,7 +210,7 @@ export default function BetaResponseLab() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.05] p-4">
-              <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-green">Positive scenario</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-green">Positive scenario</div>
               <p className="mt-2 text-[15px] leading-[1.55] text-slate-200">
                 With <InlineMath>{String.raw`R_M - R_f = +8\%`}</InlineMath>: the defensive portfolio
                 gains about 4%, the market-like 8%, the aggressive 12%.
@@ -218,7 +218,7 @@ export default function BetaResponseLab() {
               <div className="mt-3"><ResponseBars marketExcess={8} showShocks={false} /></div>
             </div>
             <div className="rounded-xl border border-accent-red/25 bg-accent-red/[0.05] p-4">
-              <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-red">Negative scenario</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-red">Negative scenario</div>
               <p className="mt-2 text-[15px] leading-[1.55] text-slate-200">
                 With <InlineMath>{String.raw`R_M - R_f = -8\%`}</InlineMath>: the defensive portfolio
                 loses about 4%, the market-like 8%, the aggressive 12%.

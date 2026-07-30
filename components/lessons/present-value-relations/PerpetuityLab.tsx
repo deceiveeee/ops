@@ -51,7 +51,7 @@ export default function PerpetuityLab() {
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Cashflow (C)</span>
-            <span className="font-mono text-accent-green">{fmt(c)}</span>
+            <span className="font-sans text-accent-green">{fmt(c)}</span>
           </span>
           <input
             type="number"
@@ -60,13 +60,13 @@ export default function PerpetuityLab() {
             value={c}
             aria-label="Perpetuity cashflow C"
             onChange={(e) => setC(Math.max(0, Number(e.target.value) || 0))}
-            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
+            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
           />
         </label>
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Discount rate (r)</span>
-            <span className={cn("font-mono", valid ? "text-accent-cyan" : "text-accent-red")}>
+            <span className={cn("font-sans", valid ? "text-accent-cyan" : "text-accent-red")}>
               {r.toFixed(1)}%
             </span>
           </span>
@@ -106,11 +106,11 @@ export default function PerpetuityLab() {
                   className="w-full rounded-t-sm bg-accent-green"
                   style={{ height: 46, opacity: op }}
                 />
-                <span className="font-mono text-[10px] text-slate-500">{i + 1}</span>
+                <span className="font-sans text-[10px] text-slate-500">{i + 1}</span>
               </div>
             );
           })}
-          <div className="flex h-[46px] flex-col justify-center pl-1 font-mono text-[16px] text-accent-green/70">
+          <div className="flex h-[46px] flex-col justify-center pl-1 font-sans text-[16px] text-accent-green/70">
             …∞
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function PerpetuityLab() {
               <span className="ops-caption text-[11px] text-slate-400">
                 Present value
               </span>
-              <span className="font-mono text-[22px] text-accent-cyan">
+              <span className="font-sans text-[22px] text-accent-cyan">
                 {fmt(pv as number)}
               </span>
             </div>

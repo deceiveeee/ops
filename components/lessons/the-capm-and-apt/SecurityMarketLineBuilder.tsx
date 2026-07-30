@@ -30,7 +30,7 @@ function Chip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[12px] uppercase tracking-[0.12em]",
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.12em]",
         done && "border-accent-green/50 bg-accent-green/10 text-accent-green",
         active && !done && "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan",
         !active && !done && "border-white/12 text-slate-500",
@@ -94,13 +94,13 @@ function NumStep({
             }}
             aria-label="numeric answer"
             className={cn(
-              "w-40 rounded-lg border bg-ink-950/60 py-2.5 pl-3.5 pr-9 font-mono text-[16px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
+              "w-40 rounded-lg border bg-ink-950/60 py-2.5 pl-3.5 pr-9 font-sans text-[16px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
               state === "correct" && "border-accent-green/60 focus-visible:ring-accent-green/40",
               state === "wrong" && "border-accent-red/60 focus-visible:ring-accent-red/40",
               state === "idle" && "border-white/20 focus:border-accent-cyan/60 focus-visible:ring-accent-cyan/40",
             )}
           />
-          <span className="pointer-events-none absolute right-3 font-mono text-[15px] text-slate-400" aria-hidden>{unit}</span>
+          <span className="pointer-events-none absolute right-3 font-sans text-[15px] text-slate-400" aria-hidden>{unit}</span>
         </div>
         {state !== "correct" && (
           <button
@@ -111,7 +111,7 @@ function NumStep({
             Check
           </button>
         )}
-        {state === "correct" && <span className="font-mono text-[13px] text-accent-green">✓ Correct</span>}
+        {state === "correct" && <span className="font-sans text-[13px] text-accent-green">✓ Correct</span>}
       </div>
       {state === "wrong" && hint && <p className="mt-2 text-[14px] leading-[1.55] text-accent-red/90">{hint}</p>}
     </div>
@@ -212,7 +212,7 @@ export default function SecurityMarketLineBuilder() {
 
       {stage >= 1 && stage <= 3 && (
         <div className="space-y-4 rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 2 · Locate the line</div>
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 2 · Locate the line</div>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <ChoiceStep
               prompt="Where does the SML cross the vertical axis (β = 0)?"
@@ -242,7 +242,7 @@ export default function SecurityMarketLineBuilder() {
 
       {stage >= 2 && stage <= 3 && (
         <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="mb-4 font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 3 · Required returns</div>
+          <div className="mb-4 font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 3 · Required returns</div>
           <CalculationWorksheet
             submitLabel="Check required returns"
             retryLabel="Clear wrong answers"
@@ -271,7 +271,7 @@ export default function SecurityMarketLineBuilder() {
 
       {stage >= 3 && (
         <div className="space-y-4 rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 4 · Read the line</div>
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 4 · Read the line</div>
           <ChoiceStep
             prompt="Why does a β = 1.5 investment require a 13% expected return?"
             options={[

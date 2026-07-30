@@ -77,7 +77,7 @@ export default function LessonIF_1_1() {
                 key={o}
                 className="ops-body flex items-start gap-3 text-[15px] text-slate-200"
               >
-                <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[12px] text-accent-amber">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[12px] text-accent-amber">
                   {i + 1}
                 </span>
                 <span>{o}</span>
@@ -469,7 +469,7 @@ function PhilosophyDevelopment() {
               className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
             >
               <div className="flex items-start gap-4">
-                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 font-mono text-[13px] text-accent-amber">
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 font-sans text-[13px] text-accent-amber">
                   {s.n}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -498,7 +498,7 @@ function PhilosophyDevelopment() {
           <ol className="mt-3 flex flex-col gap-2">
             {COURSE_PATH.map((p, i) => (
               <li key={p} className="flex items-center gap-3">
-                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 font-mono text-[11px] text-accent-amber">
+                <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 font-sans text-[11px] text-accent-amber">
                   {i + 1}
                 </span>
                 <span className="text-[14px] text-slate-200">{p}</span>
@@ -575,7 +575,7 @@ function ClosingSynthesis() {
           {PRINCIPLES.map((p, i) => (
             <Panel key={p.title}>
               <div className="flex items-start gap-3">
-                <span className="mt-1 inline-flex h-8 min-w-8 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-2 font-mono text-[12px] text-accent-amber">
+                <span className="mt-1 inline-flex h-8 min-w-8 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-2 font-sans text-[12px] text-accent-amber">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div>

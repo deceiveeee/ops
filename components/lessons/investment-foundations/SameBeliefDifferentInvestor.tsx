@@ -110,7 +110,7 @@ export default function SameBeliefDifferentInvestor() {
                 </h3>
                 <span
                   className={cn(
-                    "font-mono text-[11px] uppercase tracking-[0.14em]",
+                    "font-sans text-[11px] uppercase tracking-[0.14em]",
                     accentText[inv.accent],
                   )}
                 >
@@ -169,7 +169,7 @@ export default function SameBeliefDifferentInvestor() {
                     </span>
                     <span
                       className={cn(
-                        "font-mono text-[12px] text-accent-amber transition-transform",
+                        "font-sans text-[12px] text-accent-amber transition-transform",
                         isOpen && "rotate-90",
                       )}
                       aria-hidden

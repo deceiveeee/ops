@@ -193,10 +193,10 @@ export default function BondCashFlowBuilder() {
                     const isFinal = i === flows.length - 1;
                     return (
                       <tr key={f.period} className="border-b border-white/5">
-                        <td className="ops-body p-3 font-mono text-[13px] text-slate-300">{f.period}</td>
-                        <td className="p-3 text-right font-mono text-[13px] text-accent-green">{formatMoney(couponPerPeriod)}</td>
-                        <td className="p-3 text-right font-mono text-[13px] text-accent-amber">{isFinal ? formatMoney(face) : "—"}</td>
-                        <td className={cn("p-3 text-right font-mono text-[13px]", isFinal ? "text-accent-amber" : "text-slate-100")}>
+                        <td className="ops-body p-3 font-sans text-[13px] text-slate-300">{f.period}</td>
+                        <td className="p-3 text-right font-sans text-[13px] text-accent-green">{formatMoney(couponPerPeriod)}</td>
+                        <td className="p-3 text-right font-sans text-[13px] text-accent-amber">{isFinal ? formatMoney(face) : "—"}</td>
+                        <td className={cn("p-3 text-right font-sans text-[13px]", isFinal ? "text-accent-amber" : "text-slate-100")}>
                           {formatMoney(f.amount)}
                         </td>
                       </tr>
@@ -258,7 +258,7 @@ function ControlSlider({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{display}</span>
+        <span className="font-sans text-[13px] text-slate-100">{display}</span>
       </div>
       <input
         type="range"
@@ -279,7 +279,7 @@ function SummaryStat({ label, value, tone }: { label: string; value: string; ton
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", c)}>{value}</div>
+      <div className={cn("mt-1 font-sans text-[18px]", c)}>{value}</div>
     </div>
   );
 }

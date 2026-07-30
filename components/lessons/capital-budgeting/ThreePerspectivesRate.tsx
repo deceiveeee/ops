@@ -77,7 +77,7 @@ export default function ThreePerspectivesRate() {
     <div className="space-y-6">
       {/* The shared rate — unchanged across perspectives */}
       <div className="rounded-2xl border border-white/12 bg-ink-950/50 p-6 text-center">
-        <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-400">
+        <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-slate-400">
           The market-determined rate
         </div>
         <div className="mt-3">
@@ -115,7 +115,7 @@ export default function ThreePerspectivesRate() {
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "flex h-6 w-6 items-center justify-center rounded-full border font-mono text-[11px]",
+                    "flex h-6 w-6 items-center justify-center rounded-full border font-sans text-[11px]",
                     isActive
                       ? cn(toneBorder[item.tone], toneText[item.tone])
                       : "border-white/20 text-slate-400",
@@ -125,7 +125,7 @@ export default function ThreePerspectivesRate() {
                 </span>
                 <span
                   className={cn(
-                    "font-mono text-[11px] uppercase tracking-[0.14em]",
+                    "font-sans text-[11px] uppercase tracking-[0.14em]",
                     isActive ? toneText[item.tone] : "text-slate-400",
                   )}
                 >
@@ -142,7 +142,7 @@ export default function ThreePerspectivesRate() {
 
       {/* Active perspective detail */}
       <div className={cn("rounded-2xl border bg-white/[0.03] p-6", toneBorder[p.tone])}>
-        <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", toneText[p.tone])}>
+        <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[p.tone])}>
           {p.role}
         </div>
         <p className="ops-body mt-3 text-[20px] leading-[1.45] text-white sm:text-[22px]">
@@ -160,7 +160,7 @@ export default function ThreePerspectivesRate() {
 
       {/* The unifying statement */}
       <div className="rounded-2xl border border-accent-amber/30 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-6 sm:p-7">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           One rate, three viewpoints
         </div>
         <div className="mt-4 max-w-3xl">

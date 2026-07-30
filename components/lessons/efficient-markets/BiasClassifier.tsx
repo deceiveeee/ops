@@ -112,7 +112,7 @@ export default function BiasClassifier() {
             Classify each statement. There is one best answer per card. After every answer you will
             see the phrase that signals the bias and the disciplined question to ask instead.
           </p>
-          <span className="font-mono text-[12px] text-slate-400">{doneCount}/{CARDS.length}</span>
+          <span className="font-sans text-[12px] text-slate-400">{doneCount}/{CARDS.length}</span>
         </div>
       </div>
 
@@ -171,11 +171,11 @@ export default function BiasClassifier() {
                         </p>
                       )}
                       <p className="mt-1.5 text-[13px] leading-[1.55] text-slate-300">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Disciplined question · </span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Disciplined question · </span>
                         {card.disciplined}
                       </p>
                       <button type="button" onClick={() => reset(card.id)}
-                        className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                        className="mt-2 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                         ↻ Try again
                       </button>
                     </div>

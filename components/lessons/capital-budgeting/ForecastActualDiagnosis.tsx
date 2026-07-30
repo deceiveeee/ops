@@ -32,7 +32,7 @@ export default function ForecastActualDiagnosis() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Classify each variance
         </div>
         <p className="ops-body mt-2 text-[13px] leading-[1.55] text-slate-300">
@@ -45,7 +45,7 @@ export default function ForecastActualDiagnosis() {
               <div key={v.id} className="rounded-xl border border-white/10 bg-ink-950/30 p-3">
                 <div className="flex items-baseline justify-between">
                   <span className="text-[14px] text-white">{v.metric}</span>
-                  <span className="font-mono text-[12px] text-accent-red">{v.variance}</span>
+                  <span className="font-sans text-[12px] text-accent-red">{v.variance}</span>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {OPTIONS.map((o) => {

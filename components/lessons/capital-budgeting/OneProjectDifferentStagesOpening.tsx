@@ -71,7 +71,7 @@ export default function OneProjectDifferentStagesOpening() {
     <div className="space-y-6">
       {/* Timeline */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           One project, connected timeline
         </div>
 
@@ -91,7 +91,7 @@ export default function OneProjectDifferentStagesOpening() {
               >
                 <div className="flex items-center gap-2">
                   <span className={cn("h-2 w-2 rounded-full", active === key ? toneDot[STAGES[key].tone] : "bg-white/30")} aria-hidden />
-                  <span className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", active === key ? toneText[STAGES[key].tone] : "text-slate-400")}>
+                  <span className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", active === key ? toneText[STAGES[key].tone] : "text-slate-400")}>
                     {STAGES[key].label}
                   </span>
                 </div>
@@ -118,7 +118,7 @@ export default function OneProjectDifferentStagesOpening() {
             transition={{ duration: 0.2 }}
             className={cn("mt-5 rounded-xl border p-5", toneBorder[STAGES[active].tone], "bg-white/[0.02]")}
           >
-            <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]", toneText[STAGES[active].tone])}>
+            <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText[STAGES[active].tone])}>
               {STAGES[active].label} · key uncertainties
             </div>
             <ul className="mt-3 space-y-2">

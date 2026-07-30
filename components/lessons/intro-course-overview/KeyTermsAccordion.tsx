@@ -39,7 +39,7 @@ export default function KeyTermsAccordion() {
               </span>
               <span
                 className={cn(
-                  "font-mono text-base text-accent-cyan transition-transform",
+                  "font-sans text-base text-accent-cyan transition-transform",
                   isOpen && "rotate-45",
                 )}
                 aria-hidden

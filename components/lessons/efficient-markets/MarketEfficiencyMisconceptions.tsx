@@ -61,7 +61,7 @@ export default function MarketEfficiencyMisconceptions() {
               className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
             >
               <span className={cn(
-                "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+                "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[10px]",
                 isOpen ? "border-accent-cyan text-accent-cyan" : "border-accent-red/40 text-accent-red",
               )}>
                 {i + 1}
@@ -69,7 +69,7 @@ export default function MarketEfficiencyMisconceptions() {
               <span className="flex-1 text-[15px] font-medium leading-snug text-white">
                 <span className="text-accent-red/80">Myth: </span>{m.myth}
               </span>
-              <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-sm text-accent-cyan transition-transform",
+              <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-sm text-accent-cyan transition-transform",
                 isOpen && "rotate-45")} aria-hidden>+</span>
             </button>
             <AnimatePresence initial={false}>
@@ -83,7 +83,7 @@ export default function MarketEfficiencyMisconceptions() {
                 >
                   <div className="ops-body px-5 pb-5">
                     <div className="rounded-lg border border-accent-green/20 bg-accent-green/[0.05] p-3">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Reality</span>
+                      <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Reality</span>
                       <p className="mt-1 text-[15px] leading-[1.65] text-slate-100">{m.reality}</p>
                     </div>
                     <p className="mt-3 text-[14px] leading-[1.65] text-slate-300">{m.explanation}</p>

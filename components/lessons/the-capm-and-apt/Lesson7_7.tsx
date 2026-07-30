@@ -58,7 +58,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">Central question</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">Central question</div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
           Can you move from portfolio theory to a defensible conclusion about an investment’s risk,
           required return, and performance?
@@ -73,7 +73,7 @@ function GateRow({ done, label }: { done: boolean; label: ReactNode }) {
     <li className="flex items-center gap-3">
       <span
         className={cn(
-          "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[12px]",
+          "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px]",
           done ? "border-accent-green/50 bg-accent-green/10 text-accent-green" : "border-white/20 text-slate-500",
         )}
       >
@@ -88,7 +88,7 @@ function CompletionGate() {
   const { state, categoriesDoneCount, gateSatisfied } = useLesson77State();
   return (
     <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-      <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Completion checklist</div>
+      <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Completion checklist</div>
       <ul className="mt-4 space-y-2.5">
         <GateRow done={categoriesDoneCount === PRACTICE_CATEGORIES.length} label={<>Guided practice — all six categories complete ({categoriesDoneCount}/6)</>} />
         <GateRow done={state.clinicDone} label="Error diagnosis clinic complete" />
@@ -254,7 +254,7 @@ export default function Lesson7_7() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {CONCLUSIONS.map((c, i) => (
               <div key={i} className="rounded-2xl border border-accent-cyan/20 bg-accent-cyan/[0.04] p-5">
-                <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-cyan">Conclusion {i + 1}</div>
+                <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-cyan">Conclusion {i + 1}</div>
                 <p className="mt-2 text-[16px] leading-[1.6] text-slate-100">{c}</p>
               </div>
             ))}
@@ -277,7 +277,7 @@ export default function Lesson7_7() {
               broaden the analysis when one market beta is insufficient.
             </p>
             <div className="mt-4 rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-4">
-              <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">Final caution</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">Final caution</div>
               <p className="mt-2 text-[15px] leading-[1.6] text-slate-200">
                 No model provides a guaranteed return, a perfectly correct discount rate, or automatic
                 proof of manager skill. These models provide disciplined benchmarks for comparing risk

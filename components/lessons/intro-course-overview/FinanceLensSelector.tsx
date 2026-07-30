@@ -93,7 +93,7 @@ export default function FinanceLensSelector({
               <div className="flex items-center justify-between">
                 <span
                   className={cn(
-                    "inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+                    "inline-flex items-center rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
                     isSel ? l.accent : "border-white/15 text-slate-400",
                   )}
                 >
@@ -102,7 +102,7 @@ export default function FinanceLensSelector({
                 {isSel && (
                   <span
                     className={cn(
-                      "font-mono text-[11px] uppercase tracking-[0.14em]",
+                      "font-sans text-[11px] uppercase tracking-[0.14em]",
                       l.pill,
                     )}
                   >
@@ -116,7 +116,7 @@ export default function FinanceLensSelector({
               <div className="ops-caption mt-2 text-[11px] text-slate-500">
                 {l.inspired}
               </div>
-              <div className="mt-4 rounded-lg border border-white/10 bg-ink-950/60 px-3.5 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+              <div className="mt-4 rounded-lg border border-white/10 bg-ink-950/60 px-3.5 py-2.5 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
                 {l.object}
               </div>
               <p className="ops-body mt-4 text-[14px] text-slate-300">
@@ -155,7 +155,7 @@ export default function FinanceLensSelector({
               {active.highlight.map((h) => (
                 <span
                   key={h}
-                  className="rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan"
+                  className="rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan"
                 >
                   {h}
                 </span>

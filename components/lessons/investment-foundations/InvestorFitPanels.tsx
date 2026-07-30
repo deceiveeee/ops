@@ -73,7 +73,7 @@ export default function InvestorFitPanels() {
                 </span>
                 <span
                   className={cn(
-                    "font-mono text-[14px] text-accent-amber transition-transform",
+                    "font-sans text-[14px] text-accent-amber transition-transform",
                     isOpen && "rotate-90",
                   )}
                   aria-hidden

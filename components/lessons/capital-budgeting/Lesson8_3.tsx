@@ -144,7 +144,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-amber/25 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-amber/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-amber">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -177,7 +177,7 @@ function FactoryExample() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 sm:p-6">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
             Construction stage
           </div>
           <ul className="mt-3 space-y-2">
@@ -190,7 +190,7 @@ function FactoryExample() {
           </ul>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5 sm:p-6">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
             Operating stage
           </div>
           <ul className="mt-3 space-y-2">
@@ -358,7 +358,7 @@ export default function Lesson8_3() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
                 Stage 1 · Clinical development
               </div>
               <ul className="mt-3 space-y-2">
@@ -377,7 +377,7 @@ export default function Lesson8_3() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 Stage 2 · Commercialization
               </div>
               <ul className="mt-3 space-y-2">
@@ -426,7 +426,7 @@ export default function Lesson8_3() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Panel>
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
                 1 · Term structure of interest rates
               </div>
               <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-200">
@@ -436,7 +436,7 @@ export default function Lesson8_3() {
               </p>
             </Panel>
             <Panel>
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 2 · Term structure of risk premia
               </div>
               <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-200">
@@ -598,7 +598,7 @@ export default function Lesson8_3() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Toward Lesson 8.4
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

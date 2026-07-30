@@ -11,7 +11,7 @@ export default function PVSourceBasisPanel() {
       <div className="mt-3.5 space-y-1.5">
         <div className="text-[15px] font-semibold text-white">{PV_SOURCE_BASIS.course}</div>
         <div className="ops-body text-[14px] text-slate-300">{PV_SOURCE_BASIS.lecture}</div>
-        <div className="font-mono text-[13px] text-accent-cyan">{PV_SOURCE_BASIS.instructor}</div>
+        <div className="font-sans text-[13px] text-accent-cyan">{PV_SOURCE_BASIS.instructor}</div>
       </div>
       <p className="ops-muted mt-3 text-[13px]">{PV_SOURCE_BASIS.note}</p>
     </aside>

@@ -55,7 +55,7 @@ export default function CapitalAllocationHierarchy() {
                 type="button"
                 onClick={() => setActive(key)}
                 className={cn(
-                  "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
+                  "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
                   active === key ? "border-accent-amber bg-accent-amber/15 text-accent-amber" : "border-white/20 text-slate-400 hover:border-white/40",
                 )}
               >
@@ -87,7 +87,7 @@ export default function CapitalAllocationHierarchy() {
           transition={{ duration: 0.2 }}
           className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6"
         >
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
             Step {active} · {s.title}
           </div>
           <p className="ops-body mt-3 text-[16px] leading-[1.65] text-slate-100">{s.detail}</p>

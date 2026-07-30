@@ -92,7 +92,7 @@ export default function CorporateCashAllocationMap() {
               active === key ? cn(toneBorder[DESTINATIONS[key].tone], "bg-white/[0.06]") : "border-white/10 bg-white/[0.02] hover:border-white/25",
             )}
           >
-            <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]",
+            <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]",
               active === key ? toneText[DESTINATIONS[key].tone] : "text-slate-400")}>
               {DESTINATIONS[key].shortName}
             </div>
@@ -101,7 +101,7 @@ export default function CorporateCashAllocationMap() {
       </div>
 
       <div className={cn("rounded-2xl border p-5 sm:p-6", toneBorder[d.tone], "bg-white/[0.03]")}>
-        <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", toneText[d.tone])}>{d.name}</div>
+        <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[d.tone])}>{d.name}</div>
         <div className="mt-3 flex flex-wrap gap-2">
           {d.examples.map((e) => (
             <span key={e} className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-[12px] text-slate-200">{e}</span>
@@ -109,15 +109,15 @@ export default function CorporateCashAllocationMap() {
         </div>
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
           <div className="rounded-xl border border-accent-green/20 bg-accent-green/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Value it may create</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Value it may create</div>
             <p className="ops-body mt-1.5 text-[13px] leading-[1.55] text-slate-100">{d.valueInfo}</p>
           </div>
           <div className="rounded-xl border border-accent-amber/20 bg-accent-amber/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Information required</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Information required</div>
             <p className="ops-body mt-1.5 text-[13px] leading-[1.55] text-slate-100">{d.requiredInfo}</p>
           </div>
           <div className="rounded-xl border border-accent-red/20 bg-accent-red/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">Common mistake</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">Common mistake</div>
             <p className="ops-body mt-1.5 text-[13px] leading-[1.55] text-slate-100">{d.mistake}</p>
           </div>
         </div>

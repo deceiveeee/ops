@@ -118,16 +118,16 @@ export default function RewriteBadRule() {
           return (
             <div key={c.id} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <div className="flex items-baseline gap-2">
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">{c.label}</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-500">{c.label}</span>
               </div>
               <div className="mt-1.5 rounded-lg border border-accent-red/25 bg-accent-red/[0.05] px-3 py-2.5">
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">Bad rule · </span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">Bad rule · </span>
                 <span className="text-[14px] italic leading-[1.55] text-slate-100">&ldquo;{c.badRule}&rdquo;</span>
               </div>
 
               {!isOpen && (
                 <button type="button" onClick={() => setRevealed((p) => ({ ...p, [c.id]: true }))}
-                  className="mt-3 rounded-full border border-white/20 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-accent-cyan/60 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                  className="mt-3 rounded-full border border-white/20 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-accent-cyan/60 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                   Identify the flaw →
                 </button>
               )}
@@ -139,7 +139,7 @@ export default function RewriteBadRule() {
                     animate={{ opacity: 1, height: "auto" }}
                     className="overflow-hidden">
                     <div className="mt-3">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
                         Which flaw do you recognize? (Select one)
                       </div>
                       <div className="mt-2 space-y-2">
@@ -162,7 +162,7 @@ export default function RewriteBadRule() {
                         <button type="button"
                           disabled={flawIdx === -1}
                           onClick={() => setShowImproved((p) => ({ ...p, [c.id]: true }))}
-                          className={cn("rounded-full border px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                          className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                             flawIdx === -1
                               ? "border-white/10 text-slate-500 cursor-not-allowed"
                               : "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20")}>
@@ -178,11 +178,11 @@ export default function RewriteBadRule() {
                           animate={{ opacity: 1, y: 0 }}
                           className="mt-3 space-y-2">
                           <div className="rounded-lg border border-accent-green/25 bg-accent-green/[0.05] px-3 py-2.5">
-                            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Stronger rule · </span>
+                            <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Stronger rule · </span>
                             <span className="text-[14px] leading-[1.55] text-slate-100">{c.improved}</span>
                           </div>
                           <div className="rounded-lg border border-accent-cyan/25 bg-accent-cyan/[0.05] px-3 py-2.5">
-                            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Principle · </span>
+                            <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Principle · </span>
                             <span className="text-[13px] leading-[1.55] text-slate-100">{c.principle}</span>
                           </div>
                         </motion.div>

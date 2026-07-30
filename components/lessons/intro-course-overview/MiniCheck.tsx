@@ -24,7 +24,7 @@ export default function MiniCheck({
   return (
     <div className="ops-interactive-frame p-5">
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+        <span className="inline-flex items-center rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
           Check
         </span>
         <span className="ops-caption text-[11px] text-slate-500">

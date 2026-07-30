@@ -29,7 +29,7 @@ const config: Config = {
       fontFamily: {
         display: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Inter", "sans-serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
+        mono: ["var(--font-sans)", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Inter", "sans-serif"],
       },
       boxShadow: {
         glow: "0 0 0 1px rgba(34,211,238,0.15), 0 0 40px -10px rgba(34,211,238,0.35)",

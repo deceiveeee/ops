@@ -18,7 +18,7 @@ export default function SourceBasisPanel() {
         <div className="ops-body text-[14px] text-slate-300">
           {SOURCE_BASIS.lecture}
         </div>
-        <div className="font-mono text-[13px] text-accent-cyan">
+        <div className="font-sans text-[13px] text-accent-cyan">
           {SOURCE_BASIS.instructor}
         </div>
       </div>

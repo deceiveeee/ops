@@ -32,9 +32,9 @@ export default function MeridianYearOneUpdate() {
           <table className="w-full min-w-[440px] border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/20 text-left">
-                <th className="py-2 pr-4 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
-                <th className="py-2 pr-4 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Original</th>
-                <th className="py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">Year 1 Actual</th>
+                <th className="py-2 pr-4 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
+                <th className="py-2 pr-4 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Original</th>
+                <th className="py-2 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">Year 1 Actual</th>
               </tr>
             </thead>
             <tbody>
@@ -43,8 +43,8 @@ export default function MeridianYearOneUpdate() {
                 return (
                   <tr key={key} className="border-b border-white/5">
                     <td className="py-2.5 pr-4 text-slate-200">{d.label}</td>
-                    <td className="py-2.5 pr-4 font-mono text-slate-400">{d.original}</td>
-                    <td className={cn("py-2.5 font-mono", d.tone === "red" ? "text-accent-red" : d.tone === "amber" ? "text-accent-amber" : "text-accent-green")}>{d.actual}</td>
+                    <td className="py-2.5 pr-4 font-sans text-slate-400">{d.original}</td>
+                    <td className={cn("py-2.5 font-sans", d.tone === "red" ? "text-accent-red" : d.tone === "amber" ? "text-accent-amber" : "text-accent-green")}>{d.actual}</td>
                   </tr>
                 );
               })}
@@ -54,7 +54,7 @@ export default function MeridianYearOneUpdate() {
       </div>
 
       <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">Impact on the thesis</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">Impact on the thesis</div>
         <ul className="mt-3 space-y-2.5">
           {[
             "Store NPV is lower: higher cost, slower ramp, weaker margins, more cannibalization.",

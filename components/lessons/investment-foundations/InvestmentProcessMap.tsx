@@ -252,7 +252,7 @@ export default function InvestmentProcessMap() {
                         aria-expanded={isActive}
                         aria-label={`Stage ${s.n}: ${s.title}`}
                         className={cn(
-                          "mt-1 flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[12px] tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
+                          "mt-1 flex h-8 w-8 items-center justify-center rounded-full border font-sans text-[12px] tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
                           isRevealed
                             ? `${STAGE_RING[s.id]} bg-white/[0.04] ${STAGE_TONES[s.id]} hover:bg-white/[0.08]`
                             : "border-white/10 text-slate-600",

@@ -95,7 +95,7 @@ export default function DoubleCountingRiskCheck() {
     <div className="space-y-6">
       {/* Setup */}
       <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
           The double-counting trap
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.65] text-slate-100">
@@ -106,7 +106,7 @@ export default function DoubleCountingRiskCheck() {
         </p>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
               Probability weighting
             </div>
             <div className="mt-2">
@@ -114,7 +114,7 @@ export default function DoubleCountingRiskCheck() {
             </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
               Discounting
             </div>
             <div className="mt-2">
@@ -135,7 +135,7 @@ export default function DoubleCountingRiskCheck() {
 
       {/* Classification exercise */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Evaluate each analyst approach
         </div>
 
@@ -192,7 +192,7 @@ export default function DoubleCountingRiskCheck() {
 
       {/* Nuance */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Important nuance
         </div>
         <ul className="mt-3 space-y-2.5">

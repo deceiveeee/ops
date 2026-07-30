@@ -127,7 +127,7 @@ export default function MatrixMispricingLab() {
               Bond C · market
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="font-mono text-[20px] text-slate-100">
+              <span className="font-sans text-[20px] text-slate-100">
                 CF [50, 50]
               </span>
             </div>
@@ -143,7 +143,7 @@ export default function MatrixMispricingLab() {
                 step={0.5}
                 onChange={(e) => setMarketC(Number(e.target.value))}
                 aria-label="Bond C market price"
-                className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-purple/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-purple/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
               />
             </label>
             <div className="ops-caption mt-2 text-[11px] text-slate-500">
@@ -205,7 +205,7 @@ export default function MatrixMispricingLab() {
                 <div className="ops-caption text-[11px] text-slate-400">
                   Equation system
                 </div>
-                <div className="mt-3 grid grid-cols-1 gap-3 font-mono text-[14px] text-slate-200 md:grid-cols-2">
+                <div className="mt-3 grid grid-cols-1 gap-3 font-sans text-[14px] text-slate-200 md:grid-cols-2">
                   <div className="rounded-lg border border-white/10 bg-ink-950/50 p-3">
                     <div className="text-accent-cyan">Bond A:</div>
                     <div>
@@ -266,12 +266,12 @@ function BondCard({
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
       <div className="ops-caption text-[11px] text-accent-cyan">{name}</div>
-      <div className="mt-2 font-mono text-[20px] text-slate-100">
+      <div className="mt-2 font-sans text-[20px] text-slate-100">
         CF [{cf[0]}, {cf[1]}]
       </div>
       <div className="mt-2 flex items-center gap-2">
         <span className="ops-caption text-[10px] text-slate-500">Price</span>
-        <span className="font-mono text-[15px] text-slate-100">
+        <span className="font-sans text-[15px] text-slate-100">
           {formatMoney(price)}
         </span>
       </div>
@@ -351,7 +351,7 @@ function BalanceScale({
           x={cx - 150}
           y={armY + 24}
           textAnchor="middle"
-          className="fill-slate-100 font-mono"
+          className="fill-slate-100 font-sans"
           fontSize="11"
         >
           {formatMoney(marketC)}
@@ -360,7 +360,7 @@ function BalanceScale({
           x={cx - 150}
           y={armY - 8}
           textAnchor="middle"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="10"
         >
           market
@@ -387,7 +387,7 @@ function BalanceScale({
           x={cx + 150}
           y={armY + 24}
           textAnchor="middle"
-          className="fill-slate-100 font-mono"
+          className="fill-slate-100 font-sans"
           fontSize="11"
         >
           {formatMoney(fairC)}
@@ -396,7 +396,7 @@ function BalanceScale({
           x={cx + 150}
           y={armY - 8}
           textAnchor="middle"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="10"
         >
           no-arb

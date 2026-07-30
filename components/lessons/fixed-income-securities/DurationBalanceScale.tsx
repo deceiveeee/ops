@@ -153,7 +153,7 @@ export default function DurationBalanceScale() {
             <div className="ops-caption text-[11px] text-accent-amber">
               Macaulay duration
             </div>
-            <div className="mt-1 font-mono text-[28px] text-white">
+            <div className="mt-1 font-sans text-[28px] text-white">
               {durationYears.toFixed(2)}{" "}
               <span className="text-[16px] text-slate-400">years</span>
             </div>
@@ -204,7 +204,7 @@ function Slider({
     <div className={cn(disabled && "opacity-40")}>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{display}</span>
+        <span className="font-sans text-[13px] text-slate-100">{display}</span>
       </div>
       <input
         type="range"
@@ -285,7 +285,7 @@ function BalanceTimeline({
               x={xAt(t)}
               y={baseY + 18}
               textAnchor="middle"
-              className="fill-slate-500 font-mono"
+              className="fill-slate-500 font-sans"
               fontSize="10"
             >
               {t}
@@ -313,7 +313,7 @@ function BalanceTimeline({
                 x={x}
                 y={baseY - h - 6}
                 textAnchor="middle"
-                className="fill-slate-300 font-mono"
+                className="fill-slate-300 font-sans"
                 fontSize="10"
               >
                 {formatMoney(cf)}
@@ -343,7 +343,7 @@ function BalanceTimeline({
             x={fulcrumX}
             y={baseY - maxBarH - 20}
             textAnchor="middle"
-            className="fill-accent-amber font-mono"
+            className="fill-accent-amber font-sans"
             fontSize="11"
           >
             D = {durationYears.toFixed(2)}

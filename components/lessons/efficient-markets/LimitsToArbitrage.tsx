@@ -115,7 +115,7 @@ export default function LimitsToArbitrage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
           Terminology
         </div>
         <p className="ops-body mt-2 text-[15px] leading-[1.65] text-slate-100">
@@ -135,7 +135,7 @@ export default function LimitsToArbitrage() {
               <button type="button" aria-expanded={isOpen}
                 onClick={() => setOpen(isOpen ? null : l.key)}
                 className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
-                <span className={cn("flex h-7 w-9 flex-shrink-0 items-center justify-center rounded-md border font-mono text-[11px]",
+                <span className={cn("flex h-7 w-9 flex-shrink-0 items-center justify-center rounded-md border font-sans text-[11px]",
                   isOpen ? "border-accent-cyan text-accent-cyan" : "border-white/20 text-slate-400")}>
                   {l.letter}
                 </span>
@@ -143,7 +143,7 @@ export default function LimitsToArbitrage() {
                   <span className={cn("block text-[15px] font-medium", isOpen ? "text-white" : "text-slate-200")}>{l.title}</span>
                   <span className="block text-[12px] leading-snug text-slate-400">{l.prompt}</span>
                 </span>
-                <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-sm text-accent-cyan transition-transform",
+                <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-sm text-accent-cyan transition-transform",
                   isOpen && "rotate-45")} aria-hidden>+</span>
               </button>
               <AnimatePresence initial={false}>
@@ -165,7 +165,7 @@ export default function LimitsToArbitrage() {
                       </ul>
                       {l.example && (
                         <div className="mt-3 rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
-                          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Example</span>
+                          <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Example</span>
                           <p className="mt-1 text-[13px] leading-[1.55] text-slate-100">{l.example.setup}</p>
                           {l.example.math && (
                             <div className="mt-2 rounded-md border border-white/10 bg-ink-950/40 px-2.5 py-1.5">

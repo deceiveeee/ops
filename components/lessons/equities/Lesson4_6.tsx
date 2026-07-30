@@ -154,7 +154,7 @@ export default function Lesson4_6() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -512,15 +512,15 @@ export default function Lesson4_6() {
             <table className="w-full min-w-[360px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     r
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     1/r (no-growth P/E)
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[15px] text-slate-200">
+              <tbody className="font-sans text-[15px] text-slate-200">
                 <tr className="odd:bg-white/[0.015]">
                   <td className="px-4 py-1.5">8%</td>
                   <td className="px-4 py-1.5 text-slate-100">12.5×</td>
@@ -813,18 +813,18 @@ export default function Lesson4_6() {
             <table className="w-full min-w-[420px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Measure
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     EPS
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     P/E
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[15px] text-slate-200">
+              <tbody className="font-sans text-[15px] text-slate-200">
                 <tr className="odd:bg-white/[0.015]">
                   <td className="px-4 py-1.5">Trailing (depressed)</td>
                   <td className="px-4 py-1.5">$2</td>
@@ -868,7 +868,7 @@ export default function Lesson4_6() {
             Module 4 has built a single chain of reasoning, link by link:
           </p>
           <div className="mt-4 overflow-x-auto">
-            <div className="flex min-w-[640px] flex-wrap items-center gap-2 font-mono text-[12px]">
+            <div className="flex min-w-[640px] flex-wrap items-center gap-2 font-sans text-[12px]">
               <span className="rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-3 py-1.5 text-accent-cyan">
                 Equity ownership
               </span>

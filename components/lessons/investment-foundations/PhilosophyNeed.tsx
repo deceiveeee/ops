@@ -75,7 +75,7 @@ export default function PhilosophyNeed() {
                   {m.examples.map((ex) => (
                     <li
                       key={ex}
-                      className="font-mono text-[12px] italic text-slate-400"
+                      className="font-sans text-[12px] italic text-slate-400"
                     >
                       {ex}
                     </li>

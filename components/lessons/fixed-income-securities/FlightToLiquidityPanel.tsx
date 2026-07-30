@@ -103,14 +103,14 @@ export default function FlightToLiquidityPanel() {
                   stroke="rgba(255,255,255,0.08)"
                   strokeWidth={1}
                 />
-                <text x={padX - 8} y={yAt(gy) + 4} textAnchor="end" className="fill-slate-500 font-mono" fontSize="11">
+                <text x={padX - 8} y={yAt(gy) + 4} textAnchor="end" className="fill-slate-500 font-sans" fontSize="11">
                   {gy}%
                 </text>
               </g>
             ))}
             {/* x-axis maturity labels */}
             {MATURITIES.map((mat, i) => (
-              <text key={mat} x={xAt(i)} y={H - padY + 22} textAnchor="middle" className="fill-slate-400 font-mono" fontSize="12">
+              <text key={mat} x={xAt(i)} y={H - padY + 22} textAnchor="middle" className="fill-slate-400 font-sans" fontSize="12">
                 {mat}
               </text>
             ))}
@@ -140,7 +140,7 @@ export default function FlightToLiquidityPanel() {
                 transition={{ duration: 0.3, delay: i * 0.04 }}
               />
             ))}
-            <text x={xAt(0)} y={yAt(yields[0]) - 12} textAnchor="middle" className="fill-accent-amber font-mono" fontSize="11">
+            <text x={xAt(0)} y={yAt(yields[0]) - 12} textAnchor="middle" className="fill-accent-amber font-sans" fontSize="11">
               T-bill
             </text>
           </svg>
@@ -167,7 +167,7 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: "cya
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/50 px-4 py-3">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", tone === "amber" ? "text-accent-amber" : tone === "red" ? "text-accent-red" : "text-accent-cyan")}>
+      <div className={cn("mt-1 font-sans text-[18px]", tone === "amber" ? "text-accent-amber" : tone === "red" ? "text-accent-red" : "text-accent-cyan")}>
         {value}
       </div>
     </div>

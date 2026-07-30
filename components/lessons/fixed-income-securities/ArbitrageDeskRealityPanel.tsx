@@ -103,7 +103,7 @@ export default function ArbitrageDeskRealityPanel() {
               <span className="ops-caption text-[11px] text-slate-400">
                 Gap breakdown
               </span>
-              <span className="font-mono text-[13px] text-slate-200">
+              <span className="font-sans text-[13px] text-slate-200">
                 Executable:{" "}
                 <span className="text-accent-green">
                   {formatMoney(executable)}
@@ -146,7 +146,7 @@ export default function ArbitrageDeskRealityPanel() {
                 />
               )}
             </div>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-slate-400">
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-sans text-[11px] text-slate-400">
               <span>
                 <span className="inline-block h-2 w-2 rounded-full bg-accent-green/70" />{" "}
                 Executable

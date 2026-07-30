@@ -95,7 +95,7 @@ export default function FixedIncomeRoadmap() {
             >
               <span
                 className={cn(
-                  "relative z-10 flex h-7 w-7 items-center justify-center rounded-full border font-mono text-[12px]",
+                  "relative z-10 flex h-7 w-7 items-center justify-center rounded-full border font-sans text-[12px]",
                   s.coveredHere
                     ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
                     : "border-white/15 bg-ink-900 text-slate-400",

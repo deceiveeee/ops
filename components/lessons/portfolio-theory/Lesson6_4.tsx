@@ -323,7 +323,7 @@ function DominanceCheck() {
         <div key={pair.aLabel + pair.bLabel} className="grid grid-cols-1 gap-4 sm:grid-cols-[auto_1fr] sm:items-center">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[300px] border-collapse text-[16px]">
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/10">
                   <td className="py-2 pr-6 text-slate-400">{pair.aLabel}</td>
                   <td className="py-2 pr-6">E[R] = {pair.aEr}%</td>
@@ -389,7 +389,7 @@ function BoundaryBuilder() {
             <div
               key={i}
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[13px]",
+                "flex h-8 w-8 items-center justify-center rounded-full border font-sans text-[13px]",
                 i < roundIdx || (i === roundIdx && isCorrect)
                   ? "border-accent-green bg-accent-green/15 text-accent-green"
                   : i === roundIdx
@@ -402,7 +402,7 @@ function BoundaryBuilder() {
           ))}
         </div>
         <div className="mt-4">
-          <div className="font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <div className="font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
             Round {roundIdx + 1} of {BOUNDARY_ROUNDS.length} · Target E[R] ={" "}
             <span className="text-accent-cyan">{current.target.toFixed(2)}%</span>
           </div>
@@ -413,7 +413,7 @@ function BoundaryBuilder() {
           </p>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[300px] border-collapse text-[16px]">
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 {current.candidates.map((c) => {
                   const isSelected = selected === c.id;
                   const showAsCorrect = answered && c.id === current.correctId;
@@ -536,7 +536,7 @@ function EfficientBranchClassifier() {
             <div key={pair.id} className="grid grid-cols-1 gap-4 sm:grid-cols-[auto_1fr] sm:items-center">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[300px] border-collapse text-[16px]">
-                  <tbody className="font-mono tabular-nums text-slate-100">
+                  <tbody className="font-sans tabular-nums text-slate-100">
                     <tr className="border-b border-white/10">
                       <td className="py-2 pr-6 text-slate-400">{pair.p1Label}</td>
                       <td className="py-2 pr-6">σ = {pair.p1Sd.toFixed(2)}</td>
@@ -637,17 +637,17 @@ function FinalCheck() {
           return (
             <div key={p.id} className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
               <div className="flex items-center gap-5">
-                <div className="flex gap-5 font-mono tabular-nums text-slate-100">
+                <div className="flex gap-5 font-sans tabular-nums text-slate-100">
                   <div>
-                    <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">Port.</div>
+                    <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Port.</div>
                     <div className="text-[16px]">{p.label}</div>
                   </div>
                   <div>
-                    <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">σ %</div>
+                    <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">σ %</div>
                     <div className="text-[16px]">{p.sd.toFixed(2)}</div>
                   </div>
                   <div>
-                    <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">E[R] %</div>
+                    <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">E[R] %</div>
                     <div className="text-[16px]">{p.er.toFixed(2)}</div>
                   </div>
                 </div>
@@ -718,7 +718,7 @@ function StageNav({ stage, setStage }: { stage: number; setStage: (n: number) =>
           type="button"
           onClick={() => setStage(i)}
           className={cn(
-            "rounded-full border px-3.5 py-1.5 font-mono text-[13px] transition-colors",
+            "rounded-full border px-3.5 py-1.5 font-sans text-[13px] transition-colors",
             stage === i
               ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
               : i < stage
@@ -890,12 +890,12 @@ export default function Lesson6_4() {
 
       <Reveal className="mt-8">
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 sm:p-7">
-          <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">Learning objectives</div>
+          <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">Learning objectives</div>
           <p className="mt-3 text-[16px] text-slate-300">By the end of this lesson, you should be able to:</p>
           <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[13px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[13px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="text-[16px] leading-[1.6] text-slate-200">{o}</span>
@@ -925,7 +925,7 @@ export default function Lesson6_4() {
         </Reveal>
         <Reveal>
           <InteractiveFrame>
-            <div className="mb-1 font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+            <div className="mb-1 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
               Interaction · Dominance check
             </div>
             <p className="mb-4 max-w-2xl text-[16px] leading-[1.6] text-slate-200">
@@ -950,7 +950,7 @@ export default function Lesson6_4() {
             <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-center">
               <FrontierCanvas stage={stage} />
               <div>
-                <div className="font-mono text-[13px] uppercase tracking-[0.16em] text-accent-cyan">
+                <div className="font-sans text-[13px] uppercase tracking-[0.16em] text-accent-cyan">
                   Stage {stage + 1}
                 </div>
                 <h4 className="mt-2 text-[20px] text-white">{stageCopy.title}</h4>
@@ -1031,11 +1031,11 @@ export default function Lesson6_4() {
             <table className="w-full min-w-[360px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">GMV weight</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">GMV weight</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">GM</td><td className="py-3 text-accent-cyan">48.58%</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">IBM</td><td className="py-3 text-accent-cyan">45.34%</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">Motorola</td><td className="py-3 text-accent-cyan">6.08%</td></tr>
@@ -1089,12 +1089,12 @@ export default function Lesson6_4() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Efficient point</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">E[R] (%)</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">σ (%)</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Efficient point</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">E[R] (%)</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">σ (%)</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">GMV (lowest risk)</td><td className="py-3 pr-8">1.23</td><td className="py-3">5.25</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">Moderate</td><td className="py-3 pr-8">1.40</td><td className="py-3">5.76</td></tr>
                 <tr><td className="py-3 pr-8">Higher risk / return</td><td className="py-3 pr-8">1.50</td><td className="py-3">6.46</td></tr>
@@ -1109,7 +1109,7 @@ export default function Lesson6_4() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Assumptions and limitations
             </div>
             <ul className="mt-4 space-y-3">

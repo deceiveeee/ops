@@ -18,7 +18,7 @@ export default function IFSourcePanel() {
         <div className="ops-body text-[14px] text-slate-300">
           {IF_SOURCE_BASIS.lecture}
         </div>
-        <div className="font-mono text-[13px] text-accent-amber">
+        <div className="font-sans text-[13px] text-accent-amber">
           {IF_SOURCE_BASIS.instructor}
         </div>
       </div>

@@ -48,14 +48,14 @@ export default function CapitalAllocationTrackRecord() {
       {/* Sources and uses */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">Sources of cash</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">Sources of cash</div>
           <div className="mt-3 space-y-1 text-[13px]">
             <Row label="Operating cash flow" value={`+$${fmt(d.ocf)}M`} />
             <Row label="Acquisition-related" value={d.acquisitions > 0 ? "Cash deployed" : "—"} />
           </div>
         </div>
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-red">Uses of cash</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">Uses of cash</div>
           <div className="mt-3 space-y-1 text-[13px]">
             <Row label="Capital expenditure" value={`−$${fmt(d.capex)}M`} />
             <Row label="Acquisitions" value={d.acquisitions > 0 ? `−$${fmt(d.acquisitions)}M` : "—"} />
@@ -76,18 +76,18 @@ export default function CapitalAllocationTrackRecord() {
 
       {/* 5-year trend table */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">5-year trend</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">5-year trend</div>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[520px] border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-white/20 text-right">
-                <th className="py-2 pr-4 text-left font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
+                <th className="py-2 pr-4 text-left font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
                 {YEARS.map((y) => (
-                  <th key={y.key} className={cn("py-2 pr-4 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400", active === y.key && "text-accent-amber")}>{y.label}</th>
+                  <th key={y.key} className={cn("py-2 pr-4 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400", active === y.key && "text-accent-amber")}>{y.label}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums">
+            <tbody className="font-sans tabular-nums">
               {([
                 { label: "Operating CF", key: "ocf" as const, prefix: "$", suffix: "M" },
                 { label: "Capex", key: "capex" as const, prefix: "$", suffix: "M" },
@@ -113,7 +113,7 @@ export default function CapitalAllocationTrackRecord() {
 
       {/* Assessment prompt */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Assessment questions</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Assessment questions</div>
         <ul className="mt-3 space-y-2">
           {[
             "Did acquisitions create value? (Check Year 3 impairments.)",
@@ -136,14 +136,14 @@ export default function CapitalAllocationTrackRecord() {
 }
 
 function Row({ label, value }: { label: string; value: string }) {
-  return <div className="flex justify-between"><span className="text-slate-300">{label}</span><span className="font-mono text-white">{value}</span></div>;
+  return <div className="flex justify-between"><span className="text-slate-300">{label}</span><span className="font-sans text-white">{value}</span></div>;
 }
 function Metric({ label, value, tone = "neutral" }: { label: string; value: string; tone?: "neutral" | "green" | "red" | "amber" }) {
   const text = tone === "green" ? "text-accent-green" : tone === "red" ? "text-accent-red" : tone === "amber" ? "text-accent-amber" : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-3">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
-      <div className={cn("mt-1.5 font-mono text-[16px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
+      <div className={cn("mt-1.5 font-sans text-[16px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

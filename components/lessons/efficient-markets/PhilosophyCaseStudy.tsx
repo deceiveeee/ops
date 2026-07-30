@@ -50,7 +50,7 @@ export default function PhilosophyCaseStudy() {
     <div className="space-y-6">
       {/* Investor profile */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Fictional investor profile
         </div>
         <ul className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
@@ -64,7 +64,7 @@ export default function PhilosophyCaseStudy() {
 
       {/* Proposed philosophy */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Proposed philosophy
         </div>
         <p className="ops-body mt-3 text-[16px] italic leading-[1.65] text-slate-100">
@@ -74,7 +74,7 @@ export default function PhilosophyCaseStudy() {
 
       {/* Evaluation questions */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Evaluate the philosophy
         </div>
         <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-300">
@@ -86,7 +86,7 @@ export default function PhilosophyCaseStudy() {
           {EVAL_QUESTIONS.map((q, i) => (
             <div key={i} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/40 font-mono text-[11px] text-accent-cyan">
+                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/40 font-sans text-[11px] text-accent-cyan">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -109,13 +109,13 @@ export default function PhilosophyCaseStudy() {
           {!revealed ? (
             <button type="button"
               onClick={() => setRevealed(true)}
-              className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+              className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
               Reveal expert review →
             </button>
           ) : (
             <button type="button"
               onClick={() => setRevealed(false)}
-              className="rounded-full border border-white/20 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+              className="rounded-full border border-white/20 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
               ← Hide expert review
             </button>
           )}
@@ -130,7 +130,7 @@ export default function PhilosophyCaseStudy() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4">
             <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.05] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
                 Strengths of the philosophy
               </div>
               <ul className="mt-3 space-y-2">
@@ -143,7 +143,7 @@ export default function PhilosophyCaseStudy() {
             </div>
 
             <div className="rounded-2xl border border-accent-amber/30 bg-accent-amber/[0.05] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 Likely missing items
               </div>
               <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-200">

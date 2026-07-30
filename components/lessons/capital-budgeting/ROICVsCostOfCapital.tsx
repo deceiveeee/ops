@@ -28,7 +28,7 @@ export default function ROICVsCostOfCapital() {
       </div>
 
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           ROIC calculation
         </div>
         <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
@@ -43,18 +43,18 @@ export default function ROICVsCostOfCapital() {
       )}>
         <div className="flex items-center gap-6">
           <div className="text-center">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">ROIC</div>
-            <div className="mt-1 font-mono text-[28px] tabular-nums text-white">{fmt(roic)}%</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">ROIC</div>
+            <div className="mt-1 font-sans text-[28px] tabular-nums text-white">{fmt(roic)}%</div>
           </div>
           <div className="text-[24px] text-slate-500" aria-hidden>−</div>
           <div className="text-center">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">Cost of capital</div>
-            <div className="mt-1 font-mono text-[28px] tabular-nums text-white">{fmt(costOfCapital)}%</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">Cost of capital</div>
+            <div className="mt-1 font-sans text-[28px] tabular-nums text-white">{fmt(costOfCapital)}%</div>
           </div>
           <div className="text-[24px] text-slate-500" aria-hidden>=</div>
           <div className="text-center">
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">Spread</div>
-            <div className={cn("mt-1 font-mono text-[28px] tabular-nums", positive ? "text-accent-green" : "text-accent-red")}>
+            <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">Spread</div>
+            <div className={cn("mt-1 font-sans text-[28px] tabular-nums", positive ? "text-accent-green" : "text-accent-red")}>
               {spread >= 0 ? "+" : ""}{fmt(spread)}%
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function ROICVsCostOfCapital() {
 
       {/* Limitations */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Important limitations
         </div>
         <ul className="mt-3 space-y-2">
@@ -106,7 +106,7 @@ function Slider({ label, value, min, max, step, suffix, prefix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>

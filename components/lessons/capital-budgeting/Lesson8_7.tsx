@@ -131,7 +131,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-amber/25 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-amber/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-amber">Central question</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-amber">Central question</div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
           Given incomplete company disclosures, can an investor determine whether management&apos;s
           proposed use of capital is likely to create value — and whether that value is already
@@ -146,7 +146,7 @@ function ExampleAllocation() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
           One defensible revised plan
         </div>
         <div className="mt-4 space-y-2 text-[14px]">
@@ -164,12 +164,12 @@ function ExampleAllocation() {
                 <span className="text-slate-200">{x.l}</span>
                 <span className="ml-2 text-[12px] text-slate-400">{x.why}</span>
               </div>
-              <span className="font-mono text-white">{x.v}</span>
+              <span className="font-sans text-white">{x.v}</span>
             </div>
           ))}
           <div className="flex items-baseline justify-between pt-1 font-medium">
             <span className="text-white">Total</span>
-            <span className="font-mono text-accent-amber">$600M</span>
+            <span className="font-sans text-accent-amber">$600M</span>
           </div>
         </div>
       </div>
@@ -195,7 +195,7 @@ function Module8Synthesis() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-amber/30 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Module 8 framework
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -361,7 +361,7 @@ export default function Lesson8_7() {
         <Reveal><Module8Synthesis /></Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-green/30 bg-gradient-to-br from-accent-green/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
-            <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-green">
+            <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-green">
               Module 8 complete
             </div>
             <p className="ops-body mt-4 max-w-3xl text-[18px] leading-[1.6] text-white sm:text-[20px]">

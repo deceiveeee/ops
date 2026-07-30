@@ -39,7 +39,7 @@ export default function AuctionBoxSimulation({
             Mystery Auction · price discovery
           </span>
         </div>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
           Simulation
         </span>
       </div>
@@ -90,7 +90,7 @@ export default function AuctionBoxSimulation({
             x="100"
             y="150"
             textAnchor="middle"
-            className="fill-slate-400 font-mono"
+            className="fill-slate-400 font-sans"
             fontSize="9"
             letterSpacing="1.5"
           >

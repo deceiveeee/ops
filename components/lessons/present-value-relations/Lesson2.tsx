@@ -36,7 +36,7 @@ function fmt(n: number) {
 
 function StepBadge({ n }: { n: number }) {
   return (
-    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
       {n}
     </span>
   );
@@ -170,7 +170,7 @@ function DollarGrowthMini() {
               key={row.t}
               className="flex flex-1 flex-col items-center gap-2"
             >
-              <span className="font-mono text-[13px] text-slate-200">
+              <span className="font-sans text-[13px] text-slate-200">
                 ${row.pv.toFixed(3)}
               </span>
               <div className="flex h-[92px] w-full items-end">
@@ -194,7 +194,7 @@ function DollarGrowthMini() {
       </div>
       <p className="ops-muted mt-4 text-[13px] text-slate-400">
         At {rate}%, a dollar arriving in Year 20 is worth only{" "}
-        <span className="font-mono text-slate-200">
+        <span className="font-sans text-slate-200">
           ${(1 / Math.pow(1 + rDec, 20)).toFixed(3)}
         </span>{" "}
         today. PV declines as the receipt year moves farther into the future.
@@ -249,7 +249,7 @@ function LightingLiveSlider() {
       <label className="mt-4 block">
         <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
           <span>Discount rate</span>
-          <span className="font-mono text-accent-cyan">{rate.toFixed(1)}%</span>
+          <span className="font-sans text-accent-cyan">{rate.toFixed(1)}%</span>
         </span>
         <input
           type="range"
@@ -296,7 +296,7 @@ function LightingLiveSlider() {
             </div>
             <div
               className={cn(
-                "mt-1 font-mono text-[14px]",
+                "mt-1 font-sans text-[14px]",
                 row.tone === "red" ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -356,7 +356,7 @@ function StreamRow({
       <div className="w-40 flex-shrink-0">
         <span className={cn("ops-caption text-[11px]", color)}>{label}</span>
         {prefix && (
-          <span className="ml-1 font-mono text-[14px] text-slate-300">
+          <span className="ml-1 font-sans text-[14px] text-slate-300">
             {prefix}
           </span>
         )}
@@ -391,7 +391,7 @@ function StreamBars({
         />
       ))}
       {showInf && (
-        <span className="ml-1 self-center font-mono text-[13px] text-accent-cyan/70">
+        <span className="ml-1 self-center font-sans text-[13px] text-accent-cyan/70">
           …∞
         </span>
       )}
@@ -406,7 +406,7 @@ function AnnuityIntuition() {
         <StreamRow label="Perpetuity" color="text-accent-cyan">
           <StreamBars count={5} tone="cyan" />
           <StreamBars count={2} tone="cyan" faded />
-          <span className="ml-1 self-center font-mono text-[13px] text-accent-cyan/70">
+          <span className="ml-1 self-center font-sans text-[13px] text-accent-cyan/70">
             …∞
           </span>
         </StreamRow>
@@ -418,7 +418,7 @@ function AnnuityIntuition() {
         >
           <StreamBars count={5} tone="red" faded />
           <StreamBars count={2} tone="red" />
-          <span className="ml-1 self-center font-mono text-[13px] text-accent-red/70">
+          <span className="ml-1 self-center font-sans text-[13px] text-accent-red/70">
             …∞
           </span>
         </StreamRow>
@@ -427,7 +427,7 @@ function AnnuityIntuition() {
 
         <StreamRow label="= T-period annuity" color="text-accent-green">
           <StreamBars count={5} tone="green" />
-          <span className="ml-1 self-center font-mono text-[13px] text-slate-500">
+          <span className="ml-1 self-center font-sans text-[13px] text-slate-500">
             stops
           </span>
         </StreamRow>
@@ -469,10 +469,10 @@ const LIGHTING_TIMELINE = (
             )}
             aria-hidden
           />
-          <div className="mt-3 font-mono text-[12px] text-slate-300">{n.t}</div>
+          <div className="mt-3 font-sans text-[12px] text-slate-300">{n.t}</div>
           <div
             className={cn(
-              "mt-2 font-mono text-[14px]",
+              "mt-2 font-sans text-[14px]",
               n.tone === "red" ? "text-accent-red" : "text-accent-green",
             )}
           >
@@ -607,7 +607,7 @@ const CNOOC_STEPS = [
             <span className="ops-body text-[15px] text-slate-200">
               Years 1–2 (both loans)
             </span>
-            <span className="font-mono text-[15px] text-accent-green">
+            <span className="font-sans text-[15px] text-accent-green">
               ≈ $0.4B / yr
             </span>
           </div>
@@ -615,7 +615,7 @@ const CNOOC_STEPS = [
             <span className="ops-body text-[15px] text-slate-200">
               Years 3–30 (loan 2 only)
             </span>
-            <span className="font-mono text-[15px] text-accent-green">
+            <span className="font-sans text-[15px] text-accent-green">
               ≈ $0.2B / yr
             </span>
           </div>
@@ -820,7 +820,7 @@ export default function Lesson2() {
                 <div className="ops-caption text-[11px] text-slate-400">
                   {r.k}
                 </div>
-                <div className="mt-1 font-mono text-[14px] text-accent-amber">
+                <div className="mt-1 font-sans text-[14px] text-accent-amber">
                   {r.v}
                 </div>
               </div>
@@ -1078,19 +1078,19 @@ export default function Lesson2() {
               </div>
               <ul className="mt-2 space-y-1.5">
                 <li className="ops-body text-[15px] text-slate-200">
-                  <span className="font-mono text-accent-cyan">r</span> = APR
+                  <span className="font-sans text-accent-cyan">r</span> = APR
                   (quoted annual rate)
                 </li>
                 <li className="ops-body text-[15px] text-slate-200">
-                  <span className="font-mono text-accent-cyan">n</span> =
+                  <span className="font-sans text-accent-cyan">n</span> =
                   compounding periods per year
                 </li>
                 <li className="ops-body text-[15px] text-slate-200">
-                  <span className="font-mono text-accent-cyan">r/n</span> =
+                  <span className="font-sans text-accent-cyan">r/n</span> =
                   per-period rate
                 </li>
                 <li className="ops-body text-[15px] text-slate-200">
-                  <span className="font-mono text-accent-cyan">EAR</span> =
+                  <span className="font-sans text-accent-cyan">EAR</span> =
                   effective annual rate
                 </li>
               </ul>

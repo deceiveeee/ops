@@ -86,8 +86,8 @@ export default function CFOHedgeSimulator() {
           <span className="text-accent-cyan">Year 2</span>. You want to lock in
           a one-year lending rate from Year 1 to Year 2 — but the Year 1 rate is
           uncertain today. Current rates:{" "}
-          <span className="font-mono text-slate-100">r(0,1) = 5%</span>,{" "}
-          <span className="font-mono text-slate-100">r(0,2) = 7%</span>.
+          <span className="font-sans text-slate-100">r(0,1) = 5%</span>,{" "}
+          <span className="font-sans text-slate-100">r(0,2) = 7%</span>.
         </p>
 
         {/* Cash flow desk */}
@@ -163,7 +163,7 @@ export default function CFOHedgeSimulator() {
                   Y0; owe{" "}
                   <span className="text-accent-amber">&minus;10.000</span> at
                   Y1. Why $9.524MM? Because{" "}
-                  <span className="font-mono text-slate-100">
+                  <span className="font-sans text-slate-100">
                     9.524 &times; 1.05 &asymp; 10.000
                   </span>{" "}
                   — the present value of $10MM one year out at 5%.
@@ -187,11 +187,11 @@ export default function CFOHedgeSimulator() {
                 <div className="ops-caption text-[11px] text-accent-green">
                   Locked one-year forward rate (Y1 &rarr; Y2)
                 </div>
-                <div className="mt-1 font-mono text-[30px] text-accent-green">
+                <div className="mt-1 font-sans text-[30px] text-accent-green">
                   {formatPercent(LOCKED)}
                 </div>
                 <p className="ops-body mt-2 text-[14px] leading-6 text-slate-200">
-                  <span className="font-mono text-slate-100">
+                  <span className="font-sans text-slate-100">
                     10.904 / 10.000 &minus; 1 = {formatPercent(LOCKED)}
                   </span>{" "}
                   — exactly the one-year forward rate{" "}
@@ -288,7 +288,7 @@ function StepChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.1em] transition-colors",
         active
           ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
           : done
@@ -440,7 +440,7 @@ function CFDesk({
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.25 }}
                         className={cn(
-                          "inline-block rounded-md border px-2.5 py-1 font-mono text-[14px]",
+                          "inline-block rounded-md border px-2.5 py-1 font-sans text-[14px]",
                           v > 0
                             ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
                             : "border-accent-red/40 bg-accent-red/10 text-accent-red",
@@ -450,7 +450,7 @@ function CFDesk({
                         {Math.abs(v).toFixed(3)}
                       </motion.span>
                     ) : (
-                      <span className="font-mono text-[14px] text-slate-700">
+                      <span className="font-sans text-[14px] text-slate-700">
                         0
                       </span>
                     )}
@@ -476,7 +476,7 @@ function CFDesk({
                     initial={reduce ? false : { opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className={cn(
-                      "inline-block rounded-md border px-2.5 py-1 font-mono text-[15px] font-semibold",
+                      "inline-block rounded-md border px-2.5 py-1 font-sans text-[15px] font-semibold",
                       Math.abs(c.v) < 0.001
                         ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
                         : c.v > 0

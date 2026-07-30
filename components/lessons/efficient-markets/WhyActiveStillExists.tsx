@@ -40,12 +40,12 @@ export default function WhyActiveStillExists() {
             <button type="button" aria-expanded={isOpen}
               onClick={() => setOpen(isOpen ? null : f.key)}
               className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
-              <span className={cn("flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+              <span className={cn("flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[10px]",
                 isOpen ? "border-accent-cyan text-accent-cyan" : "border-white/20 text-slate-400")}>
                 {f.title.charAt(0)}
               </span>
               <span className="flex-1 text-[15px] font-medium text-white">{f.title}</span>
-              <span className={cn("font-mono text-sm text-accent-cyan transition-transform", isOpen && "rotate-45")} aria-hidden>+</span>
+              <span className={cn("font-sans text-sm text-accent-cyan transition-transform", isOpen && "rotate-45")} aria-hidden>+</span>
             </button>
             <AnimatePresence initial={false}>
               {isOpen && (
@@ -60,7 +60,7 @@ export default function WhyActiveStillExists() {
                     <p className="ops-body text-[15px] leading-[1.6] text-slate-100">{f.detail}</p>
                     {"paradox" in f && f.paradox && (
                       <div className="rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">The paradox</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">The paradox</span>
                         <p className="mt-1 text-[14px] leading-[1.55] text-slate-100">{f.paradox}</p>
                       </div>
                     )}

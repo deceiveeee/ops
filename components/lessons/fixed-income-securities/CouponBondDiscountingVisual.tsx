@@ -37,8 +37,8 @@ export default function CouponBondDiscountingVisual() {
         </DefinitionCard>
         <DefinitionCard term="Our running example">
           A 3-year bond, face{" "}
-          <span className="font-mono text-slate-100">$1,000</span>, 5% annual
-          coupon = <span className="font-mono text-slate-100">$50</span> per
+          <span className="font-sans text-slate-100">$1,000</span>, 5% annual
+          coupon = <span className="font-sans text-slate-100">$50</span> per
           year: Year 1 $50, Year 2 $50, Year 3 $1,050.
         </DefinitionCard>
       </div>
@@ -88,7 +88,7 @@ export default function CouponBondDiscountingVisual() {
                 key={total.toFixed(2)}
                 initial={reduce ? false : { opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="mt-1 font-mono text-[26px] text-accent-green"
+                className="mt-1 font-sans text-[26px] text-accent-green"
               >
                 $
                 {total.toLocaleString("en-US", {
@@ -127,7 +127,7 @@ function RateRow({
         <span className="ops-caption text-[11px] text-slate-400">
           Year {year} (${amount})
         </span>
-        <span className="font-mono text-[13px] text-slate-100">
+        <span className="font-sans text-[13px] text-slate-100">
           {ratePct.toFixed(1)}% → PV ${pv.toFixed(2)}
         </span>
       </div>
@@ -185,7 +185,7 @@ function DiscountPaths({
         x={todayX}
         y={padY - 8}
         textAnchor="middle"
-        className="fill-accent-cyan font-mono"
+        className="fill-accent-cyan font-sans"
         fontSize="11"
       >
         today
@@ -204,7 +204,7 @@ function DiscountPaths({
           x={xAt(y)}
           y={H - padY + 18}
           textAnchor="middle"
-          className="fill-slate-400 font-mono"
+          className="fill-slate-400 font-sans"
           fontSize="12"
         >
           Y{y}
@@ -236,7 +236,7 @@ function DiscountPaths({
               y={H - padY - faceH - 6}
               textAnchor="middle"
               fill={color}
-              className="font-mono"
+              className="font-sans"
               fontSize="11"
             >
               ${f.amount}
@@ -270,7 +270,7 @@ function DiscountPaths({
               x={todayX}
               y={H - padY - pvH - 6}
               textAnchor="middle"
-              className="fill-slate-200 font-mono"
+              className="fill-slate-200 font-sans"
               fontSize="10"
             >
               ${pvs[i].toFixed(0)}
@@ -280,7 +280,7 @@ function DiscountPaths({
               x={midX}
               y={H - padY - faceH * 0.5 + 3}
               textAnchor="middle"
-              className="fill-accent-amber font-mono"
+              className="fill-accent-amber font-sans"
               fontSize="10"
             >
               {formatPct(r)}

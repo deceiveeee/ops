@@ -142,7 +142,7 @@ export default function Lesson5_1() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[12px] text-accent-amber">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[12px] text-accent-amber">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -209,11 +209,11 @@ export default function Lesson5_1() {
           <p className="ops-body text-[15px] leading-7 text-slate-200">
             We can decompose the return into two yields. The{" "}
             <strong className="text-white">dividend yield</strong> is{" "}
-            <span className="font-mono text-slate-100">D₁ / P₀</span>, and the{" "}
+            <span className="font-sans text-slate-100">D₁ / P₀</span>, and the{" "}
             <strong className="text-white">capital gain yield</strong> is{" "}
-            <span className="font-mono text-slate-100">(P₁ − P₀) / P₀</span>. In
+            <span className="font-sans text-slate-100">(P₁ − P₀) / P₀</span>. In
             the example:{" "}
-            <span className="font-mono text-accent-green">2% + 8% = 10%</span>.
+            <span className="font-sans text-accent-green">2% + 8% = 10%</span>.
           </p>
         </Panel>
       </Reveal>
@@ -232,9 +232,9 @@ export default function Lesson5_1() {
             Practice: a stock you bought for $80
           </h4>
           <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
-            You bought a share for <span className="font-mono">$80</span>. A
-            year later it trades at <span className="font-mono">$74</span> and
-            paid a <span className="font-mono">$2</span> dividend. Compute each
+            You bought a share for <span className="font-sans">$80</span>. A
+            year later it trades at <span className="font-sans">$74</span> and
+            paid a <span className="font-sans">$2</span> dividend. Compute each
             component of the return, then the total.
           </p>
           <div className="mt-5 grid grid-cols-1 gap-3">
@@ -334,21 +334,21 @@ export default function Lesson5_1() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-6 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     State
                   </th>
-                  <th className="py-2 pr-6 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Probability
                   </th>
-                  <th className="py-2 pr-6 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Return
                   </th>
-                  <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Contribution
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-slate-200">
+              <tbody className="font-sans text-slate-200">
                 <tr className="border-b border-white/5">
                   <td className="py-2 pr-6 text-slate-100">Strong</td>
                   <td className="py-2 pr-6">30%</td>
@@ -382,11 +382,11 @@ export default function Lesson5_1() {
           </div>
           <p className="ops-body mt-4 text-[15px] leading-7 text-slate-300">
             Adding the three contributions:{" "}
-            <span className="font-mono text-slate-100">
+            <span className="font-sans text-slate-100">
               7.5% + 4.0% − 4.0% = 7.5%
             </span>
             . The expected return is{" "}
-            <span className="font-mono text-accent-cyan">7.5%</span> — but no
+            <span className="font-sans text-accent-cyan">7.5%</span> — but no
             single state actually produces exactly 7.5%. The realized return
             will be one of +25%, +8%, or −20%.
           </p>
@@ -420,24 +420,24 @@ export default function Lesson5_1() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Year
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     1
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     2
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     3
                   </th>
-                  <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     4
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-slate-200">
+              <tbody className="font-sans text-slate-200">
                 <tr>
                   <td className="py-2 pr-8 text-slate-400">Return</td>
                   <td className="py-2 pr-8 text-accent-green">+25%</td>
@@ -484,7 +484,7 @@ export default function Lesson5_1() {
               <p className="ops-body mt-2 text-[15px] text-slate-200">
                 A guaranteed 8% return. No uncertainty — you always get 8%.
               </p>
-              <div className="mt-3 font-mono text-[18px] text-slate-100">
+              <div className="mt-3 font-sans text-[18px] text-slate-100">
                 E[R] = 8%
               </div>
             </div>
@@ -496,14 +496,14 @@ export default function Lesson5_1() {
                 50% chance of +30%, 50% chance of −14%. The same expectation,
                 but outcomes are spread far apart.
               </p>
-              <div className="mt-3 font-mono text-[14px] text-slate-300">
+              <div className="mt-3 font-sans text-[14px] text-slate-300">
                 0.5 × 30% + 0.5 × (−14%) = 8%
               </div>
             </div>
           </div>
           <p className="ops-body mt-5 text-[15px] leading-7 text-slate-200">
             Both have{" "}
-            <span className="font-mono text-accent-cyan">E[R] = 8%</span>, but
+            <span className="font-sans text-accent-cyan">E[R] = 8%</span>, but
             investment B is plainly riskier: its outcomes (−14% or +30%) are far
             more spread out than A&apos;s certain 8%. An investor who cannot
             tolerate losing 14% would prefer A even though the expectation is
@@ -573,13 +573,13 @@ export default function Lesson5_1() {
       <Reveal className="mt-5">
         <Panel>
           <p className="ops-body text-[15px] leading-7 text-slate-200">
-            Suppose the risk-free rate is <span className="font-mono">4%</span>{" "}
+            Suppose the risk-free rate is <span className="font-sans">4%</span>{" "}
             and a stock has an expected return of{" "}
-            <span className="font-mono">10%</span>. The expected risk premium is{" "}
-            <span className="font-mono text-accent-cyan">6%</span>. But if the
-            stock actually returns <span className="font-mono">−12%</span>, the
+            <span className="font-sans">10%</span>. The expected risk premium is{" "}
+            <span className="font-sans text-accent-cyan">6%</span>. But if the
+            stock actually returns <span className="font-sans">−12%</span>, the
             realized excess return is{" "}
-            <span className="font-mono text-accent-red">−16%</span> — the
+            <span className="font-sans text-accent-red">−16%</span> — the
             investor did far worse than holding the risk-free asset. A positive
             expected premium does <strong className="text-white">not</strong>{" "}
             guarantee a positive realized excess return.
@@ -631,21 +631,21 @@ export default function Lesson5_1() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-6 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Company
                   </th>
-                  <th className="py-2 pr-6 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     E[payoff]
                   </th>
-                  <th className="py-2 pr-6 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Cost of equity
                   </th>
-                  <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     P₀ = payoff / (1 + r_e)
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-slate-200">
+              <tbody className="font-sans text-slate-200">
                 <tr className="border-b border-white/5">
                   <td className="py-2 pr-6 text-accent-green">Safer</td>
                   <td className="py-2 pr-6">$110</td>
@@ -663,7 +663,7 @@ export default function Lesson5_1() {
           </div>
           <p className="ops-body mt-4 text-[15px] leading-7 text-slate-300">
             Same expected payoff, but the riskier company is worth less today:{" "}
-            <span className="font-mono text-accent-red">
+            <span className="font-sans text-accent-red">
               $98.21 &lt; $103.77
             </span>
             . Higher risk → higher required return → heavier discounting → lower
@@ -839,8 +839,8 @@ function StateOfTheWorldExercise() {
       <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-4">
         <p className="ops-body text-[15px] leading-7 text-slate-200">
           If the realized return turned out to be{" "}
-          <span className="font-mono text-accent-red">−20%</span>, does this
-          contradict <span className="font-mono">E[R] = 7.5%</span>?
+          <span className="font-sans text-accent-red">−20%</span>, does this
+          contradict <span className="font-sans">E[R] = 7.5%</span>?
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <button
@@ -877,14 +877,14 @@ function StateOfTheWorldExercise() {
         )}
         {contradiction === "no" && (
           <Feedback status="correct">
-            Correct. The <span className="font-mono">−20%</span> is exactly the
+            Correct. The <span className="font-sans">−20%</span> is exactly the
             recession state. The expectation of{" "}
-            <span className="font-mono">7.5%</span> is an average across
+            <span className="font-sans">7.5%</span> is an average across
             possible states; a single realized outcome cannot contradict it.
             (Quietly, the math checks out:{" "}
-            <span className="font-mono">E[R] = {(er * 100).toFixed(1)}%</span>,
+            <span className="font-sans">E[R] = {(er * 100).toFixed(1)}%</span>,
             probabilities sum to{" "}
-            <span className="font-mono">{(probSum * 100).toFixed(0)}%</span>.)
+            <span className="font-sans">{(probSum * 100).toFixed(0)}%</span>.)
           </Feedback>
         )}
       </div>
@@ -929,7 +929,7 @@ function ReturnClassificationExercise() {
       <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
         Each quantity below looks similar but means something different. Compute
         each one. The risk-free rate is{" "}
-        <span className="font-mono">{(rf * 100).toFixed(0)}%</span>.
+        <span className="font-sans">{(rf * 100).toFixed(0)}%</span>.
       </p>
 
       <div className="mt-5 grid grid-cols-1 gap-3">
@@ -1018,9 +1018,9 @@ function ConceptCheck() {
         Pulling it together
       </h4>
       <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
-        Given <span className="font-mono">r_f = {rf}%</span>,{" "}
-        <span className="font-mono">E[R] = {eR}%</span>, and a realized return
-        of <span className="font-mono text-accent-red">{realized}%</span>,
+        Given <span className="font-sans">r_f = {rf}%</span>,{" "}
+        <span className="font-sans">E[R] = {eR}%</span>, and a realized return
+        of <span className="font-sans text-accent-red">{realized}%</span>,
         compute the two excess-return measures and interpret them.
       </p>
 

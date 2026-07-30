@@ -105,7 +105,7 @@ export default function TwoPathForwardRateBuilder() {
         <div className="ops-caption text-[11px] text-accent-purple">
           Implied year-2 forward rate (f₂)
         </div>
-        <div className="mt-1 font-mono text-[32px] text-white">{f2Label}</div>
+        <div className="mt-1 font-sans text-[32px] text-white">{f2Label}</div>
         <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
           {r1Pct <= r2Pct
             ? `If year 1 is ${formatPercent(r1, 1)}, the implied year-2 forward must be above ${formatPercent(r2, 1)} — the 2-year rate is an average, and the first year is the cheap one.`
@@ -147,7 +147,7 @@ function Slider({
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{display}</span>
+        <span className="font-sans text-[13px] text-slate-100">{display}</span>
       </div>
       <input
         type="range"
@@ -182,7 +182,7 @@ function PathCard({
   return (
     <div className={`rounded-2xl border ${border} ${bg} p-5`}>
       <div className={`ops-caption text-[11px] ${text}`}>{tag}</div>
-      <div className="mt-1 font-mono text-[16px] text-slate-100"><MathText>{title}</MathText></div>
+      <div className="mt-1 font-sans text-[16px] text-slate-100"><MathText>{title}</MathText></div>
       <div className="mt-4 space-y-2">
         {steps.map((s, i) => (
           <div
@@ -190,11 +190,11 @@ function PathCard({
             className="flex items-center justify-between rounded-lg border border-white/10 bg-ink-950/50 px-3 py-2"
           >
             <span className="ops-caption text-[11px] text-slate-400">{s.k}</span>
-            <span className="font-mono text-[14px] text-slate-100">{s.v}</span>
+            <span className="font-sans text-[14px] text-slate-100">{s.v}</span>
           </div>
         ))}
       </div>
-      <div className="mt-3 text-center font-mono text-[12px] text-slate-400">
+      <div className="mt-3 text-center font-sans text-[12px] text-slate-400">
         {footer}
       </div>
     </div>

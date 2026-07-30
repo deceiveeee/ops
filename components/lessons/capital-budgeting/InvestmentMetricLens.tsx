@@ -91,7 +91,7 @@ export default function InvestmentMetricLens() {
     <div className="space-y-6">
       {/* Program summary */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Restaurant expansion program
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -115,11 +115,11 @@ export default function InvestmentMetricLens() {
                 : "border-white/10 bg-white/[0.02] hover:border-white/25",
             )}
           >
-            <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]",
+            <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]",
               active === metric.key ? toneText[metric.tone] : "text-slate-400")}>
               {metric.shortLabel}
             </div>
-            <div className="mt-1 font-mono text-[16px] tabular-nums text-white">{metric.result}</div>
+            <div className="mt-1 font-sans text-[16px] tabular-nums text-white">{metric.result}</div>
           </button>
         ))}
       </div>
@@ -127,11 +127,11 @@ export default function InvestmentMetricLens() {
       {/* Active metric detail */}
       <div className={cn("rounded-2xl border p-5 sm:p-6", toneBorder[m.tone], "bg-white/[0.03]")}>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <span className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", toneText[m.tone])}>
+          <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[m.tone])}>
             {m.label}
           </span>
           <span className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em]",
+            "inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 font-sans text-[10px] uppercase tracking-[0.14em]",
             m.supports === "supports"
               ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
               : "border-accent-amber/40 bg-accent-amber/10 text-accent-amber",
@@ -141,7 +141,7 @@ export default function InvestmentMetricLens() {
         </div>
 
         <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 p-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
             Question answered
           </div>
           <p className="ops-body mt-1.5 text-[15px] leading-[1.6] text-white">{m.question}</p>
@@ -149,13 +149,13 @@ export default function InvestmentMetricLens() {
 
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-accent-green/20 bg-accent-green/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">
               What it reveals
             </div>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-100">{m.reveals}</p>
           </div>
           <div className="rounded-xl border border-accent-red/20 bg-accent-red/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">
               What it omits
             </div>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-100">{m.omits}</p>
@@ -169,8 +169,8 @@ export default function InvestmentMetricLens() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-ink-950/40 p-3">
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className="mt-1 font-mono text-[15px] text-white">{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className="mt-1 font-sans text-[15px] text-white">{value}</div>
     </div>
   );
 }

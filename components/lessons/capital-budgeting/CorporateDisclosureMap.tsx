@@ -150,7 +150,7 @@ export default function CorporateDisclosureMap() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Select an investor question
         </div>
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Investor question">
@@ -197,7 +197,7 @@ export default function CorporateDisclosureMap() {
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "rounded-full px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em]",
+                    "rounded-full px-2 py-0.5 font-sans text-[9px] uppercase tracking-[0.14em]",
                     rel === "primary"
                       ? "bg-accent-green/15 text-accent-green"
                       : rel === "secondary"

@@ -113,7 +113,7 @@ function RateLayerInteractive() {
             aria-label="Maturity in years"
             className="w-40 accent-accent-cyan"
           />
-          <span className="font-mono text-[15px] text-slate-100">T = {T}</span>
+          <span className="font-sans text-[15px] text-slate-100">T = {T}</span>
         </div>
       </div>
 
@@ -138,7 +138,7 @@ function RateLayerInteractive() {
                 "relative flex flex-1 min-w-[58px] flex-col items-center justify-center rounded-lg border border-dashed border-accent-purple/40 bg-accent-purple/[0.06] px-2 py-3",
               )}
             >
-              <span className="font-mono text-[13px] text-accent-purple">
+              <span className="font-sans text-[13px] text-accent-purple">
                 R<sub className="text-[0.7em]">{i + 1}</sub>
               </span>
               <span className="ops-caption mt-0.5 text-[10px] text-slate-500">
@@ -199,7 +199,7 @@ function RateLayerInteractive() {
             className="flex items-center gap-2 rounded-lg border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-3"
             style={{ minWidth: Math.max(120, T * 62) }}
           >
-            <span className="font-mono text-[16px] text-accent-cyan">
+            <span className="font-sans text-[16px] text-accent-cyan">
               r<sub className="text-[0.7em]">0,{T}</sub>
             </span>
             <span className="ops-caption text-[11px] text-slate-400">
@@ -220,12 +220,12 @@ function RateLayerInteractive() {
           <div className="ops-caption text-[11px] text-accent-cyan">
             Current substitution
           </div>
-          <div className="mt-2 font-mono text-[15px] text-slate-100">
+          <div className="mt-2 font-sans text-[15px] text-slate-100">
             <Var>P</Var>
             <Sub>0</Sub> = <Var>F</Var> / (1+<Var>r</Var>
             <Sub>0,{T}</Sub>)<Sup>{T}</Sup>
           </div>
-          <div className="mt-1 font-mono text-[13px] text-slate-400">
+          <div className="mt-1 font-sans text-[13px] text-slate-400">
             {T} hidden one-year rates collapse into one observable {T}-year
             rate.
           </div>

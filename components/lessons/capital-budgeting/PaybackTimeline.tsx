@@ -44,7 +44,7 @@ export default function PaybackTimeline() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
           <span>Initial investment</span>
           <span className="text-[14px] tabular-nums text-accent-amber">${initial}</span>
         </label>
@@ -55,7 +55,7 @@ export default function PaybackTimeline() {
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
           {flows.map((f, i) => (
             <div key={i}>
-              <label className="block font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+              <label className="block font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
                 Year {i + 1}
               </label>
               <input type="range" min={0} max={80} step={5} value={f}
@@ -63,7 +63,7 @@ export default function PaybackTimeline() {
                 className="mt-1 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
                 aria-label={`Year ${i + 1} cash flow`}
               />
-              <div className="mt-0.5 text-center font-mono text-[12px] tabular-nums text-white">${f}</div>
+              <div className="mt-0.5 text-center font-sans text-[12px] tabular-nums text-white">${f}</div>
             </div>
           ))}
         </div>
@@ -71,17 +71,17 @@ export default function PaybackTimeline() {
 
       {/* Timeline visualization */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Cumulative cash recovery
         </div>
         <div className="mt-4 space-y-2">
           {/* Initial outflow bar */}
           <div className="flex items-center gap-3">
-            <div className="w-16 flex-shrink-0 font-mono text-[11px] text-slate-400">Year 0</div>
+            <div className="w-16 flex-shrink-0 font-sans text-[11px] text-slate-400">Year 0</div>
             <div className="relative h-7 flex-1 overflow-hidden rounded-lg border border-white/10 bg-ink-950/40">
               <div className="absolute inset-y-0 right-0 flex items-center justify-end rounded-lg bg-accent-red/30 px-3"
                 style={{ width: `${(initial / maxCum) * 100}%` }}>
-                <span className="font-mono text-[11px] text-white">−${initial}</span>
+                <span className="font-sans text-[11px] text-white">−${initial}</span>
               </div>
             </div>
           </div>
@@ -90,12 +90,12 @@ export default function PaybackTimeline() {
             const widthPct = (Math.abs(c) / maxCum) * 100;
             return (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-16 flex-shrink-0 font-mono text-[11px] text-slate-400">Year {i + 1}</div>
+                <div className="w-16 flex-shrink-0 font-sans text-[11px] text-slate-400">Year {i + 1}</div>
                 <div className="relative h-7 flex-1 overflow-hidden rounded-lg border border-white/10 bg-ink-950/40">
                   <div className={cn("absolute inset-y-0 left-0 flex items-center justify-end rounded-lg px-3",
                     recovered ? "bg-accent-green/30" : "bg-accent-amber/25")}
                     style={{ width: `${widthPct}%` }}>
-                    <span className="font-mono text-[11px] text-white">${c}</span>
+                    <span className="font-sans text-[11px] text-white">${c}</span>
                   </div>
                   {!recovered && c < initial && (
                     <div className="absolute inset-y-0 border-l-2 border-dashed border-accent-amber/50"
@@ -107,7 +107,7 @@ export default function PaybackTimeline() {
           })}
           {/* Target line indicator */}
           <div className="flex items-center gap-3">
-            <div className="w-16 flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Target</div>
+            <div className="w-16 flex-shrink-0 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Target</div>
             <div className="text-[12px] text-slate-400">Initial investment recovered: ${initial}</div>
           </div>
         </div>
@@ -119,14 +119,14 @@ export default function PaybackTimeline() {
         paybackYear > 0 ? "border-accent-green/25 bg-accent-green/[0.05]" : "border-accent-red/25 bg-accent-red/[0.05]",
       )}>
         <div className={cn(
-          "font-mono text-[12px] uppercase tracking-[0.16em]",
+          "font-sans text-[12px] uppercase tracking-[0.16em]",
           paybackYear > 0 ? "text-accent-green" : "text-accent-red",
         )}>
           Payback period
         </div>
         {paybackYear > 0 ? (
           <>
-            <div className="mt-2 font-mono text-[24px] tabular-nums text-white">
+            <div className="mt-2 font-sans text-[24px] tabular-nums text-white">
               {paybackYear - 1 + paybackFraction > 0 ? (paybackYear - 1 + paybackFraction).toFixed(1) : paybackYear} years
             </div>
             <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
@@ -140,7 +140,7 @@ export default function PaybackTimeline() {
           </>
         ) : (
           <>
-            <div className="mt-2 font-mono text-[24px] tabular-nums text-white">Not recovered</div>
+            <div className="mt-2 font-sans text-[24px] tabular-nums text-white">Not recovered</div>
             <p className="ops-body mt-3 text-[15px] leading-[1.65] text-slate-100">
               The cumulative cash flows (${cumulative[cumulative.length - 1]}) do not recover the
               initial investment (${initial}) within the horizon.

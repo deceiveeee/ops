@@ -166,7 +166,7 @@ export default function CalculationWorksheet({
       {groups.map((group, gi) => (
         <div key={gi} className="border-l border-white/10 pl-5 sm:pl-6">
           {group.heading !== undefined && (
-            <div className="mb-1 font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+            <div className="mb-1 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
               {group.heading}
             </div>
           )}
@@ -194,7 +194,7 @@ export default function CalculationWorksheet({
                     <div className="relative inline-flex items-center">
                       {f.prefix && (
                         <span
-                          className="pointer-events-none absolute left-3 font-mono text-[15px] text-slate-400"
+                          className="pointer-events-none absolute left-3 font-sans text-[15px] text-slate-400"
                           aria-hidden
                         >
                           {f.prefix}
@@ -223,7 +223,7 @@ export default function CalculationWorksheet({
                         }
                         aria-invalid={st === "wrong"}
                         className={cn(
-                          "w-44 rounded-lg border bg-ink-950/60 py-2.5 font-mono text-[16px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
+                          "w-44 rounded-lg border bg-ink-950/60 py-2.5 font-sans text-[16px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
                           f.prefix ? "pl-8" : "pl-3.5",
                           f.unit ? "pr-10" : "pr-3.5",
                           meta.border,
@@ -231,7 +231,7 @@ export default function CalculationWorksheet({
                       />
                       {f.unit && (
                         <span
-                          className="pointer-events-none absolute right-3 font-mono text-[15px] text-slate-400"
+                          className="pointer-events-none absolute right-3 font-sans text-[15px] text-slate-400"
                           aria-hidden
                         >
                           {f.unit}
@@ -239,7 +239,7 @@ export default function CalculationWorksheet({
                       )}
                     </div>
                     {st !== "idle" && (
-                      <span className={cn("font-mono text-[13px]", meta.labelCls)} aria-live="polite">
+                      <span className={cn("font-sans text-[13px]", meta.labelCls)} aria-live="polite">
                         {st === "revealed"
                           ? `answer: ${f.prefix ?? ""}${fmt(f.answer, f.decimals ?? 2)}${f.unit ?? ""}`
                           : meta.label}
@@ -294,7 +294,7 @@ export default function CalculationWorksheet({
         {attempts > 0 && (
           <span
             className={cn(
-              "font-mono text-[14px] tabular-nums",
+              "font-sans text-[14px] tabular-nums",
               solved || allCorrect ? "text-accent-green" : "text-slate-400",
             )}
             aria-live="polite"

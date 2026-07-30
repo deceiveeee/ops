@@ -97,7 +97,7 @@ export default function SeniorTrancheStressRoom() {
                   initial={reduce ? false : { scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className={cn(
-                    "rounded-md border px-2.5 py-0.5 font-mono text-[12px]",
+                    "rounded-md border px-2.5 py-0.5 font-sans text-[12px]",
                     badge.cls,
                   )}
                 >
@@ -111,7 +111,7 @@ export default function SeniorTrancheStressRoom() {
                 <motion.div
                   initial={false}
                   animate={{ opacity: seniorValue < 70 ? 0.85 : 1 }}
-                  className="mt-1 font-mono text-[24px] text-white"
+                  className="mt-1 font-sans text-[24px] text-white"
                 >
                   {seniorValue.toFixed(0)}
                 </motion.div>
@@ -179,7 +179,7 @@ export default function SeniorTrancheStressRoom() {
               <span className="ops-caption text-[11px] text-slate-400">
                 Mark-to-market loss
               </span>
-              <span className="font-mono text-[13px] text-accent-red">
+              <span className="font-sans text-[13px] text-accent-red">
                 -{mtmLoss.toFixed(0)}
               </span>
             </div>
@@ -199,7 +199,7 @@ export default function SeniorTrancheStressRoom() {
               </span>
               <span
                 className={cn(
-                  "font-mono text-[13px]",
+                  "font-sans text-[13px]",
                   stress.liquidity > 66
                     ? "text-accent-red"
                     : stress.liquidity > 33
@@ -255,7 +255,7 @@ function StressLever({
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
         <span
           className={cn(
-            "font-mono text-[13px]",
+            "font-sans text-[13px]",
             value > 66
               ? "text-accent-red"
               : value > 33

@@ -54,7 +54,7 @@ export default function ChallengerCaseStudy() {
     <div className="space-y-6">
       {/* Original timeline (not reproducing the Elsevier chart) */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Original timeline
         </div>
 
@@ -67,7 +67,7 @@ export default function ChallengerCaseStudy() {
                 "flex-1 rounded-lg border p-3 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                 step === i ? "border-accent-cyan/50 bg-accent-cyan/10" : "border-white/8 bg-white/[0.02] hover:border-white/20",
               )}>
-              <div className={cn("font-mono text-[9px] uppercase tracking-[0.14em]",
+              <div className={cn("font-sans text-[9px] uppercase tracking-[0.14em]",
                 step === i ? "text-accent-cyan" : "text-slate-500")}>
                 {i + 1}
               </div>
@@ -81,7 +81,7 @@ export default function ChallengerCaseStudy() {
 
         {/* Simplified relative reaction visualization */}
         <div className="mt-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">
+          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-500">
             Relative stock reaction (simplified, illustrative)
           </div>
           <div className="mt-2 space-y-1.5">
@@ -94,7 +94,7 @@ export default function ChallengerCaseStudy() {
                 <div className="relative h-6 flex-1 overflow-hidden rounded-lg border border-white/10 bg-ink-950/40">
                   <div className="absolute inset-y-0 right-1/2 flex items-center justify-start rounded-lg bg-accent-red/25 px-2"
                     style={{ width: `${c.width}%`, transform: "translateX(0)" }}>
-                    <span className="font-mono text-[11px] text-accent-red">{c.reaction}%</span>
+                    <span className="font-sans text-[11px] text-accent-red">{c.reaction}%</span>
                   </div>
                   <div className="absolute inset-y-0 left-1/2 w-px bg-white/20" />
                 </div>
@@ -120,10 +120,10 @@ export default function ChallengerCaseStudy() {
           className="rounded-2xl border border-accent-cyan/25 bg-white/[0.03] p-5 sm:p-6"
         >
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-mono text-[11px] text-accent-cyan">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-sans text-[11px] text-accent-cyan">
               {step + 1}
             </span>
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">{s.date}</span>
+            <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">{s.date}</span>
           </div>
           <h3 className="ops-section-title mt-3 text-[20px] text-white">{s.title}</h3>
           <p className="ops-body mt-2 text-[16px] leading-[1.65] text-slate-100">{s.text}</p>
@@ -135,14 +135,14 @@ export default function ChallengerCaseStudy() {
       <div className="flex items-center justify-between">
         <button type="button" disabled={step === 0}
           onClick={() => setStep((s) => Math.max(0, s - 1))}
-          className={cn("rounded-full border px-4 py-2 font-mono text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+          className={cn("rounded-full border px-4 py-2 font-sans text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
             step === 0 ? "border-white/10 text-slate-600" : "border-white/20 text-slate-200 hover:border-accent-cyan/60 hover:text-accent-cyan")}>
           ← Previous
         </button>
-        <span className="font-mono text-[12px] text-slate-400">{step + 1} / {STEPS.length}</span>
+        <span className="font-sans text-[12px] text-slate-400">{step + 1} / {STEPS.length}</span>
         <button type="button" disabled={step === STEPS.length - 1}
           onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-          className={cn("rounded-full border px-4 py-2 font-mono text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+          className={cn("rounded-full border px-4 py-2 font-sans text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
             step === STEPS.length - 1 ? "border-white/10 text-slate-600" : "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20")}>
           Next →
         </button>

@@ -27,7 +27,7 @@ export default function LessonSummary({
       <ol className="mt-6 space-y-3">
         {points.map((p, i) => (
           <li key={p} className="ops-body flex items-start gap-3 text-[16px] text-slate-200">
-            <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+            <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
               {i + 1}
             </span>
             <MathText>{p}</MathText>

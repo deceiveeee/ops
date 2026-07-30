@@ -43,7 +43,7 @@ export default function SameCashFlowDifferentRisk() {
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <p className="ops-body text-[16px] leading-[1.65] text-slate-100">
           Both investments are <span className="text-white">expected</span> to pay{" "}
-          <span className="font-mono text-accent-amber">$110</span> next year. Only the
+          <span className="font-sans text-accent-amber">$110</span> next year. Only the
           required return differs. Hold Investment A at{" "}
           <InlineMath>{String.raw`5\%`}</InlineMath> and raise Investment B&apos;s required
           return to see how its present value falls.
@@ -51,7 +51,7 @@ export default function SameCashFlowDifferentRisk() {
         <div className="mt-5">
           <label
             htmlFor="b-rate"
-            className="flex items-baseline justify-between font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400"
+            className="flex items-baseline justify-between font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400"
           >
             <span>Investment B required return</span>
             <span className="text-[15px] tabular-nums text-accent-amber">{bRate}%</span>
@@ -74,7 +74,7 @@ export default function SameCashFlowDifferentRisk() {
                 type="button"
                 onClick={() => setBRate(preset)}
                 className={cn(
-                  "rounded-full border px-3 py-1 font-mono text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
+                  "rounded-full border px-3 py-1 font-sans text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
                   bRate === preset
                     ? "border-accent-amber bg-accent-amber/15 text-accent-amber"
                     : "border-white/15 text-slate-300 hover:border-accent-amber/50 hover:text-accent-amber",
@@ -90,27 +90,27 @@ export default function SameCashFlowDifferentRisk() {
       {/* Side-by-side comparison */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.05] p-6">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
             Investment A · lower risk
           </div>
           <div className="mt-4 space-y-2">
             <div className="text-slate-200">
               <BlockMath>{String.raw`PV_A = \frac{110}{1.05}`}</BlockMath>
             </div>
-            <div className="rounded-lg border border-white/10 bg-ink-950/40 px-4 py-3 font-mono text-[20px] tabular-nums text-white">
+            <div className="rounded-lg border border-white/10 bg-ink-950/40 px-4 py-3 font-sans text-[20px] tabular-nums text-white">
               ${fmt(pvA)}
             </div>
           </div>
         </div>
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-6">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
             Investment B · higher risk
           </div>
           <div className="mt-4 space-y-2">
             <div className="text-slate-200">
               <BlockMath>{String.raw`PV_B = \frac{110}{1 + ${bRate}\%}`}</BlockMath>
             </div>
-            <div className="rounded-lg border border-white/10 bg-ink-950/40 px-4 py-3 font-mono text-[20px] tabular-nums text-white">
+            <div className="rounded-lg border border-white/10 bg-ink-950/40 px-4 py-3 font-sans text-[20px] tabular-nums text-white">
               ${fmt(pvB)}
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function SameCashFlowDifferentRisk() {
             : "border-white/12 bg-white/[0.03]",
         )}
       >
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Price comparison
         </div>
         <div className="mt-3">
@@ -152,7 +152,7 @@ export default function SameCashFlowDifferentRisk() {
 
       {/* Causal chain */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           The pricing mechanism
         </div>
         <div className="mt-5 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">

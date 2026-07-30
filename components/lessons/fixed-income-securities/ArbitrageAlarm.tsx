@@ -110,7 +110,7 @@ function PriceSlider({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[14px] text-slate-100">{formatMoney(value)}</span>
+        <span className="font-sans text-[14px] text-slate-100">{formatMoney(value)}</span>
       </div>
       <input
         type="range"
@@ -178,15 +178,15 @@ function AlarmPanel({
           <div className="mt-2 flex items-center gap-4">
             <div>
               <div className="ops-caption text-[11px] text-slate-400">Coupon bond</div>
-              <div className="font-mono text-[20px] text-slate-100">{formatMoney(bondPrice)}</div>
+              <div className="font-sans text-[20px] text-slate-100">{formatMoney(bondPrice)}</div>
             </div>
             <div className="ops-caption text-[16px] text-slate-500">vs</div>
             <div>
               <div className="ops-caption text-[11px] text-slate-400">STRIPS</div>
-              <div className="font-mono text-[20px] text-slate-100">{formatMoney(stripsPrice)}</div>
+              <div className="font-sans text-[20px] text-slate-100">{formatMoney(stripsPrice)}</div>
             </div>
             {status !== "fair" && (
-              <div className={cn("ml-auto font-mono text-[16px]", config.text)}>
+              <div className={cn("ml-auto font-sans text-[16px]", config.text)}>
                 Δ {formatMoney(diff)}
               </div>
             )}
@@ -208,7 +208,7 @@ function AlarmPanel({
             <TradeArrow from="Buy coupon bond" to="Short STRIPS" tone="amber" reduce={reduce} />
           )}
           {status === "fair" && (
-            <div className="w-full py-2 text-center font-mono text-[13px] text-slate-400">
+            <div className="w-full py-2 text-center font-sans text-[13px] text-slate-400">
               No trade — prices are aligned
             </div>
           )}
@@ -222,7 +222,7 @@ function TradeArrow({ from, to, tone, reduce }: { from: string; to: string; tone
   const toneText = tone === "red" ? "text-accent-red" : "text-accent-amber";
   return (
     <div className="flex w-full items-center justify-between gap-2">
-      <span className={cn("rounded-md border border-current/40 px-3 py-1.5 font-mono text-[12px]", toneText)}>
+      <span className={cn("rounded-md border border-current/40 px-3 py-1.5 font-sans text-[12px]", toneText)}>
         {from}
       </span>
       <motion.span
@@ -233,7 +233,7 @@ function TradeArrow({ from, to, tone, reduce }: { from: string; to: string; tone
       >
         ⇄
       </motion.span>
-      <span className={cn("rounded-md border border-current/40 px-3 py-1.5 font-mono text-[12px]", toneText)}>
+      <span className={cn("rounded-md border border-current/40 px-3 py-1.5 font-sans text-[12px]", toneText)}>
         {to}
       </span>
     </div>

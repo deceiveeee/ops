@@ -66,12 +66,12 @@ export default function GenuineEdgeSources() {
               <button type="button" aria-expanded={isOpen}
                 onClick={() => setActive(isOpen ? null : e.key)}
                 className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
-                <span className={cn("flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+                <span className={cn("flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[10px]",
                   isOpen ? "border-accent-cyan text-accent-cyan" : "border-white/20 text-slate-400")}>
                   {e.title.charAt(0)}
                 </span>
                 <span className="flex-1 text-[15px] font-medium text-white">{e.title}</span>
-                <span className={cn("font-mono text-sm text-accent-cyan transition-transform", isOpen && "rotate-45")} aria-hidden>+</span>
+                <span className={cn("font-sans text-sm text-accent-cyan transition-transform", isOpen && "rotate-45")} aria-hidden>+</span>
               </button>
               <AnimatePresence initial={false}>
                 {isOpen && (
@@ -86,11 +86,11 @@ export default function GenuineEdgeSources() {
                       <p className="ops-body text-[15px] leading-[1.6] text-slate-100">{e.definition}</p>
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <div className="rounded-lg border border-accent-green/20 bg-accent-green/[0.04] p-3">
-                          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Example</div>
+                          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Example</div>
                           <p className="mt-1 text-[13px] leading-[1.55] text-slate-100">{e.example}</p>
                         </div>
                         <div className="rounded-lg border border-accent-red/20 bg-accent-red/[0.04] p-3">
-                          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">Limitation</div>
+                          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">Limitation</div>
                           <p className="mt-1 text-[13px] leading-[1.55] text-slate-100">{e.limitation}</p>
                         </div>
                       </div>

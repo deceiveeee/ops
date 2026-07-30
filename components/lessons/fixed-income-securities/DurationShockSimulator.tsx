@@ -80,7 +80,7 @@ export default function DurationShockSimulator() {
               </span>
               <span
                 className={cn(
-                  "font-mono text-[13px]",
+                  "font-sans text-[13px]",
                   up ? "text-accent-green" : "text-accent-red",
                 )}
               >
@@ -98,7 +98,7 @@ export default function DurationShockSimulator() {
               aria-label="Yield shock in basis points"
               className="mt-2 w-full accent-accent-amber"
             />
-            <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+            <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
               <span>−200 bps</span>
               <span>+200 bps</span>
             </div>
@@ -124,7 +124,7 @@ export default function DurationShockSimulator() {
             </div>
             <div
               className={cn(
-                "mt-1 font-mono text-[20px]",
+                "mt-1 font-sans text-[20px]",
                 up ? "text-accent-green" : "text-accent-red",
               )}
             >
@@ -178,7 +178,7 @@ function NumField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-2 w-full rounded-md border border-white/10 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-2 w-full rounded-md border border-white/10 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -217,13 +217,13 @@ function PriceCard({
       className={cn("rounded-xl border bg-white/[0.02] p-4", accent)}
     >
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className="mt-1 font-mono text-[22px] text-slate-100">
+      <div className="mt-1 font-sans text-[22px] text-slate-100">
         {formatMoney(value)}
       </div>
       {delta !== undefined && (
         <div
           className={cn(
-            "mt-0.5 font-mono text-[13px]",
+            "mt-0.5 font-sans text-[13px]",
             up ? "text-accent-green" : "text-accent-red",
           )}
         >

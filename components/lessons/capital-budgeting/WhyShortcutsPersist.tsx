@@ -51,13 +51,13 @@ export default function WhyShortcutsPersist() {
               className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
             >
               <span className={cn(
-                "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+                "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[10px]",
                 isOpen ? "border-accent-amber text-accent-amber" : "border-white/20 text-slate-400",
               )}>
                 {String.fromCharCode(65 + i)}
               </span>
               <span className="flex-1 text-[15px] font-medium text-white">{r.title}</span>
-              <span className={cn("font-mono text-sm text-accent-amber transition-transform", isOpen && "rotate-45")} aria-hidden>+</span>
+              <span className={cn("font-sans text-sm text-accent-amber transition-transform", isOpen && "rotate-45")} aria-hidden>+</span>
             </button>
             <AnimatePresence initial={false}>
               {isOpen && (

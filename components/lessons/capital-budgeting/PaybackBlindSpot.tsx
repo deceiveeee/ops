@@ -97,7 +97,7 @@ export default function PaybackBlindSpot() {
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <p className="ops-body text-[15px] leading-[1.6] text-slate-100">{p.blurb}</p>
         <p className="ops-body mt-2 text-[14px] leading-[1.55] text-slate-400">
-          Payback period: <span className="font-mono text-white">{fmt(pb, 1)} years</span> (all three projects share this).
+          Payback period: <span className="font-sans text-white">{fmt(pb, 1)} years</span> (all three projects share this).
         </p>
 
         {/* Timeline */}
@@ -109,15 +109,15 @@ export default function PaybackBlindSpot() {
                 "flex-shrink-0 rounded-lg border p-3 text-center transition-opacity",
                 hidden ? "border-white/5 bg-white/[0.01] opacity-30" : "border-white/10 bg-ink-950/40",
               )} style={{ minWidth: "80px" }}>
-                <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
                   {i === 0 ? "Year 0" : `Year ${i}`}
                 </div>
-                <div className={cn("mt-1 font-mono text-[14px] tabular-nums",
+                <div className={cn("mt-1 font-sans text-[14px] tabular-nums",
                   hidden ? "text-slate-600" : f >= 0 ? "text-accent-green" : "text-accent-red")}>
                   {hidden ? "???" : `${f >= 0 ? "+" : "−"}$${fmt(Math.abs(f))}`}
                 </div>
                 {hidden && (
-                  <div className="mt-1 font-mono text-[9px] uppercase text-slate-600">hidden</div>
+                  <div className="mt-1 font-sans text-[9px] uppercase text-slate-600">hidden</div>
                 )}
               </div>
             );
@@ -128,7 +128,7 @@ export default function PaybackBlindSpot() {
           <button
             type="button"
             onClick={() => setRevealed(true)}
-            className="mt-4 rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
+            className="mt-4 rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
           >
             Reveal post-payback cash flows
           </button>
@@ -143,10 +143,10 @@ export default function PaybackBlindSpot() {
             className="grid grid-cols-1 gap-4 sm:grid-cols-2"
           >
             <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-red">
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">
                 What payback sees
               </div>
-              <div className="mt-2 font-mono text-[20px] tabular-nums text-white">
+              <div className="mt-2 font-sans text-[20px] tabular-nums text-white">
                 NPV (truncated) = {truncatedNPV >= 0 ? "+" : "−"}${fmt(Math.abs(truncatedNPV))}
               </div>
               <p className="ops-body mt-2 text-[13px] leading-[1.55] text-slate-300">
@@ -154,10 +154,10 @@ export default function PaybackBlindSpot() {
               </p>
             </div>
             <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
                 Full project NPV
               </div>
-              <div className={cn("mt-2 font-mono text-[20px] tabular-nums", fullNPV > 0 ? "text-accent-green" : "text-accent-red")}>
+              <div className={cn("mt-2 font-sans text-[20px] tabular-nums", fullNPV > 0 ? "text-accent-green" : "text-accent-red")}>
                 {fullNPV >= 0 ? "+" : "−"}${fmt(Math.abs(fullNPV))}
               </div>
               <p className="ops-body mt-2 text-[13px] leading-[1.55] text-slate-300">

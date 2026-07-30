@@ -42,7 +42,7 @@ export default function BasicVsDiscountedPayback() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
           <span>Discount rate</span>
           <span className="text-[14px] tabular-nums text-accent-amber">{rate}%</span>
         </label>
@@ -62,28 +62,28 @@ export default function BasicVsDiscountedPayback() {
             "rounded-2xl border p-5",
             p.tone === "cyan" ? "border-accent-cyan/25 bg-accent-cyan/[0.04]" : "border-accent-amber/25 bg-accent-amber/[0.04]",
           )}>
-            <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+            <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
               p.tone === "cyan" ? "text-accent-cyan" : "text-accent-amber")}>{p.name}</div>
             <div className="mt-3 flex gap-1">
               {p.flows.map((f, i) => (
                 <div key={i} className="flex-1 rounded-lg border border-white/10 bg-ink-950/40 p-2 text-center">
-                  <div className="font-mono text-[10px] text-slate-400">Yr {i + 1}</div>
-                  <div className={cn("font-mono text-[13px]", f > 0 ? "text-accent-green" : "text-slate-500")}>${f}</div>
+                  <div className="font-sans text-[10px] text-slate-400">Yr {i + 1}</div>
+                  <div className={cn("font-sans text-[13px]", f > 0 ? "text-accent-green" : "text-slate-500")}>${f}</div>
                 </div>
               ))}
             </div>
             <div className="mt-3 space-y-1 text-[13px]">
               <div className="flex justify-between border-b border-white/5 pb-1">
                 <span className="text-slate-400">Basic payback</span>
-                <span className="font-mono text-white">{p.pb > 0 ? `${fmt(p.pb)} yrs` : "—"}</span>
+                <span className="font-sans text-white">{p.pb > 0 ? `${fmt(p.pb)} yrs` : "—"}</span>
               </div>
               <div className="flex justify-between border-b border-white/5 pb-1">
                 <span className="text-slate-400">Discounted payback ({rate}%)</span>
-                <span className="font-mono text-white">{p.dpb > 0 ? `${fmt(p.dpb)} yrs` : "—"}</span>
+                <span className="font-sans text-white">{p.dpb > 0 ? `${fmt(p.dpb)} yrs` : "—"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">NPV ({rate}%)</span>
-                <span className={cn("font-mono", p.npv > 0 ? "text-accent-green" : "text-accent-red")}>
+                <span className={cn("font-sans", p.npv > 0 ? "text-accent-green" : "text-accent-red")}>
                   {p.npv >= 0 ? "+" : "−"}${fmt(Math.abs(p.npv))}
                 </span>
               </div>
@@ -94,7 +94,7 @@ export default function BasicVsDiscountedPayback() {
 
       {/* Key insight */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           What discounting reveals
         </div>
         <p className="ops-body mt-3 text-[15px] leading-[1.7] text-slate-100">

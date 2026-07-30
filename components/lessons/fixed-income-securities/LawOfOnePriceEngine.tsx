@@ -149,7 +149,7 @@ export default function LawOfOnePriceEngine() {
             />
           </div>
           {identical && gap >= 0.5 && (
-            <div className="mt-3 flex items-center gap-2 font-mono text-[14px] text-accent-amber">
+            <div className="mt-3 flex items-center gap-2 font-sans text-[14px] text-accent-amber">
               <span>Arbitrage gap</span>
               <span className="text-accent-amber">{formatMoney(gap)}</span>
               <InlineMath>{"\\Rightarrow"}</InlineMath>
@@ -229,7 +229,7 @@ function StreamEditor({
               step={10}
               onChange={(e) => setters[i](Number(e.target.value))}
               aria-label={`${title} year ${i + 1} cash flow`}
-              className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+              className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
             />
           </label>
         ))}
@@ -245,7 +245,7 @@ function StreamEditor({
           step={5}
           onChange={(e) => setPrice(Number(e.target.value))}
           aria-label={`${title} price today`}
-          className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+          className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
         />
       </label>
     </div>
@@ -268,7 +268,7 @@ function PriceBar({
   const color = tone === "cyan" ? "bg-accent-cyan/70" : "bg-accent-purple/70";
   return (
     <div className="flex items-center gap-3">
-      <span className="w-5 font-mono text-[13px] text-slate-300">{label}</span>
+      <span className="w-5 font-sans text-[13px] text-slate-300">{label}</span>
       <div className="h-7 flex-1 overflow-hidden rounded-md bg-white/5">
         <motion.div
           className={cn("h-full rounded-md", color)}
@@ -277,7 +277,7 @@ function PriceBar({
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
-      <span className="w-20 text-right font-mono text-[14px] text-slate-100">
+      <span className="w-20 text-right font-sans text-[14px] text-slate-100">
         {formatMoney(value)}
       </span>
     </div>

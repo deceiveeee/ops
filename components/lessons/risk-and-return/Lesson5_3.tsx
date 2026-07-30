@@ -161,7 +161,7 @@ export default function Lesson5_3() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-purple/40 bg-accent-purple/10 px-1.5 font-mono text-[12px] text-accent-purple">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-purple/40 bg-accent-purple/10 px-1.5 font-sans text-[12px] text-accent-purple">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -271,21 +271,21 @@ export default function Lesson5_3() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     State
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Stock A
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Asset B
                   </th>
-                  <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     50/50 portfolio
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-slate-200">
+              <tbody className="font-sans text-slate-200">
                 <tr className="border-b border-white/5">
                   <td className="py-2 pr-8 text-slate-100">Expansion</td>
                   <td className="py-2 pr-8 text-accent-green">+30%</td>
@@ -307,11 +307,11 @@ export default function Lesson5_3() {
           </div>
           <p className="ops-body mt-4 text-[15px] leading-7 text-slate-300">
             Stock A alone swings between{" "}
-            <span className="font-mono text-accent-red">−10%</span> and{" "}
-            <span className="font-mono text-accent-green">+30%</span> — a
+            <span className="font-sans text-accent-red">−10%</span> and{" "}
+            <span className="font-sans text-accent-green">+30%</span> — a
             40-point range. The 50/50 portfolio swings only between{" "}
-            <span className="font-mono">4%</span> and{" "}
-            <span className="font-mono">14%</span> — a 10-point range. The two
+            <span className="font-sans">4%</span> and{" "}
+            <span className="font-sans">14%</span> — a 10-point range. The two
             assets <strong className="text-white">partially offset</strong> each
             other, smoothing the portfolio&apos;s outcomes. That offset is the
             essence of diversification, and it is driven by how the assets{" "}
@@ -424,8 +424,8 @@ export default function Lesson5_3() {
       <Reveal className="mt-5">
         <Panel>
           <p className="ops-body text-[16px] leading-7 text-slate-200">
-            Hold the weights at <span className="font-mono">50/50</span> and the
-            volatilities at <span className="font-mono">σ_A = σ_B = 20%</span>.
+            Hold the weights at <span className="font-sans">50/50</span> and the
+            volatilities at <span className="font-sans">σ_A = σ_B = 20%</span>.
             Only the correlation changes. Watch what happens to portfolio
             volatility — while expected return stays fixed.
           </p>
@@ -449,13 +449,13 @@ export default function Lesson5_3() {
       <Reveal className="mt-5">
         <Panel>
           <p className="ops-body text-[16px] leading-7 text-slate-200">
-            Now a realistic case: <span className="font-mono">w_A = 60%</span>,{" "}
-            <span className="font-mono">w_B = 40%</span>,{" "}
-            <span className="font-mono">E[R_A] = 8%</span>,{" "}
-            <span className="font-mono">E[R_B] = 12%</span>,{" "}
-            <span className="font-mono">σ_A = 12%</span>,{" "}
-            <span className="font-mono">σ_B = 18%</span>, and{" "}
-            <span className="font-mono">ρ = 0.25</span>. The portfolio&apos;s
+            Now a realistic case: <span className="font-sans">w_A = 60%</span>,{" "}
+            <span className="font-sans">w_B = 40%</span>,{" "}
+            <span className="font-sans">E[R_A] = 8%</span>,{" "}
+            <span className="font-sans">E[R_B] = 12%</span>,{" "}
+            <span className="font-sans">σ_A = 12%</span>,{" "}
+            <span className="font-sans">σ_B = 18%</span>, and{" "}
+            <span className="font-sans">ρ = 0.25</span>. The portfolio&apos;s
             expected return is a weighted average, but its volatility must come
             from the variance formula.
           </p>
@@ -635,9 +635,9 @@ export default function Lesson5_3() {
           Yes — when their correlation is low enough. With ρ &lt; 1, the
           portfolio&apos;s variance is below the weighted average of the
           individual variances, so σ_P can fall below both{" "}
-          <span className="font-mono">σ_A</span> and{" "}
-          <span className="font-mono">σ_B</span>. At{" "}
-          <span className="font-mono">ρ = −1</span> and equal volatilities, a
+          <span className="font-sans">σ_A</span> and{" "}
+          <span className="font-sans">σ_B</span>. At{" "}
+          <span className="font-sans">ρ = −1</span> and equal volatilities, a
           50/50 portfolio can reach zero risk.
         </ExpandableQA>
         <ExpandableQA question="Does diversification prevent losses?">
@@ -729,10 +729,10 @@ function PortfolioReturnWorksheet() {
       </h4>
       <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
         You hold{" "}
-        <span className="font-mono">w_A = {(wA * 100).toFixed(0)}%</span> in
-        stock A (return <span className="font-mono">{rA}%</span>) and{" "}
-        <span className="font-mono">w_B = {(wB * 100).toFixed(0)}%</span> in
-        asset B (return <span className="font-mono">{rB}%</span>). What is the
+        <span className="font-sans">w_A = {(wA * 100).toFixed(0)}%</span> in
+        stock A (return <span className="font-sans">{rA}%</span>) and{" "}
+        <span className="font-sans">w_B = {(wB * 100).toFixed(0)}%</span> in
+        asset B (return <span className="font-sans">{rB}%</span>). What is the
         portfolio return?
       </p>
       <div className="mt-5 grid grid-cols-1 gap-3">
@@ -961,8 +961,8 @@ function CorrelationExplorer() {
       </div>
 
       <p className="ops-body mt-5 text-[15px] leading-7 text-slate-300">
-        As ρ moves from <span className="font-mono">+1</span> toward{" "}
-        <span className="font-mono">−1</span>, the cloud rotates from a tight
+        As ρ moves from <span className="font-sans">+1</span> toward{" "}
+        <span className="font-sans">−1</span>, the cloud rotates from a tight
         upward line to a loose disk to a downward line. The tighter the cloud
         hugs a line, the stronger the linear co-movement — and the smaller the
         diversification benefit.
@@ -1051,11 +1051,11 @@ function CorrelationComparison() {
         <Feedback status="info">
           <strong className="text-white">The pattern:</strong> as correlation
           falls, portfolio volatility falls — but expected return does{" "}
-          <em>not</em>. At <span className="font-mono">ρ = 1</span> there is no
+          <em>not</em>. At <span className="font-sans">ρ = 1</span> there is no
           diversification (σ_P = 20%); at{" "}
-          <span className="font-mono">ρ = 0</span> risk drops to 14.14%; at{" "}
-          <span className="font-mono">ρ = −0.5</span> to 10%; and at{" "}
-          <span className="font-mono">ρ = −1</span> with equal volatilities,
+          <span className="font-sans">ρ = 0</span> risk drops to 14.14%; at{" "}
+          <span className="font-sans">ρ = −0.5</span> to 10%; and at{" "}
+          <span className="font-sans">ρ = −1</span> with equal volatilities,
           risk can be driven to zero. Lower correlation is a free lunch — less
           risk for the same expected return.
         </Feedback>
@@ -1066,18 +1066,18 @@ function CorrelationComparison() {
           <table className="w-full border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/15 text-left">
-                <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                   Correlation
                 </th>
-                <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                   σ_P
                 </th>
-                <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                   Diversification benefit
                 </th>
               </tr>
             </thead>
-            <tbody className="font-mono text-slate-200">
+            <tbody className="font-sans text-slate-200">
               {COMP_CASES.map((c) => (
                 <tr key={c.label} className="border-b border-white/5">
                   <td className="py-2 pr-8 text-slate-100">{c.label}</td>
@@ -1140,8 +1140,8 @@ function TwoAssetPortfolioWorksheet() {
       </h4>
       <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
         Enter expected returns as percents (e.g.{" "}
-        <span className="font-mono">9.6</span>) and the variance terms as
-        decimals (e.g. <span className="font-mono">0.0052</span>). Work each
+        <span className="font-sans">9.6</span>) and the variance terms as
+        decimals (e.g. <span className="font-sans">0.0052</span>). Work each
         piece, then assemble the total.
       </p>
 
@@ -1214,16 +1214,16 @@ function TwoAssetPortfolioWorksheet() {
           interpretation={
             <>
               The portfolio has expected return{" "}
-              <span className="font-mono text-accent-cyan">
+              <span className="font-sans text-accent-cyan">
                 {erp.toFixed(1)}%
               </span>{" "}
               and volatility{" "}
-              <span className="font-mono text-accent-purple">
+              <span className="font-sans text-accent-purple">
                 {(sdP * 100).toFixed(2)}%
               </span>
               . That volatility is <em>below</em> both individual assets (12%
               and 18%) and well below the naïve weighted average of{" "}
-              <span className="font-mono">
+              <span className="font-sans">
                 {(wA * sA * 100 + wB * sB * 100).toFixed(1)}%
               </span>{" "}
               — the payoff of imperfect correlation.
@@ -1234,21 +1234,21 @@ function TwoAssetPortfolioWorksheet() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Asset
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     Weight
                   </th>
-                  <th className="py-2 pr-8 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     E[R]
                   </th>
-                  <th className="py-2 font-mono text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
                     σ
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-slate-200">
+              <tbody className="font-sans text-slate-200">
                 <tr className="border-b border-white/5">
                   <td className="py-2 pr-8 text-slate-100">A</td>
                   <td className="py-2 pr-8">60%</td>
@@ -1313,13 +1313,13 @@ function ConceptCheck() {
         Pulling it together
       </h4>
       <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
-        A portfolio has <span className="font-mono">w_A = 60%</span>,{" "}
-        <span className="font-mono">w_B = 40%</span>,{" "}
-        <span className="font-mono">E[R_A] = 8%</span>,{" "}
-        <span className="font-mono">E[R_B] = 12%</span>,{" "}
-        <span className="font-mono">σ_A = 12%</span>,{" "}
-        <span className="font-mono">σ_B = 18%</span>,{" "}
-        <span className="font-mono">ρ = 0.25</span>. Compute the expected return
+        A portfolio has <span className="font-sans">w_A = 60%</span>,{" "}
+        <span className="font-sans">w_B = 40%</span>,{" "}
+        <span className="font-sans">E[R_A] = 8%</span>,{" "}
+        <span className="font-sans">E[R_B] = 12%</span>,{" "}
+        <span className="font-sans">σ_A = 12%</span>,{" "}
+        <span className="font-sans">σ_B = 18%</span>,{" "}
+        <span className="font-sans">ρ = 0.25</span>. Compute the expected return
         and the volatility.
       </p>
 
@@ -1360,12 +1360,12 @@ function ConceptCheck() {
       {reveal && (
         <Feedback status="info">
           The naïve weighted average of volatilities would be{" "}
-          <span className="font-mono">{weightedAvg.toFixed(1)}%</span>, but the
-          true <span className="font-mono">σ_P ≈ {sdP.toFixed(2)}%</span>. The
+          <span className="font-sans">{weightedAvg.toFixed(1)}%</span>, but the
+          true <span className="font-sans">σ_P ≈ {sdP.toFixed(2)}%</span>. The
           difference exists because the weighted average{" "}
           <strong className="text-white">ignores correlation</strong>. When
           assets are imperfectly correlated (here{" "}
-          <span className="font-mono">ρ = 0.25 &lt; 1</span>), their
+          <span className="font-sans">ρ = 0.25 &lt; 1</span>), their
           fluctuations partially offset, so the portfolio variance&apos;s
           co-movement term is smaller than it would be under perfect
           correlation. That offset is the diversification benefit.

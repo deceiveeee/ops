@@ -26,14 +26,14 @@ export default function MeridianCaseOpening() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] px-4 py-3">
-        <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-amber">
+        <p className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
           Fictional public-company case. All financial data are illustrative.
         </p>
       </div>
 
       {/* Company snapshot */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Meridian Dining Group · current position
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -44,8 +44,8 @@ export default function MeridianCaseOpening() {
             { label: "Shares", value: "100M" }, { label: "Share price", value: "$42" },
           ].map((s) => (
             <div key={s.label} className="rounded-lg border border-white/10 bg-ink-950/40 p-3">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{s.label}</div>
-              <div className="mt-1 font-mono text-[15px] text-white">{s.value}</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{s.label}</div>
+              <div className="mt-1 font-sans text-[15px] text-white">{s.value}</div>
             </div>
           ))}
         </div>
@@ -53,7 +53,7 @@ export default function MeridianCaseOpening() {
 
       {/* Strategy */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Management&apos;s three-part strategy
         </div>
         <div className="mt-4 space-y-3">
@@ -107,7 +107,7 @@ export default function MeridianCaseOpening() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {MISSING.map((m) => (
                 <div key={m.area} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
-                  <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">{m.area}</div>
+                  <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">{m.area}</div>
                   <ul className="mt-2 space-y-1">
                     {m.questions.map((q) => (
                       <li key={q} className="flex items-start gap-2 text-[13px] leading-[1.5] text-slate-200">

@@ -28,7 +28,7 @@ export default function IRRVsNPVScale() {
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+            <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
               <span>Project A scale (IRR 30%)</span>
               <span className="text-[14px] tabular-nums text-accent-cyan">${scaleA}M</span>
             </label>
@@ -38,7 +38,7 @@ export default function IRRVsNPVScale() {
             />
           </div>
           <div>
-            <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+            <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
               <span>Project B scale (IRR 20%)</span>
               <span className="text-[14px] tabular-nums text-accent-amber">${scaleB}M</span>
             </label>
@@ -56,12 +56,12 @@ export default function IRRVsNPVScale() {
           <table className="w-full min-w-[360px] border-collapse text-[15px]">
             <thead>
               <tr className="border-b border-white/20 text-right">
-                <th className="py-2 pr-6 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
-                <th className="py-2 pr-6 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">Project A</th>
-                <th className="py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">Project B</th>
+                <th className="py-2 pr-6 text-left font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
+                <th className="py-2 pr-6 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">Project A</th>
+                <th className="py-2 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">Project B</th>
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums">
+            <tbody className="font-sans tabular-nums">
               <tr className="border-b border-white/5">
                 <td className="py-2.5 pr-6 text-left text-slate-300">Investment</td>
                 <td className="py-2.5 pr-6 text-right text-white">${fmt(scaleA)}M</td>
@@ -95,14 +95,14 @@ export default function IRRVsNPVScale() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">IRR says</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">IRR says</div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Project {higherIRR} has a higher return per dollar invested.
             {higherIRR === higherNPV ? " It also creates more total value." : " But it does NOT create the most total value."}
           </p>
         </div>
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">NPV says</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">NPV says</div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Project {higherNPV} creates ${fmt(Math.max(npvA, npvB))}M of value versus ${fmt(Math.min(npvA, npvB))}M.
             If the projects are mutually exclusive, select Project {higherNPV}.

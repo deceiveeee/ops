@@ -34,30 +34,30 @@ export default function MeridianSourcesAndUses() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Sources and uses of cash
         </div>
 
         {/* Sources */}
         <div className="mt-4 rounded-xl border border-accent-green/25 bg-accent-green/[0.04] p-4">
-          <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">Sources</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">Sources</div>
           <div className="mt-2 flex justify-between text-[15px]">
             <span className="text-slate-200">Cash available for allocation</span>
-            <span className="font-mono text-white">{fmt(available)}</span>
+            <span className="font-sans text-white">{fmt(available)}</span>
           </div>
           <div className="mt-1 flex justify-between text-[13px] border-t border-white/10 pt-1">
             <span className="text-slate-400">Less: minimum prudent liquidity</span>
-            <span className="font-mono text-accent-red">−{fmt(minLiquidity)}</span>
+            <span className="font-sans text-accent-red">−{fmt(minLiquidity)}</span>
           </div>
           <div className="mt-1 flex justify-between text-[14px] font-medium border-t border-white/10 pt-1">
             <span className="text-slate-200">Truly discretionary capital</span>
-            <span className="font-mono text-accent-amber">{fmt(actualAvailable)}</span>
+            <span className="font-sans text-accent-amber">{fmt(actualAvailable)}</span>
           </div>
         </div>
 
         {/* Uses */}
         <div className="mt-3 rounded-xl border border-accent-red/25 bg-accent-red/[0.04] p-4">
-          <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">Proposed uses</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">Proposed uses</div>
           <div className="mt-2 space-y-2">
             {USES.map((u) => (
               <div key={u.key} className="flex items-center gap-3">
@@ -77,7 +77,7 @@ export default function MeridianSourcesAndUses() {
                     <span className={cn("text-[14px]", enabled[u.key] ? "text-white" : "text-slate-500")}>
                       {u.label} {u.required && <span className="text-[10px] uppercase tracking-[0.14em] text-accent-cyan">required</span>}
                     </span>
-                    <span className={cn("font-mono text-[14px] tabular-nums", enabled[u.key] ? "text-white" : "text-slate-600 line-through")}>
+                    <span className={cn("font-sans text-[14px] tabular-nums", enabled[u.key] ? "text-white" : "text-slate-600 line-through")}>
                       {enabled[u.key] ? `−${fmt(u.amount)}` : ""}
                     </span>
                   </div>
@@ -93,10 +93,10 @@ export default function MeridianSourcesAndUses() {
       <div className={cn("rounded-2xl border p-5 sm:p-6",
         fundingGap > 0 ? "border-accent-red/30 bg-accent-red/[0.06]" : "border-accent-green/25 bg-accent-green/[0.05]")}>
         <div className="flex items-baseline justify-between">
-          <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
             {fundingGap > 0 ? "Funding gap" : "Surplus available"}
           </span>
-          <span className={cn("font-mono text-[28px] tabular-nums", fundingGap > 0 ? "text-accent-red" : "text-accent-green")}>
+          <span className={cn("font-sans text-[28px] tabular-nums", fundingGap > 0 ? "text-accent-red" : "text-accent-green")}>
             {fundingGap > 0 ? "−" : "+"}{fmt(Math.abs(fundingGap))}
           </span>
         </div>

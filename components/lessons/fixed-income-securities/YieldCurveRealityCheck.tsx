@@ -67,14 +67,14 @@ export default function YieldCurveRealityCheck() {
             {[0, 1, 2, 3, 4, 5, 6].map((gy) => (
               <g key={gy}>
                 <line x1={padX} y1={yAt(gy)} x2={W - padX} y2={yAt(gy)} stroke="rgba(255,255,255,0.07)" strokeWidth={1} />
-                <text x={padX - 10} y={yAt(gy) + 4} textAnchor="end" className="fill-slate-500 font-mono" fontSize="11">
+                <text x={padX - 10} y={yAt(gy) + 4} textAnchor="end" className="fill-slate-500 font-sans" fontSize="11">
                   {gy}%
                 </text>
               </g>
             ))}
             {/* maturity labels */}
             {MATURITIES.map((m, i) => (
-              <text key={m} x={xAt(i)} y={H - padY + 22} textAnchor="middle" className="fill-slate-400 font-mono" fontSize="12">
+              <text key={m} x={xAt(i)} y={H - padY + 22} textAnchor="middle" className="fill-slate-400 font-sans" fontSize="12">
                 {m}y
               </text>
             ))}

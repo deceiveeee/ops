@@ -30,7 +30,7 @@ export default function SunkCostDecision() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Wrong view: including sunk cost */}
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
             Wrong view · including sunk cost
           </div>
           <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
@@ -50,7 +50,7 @@ export default function SunkCostDecision() {
           shouldContinue ? "border-accent-green/25 bg-accent-green/[0.04]" : "border-accent-red/25 bg-accent-red/[0.04]",
         )}>
           <div className={cn(
-            "font-mono text-[12px] uppercase tracking-[0.16em]",
+            "font-sans text-[12px] uppercase tracking-[0.16em]",
             shouldContinue ? "text-accent-green" : "text-accent-red",
           )}>
             Correct view · forward-looking only
@@ -100,7 +100,7 @@ function Slider({
   const valColor = tone === "red" ? "text-accent-red" : tone === "green" ? "text-accent-green" : tone === "slate" ? "text-slate-400" : "text-accent-amber";
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className={cn("text-[14px] tabular-nums", valColor)}>{prefix}{value}{suffix}</span>
       </label>

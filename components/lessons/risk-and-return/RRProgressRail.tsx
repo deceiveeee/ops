@@ -35,7 +35,7 @@ export default function RRProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
                     active
                       ? "border-accent-amber bg-accent-amber/20 text-accent-amber"
                       : done

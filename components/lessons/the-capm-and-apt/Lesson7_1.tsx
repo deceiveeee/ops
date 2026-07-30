@@ -114,7 +114,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -134,26 +134,26 @@ function MarketValueTable() {
       <table className="w-full min-w-[440px] border-collapse text-[16px]">
         <thead>
           <tr className="border-b border-white/20 text-left">
-            <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Company</th>
-            <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Total market value</th>
-            <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Market weight</th>
+            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Company</th>
+            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Total market value</th>
+            <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Market weight</th>
           </tr>
         </thead>
         <tbody className="text-slate-100">
           <tr className="border-b border-white/5">
             <td className="py-3 pr-8">Atlas</td>
-            <td className="py-3 pr-8 font-mono tabular-nums">$75 billion</td>
-            <td className="py-3 font-mono tabular-nums text-accent-cyan">75%</td>
+            <td className="py-3 pr-8 font-sans tabular-nums">$75 billion</td>
+            <td className="py-3 font-sans tabular-nums text-accent-cyan">75%</td>
           </tr>
           <tr className="border-b border-white/5">
             <td className="py-3 pr-8">Beacon</td>
-            <td className="py-3 pr-8 font-mono tabular-nums">$25 billion</td>
-            <td className="py-3 font-mono tabular-nums text-accent-cyan">25%</td>
+            <td className="py-3 pr-8 font-sans tabular-nums">$25 billion</td>
+            <td className="py-3 font-sans tabular-nums text-accent-cyan">25%</td>
           </tr>
           <tr>
             <td className="py-3 pr-8 font-semibold text-slate-50">Total</td>
-            <td className="py-3 pr-8 font-mono font-semibold tabular-nums text-slate-50">$100 billion</td>
-            <td className="py-3 font-mono font-semibold tabular-nums text-accent-green">100%</td>
+            <td className="py-3 pr-8 font-sans font-semibold tabular-nums text-slate-50">$100 billion</td>
+            <td className="py-3 font-sans font-semibold tabular-nums text-accent-green">100%</td>
           </tr>
         </tbody>
       </table>
@@ -171,8 +171,8 @@ function SamePortfolioDifferentAmounts() {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {investors.map((inv) => (
         <div key={inv.label} className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">{inv.label}</div>
-          <div className="mt-3 space-y-2 font-mono text-[15px] text-slate-100">
+          <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">{inv.label}</div>
+          <div className="mt-3 space-y-2 font-sans text-[15px] text-slate-100">
             <div>
               Tangency T:{" "}
               <span className="text-accent-cyan">{inv.tangency}%</span>
@@ -186,8 +186,8 @@ function SamePortfolioDifferentAmounts() {
           </div>
           <div className="mt-4 rounded-lg border border-white/10 bg-ink-950/40 px-3 py-2.5 text-[14px] text-slate-300">
             Risky part is always{" "}
-            <span className="font-mono text-accent-cyan">60% Atlas</span> +{" "}
-            <span className="font-mono text-accent-purple">40% Beacon</span>
+            <span className="font-sans text-accent-cyan">60% Atlas</span> +{" "}
+            <span className="font-sans text-accent-purple">40% Beacon</span>
           </div>
         </div>
       ))}
@@ -241,7 +241,7 @@ function FinalCheckRow({
       {answered && (
         <div className="mt-3">
           <Feedback status={isCorrect ? "correct" : "incorrect"}>
-            <span className="block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <span className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Expected: {answerLabel}
             </span>
             <span className="mt-1 block">{feedback}</span>
@@ -284,7 +284,7 @@ export default function Lesson7_1() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
                 Tangency portfolio T
               </div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
@@ -300,7 +300,7 @@ export default function Lesson7_1() {
               </p>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 Market portfolio M
               </div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
@@ -334,7 +334,7 @@ export default function Lesson7_1() {
 
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/30 bg-accent-amber/[0.06] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Required distinction
             </div>
             <p className="mt-3 text-[18px] leading-[1.55] text-white">
@@ -393,13 +393,13 @@ export default function Lesson7_1() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Investors collectively want</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Investors collectively want</div>
               <div className="mt-3">
                 <BlockMath>{String.raw`T = 60\%\,\text{Atlas} + 40\%\,\text{Beacon}`}</BlockMath>
               </div>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">But the market supply is</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">But the market supply is</div>
               <div className="mt-3">
                 <BlockMath>{String.raw`M = 75\%\,\text{Atlas} + 25\%\,\text{Beacon}`}</BlockMath>
               </div>
@@ -447,7 +447,7 @@ export default function Lesson7_1() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-purple/30 bg-accent-purple/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-purple">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-purple">
                 Beacon is over-demanded
               </div>
               <ul className="mt-4 space-y-3">
@@ -459,14 +459,14 @@ export default function Lesson7_1() {
                   "Its desired tangency weight decreases.",
                 ].map((item, i) => (
                   <li key={item} className="flex items-start gap-3 text-[16px] leading-[1.6] text-slate-200">
-                    <span className="mt-0.5 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-purple/50 font-mono text-[12px] text-accent-purple">{i + 1}</span>
+                    <span className="mt-0.5 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-purple/50 font-sans text-[12px] text-accent-purple">{i + 1}</span>
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-cyan/30 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
                 Atlas is under-demanded
               </div>
               <ul className="mt-4 space-y-3">
@@ -478,7 +478,7 @@ export default function Lesson7_1() {
                   "Its desired tangency weight increases.",
                 ].map((item, i) => (
                   <li key={item} className="flex items-start gap-3 text-[16px] leading-[1.6] text-slate-200">
-                    <span className="mt-0.5 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/50 font-mono text-[12px] text-accent-cyan">{i + 1}</span>
+                    <span className="mt-0.5 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/50 font-sans text-[12px] text-accent-cyan">{i + 1}</span>
                     {item}
                   </li>
                 ))}
@@ -497,7 +497,7 @@ export default function Lesson7_1() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-green/30 bg-accent-green/[0.06] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
               Central conclusion
             </div>
             <p className="mt-3 text-[18px] leading-[1.55] text-white">
@@ -538,13 +538,13 @@ export default function Lesson7_1() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Decision 1 · Which risky portfolio?</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Decision 1 · Which risky portfolio?</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 Under the simplified CAPM result: the market portfolio.
               </p>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Decision 2 · How much risky exposure?</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Decision 2 · How much risky exposure?</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 The split between the market portfolio and the risk-free asset.
               </p>
@@ -557,7 +557,7 @@ export default function Lesson7_1() {
               { label: "Leverage", expr: String.raw`130\%\,M - 30\%\,\text{risk-free}` },
             ].map((ex) => (
               <div key={ex.label} className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-                <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">{ex.label}</div>
+                <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">{ex.label}</div>
                 <div className="mt-2 text-[15px] text-slate-100">
                   <BlockMath>{ex.expr}</BlockMath>
                 </div>
@@ -591,7 +591,7 @@ export default function Lesson7_1() {
               },
             ].map((r, i) => (
               <div key={r.role} className="flex items-start gap-4 rounded-xl border border-white/12 bg-white/[0.03] p-5">
-                <span className="mt-0.5 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/50 bg-accent-cyan/10 font-mono text-[14px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/50 bg-accent-cyan/10 font-sans text-[14px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <div>
@@ -663,7 +663,7 @@ export default function Lesson7_1() {
               "Markets clear.",
             ].map((a, i) => (
               <div key={a} className="flex items-start gap-3 rounded-xl border border-white/12 bg-white/[0.03] p-4">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[13px] text-accent-amber">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[13px] text-accent-amber">
                   {i + 1}
                 </span>
                 <span className="text-[16px] leading-[1.55] text-slate-200">{a}</span>

@@ -34,7 +34,7 @@ export default function AdaptiveMarketsComparison() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Markets may be more efficient when
           </div>
           <ul className="mt-3 space-y-2">
@@ -46,7 +46,7 @@ export default function AdaptiveMarketsComparison() {
           </ul>
         </div>
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">
             Markets may be less efficient when
           </div>
           <ul className="mt-3 space-y-2">
@@ -67,7 +67,7 @@ export default function AdaptiveMarketsComparison() {
       </div>
 
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
           Caveat
         </div>
         <p className="ops-body mt-2 text-[14px] leading-[1.65] text-slate-100">

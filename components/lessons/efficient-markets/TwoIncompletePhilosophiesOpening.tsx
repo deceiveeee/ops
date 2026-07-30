@@ -35,7 +35,7 @@ export default function TwoIncompletePhilosophiesOpening() {
           <div key={p.key}
             className={cn("rounded-2xl border p-5",
               choice === p.key ? "border-accent-amber/40 bg-accent-amber/[0.06]" : "border-white/12 bg-white/[0.03]")}>
-            <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+            <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
               {p.label}
             </div>
             <p className="ops-body mt-3 text-[16px] italic leading-[1.6] text-slate-100">
@@ -82,7 +82,7 @@ export default function TwoIncompletePhilosophiesOpening() {
             className="space-y-4">
             <div className={cn("rounded-2xl border p-5 sm:p-6",
               isCorrect ? "border-accent-green/30 bg-accent-green/[0.05]" : "border-accent-red/30 bg-accent-red/[0.05]")}>
-              <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]",
+              <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]",
                 isCorrect ? "text-accent-green" : "text-accent-red")}>
                 {isCorrect ? "Correct" : "Reconsider"}
               </div>
@@ -98,7 +98,7 @@ export default function TwoIncompletePhilosophiesOpening() {
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {PROFILES.map((p) => (
                 <div key={p.key} className="rounded-xl border border-accent-red/20 bg-accent-red/[0.04] p-4">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">
+                  <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">
                     {p.label} · the flaw
                   </div>
                   <p className="ops-body mt-1.5 text-[13px] leading-[1.55] text-slate-100">{p.flaw}</p>

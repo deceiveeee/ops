@@ -69,14 +69,14 @@ export default function MultipleIRRProfile() {
       {/* Cash flow display */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">
             Nonconventional cash flows
           </div>
           <div className="mt-3 flex gap-2">
             {FLOWS_NONCONV.map((f, i) => (
               <div key={i} className="flex-1 rounded-lg border border-white/10 bg-ink-950/40 p-2 text-center">
-                <div className="font-mono text-[10px] text-slate-400">Yr {i}</div>
-                <div className={cn("font-mono text-[13px]", f >= 0 ? "text-accent-green" : "text-accent-red")}>
+                <div className="font-sans text-[10px] text-slate-400">Yr {i}</div>
+                <div className={cn("font-sans text-[13px]", f >= 0 ? "text-accent-green" : "text-accent-red")}>
                   {f >= 0 ? "+" : ""}{f}
                 </div>
               </div>
@@ -85,19 +85,19 @@ export default function MultipleIRRProfile() {
           <p className="ops-body mt-3 text-[13px] leading-[1.55] text-slate-300">
             Signs change twice: outflow, inflow, outflow. The NPV curve can cross zero more than once.
           </p>
-          <div className="mt-2 font-mono text-[14px] text-white">
+          <div className="mt-2 font-sans text-[14px] text-white">
             IRRs found: {irrsNonConv.length === 0 ? "none" : irrsNonConv.map((r) => `${r.toFixed(1)}%`).join(" and ")}
           </div>
         </div>
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Conventional cash flows
           </div>
           <div className="mt-3 flex gap-2">
             {FLOWS_CONV.map((f, i) => (
               <div key={i} className="flex-1 rounded-lg border border-white/10 bg-ink-950/40 p-2 text-center">
-                <div className="font-mono text-[10px] text-slate-400">Yr {i}</div>
-                <div className={cn("font-mono text-[13px]", f >= 0 ? "text-accent-green" : "text-accent-red")}>
+                <div className="font-sans text-[10px] text-slate-400">Yr {i}</div>
+                <div className={cn("font-sans text-[13px]", f >= 0 ? "text-accent-green" : "text-accent-red")}>
                   {f >= 0 ? "+" : ""}{f}
                 </div>
               </div>
@@ -106,7 +106,7 @@ export default function MultipleIRRProfile() {
           <p className="ops-body mt-3 text-[13px] leading-[1.55] text-slate-300">
             One outflow, then positive inflows. The NPV curve crosses zero exactly once.
           </p>
-          <div className="mt-2 font-mono text-[14px] text-white">
+          <div className="mt-2 font-sans text-[14px] text-white">
             IRR: {irrsConv.length === 1 ? `${irrsConv[0].toFixed(1)}%` : "none found"}
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function MultipleIRRProfile() {
 
       {/* NPV Profile Chart */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400 mb-3">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400 mb-3">
           NPV profile: NPV vs. discount rate
         </div>
         <div className="overflow-x-auto">

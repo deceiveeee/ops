@@ -33,7 +33,7 @@ export default function BetaVsAlphaDecomposition() {
     <div className="space-y-6">
       {/* Formula */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Return decomposition
         </div>
         <div className="mt-3 space-y-3">
@@ -51,7 +51,7 @@ export default function BetaVsAlphaDecomposition() {
             { sym: String.raw`\varepsilon`, desc: "Unpredictable random variation" },
           ].map((v) => (
             <div key={v.sym} className="flex items-start gap-2.5">
-              <span className="flex-shrink-0 font-mono text-slate-200"><InlineMath>{v.sym}</InlineMath></span>
+              <span className="flex-shrink-0 font-sans text-slate-200"><InlineMath>{v.sym}</InlineMath></span>
               <span className="text-[13px] text-slate-300">{v.desc}</span>
             </div>
           ))}
@@ -64,19 +64,19 @@ export default function BetaVsAlphaDecomposition() {
           const alpha = calcAlpha(m);
           return (
             <div key={m.name} className={cn("rounded-2xl border p-5 bg-white/[0.02]", toneBorder[m.tone])}>
-              <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]", toneText[m.tone])}>{m.name}</div>
+              <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText[m.tone])}>{m.name}</div>
               <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-lg border border-white/10 bg-ink-950/40 p-2">
-                  <div className="font-mono text-[10px] text-slate-400">Return</div>
-                  <div className="font-mono text-[16px] text-white">{m.ret}%</div>
+                  <div className="font-sans text-[10px] text-slate-400">Return</div>
+                  <div className="font-sans text-[16px] text-white">{m.ret}%</div>
                 </div>
                 <div className="rounded-lg border border-white/10 bg-ink-950/40 p-2">
-                  <div className="font-mono text-[10px] text-slate-400">Beta</div>
-                  <div className="font-mono text-[16px] text-white">{m.beta}</div>
+                  <div className="font-sans text-[10px] text-slate-400">Beta</div>
+                  <div className="font-sans text-[16px] text-white">{m.beta}</div>
                 </div>
                 <div className={cn("rounded-lg border p-2", alpha > 0 ? "border-accent-green/25 bg-accent-green/[0.05]" : "border-accent-red/25 bg-accent-red/[0.05]")}>
-                  <div className="font-mono text-[10px] text-slate-400">Est. alpha</div>
-                  <div className={cn("font-mono text-[16px]", alpha > 0 ? "text-accent-green" : "text-accent-red")}>{alpha > 0 ? "+" : ""}{alpha.toFixed(1)}%</div>
+                  <div className="font-sans text-[10px] text-slate-400">Est. alpha</div>
+                  <div className={cn("font-sans text-[16px]", alpha > 0 ? "text-accent-green" : "text-accent-red")}>{alpha > 0 ? "+" : ""}{alpha.toFixed(1)}%</div>
                 </div>
               </div>
               <p className="ops-body mt-3 text-[13px] leading-[1.55] text-slate-200">{m.interpretation}</p>

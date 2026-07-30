@@ -99,7 +99,7 @@ export function AnswerInput({
         <div className="relative inline-flex items-center">
           {prefix && (
             <span
-              className="pointer-events-none absolute left-3 font-mono text-[14px] text-slate-400"
+              className="pointer-events-none absolute left-3 font-sans text-[14px] text-slate-400"
               aria-hidden
             >
               {prefix}
@@ -119,7 +119,7 @@ export function AnswerInput({
             }}
             aria-label={ariaLabel ?? (typeof label === "string" ? label : "numeric answer")}
             className={cn(
-              "w-36 rounded-lg border bg-ink-950/60 py-2 font-mono text-[15px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
+              "w-36 rounded-lg border bg-ink-950/60 py-2 font-sans text-[15px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
               prefix ? "pl-7" : "pl-3",
               unit ? "pr-8" : "pr-3",
               inputBorder(status),
@@ -127,7 +127,7 @@ export function AnswerInput({
           />
           {unit && (
             <span
-              className="pointer-events-none absolute right-3 font-mono text-[14px] text-slate-400"
+              className="pointer-events-none absolute right-3 font-sans text-[14px] text-slate-400"
               aria-hidden
             >
               {unit}
@@ -153,7 +153,7 @@ export function AnswerInput({
             Reset
           </button>
         )}
-        <span className="ops-caption font-mono text-[11px] text-slate-500">
+        <span className="ops-caption font-sans text-[11px] text-slate-500">
           Attempt {Math.min(attempts + (locked ? 0 : 1), MAX_ATTEMPTS)} of {MAX_ATTEMPTS}
         </span>
       </div>
@@ -161,7 +161,7 @@ export function AnswerInput({
       {status === "correct" && (
         <Feedback status="correct">
           Correct — the value is{" "}
-          <span className="font-mono">
+          <span className="font-sans">
             {prefix}
             {fmt(answer, decimals)}
             {unit}
@@ -177,7 +177,7 @@ export function AnswerInput({
       {status === "revealed" && (
         <Feedback status="incorrect">
           The answer is{" "}
-          <span className="font-mono text-accent-amber">
+          <span className="font-sans text-accent-amber">
             {prefix}
             {fmt(answer, decimals)}
             {unit}
@@ -292,7 +292,7 @@ export function AnswerWorksheet({
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <div className="relative inline-flex items-center">
                   {f.prefix && (
-                    <span className="pointer-events-none absolute left-3 font-mono text-[14px] text-slate-400" aria-hidden>
+                    <span className="pointer-events-none absolute left-3 font-sans text-[14px] text-slate-400" aria-hidden>
                       {f.prefix}
                     </span>
                   )}
@@ -311,25 +311,25 @@ export function AnswerWorksheet({
                       typeof f.label === "string" ? f.label : `worksheet field ${f.id}`
                     }
                     className={cn(
-                      "w-36 rounded-lg border bg-ink-950/60 py-2 font-mono text-[15px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
+                      "w-36 rounded-lg border bg-ink-950/60 py-2 font-sans text-[15px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
                       f.prefix ? "pl-7" : "pl-3",
                       f.unit ? "pr-8" : "pr-3",
                       inputBorder(st),
                     )}
                   />
                   {f.unit && (
-                    <span className="pointer-events-none absolute right-3 font-mono text-[14px] text-slate-400" aria-hidden>
+                    <span className="pointer-events-none absolute right-3 font-sans text-[14px] text-slate-400" aria-hidden>
                       {f.unit}
                     </span>
                   )}
                 </div>
                 {st === "correct" && (
-                  <span className="ops-caption font-mono text-[12px] text-accent-green">
+                  <span className="ops-caption font-sans text-[12px] text-accent-green">
                     ✓ correct
                   </span>
                 )}
                 {st === "revealed" && (
-                  <span className="ops-caption font-mono text-[12px] text-accent-amber">
+                  <span className="ops-caption font-sans text-[12px] text-accent-amber">
                     answer: {f.prefix}
                     {fmt(f.answer, f.decimals ?? 2)}
                     {f.unit}
@@ -366,7 +366,7 @@ export function AnswerWorksheet({
         {attempts > 0 && (
           <span
             className={cn(
-              "ops-caption font-mono text-[12px]",
+              "ops-caption font-sans text-[12px]",
               solved ? "text-accent-green" : "text-slate-500",
             )}
           >

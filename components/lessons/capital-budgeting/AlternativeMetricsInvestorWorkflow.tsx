@@ -47,7 +47,7 @@ export default function AlternativeMetricsInvestorWorkflow() {
         {(Object.keys(PHASES) as Phase[]).map((p) => (
           <div key={p} className="flex items-center gap-2">
             <span className={cn("h-2 w-2 rounded-full", toneDot[PHASES[p].tone])} aria-hidden />
-            <span className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", toneText[PHASES[p].tone])}>
+            <span className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", toneText[PHASES[p].tone])}>
               {PHASES[p].label}
             </span>
           </div>
@@ -69,7 +69,7 @@ export default function AlternativeMetricsInvestorWorkflow() {
             >
               <div className="flex items-center gap-3">
                 <span className={cn(
-                  "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[11px] tabular-nums",
+                  "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
                   toneBorder[phase.tone], toneText[phase.tone],
                 )}>{step.n}</span>
                 <span className={cn("h-1.5 w-1.5 flex-shrink-0 rounded-full", toneDot[phase.tone])} aria-hidden />

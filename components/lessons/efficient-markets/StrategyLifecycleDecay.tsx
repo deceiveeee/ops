@@ -17,7 +17,7 @@ export default function StrategyLifecycleDecay() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
           <span>Capital entering the strategy</span>
           <span className="text-[14px] tabular-nums text-accent-amber">{["Minimal", "Growing", "Moderate", "Heavy", "Saturated"][capital]}</span>
         </label>
@@ -30,7 +30,7 @@ export default function StrategyLifecycleDecay() {
 
       {/* Stage display */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">Strategy lifecycle</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Strategy lifecycle</div>
         <div className="mt-4 space-y-2">
           {stages.map((s, i) => {
             const active = i === capital;
@@ -40,14 +40,14 @@ export default function StrategyLifecycleDecay() {
                 "flex items-center gap-3 rounded-lg border p-3 transition-all",
                 active ? "border-accent-amber/40 bg-accent-amber/[0.06]" : past ? "border-white/5 opacity-50" : "border-white/8",
               )}>
-                <span className={cn("flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
+                <span className={cn("flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[10px]",
                   active ? "border-accent-amber text-accent-amber" : past ? "border-white/20 text-slate-500" : "border-white/15 text-slate-400")}>
                   {s.n}
                 </span>
                 <div className="flex-1">
                   <div className="flex items-baseline justify-between">
                     <span className={cn("text-[14px] font-medium", active ? "text-white" : "text-slate-300")}>{s.label}</span>
-                    <span className="font-mono text-[11px] text-slate-400">Edge: {s.edge}%</span>
+                    <span className="font-sans text-[11px] text-slate-400">Edge: {s.edge}%</span>
                   </div>
                   {(active || past) && <p className="mt-0.5 text-[12px] leading-[1.45] text-slate-300">{s.detail}</p>}
                 </div>

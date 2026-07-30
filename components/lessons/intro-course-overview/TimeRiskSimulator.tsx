@@ -75,7 +75,7 @@ export default function TimeRiskSimulator({
             Time &amp; Risk · decision simulator
           </span>
         </div>
-        <span className="font-mono text-[12px] tabular-nums text-accent-cyan">
+        <span className="font-sans text-[12px] tabular-nums text-accent-cyan">
           {step + 1}/{STEPS.length}
         </span>
       </div>

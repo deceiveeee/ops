@@ -32,18 +32,18 @@ export default function DebtRepaymentOpportunityCost() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className={cn("rounded-2xl border p-5",
           debtBetter ? "border-accent-green/30 bg-accent-green/[0.05]" : "border-white/12 bg-white/[0.02]")}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
             debtBetter ? "text-accent-green" : "text-slate-400")}>Repay debt</div>
-          <div className="mt-2 font-mono text-[24px] tabular-nums text-white">${fmt(annualBenefit)}M/yr</div>
+          <div className="mt-2 font-sans text-[24px] tabular-nums text-white">${fmt(annualBenefit)}M/yr</div>
           <p className="ops-body mt-2 text-[13px] leading-[1.55] text-slate-300">
             Interest saving ({borrowingCost}%) + distress-risk reduction ({distressBenefit}%) on ${debt}M.
           </p>
         </div>
         <div className={cn("rounded-2xl border p-5",
           !debtBetter ? "border-accent-green/30 bg-accent-green/[0.05]" : "border-white/12 bg-white/[0.02]")}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
             !debtBetter ? "text-accent-green" : "text-slate-400")}>Invest instead</div>
-          <div className="mt-2 font-mono text-[24px] tabular-nums text-white">${fmt(altBenefit)}M/yr</div>
+          <div className="mt-2 font-sans text-[24px] tabular-nums text-white">${fmt(altBenefit)}M/yr</div>
           <p className="ops-body mt-2 text-[13px] leading-[1.55] text-slate-300">
             Expected return of {altReturn}% on ${debt}M deployed elsewhere.
           </p>
@@ -79,7 +79,7 @@ function Slider({ label, value, min, max, step, suffix, prefix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span><span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>
       <input type="range" min={min} max={max} step={step} value={value}

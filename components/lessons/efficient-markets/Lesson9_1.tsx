@@ -127,7 +127,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -338,7 +338,7 @@ export default function Lesson9_1() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
               Toward Lesson 9.2
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

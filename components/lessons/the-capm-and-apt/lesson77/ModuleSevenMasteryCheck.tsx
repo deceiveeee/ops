@@ -88,7 +88,7 @@ function QuestionView({
   return (
     <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/40 font-mono text-[11px] text-accent-cyan">
+        <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/40 font-sans text-[11px] text-accent-cyan">
           {q.cat[0].toUpperCase()}
         </span>
         <div className="min-w-0 flex-1">
@@ -129,16 +129,16 @@ function QuestionView({
                   onChange={(e) => onNumeric(e.target.value)}
                   aria-label="numeric answer"
                   className={cn(
-                    "w-32 rounded-lg border bg-ink-950/60 py-2 pl-3 pr-8 font-mono text-[15px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
+                    "w-32 rounded-lg border bg-ink-950/60 py-2 pl-3 pr-8 font-sans text-[15px] text-slate-100 focus:outline-none focus-visible:ring-2 disabled:cursor-default",
                     locked && correct && "border-accent-green/60 focus-visible:ring-accent-green/40",
                     locked && !correct && "border-accent-red/60 focus-visible:ring-accent-red/40",
                     !locked && "border-white/20 focus:border-accent-cyan/60 focus-visible:ring-accent-cyan/40",
                   )}
                 />
-                {q.unit && <span className="pointer-events-none absolute right-2.5 font-mono text-[13px] text-slate-400">{q.unit}</span>}
+                {q.unit && <span className="pointer-events-none absolute right-2.5 font-sans text-[13px] text-slate-400">{q.unit}</span>}
               </div>
               {locked && !correct && (
-                <span className="font-mono text-[12px] text-accent-red">answer: {q.answer}{q.unit ?? ""}</span>
+                <span className="font-sans text-[12px] text-accent-red">answer: {q.answer}{q.unit ?? ""}</span>
               )}
             </div>
           )}
@@ -225,7 +225,7 @@ export default function ModuleSevenMasteryCheck() {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Module 7 mastery check</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Module 7 mastery check</div>
         <p className="mt-1 text-[15px] leading-[1.55] text-slate-200">
           A fresh sample of {sample.length} questions drawn across all six categories. Standard: at
           least {PASS_PCT}% overall, with no category entirely wrong. Each retry draws a new sample.
@@ -275,7 +275,7 @@ export default function ModuleSevenMasteryCheck() {
           </button>
         )}
         {state.mastery && (
-          <span className="font-mono text-[13px] text-slate-400">
+          <span className="font-sans text-[13px] text-slate-400">
             Attempts: {state.mastery.attempts} · Best status: {state.mastery.passed ? "passed" : "not yet passed"}
           </span>
         )}
@@ -303,8 +303,8 @@ export default function ModuleSevenMasteryCheck() {
                     catOk ? "border-accent-green/40 bg-accent-green/10" : catWeak ? "border-accent-red/40 bg-accent-red/10" : "border-white/12 bg-white/[0.02]",
                   )}
                 >
-                  <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-slate-400">{c.label}</div>
-                  <div className="mt-1 font-mono text-[14px] text-slate-100">{r.correct}/{r.total}</div>
+                  <div className="font-sans text-[10px] uppercase tracking-[0.08em] text-slate-400">{c.label}</div>
+                  <div className="mt-1 font-sans text-[14px] text-slate-100">{r.correct}/{r.total}</div>
                 </div>
               );
             })}
@@ -312,7 +312,7 @@ export default function ModuleSevenMasteryCheck() {
 
           {results.weak.length > 0 && (
             <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-4">
-              <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-amber">Targeted review</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">Targeted review</div>
               <ul className="mt-2 space-y-2">
                 {results.weak.map((c) => (
                   <li key={c.id} className="text-[14px] leading-[1.55] text-slate-200">

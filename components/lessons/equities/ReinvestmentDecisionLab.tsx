@@ -171,7 +171,7 @@ export default function ReinvestmentDecisionLab() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span
             className={cn(
-              "font-mono text-[13px] uppercase tracking-[0.14em]",
+              "font-sans text-[13px] uppercase tracking-[0.14em]",
               verdictTone === "green" && "text-accent-green",
               verdictTone === "cyan" && "text-accent-cyan",
               verdictTone === "red" && "text-accent-red",
@@ -240,9 +240,9 @@ export default function ReinvestmentDecisionLab() {
             Percentage rates
           </div>
           <div className="ops-body mt-2 text-[15px] text-slate-200">
-            <span className="font-mono text-accent-green">{pct(expected)}</span>{" "}
+            <span className="font-sans text-accent-green">{pct(expected)}</span>{" "}
             = return rate the company earns.{" "}
-            <span className="font-mono text-accent-cyan">{pct(required)}</span> =
+            <span className="font-sans text-accent-cyan">{pct(required)}</span> =
             required return (cost of equity).
           </div>
         </div>
@@ -251,11 +251,11 @@ export default function ReinvestmentDecisionLab() {
             Dollar returns
           </div>
           <div className="ops-body mt-2 text-[15px] text-slate-200">
-            <span className="font-mono text-accent-green">
+            <span className="font-sans text-accent-green">
               {money(dollarProduced)}
             </span>{" "}
             = actual dollars produced.{" "}
-            <span className="font-mono text-accent-cyan">
+            <span className="font-sans text-accent-cyan">
               {money(dollarRequired)}
             </span>{" "}
             = dollars investors required.
@@ -286,7 +286,7 @@ function NumberField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-2 w-full rounded-md border border-white/10 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-2 w-full rounded-md border border-white/10 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -315,7 +315,7 @@ function SliderField({
     <div>
       <div className="flex items-center justify-between gap-2">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-200">{display}</span>
+        <span className="font-sans text-[13px] text-slate-200">{display}</span>
       </div>
       <input
         type="range"
@@ -358,13 +358,13 @@ function OutputCard({
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
       <div
         className={cn(
-          "mt-1 font-mono text-[20px]",
+          "mt-1 font-sans text-[20px]",
           highlight ? toneCls.split(" ")[1] : "text-slate-100",
         )}
       >
         {value}
       </div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {sub}
       </div>
     </motion.div>
@@ -388,7 +388,7 @@ function BarRow({
     <div>
       <div className="flex items-center justify-between gap-2">
         <span className="ops-caption text-[11px] text-slate-300">{label}</span>
-        <span className="font-mono text-[13px] text-slate-200">{value}</span>
+        <span className="font-sans text-[13px] text-slate-200">{value}</span>
       </div>
       <div className="mt-1.5 h-3 w-full overflow-hidden rounded-full border border-white/10 bg-ink-950/60">
         <motion.div
@@ -397,7 +397,7 @@ function BarRow({
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {caption}
       </div>
     </div>

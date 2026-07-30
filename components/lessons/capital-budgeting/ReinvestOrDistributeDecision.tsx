@@ -40,7 +40,7 @@ export default function ReinvestOrDistributeDecision() {
 
       {/* Decision */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           What should the company do with excess cash?
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -113,7 +113,7 @@ function Slider({ label, value, min, max, step, suffix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span><span className="text-[14px] tabular-nums text-accent-amber">{value}{suffix}</span>
       </label>
       <input type="range" min={min} max={max} step={step} value={value}
@@ -129,8 +129,8 @@ function StatusCard({ label, status, detail }: { label: string; status: "attract
   return (
     <div className={cn("rounded-xl border p-4",
       positive ? "border-accent-green/25 bg-accent-green/[0.04]" : "border-accent-red/25 bg-accent-red/[0.04]")}>
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[14px]", positive ? "text-accent-green" : "text-accent-red")}>{status}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className={cn("mt-1 font-sans text-[14px]", positive ? "text-accent-green" : "text-accent-red")}>{status}</div>
       <div className="mt-0.5 text-[12px] text-slate-300">{detail}</div>
     </div>
   );

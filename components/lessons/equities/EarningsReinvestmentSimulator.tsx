@@ -107,7 +107,7 @@ export default function EarningsReinvestmentSimulator() {
             Earnings &amp; reinvestment simulator
           </span>
         </div>
-        <span className="ops-caption font-mono text-[11px] text-slate-500">
+        <span className="ops-caption font-sans text-[11px] text-slate-500">
           g = b × ROE
         </span>
       </div>
@@ -251,7 +251,7 @@ export default function EarningsReinvestmentSimulator() {
             <div className="ops-caption text-[11px] text-accent-cyan">
               Sustainable growth
             </div>
-            <div className="mt-2 font-mono text-[24px] text-accent-cyan">
+            <div className="mt-2 font-sans text-[24px] text-accent-cyan">
               {pct(g, 2)}
             </div>
             <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
@@ -268,7 +268,7 @@ export default function EarningsReinvestmentSimulator() {
             <div className={cn("ops-caption text-[11px]", verdictText)}>
               ROE vs r
             </div>
-            <div className={cn("mt-2 font-mono text-[20px]", verdictText)}>
+            <div className={cn("mt-2 font-sans text-[20px]", verdictText)}>
               {verdict.label}
             </div>
             <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
@@ -284,17 +284,17 @@ export default function EarningsReinvestmentSimulator() {
           </div>
           <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <div className="font-mono text-[15px] text-slate-100">
+              <div className="font-sans text-[15px] text-slate-100">
                 Historical ROE = {pct(historicalRoe)}
               </div>
               <p className="ops-body mt-1 text-[14px] leading-6 text-slate-400">
                 Profitability on the existing book:{" "}
-                <span className="font-mono">EPS₁ / BVPS₀</span> = {money(eps)} ÷{" "}
+                <span className="font-sans">EPS₁ / BVPS₀</span> = {money(eps)} ÷{" "}
                 {money(bvps)}.
               </p>
             </div>
             <div>
-              <div className="font-mono text-[15px] text-slate-100">
+              <div className="font-sans text-[15px] text-slate-100">
                 ROE on new investment = {pct(roe)}
               </div>
               <p className="ops-body mt-1 text-[14px] leading-6 text-slate-400">
@@ -329,7 +329,7 @@ function NumberField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -362,7 +362,7 @@ function SliderField({
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
         <span
           className={cn(
-            "font-mono text-[12px]",
+            "font-sans text-[12px]",
             danger ? "text-accent-red" : "text-slate-200",
           )}
         >
@@ -408,8 +408,8 @@ function OutputCard({
       className={cn("rounded-xl border bg-white/[0.02] p-4", toneBorder)}
     >
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", toneText)}>{value}</div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className={cn("mt-1 font-sans text-[18px]", toneText)}>{value}</div>
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {sub}
       </div>
     </motion.div>

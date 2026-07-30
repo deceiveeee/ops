@@ -72,7 +72,7 @@ export default function RiskReallocationPanel() {
               Before · untranched pool
             </div>
             <div className="mt-3 flex h-24 items-center justify-center rounded-xl border border-white/10 bg-white/[0.02]">
-              <span className="font-mono text-[14px] text-slate-300">
+              <span className="font-sans text-[14px] text-slate-300">
                 All investors share the same risk
               </span>
             </div>
@@ -119,7 +119,7 @@ export default function RiskReallocationPanel() {
             </span>
             <span
               className={cn(
-                "font-mono text-[13px]",
+                "font-sans text-[13px]",
                 stress > 66
                   ? "text-accent-red"
                   : stress > 33
@@ -140,7 +140,7 @@ export default function RiskReallocationPanel() {
             aria-label="Underlying loan stress level"
             className="mt-4 w-full accent-accent-red"
           />
-          <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+          <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
             <span>Calm</span>
             <span>Stress</span>
             <span>Crisis</span>
@@ -215,7 +215,7 @@ function TrancheLoss({
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[12px] text-slate-200">
+        <span className="font-sans text-[12px] text-slate-200">
           {name}
           {firstLoss && (
             <span className="ml-2 ops-caption text-[10px] text-slate-500">
@@ -223,7 +223,7 @@ function TrancheLoss({
             </span>
           )}
         </span>
-        <span className={cn("font-mono text-[11px]", text)}>
+        <span className={cn("font-sans text-[11px]", text)}>
           {protectedLayer ? "protected" : `${loss.toFixed(0)} loss`}
         </span>
       </div>

@@ -72,7 +72,7 @@ export default function FormulaExplainer({
         <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
           {variables.map((v) => (
             <div key={v.symbol} className="flex items-start gap-2.5">
-              <dt className="mt-0.5 flex-shrink-0 font-mono text-[15px] text-slate-200">
+              <dt className="mt-0.5 flex-shrink-0 font-sans text-[15px] text-slate-200">
                 <InlineMath>{v.symbol}</InlineMath>
               </dt>
               <dd className="ops-body text-[14px] leading-6 text-slate-300">

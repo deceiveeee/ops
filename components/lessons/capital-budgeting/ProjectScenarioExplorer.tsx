@@ -142,7 +142,7 @@ export default function ProjectScenarioExplorer() {
             )}
           >
             <div className="flex items-center gap-2">
-              <span className={cn("font-mono text-[16px]", active === sc.key ? toneText[sc.tone] : "text-slate-400")}>
+              <span className={cn("font-sans text-[16px]", active === sc.key ? toneText[sc.tone] : "text-slate-400")}>
                 {sc.icon}
               </span>
               <span className={cn("font-display text-[17px] font-medium", active === sc.key ? "text-white" : "text-slate-200")}>
@@ -160,20 +160,20 @@ export default function ProjectScenarioExplorer() {
 
       {/* Scenario assumption table */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Assumptions by scenario
         </div>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[520px] border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/20 text-left">
-                <th className="py-2 pr-6 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Assumption</th>
-                <th className="py-2 pr-6 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">Bear</th>
-                <th className="py-2 pr-6 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">Base</th>
-                <th className="py-2 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">Bull</th>
+                <th className="py-2 pr-6 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Assumption</th>
+                <th className="py-2 pr-6 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">Bear</th>
+                <th className="py-2 pr-6 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">Base</th>
+                <th className="py-2 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">Bull</th>
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums text-slate-100">
+            <tbody className="font-sans tabular-nums text-slate-100">
               {[
                 { label: "Mature sales / store", get: (x: Scenario) => fmtM(x.matureSales) },
                 { label: "Years to maturity", get: (x: Scenario) => `${x.rampYears}` },
@@ -193,11 +193,11 @@ export default function ProjectScenarioExplorer() {
                 </tr>
               ))}
               <tr>
-                <td className="py-3 pr-6 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">NPV / store</td>
+                <td className="py-3 pr-6 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">NPV / store</td>
                 {SCENARIOS.map((sc) => {
                   const n = perStoreNPV(sc);
                   return (
-                    <td key={sc.key} className={cn("py-3 pr-6 text-right font-mono text-[15px]", n > 0 ? "text-accent-green" : "text-accent-red")}>
+                    <td key={sc.key} className={cn("py-3 pr-6 text-right font-sans text-[15px]", n > 0 ? "text-accent-green" : "text-accent-red")}>
                       {fmtM(n)}
                     </td>
                   );
@@ -211,10 +211,10 @@ export default function ProjectScenarioExplorer() {
       {/* Active scenario detail */}
       <div className={cn("rounded-2xl border p-5 sm:p-6", toneBorder[s.tone], toneBg[s.tone])}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", toneText[s.tone])}>
+          <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[s.tone])}>
             {s.name} case · active
           </span>
-          <span className={cn("font-mono text-[15px] tabular-nums", npv > 0 ? "text-accent-green" : "text-accent-red")}>
+          <span className={cn("font-sans text-[15px] tabular-nums", npv > 0 ? "text-accent-green" : "text-accent-red")}>
             per-store NPV {fmtM(npv)}
           </span>
         </div>
@@ -261,7 +261,7 @@ export default function ProjectScenarioExplorer() {
 
       {/* Required analytical questions */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           The questions scenario analysis should answer
         </div>
         <ul className="mt-4 space-y-2.5">
@@ -307,10 +307,10 @@ function Readout({
           : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">
         {label}
       </div>
-      <div className={cn("mt-2 font-mono text-[16px] tabular-nums", text)}>{value}</div>
+      <div className={cn("mt-2 font-sans text-[16px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

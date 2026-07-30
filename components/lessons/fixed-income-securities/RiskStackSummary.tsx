@@ -138,7 +138,7 @@ export default function RiskStackSummary() {
                 >
                   <span
                     className={cn(
-                      "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border font-mono text-[14px]",
+                      "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border font-sans text-[14px]",
                       TONE_BORDER[layer.tone],
                       TONE_TEXT[layer.tone],
                     )}
@@ -155,7 +155,7 @@ export default function RiskStackSummary() {
                     )}
                     aria-hidden
                   />
-                  <span className="font-mono text-[12px] text-slate-400">
+                  <span className="font-sans text-[12px] text-slate-400">
                     {isOpen ? "−" : "+"}
                   </span>
                 </button>

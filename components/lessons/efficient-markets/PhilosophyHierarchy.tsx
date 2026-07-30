@@ -52,7 +52,7 @@ export default function PhilosophyHierarchy() {
 
       {/* Hierarchy formula */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Hierarchy
         </div>
         <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4 overflow-x-auto">
@@ -69,16 +69,16 @@ export default function PhilosophyHierarchy() {
         {LEVELS.map((l) => (
           <div key={l.letter} className={`rounded-2xl border p-5 ${toneBorder[l.tone]} ${toneBg[l.tone]}`}>
             <div className="flex items-center gap-2">
-              <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[12px] ${toneBorder[l.tone]} ${toneText[l.tone]}`}>
+              <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px] ${toneBorder[l.tone]} ${toneText[l.tone]}`}>
                 {l.letter}
               </span>
-              <span className={`font-mono text-[11px] uppercase tracking-[0.16em] ${toneText[l.tone]}`}>
+              <span className={`font-sans text-[11px] uppercase tracking-[0.16em] ${toneText[l.tone]}`}>
                 {l.label}
               </span>
             </div>
             <p className="ops-body mt-3 text-[14px] leading-[1.6] text-slate-100">{l.description}</p>
             <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/40 px-3 py-2.5">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Example</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Example</div>
               <p className="ops-body mt-1 text-[13px] italic leading-[1.55] text-slate-100">{l.example}</p>
             </div>
             <p className="mt-3 text-[12px] leading-[1.5] text-slate-300">{l.scope}</p>

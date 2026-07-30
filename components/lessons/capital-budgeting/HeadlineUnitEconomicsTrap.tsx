@@ -20,14 +20,14 @@ export default function HeadlineUnitEconomicsTrap() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Management headline assumptions
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[{ l: "Dev cost", v: "$1.3M" }, { l: "Mature sales", v: "$2.7M" }, { l: "Margin", v: "21%" }, { l: "Time to maturity", v: "3 yrs" }].map((s) => (
             <div key={s.l} className="rounded-lg border border-white/10 bg-ink-950/40 p-3 text-center">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{s.l}</div>
-              <div className="mt-1 font-mono text-[15px] text-white">{s.v}</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{s.l}</div>
+              <div className="mt-1 font-sans text-[15px] text-white">{s.v}</div>
             </div>
           ))}
         </div>
@@ -35,7 +35,7 @@ export default function HeadlineUnitEconomicsTrap() {
 
       {/* The shortcut */}
       <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
           The tempting shortcut
         </div>
         <div className="mt-3 space-y-2">
@@ -53,7 +53,7 @@ export default function HeadlineUnitEconomicsTrap() {
 
       {!revealed && (
         <button type="button" onClick={() => setRevealed(true)}
-          className="rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50">
+          className="rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50">
           Reveal what is missing
         </button>
       )}
@@ -62,7 +62,7 @@ export default function HeadlineUnitEconomicsTrap() {
         {revealed && (
           <motion.div initial={reduce ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 Items excluded from the shortcut
               </div>
               <div className="mt-3 flex flex-wrap gap-2">

@@ -132,7 +132,7 @@ export default function Lesson4_2() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -351,7 +351,7 @@ export default function Lesson4_2() {
             <div className="ops-caption text-[11px] text-accent-cyan">
               Causal chain
             </div>
-            <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[13px] text-slate-200">
+            <div className="mt-3 flex flex-wrap items-center gap-2 font-sans text-[13px] text-slate-200">
               <span className="rounded-md border border-white/15 bg-white/[0.04] px-3 py-1.5">Future business performance</span>
               <span className="text-accent-cyan" aria-hidden>→</span>
               <span className="rounded-md border border-white/15 bg-white/[0.04] px-3 py-1.5">Future shareholder benefits</span>
@@ -450,7 +450,7 @@ export default function Lesson4_2() {
               <div className="ops-caption text-[11px] text-accent-green">
                 Lower risk — r = 5%
               </div>
-              <div className="mt-1 font-mono text-[18px] text-slate-100">
+              <div className="mt-1 font-sans text-[18px] text-slate-100">
                 <InlineMath>{String.raw`PV = \frac{110}{1.05} = \$104.76`}</InlineMath>
               </div>
             </div>
@@ -458,7 +458,7 @@ export default function Lesson4_2() {
               <div className="ops-caption text-[11px] text-accent-red">
                 Higher risk — r = 15%
               </div>
-              <div className="mt-1 font-mono text-[18px] text-slate-100">
+              <div className="mt-1 font-sans text-[18px] text-slate-100">
                 <InlineMath>{String.raw`PV = \frac{110}{1.15} = \$95.65`}</InlineMath>
               </div>
             </div>
@@ -572,15 +572,15 @@ export default function Lesson4_2() {
               <div className="ops-caption text-[11px] text-accent-cyan">
                 Market r = 10% → P₀
               </div>
-              <div className="mt-1 font-mono text-[20px] text-slate-100">$100</div>
-              <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">110 / 1.10</div>
+              <div className="mt-1 font-sans text-[20px] text-slate-100">$100</div>
+              <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">110 / 1.10</div>
             </div>
             <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.05] p-4">
               <div className="ops-caption text-[11px] text-accent-amber">
                 Your personal r = 15% → your valuation
               </div>
-              <div className="mt-1 font-mono text-[20px] text-slate-100">$95.65</div>
-              <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">110 / 1.15</div>
+              <div className="mt-1 font-sans text-[20px] text-slate-100">$95.65</div>
+              <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">110 / 1.15</div>
             </div>
           </div>
           <p className="ops-body mt-3 text-[15px] text-slate-300">
@@ -781,7 +781,7 @@ function ConceptCheck() {
           <div className="ops-caption text-[11px] text-accent-cyan">
             r = 10%
           </div>
-          <div className="mt-1 font-mono text-[18px] text-slate-100">
+          <div className="mt-1 font-sans text-[18px] text-slate-100">
             P₀ = 55 / 1.10 = $50.00
           </div>
         </div>
@@ -789,7 +789,7 @@ function ConceptCheck() {
           <div className="ops-caption text-[11px] text-accent-amber">
             r = 15%
           </div>
-          <div className="mt-1 font-mono text-[18px] text-slate-100">
+          <div className="mt-1 font-sans text-[18px] text-slate-100">
             P₀ = 55 / 1.15 = $47.83
           </div>
         </div>
@@ -809,8 +809,8 @@ function ConceptCheck() {
         <Feedback status="correct">
           Correct. The expected future payoff ($55) is fixed; only the discount
           rate changes. Raising r from 10% to 15% lowers P₀ from{" "}
-          <span className="font-mono">$50.00</span> to{" "}
-          <span className="font-mono">$47.83</span>. The cash flow did not
+          <span className="font-sans">$50.00</span> to{" "}
+          <span className="font-sans">$47.83</span>. The cash flow did not
           change — the price did.
         </Feedback>
       )}

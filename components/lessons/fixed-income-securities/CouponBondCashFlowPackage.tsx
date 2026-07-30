@@ -51,7 +51,7 @@ export default function CouponBondCashFlowPackage() {
             type="button"
             onClick={() => setBroken((b) => !b)}
             aria-pressed={broken}
-            className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+            className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
           >
             {broken ? "Recombine" : "Break apart"}
           </button>
@@ -77,7 +77,7 @@ export default function CouponBondCashFlowPackage() {
                     <div className="ops-caption text-[11px] text-accent-cyan">
                       Whole coupon bond
                     </div>
-                    <div className="mt-1 font-mono text-[20px] text-white">
+                    <div className="mt-1 font-sans text-[20px] text-white">
                       3yr · 5% · $1,000
                     </div>
                     <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -106,7 +106,7 @@ export default function CouponBondCashFlowPackage() {
                     <div className="ops-caption text-[11px] text-accent-green">
                       Zero-coupon claim
                     </div>
-                    <div className="mt-1 font-mono text-[18px] text-white">
+                    <div className="mt-1 font-sans text-[18px] text-white">
                       ${f.amount.toLocaleString()}
                     </div>
                     <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -134,7 +134,7 @@ export default function CouponBondCashFlowPackage() {
             {broken ? (
               <>
                 Broken apart, the bond is three independent zero-coupon bonds:{" "}
-                <span className="font-mono text-accent-green">$50 / $50 / $1,050</span>{" "}
+                <span className="font-sans text-accent-green">$50 / $50 / $1,050</span>{" "}
                 at years 1, 2, and 3. Each can be priced and traded on its own.
               </>
             ) : (

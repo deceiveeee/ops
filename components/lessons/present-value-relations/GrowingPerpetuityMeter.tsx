@@ -69,7 +69,7 @@ export default function GrowingPerpetuityMeter() {
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Cashflow (C)</span>
-            <span className="font-mono text-accent-green">{fmt(c)}</span>
+            <span className="font-sans text-accent-green">{fmt(c)}</span>
           </span>
           <input
             type="number"
@@ -78,13 +78,13 @@ export default function GrowingPerpetuityMeter() {
             value={c}
             aria-label="Growing perpetuity cashflow C"
             onChange={(e) => setC(Math.max(0, Number(e.target.value) || 0))}
-            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
+            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
           />
         </label>
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Discount rate (r)</span>
-            <span className="font-mono text-accent-cyan">{r.toFixed(1)}%</span>
+            <span className="font-sans text-accent-cyan">{r.toFixed(1)}%</span>
           </span>
           <input
             type="range"
@@ -100,7 +100,7 @@ export default function GrowingPerpetuityMeter() {
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Growth rate (g)</span>
-            <span className={cn("font-mono", status === "ok" ? "text-accent-purple" : "text-accent-red")}>
+            <span className={cn("font-sans", status === "ok" ? "text-accent-purple" : "text-accent-red")}>
               {g.toFixed(1)}%
             </span>
           </span>
@@ -125,7 +125,7 @@ export default function GrowingPerpetuityMeter() {
           </span>
           <span
             className={cn(
-              "font-mono text-[12px]",
+              "font-sans text-[12px]",
               status === "exceeds"
                 ? "text-accent-red"
                 : fillFrac >= 0.8
@@ -176,7 +176,7 @@ export default function GrowingPerpetuityMeter() {
               <span className="h-1.5 w-1.5 rounded-full bg-accent-red" aria-hidden />
               Formula blocked · no finite value
             </div>
-            <div className="font-mono text-[17px] leading-relaxed text-slate-500 sm:text-[19px]">
+            <div className="font-sans text-[17px] leading-relaxed text-slate-500 sm:text-[19px]">
               <Var>PV</Var> ={" "}
               <Frac num={<><Var>C</Var></>} den={<><Var>r</Var> − <Var>g</Var></>} /> ={" "}
               <span className="text-accent-red">undefined</span>

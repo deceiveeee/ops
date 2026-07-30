@@ -36,7 +36,7 @@ export default function EqProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
                     active
                       ? "border-accent-green bg-accent-green/20 text-accent-green"
                       : done

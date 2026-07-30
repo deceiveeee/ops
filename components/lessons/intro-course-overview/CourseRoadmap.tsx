@@ -19,7 +19,7 @@ export default function CourseRoadmap() {
             Finance Foundations · roadmap
           </span>
         </div>
-        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
           5 stages
         </span>
       </div>

@@ -108,7 +108,7 @@ function DocumentPage({ reduce }: { reduce: boolean }) {
         <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-stone-500">
           Form 10-K · Annual Report
         </span>
-        <span className="font-mono text-[13px] tabular-nums text-stone-400">
+        <span className="font-sans text-[13px] tabular-nums text-stone-400">
           Fiscal Year · Page 47
         </span>
       </header>
@@ -191,7 +191,7 @@ function DocumentPage({ reduce }: { reduce: boolean }) {
       {/* Page footer */}
       <footer className="relative flex items-center justify-between border-t border-stone-200 px-10 py-4 text-[12px] text-stone-400">
         <span>Annual Report on Form 10-K</span>
-        <span className="font-mono tabular-nums">47</span>
+        <span className="font-sans tabular-nums">47</span>
       </footer>
     </article>
   );

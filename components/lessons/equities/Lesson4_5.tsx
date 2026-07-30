@@ -142,7 +142,7 @@ export default function Lesson4_5() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -314,18 +314,18 @@ export default function Lesson4_5() {
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Concept
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Definition
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Same as ROE?
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[14px] text-slate-200">
+              <tbody className="font-sans text-[14px] text-slate-200">
                 <tr className="odd:bg-white/[0.015]">
                   <td className="px-4 py-2">ROE</td>
                   <td className="px-4 py-2 text-slate-400">EPS / BVPS</td>
@@ -623,16 +623,16 @@ export default function Lesson4_5() {
             <table className="w-full min-w-[640px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">Year</th>
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">BVPS</th>
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">EPS</th>
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">b</th>
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">Retained</th>
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">Dividend</th>
-                  <th className="border-b border-white/15 px-3 py-2 font-mono font-normal">End BVPS</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">Year</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">BVPS</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">EPS</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">b</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">Retained</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">Dividend</th>
+                  <th className="border-b border-white/15 px-3 py-2 font-sans font-normal">End BVPS</th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[13px] text-slate-200">
+              <tbody className="font-sans text-[13px] text-slate-200">
                 <tr className="odd:bg-white/[0.015]">
                   <td className="px-3 py-1.5">0</td>
                   <td className="px-3 py-1.5">$10.00</td>

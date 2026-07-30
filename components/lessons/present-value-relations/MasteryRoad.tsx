@@ -54,7 +54,7 @@ export default function MasteryRoad() {
             Module 2 · skill map
           </span>
         </div>
-        <span className="ops-caption font-mono text-[12px] text-slate-300">
+        <span className="ops-caption font-sans text-[12px] text-slate-300">
           <span className="text-accent-green">{ready ? masteredCount : 0}</span>
           <span className="text-slate-500"> / {total} mastered</span>
         </span>
@@ -129,7 +129,7 @@ export default function MasteryRoad() {
                   aria-hidden
                 />
                 <span
-                  className="absolute -top-1 -right-1 font-mono text-[10px] text-slate-500"
+                  className="absolute -top-1 -right-1 font-sans text-[10px] text-slate-500"
                   aria-hidden
                 >
                   {String(i + 1).padStart(2, "0")}
@@ -140,7 +140,7 @@ export default function MasteryRoad() {
               </div>
               <div
                 className={cn(
-                  "mt-1 font-mono text-[10px] uppercase tracking-[0.14em]",
+                  "mt-1 font-sans text-[10px] uppercase tracking-[0.14em]",
                   s.text,
                 )}
               >

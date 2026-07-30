@@ -162,7 +162,7 @@ export default function Lesson5_4() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[12px] text-accent-amber">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[12px] text-accent-amber">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -276,7 +276,7 @@ export default function Lesson5_4() {
             {["Firm-specific", "Unsystematic", "Diversifiable"].map((s) => (
               <span
                 key={s}
-                className="rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-3 py-1 font-mono text-[12px] text-accent-cyan"
+                className="rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-3 py-1 font-sans text-[12px] text-accent-cyan"
               >
                 {s}
               </span>
@@ -287,7 +287,7 @@ export default function Lesson5_4() {
               <strong className="text-white">100-stock example.</strong> Each
               stock has a 1% weight. If one stock falls 50%, the portfolio
               impact is only{" "}
-              <span className="font-mono text-accent-red">
+              <span className="font-sans text-accent-red">
                 1% × 50% = −0.5%
               </span>
               . The blow is tiny because the position is tiny.
@@ -328,7 +328,7 @@ export default function Lesson5_4() {
             ].map((s) => (
               <span
                 key={s}
-                className="rounded-full border border-accent-red/30 bg-accent-red/10 px-3 py-1 font-mono text-[12px] text-accent-red"
+                className="rounded-full border border-accent-red/30 bg-accent-red/10 px-3 py-1 font-sans text-[12px] text-accent-red"
               >
                 {s}
               </span>
@@ -339,7 +339,7 @@ export default function Lesson5_4() {
               <strong className="text-white">100-stock recession.</strong> A
               downturn pushes <em>all</em> stocks down roughly 20%. Even with
               100 holdings the portfolio still falls about{" "}
-              <span className="font-mono text-accent-red">−20%</span>. Adding
+              <span className="font-sans text-accent-red">−20%</span>. Adding
               more stocks does not help because the risk source is shared.
             </p>
           </div>
@@ -401,15 +401,15 @@ export default function Lesson5_4() {
             components:
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <span className="rounded-lg border border-accent-purple/30 bg-accent-purple/10 px-4 py-2 font-mono text-[14px] text-accent-purple">
+            <span className="rounded-lg border border-accent-purple/30 bg-accent-purple/10 px-4 py-2 font-sans text-[14px] text-accent-purple">
               Total risk
             </span>
-            <span className="font-mono text-slate-400">=</span>
-            <span className="rounded-lg border border-accent-red/30 bg-accent-red/10 px-4 py-2 font-mono text-[14px] text-accent-red">
+            <span className="font-sans text-slate-400">=</span>
+            <span className="rounded-lg border border-accent-red/30 bg-accent-red/10 px-4 py-2 font-sans text-[14px] text-accent-red">
               Systematic
             </span>
-            <span className="font-mono text-slate-400">+</span>
-            <span className="rounded-lg border border-accent-cyan/30 bg-accent-cyan/10 px-4 py-2 font-mono text-[14px] text-accent-cyan">
+            <span className="font-sans text-slate-400">+</span>
+            <span className="rounded-lg border border-accent-cyan/30 bg-accent-cyan/10 px-4 py-2 font-sans text-[14px] text-accent-cyan">
               Idiosyncratic
             </span>
           </div>
@@ -451,11 +451,11 @@ export default function Lesson5_4() {
         <Panel>
           <p className="ops-body text-[15px] leading-7 text-slate-200">
             <strong className="text-white">Worked example.</strong> The market
-            surprise is <span className="font-mono">−5%</span>, the stock&apos;s
-            beta is <span className="font-mono">1.4</span>, and the
-            firm-specific surprise is <span className="font-mono">+3%</span>.
+            surprise is <span className="font-sans">−5%</span>, the stock&apos;s
+            beta is <span className="font-sans">1.4</span>, and the
+            firm-specific surprise is <span className="font-sans">+3%</span>.
           </p>
-          <div className="mt-4 space-y-2 rounded-xl border border-white/10 bg-white/[0.02] p-5 font-mono text-[14px] text-slate-200">
+          <div className="mt-4 space-y-2 rounded-xl border border-white/10 bg-white/[0.02] p-5 font-sans text-[14px] text-slate-200">
             <div>
               Market component = β × market surprise = 1.4 × (−5%) ={" "}
               <span className="text-accent-red">−7%</span>
@@ -612,7 +612,7 @@ export default function Lesson5_4() {
                   ["β < 0", "Tends to move opposite the market"],
                 ].map((row, i) => (
                   <tr key={i} className="border-b border-white/10">
-                    <td className="px-4 py-3 font-mono text-accent-amber">
+                    <td className="px-4 py-3 font-sans text-accent-amber">
                       {row[0]}
                     </td>
                     <td className="px-4 py-3">{row[1]}</td>
@@ -623,26 +623,26 @@ export default function Lesson5_4() {
           </div>
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
-              <div className="font-mono text-[13px] text-slate-400">
+              <div className="font-sans text-[13px] text-slate-400">
                 β = 1.5, market +4%
               </div>
-              <div className="mt-1 font-mono text-[16px] text-accent-green">
+              <div className="mt-1 font-sans text-[16px] text-accent-green">
                 → +6% est.
               </div>
             </div>
             <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
-              <div className="font-mono text-[13px] text-slate-400">
+              <div className="font-sans text-[13px] text-slate-400">
                 β = 1.5, market −4%
               </div>
-              <div className="mt-1 font-mono text-[16px] text-accent-red">
+              <div className="mt-1 font-sans text-[16px] text-accent-red">
                 → −6% est.
               </div>
             </div>
             <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
-              <div className="font-mono text-[13px] text-slate-400">
+              <div className="font-sans text-[13px] text-slate-400">
                 β = 0.6, market −5%
               </div>
-              <div className="mt-1 font-mono text-[16px] text-accent-red">
+              <div className="mt-1 font-sans text-[16px] text-accent-red">
                 → −3% est.
               </div>
             </div>
@@ -676,7 +676,7 @@ export default function Lesson5_4() {
           </p>
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-accent-green/20 bg-accent-green/[0.06] p-4 text-center">
-              <div className="font-mono text-[20px] text-accent-green">
+              <div className="font-sans text-[20px] text-accent-green">
                 +12%
               </div>
               <div className="mt-1 text-[13px] text-slate-400">
@@ -684,13 +684,13 @@ export default function Lesson5_4() {
               </div>
             </div>
             <div className="rounded-lg border border-accent-amber/20 bg-accent-amber/[0.06] p-4 text-center">
-              <div className="font-mono text-[20px] text-accent-amber">+1%</div>
+              <div className="font-sans text-[20px] text-accent-amber">+1%</div>
               <div className="mt-1 text-[13px] text-slate-400">
                 Firm news offset most of it
               </div>
             </div>
             <div className="rounded-lg border border-accent-red/20 bg-accent-red/[0.06] p-4 text-center">
-              <div className="font-mono text-[20px] text-accent-red">−5%</div>
+              <div className="font-sans text-[20px] text-accent-red">−5%</div>
               <div className="mt-1 text-[13px] text-slate-400">
                 Firm news was terrible
               </div>
@@ -797,17 +797,17 @@ export default function Lesson5_4() {
               <tbody className="text-slate-200">
                 <tr className="border-b border-white/10">
                   <td className="px-3 py-2">Stock A</td>
-                  <td className="px-3 py-2 font-mono">30%</td>
-                  <td className="px-3 py-2 font-mono">0.20</td>
-                  <td className="px-3 py-2 font-mono text-accent-amber">
+                  <td className="px-3 py-2 font-sans">30%</td>
+                  <td className="px-3 py-2 font-sans">0.20</td>
+                  <td className="px-3 py-2 font-sans text-accent-amber">
                     0.40
                   </td>
                 </tr>
                 <tr className="border-b border-white/10">
                   <td className="px-3 py-2">Stock B</td>
-                  <td className="px-3 py-2 font-mono">20%</td>
-                  <td className="px-3 py-2 font-mono">0.90</td>
-                  <td className="px-3 py-2 font-mono text-accent-amber">
+                  <td className="px-3 py-2 font-sans">20%</td>
+                  <td className="px-3 py-2 font-sans">0.90</td>
+                  <td className="px-3 py-2 font-sans text-accent-amber">
                     1.20
                   </td>
                 </tr>
@@ -856,18 +856,18 @@ export default function Lesson5_4() {
               <tbody className="text-slate-200">
                 <tr className="border-b border-white/10">
                   <td className="px-3 py-2">Weak</td>
-                  <td className="px-3 py-2 font-mono">−10%</td>
-                  <td className="px-3 py-2 font-mono">−20%</td>
+                  <td className="px-3 py-2 font-sans">−10%</td>
+                  <td className="px-3 py-2 font-sans">−20%</td>
                 </tr>
                 <tr className="border-b border-white/10">
                   <td className="px-3 py-2">Normal</td>
-                  <td className="px-3 py-2 font-mono">0%</td>
-                  <td className="px-3 py-2 font-mono">0%</td>
+                  <td className="px-3 py-2 font-sans">0%</td>
+                  <td className="px-3 py-2 font-sans">0%</td>
                 </tr>
                 <tr className="border-b border-white/10">
                   <td className="px-3 py-2">Strong</td>
-                  <td className="px-3 py-2 font-mono">+10%</td>
-                  <td className="px-3 py-2 font-mono">+20%</td>
+                  <td className="px-3 py-2 font-sans">+10%</td>
+                  <td className="px-3 py-2 font-sans">+20%</td>
                 </tr>
               </tbody>
             </table>
@@ -924,7 +924,7 @@ export default function Lesson5_4() {
           <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/50 p-4 text-center text-slate-50">
             <InlineMath>{String.raw`\beta_P = \sum_i w_i \, \beta_i`}</InlineMath>
           </div>
-          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 font-mono text-[14px] text-slate-200">
+          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 font-sans text-[14px] text-slate-200">
             Example: 60% × 1.2 + 40% × 0.6 = 0.72 + 0.24 ={" "}
             <span className="text-accent-amber">0.96</span>
           </div>
@@ -988,7 +988,7 @@ export default function Lesson5_4() {
             </div>
             <p className="mt-2 text-[15px] text-slate-200">
               Assets fall from 100 to 90 (−10%). If equity was 40, it falls to
-              30 — a <span className="font-mono text-accent-red">−25%</span>{" "}
+              30 — a <span className="font-sans text-accent-red">−25%</span>{" "}
               equity loss. Debt amplifies the impact on equity holders, raising
               the stock&apos;s beta.
             </p>
@@ -1241,9 +1241,9 @@ function DiversificationWorksheet() {
       </h4>
       <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
         In an equally-weighted portfolio, each stock has weight{" "}
-        <span className="font-mono">1/N</span>. The portfolio impact of one
+        <span className="font-sans">1/N</span>. The portfolio impact of one
         stock falling is{" "}
-        <span className="font-mono text-accent-cyan">
+        <span className="font-sans text-accent-cyan">
           weight × that stock&apos;s return
         </span>
         . Compute the impact in each case.
@@ -1314,9 +1314,9 @@ function SurpriseDecomposer() {
           Case 1 — Forward
         </div>
         <p className="ops-body mt-2 text-[15px] leading-7 text-slate-200">
-          Market surprise = <span className="font-mono">−5%</span>, beta ={" "}
-          <span className="font-mono">1.4</span>, firm surprise ={" "}
-          <span className="font-mono">+3%</span>. Find the components and total.
+          Market surprise = <span className="font-sans">−5%</span>, beta ={" "}
+          <span className="font-sans">1.4</span>, firm surprise ={" "}
+          <span className="font-sans">+3%</span>. Find the components and total.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-3">
           <AnswerInput
@@ -1349,9 +1349,9 @@ function SurpriseDecomposer() {
         </div>
         <p className="ops-body mt-2 text-[15px] leading-7 text-slate-200">
           Stock&apos;s total unexpected return ={" "}
-          <span className="font-mono">−2%</span>, beta ={" "}
-          <span className="font-mono">1.2</span>, market surprise ={" "}
-          <span className="font-mono">−4%</span>. Back out the components.
+          <span className="font-sans">−2%</span>, beta ={" "}
+          <span className="font-sans">1.2</span>, market surprise ={" "}
+          <span className="font-sans">−4%</span>. Back out the components.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-3">
           <AnswerInput
@@ -1590,7 +1590,7 @@ function BetaSlopeExplorer() {
             aria-label={`Set beta to ${s}`}
             onClick={() => setBeta(s)}
             className={cn(
-              "rounded-full border px-4 py-2 font-mono text-[14px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+              "rounded-full border px-4 py-2 font-sans text-[14px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               beta === s
                 ? "border-accent-cyan bg-accent-cyan/15 text-accent-cyan"
                 : "border-white/20 text-slate-200 hover:border-accent-cyan/60",

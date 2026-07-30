@@ -26,7 +26,7 @@ function LabeledSlider({
     <div>
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400"
+        className="flex items-baseline justify-between font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400"
       >
         <span>{label}</span>
         <span className="text-[15px] tabular-nums text-accent-amber">
@@ -95,7 +95,7 @@ export default function RequiredReturnToPV() {
 
       {/* Derivation */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Solve for the price that earns exactly the required return
         </div>
         <div className="mt-4 space-y-3">
@@ -118,10 +118,10 @@ export default function RequiredReturnToPV() {
       {/* Readouts */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-white/10 bg-ink-950/40 p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
             Present value
           </div>
-          <div className="mt-2 font-mono text-[22px] tabular-nums text-white">
+          <div className="mt-2 font-sans text-[22px] tabular-nums text-white">
             ${fmt(pv)}
           </div>
           <div className="mt-1 text-slate-400">
@@ -129,10 +129,10 @@ export default function RequiredReturnToPV() {
           </div>
         </div>
         <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.05] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Implied expected return at this price
           </div>
-          <div className="mt-2 font-mono text-[22px] tabular-nums text-white">
+          <div className="mt-2 font-sans text-[22px] tabular-nums text-white">
             {fmt(impliedReturn)}%
           </div>
           <div className="mt-1 text-slate-400">
@@ -142,7 +142,7 @@ export default function RequiredReturnToPV() {
       </div>
 
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Why the present value changes
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-100">

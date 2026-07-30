@@ -61,7 +61,7 @@ export default function StockFlowVisualizer({
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-amber/30 bg-accent-amber/[0.07] p-5">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">
+          <span className="inline-flex items-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">
             Important
           </span>
         </div>
@@ -169,7 +169,7 @@ export default function StockFlowVisualizer({
                     aria-pressed={picked === "stock"}
                     onClick={() => classify(c.id, "stock")}
                     className={cn(
-                      "rounded-full border px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                      "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                       picked === "stock"
                         ? correct
                           ? "border-accent-green bg-accent-green/15 text-accent-green"
@@ -184,7 +184,7 @@ export default function StockFlowVisualizer({
                     aria-pressed={picked === "flow"}
                     onClick={() => classify(c.id, "flow")}
                     className={cn(
-                      "rounded-full border px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                      "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                       picked === "flow"
                         ? correct
                           ? "border-accent-green bg-accent-green/15 text-accent-green"

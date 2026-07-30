@@ -143,7 +143,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-amber/25 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-amber/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-amber">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -218,7 +218,7 @@ export default function Lesson8_5() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">Payback reveals</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">Payback reveals</div>
               <ul className="mt-3 space-y-2">
                 {["Liquidity exposure", "Speed of capital recovery", "Dependence on distant forecasts", "Risk of obsolescence before recovery", "Flexibility to reinvest recovered cash"].map((x) => (
                   <li key={x} className="flex items-start gap-2 text-[14px] leading-[1.55] text-slate-100">
@@ -228,7 +228,7 @@ export default function Lesson8_5() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-red">Payback does not reveal</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">Payback does not reveal</div>
               <ul className="mt-3 space-y-2">
                 {["How much value the project creates", "Cash flows after the recovery date", "The time value of money (without discounting)", "Risk-adjusted return", "Total economic benefit"].map((x) => (
                   <li key={x} className="flex items-start gap-2 text-[14px] leading-[1.55] text-slate-100">
@@ -289,7 +289,7 @@ export default function Lesson8_5() {
       >
         <Reveal>
           <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5 sm:p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
               Conditions for agreement
             </div>
             <ul className="mt-3 space-y-2">
@@ -549,7 +549,7 @@ export default function Lesson8_5() {
                 { m: "ROIC", q: "Return on deployed capital", tone: "slate" },
               ].map((x) => (
                 <div key={x.m} className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-                  <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+                  <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
                     x.tone === "amber" ? "text-accent-amber"
                     : x.tone === "cyan" ? "text-accent-cyan"
                     : x.tone === "green" ? "text-accent-green"
@@ -577,7 +577,7 @@ export default function Lesson8_5() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Toward Lesson 8.6
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

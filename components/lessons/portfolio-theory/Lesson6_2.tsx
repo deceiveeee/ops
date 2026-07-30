@@ -142,7 +142,7 @@ function portfolioPoint(wMot: number, rho: number) {
 function NotationGuide() {
   return (
     <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-      <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">
+      <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
         Notation guide
       </div>
       <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
@@ -209,7 +209,7 @@ function ReturnPathVisual() {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
       <div className="rounded-xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
           Case A — move together
         </div>
         <p className="mt-2 text-[16px] leading-[1.6] text-slate-200">
@@ -223,7 +223,7 @@ function ReturnPathVisual() {
         </svg>
       </div>
       <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
           Case B — offset
         </div>
         <p className="mt-2 text-[16px] leading-[1.6] text-slate-200">
@@ -283,10 +283,10 @@ const EXPANSION_STEPS: DerivationStep[] = [
           <Matrix2x2
             rowLabels={["A", "B"]}
             colLabels={["A", "B"]}
-            topLeft={<span className="font-mono text-[15px]">a²</span>}
-            topRight={<span className="font-mono text-[15px]">ab</span>}
-            bottomLeft={<span className="font-mono text-[15px]">ba</span>}
-            bottomRight={<span className="font-mono text-[15px]">b²</span>}
+            topLeft={<span className="font-sans text-[15px]">a²</span>}
+            topRight={<span className="font-sans text-[15px]">ab</span>}
+            bottomLeft={<span className="font-sans text-[15px]">ba</span>}
+            bottomRight={<span className="font-sans text-[15px]">b²</span>}
             highlight={["tl", "tr", "bl", "br"]}
             highlightTone="cyan"
           />
@@ -309,10 +309,10 @@ const EXPANSION_STEPS: DerivationStep[] = [
           <Matrix2x2
             rowLabels={["A", "B"]}
             colLabels={["A", "B"]}
-            topLeft={<span className="font-mono text-[14px]">w²σ²</span>}
-            topRight={<span className="font-mono text-[14px] text-accent-amber">Cov</span>}
-            bottomLeft={<span className="font-mono text-[14px] text-accent-amber">Cov</span>}
-            bottomRight={<span className="font-mono text-[14px]">w²σ²</span>}
+            topLeft={<span className="font-sans text-[14px]">w²σ²</span>}
+            topRight={<span className="font-sans text-[14px] text-accent-amber">Cov</span>}
+            bottomLeft={<span className="font-sans text-[14px] text-accent-amber">Cov</span>}
+            bottomRight={<span className="font-sans text-[14px]">w²σ²</span>}
             highlight={["tr", "bl"]}
             highlightTone="amber"
           />
@@ -334,18 +334,18 @@ function GMMotorolaLedger() {
       <table className="w-full min-w-[460px] border-collapse text-[16px]">
         <thead>
           <tr className="border-b border-white/20 text-left">
-            <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Weighted cell
             </th>
-            <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Calculation
             </th>
-            <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Value
             </th>
           </tr>
         </thead>
-        <tbody className="font-mono tabular-nums text-slate-100">
+        <tbody className="font-sans tabular-nums text-slate-100">
           {rows.map((r) => (
             <tr
               key={r.cell}
@@ -370,13 +370,13 @@ function GMMotorolaLedger() {
             <td className="py-3 pr-6 font-semibold text-slate-50" colSpan={2}>
               Two off-diagonals combine → 2 × 4.21
             </td>
-            <td className="py-3 font-mono text-accent-amber">8.42</td>
+            <td className="py-3 font-sans text-accent-amber">8.42</td>
           </tr>
           <tr className="border-t border-white/15">
             <td className="py-3 pr-6 font-semibold text-slate-50" colSpan={2}>
               Sum = σ²_P (21.83 + 8.42 + 5.92)
             </td>
-            <td className="py-3 font-mono font-semibold text-accent-green">36.16</td>
+            <td className="py-3 font-sans font-semibold text-accent-green">36.16</td>
           </tr>
         </tbody>
       </table>
@@ -496,7 +496,7 @@ function OpportunityCurveExplorer() {
 
       <div className="space-y-5">
         <div>
-          <label className="block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <label className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
             Motorola weight: <span className="text-accent-cyan">{(wMot * 100).toFixed(0)}%</span>
           </label>
           <input
@@ -508,7 +508,7 @@ function OpportunityCurveExplorer() {
             className="mt-2 w-full accent-accent-cyan"
             aria-label="Motorola weight"
           />
-          <label className="mt-4 block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <label className="mt-4 block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
             Correlation ρ: <span className="text-accent-cyan">{rho.toFixed(2)}</span>
           </label>
           <input
@@ -528,7 +528,7 @@ function OpportunityCurveExplorer() {
                 type="button"
                 onClick={() => setRho(p.value)}
                 className={cn(
-                  "rounded-full border px-3 py-1 font-mono text-[13px] transition-colors",
+                  "rounded-full border px-3 py-1 font-sans text-[13px] transition-colors",
                   Math.abs(rho - p.value) < 0.005
                     ? "border-accent-cyan bg-accent-cyan/15 text-accent-cyan"
                     : "border-white/20 text-slate-300 hover:border-accent-cyan/60 hover:text-accent-cyan",
@@ -571,8 +571,8 @@ function Readout({
 }) {
   return (
     <div className="rounded-xl border border-white/12 bg-white/[0.03] px-4 py-3">
-      <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", tone === "cyan" ? "text-accent-cyan" : "text-slate-100")}>
+      <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className={cn("mt-1 font-sans text-[18px]", tone === "cyan" ? "text-accent-cyan" : "text-slate-100")}>
         {value}
       </div>
     </div>
@@ -601,14 +601,14 @@ export default function Lesson6_2() {
 
       <Reveal className="mt-8">
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 sm:p-7">
-          <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">
+          <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
             Learning objectives
           </div>
           <p className="mt-3 text-[16px] text-slate-300">By the end of this lesson, you should be able to:</p>
           <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[13px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[13px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="text-[16px] leading-[1.6] text-slate-200">{o}</span>
@@ -700,23 +700,23 @@ export default function Lesson6_2() {
             colLabels={["GM", "MOT"]}
             rawCells={{
               tl: (
-                <span className="font-mono">
+                <span className="font-sans">
                   <InlineMath>{String.raw`\sigma_A^2`}</InlineMath>
                 </span>
               ),
-              tr: <span className="font-mono">Cov(A,B)</span>,
-              bl: <span className="font-mono">Cov(B,A)</span>,
+              tr: <span className="font-sans">Cov(A,B)</span>,
+              bl: <span className="font-sans">Cov(B,A)</span>,
               br: (
-                <span className="font-mono">
+                <span className="font-sans">
                   <InlineMath>{String.raw`\sigma_B^2`}</InlineMath>
                 </span>
               ),
             }}
             weightedCells={{
-              tl: <span className="font-mono">w²ₐ σ²ₐ</span>,
-              tr: <span className="font-mono">wₐw_b Cov</span>,
-              bl: <span className="font-mono">w_b wₐ Cov</span>,
-              br: <span className="font-mono">w²_b σ²_b</span>,
+              tl: <span className="font-sans">w²ₐ σ²ₐ</span>,
+              tr: <span className="font-sans">wₐw_b Cov</span>,
+              bl: <span className="font-sans">w_b wₐ Cov</span>,
+              br: <span className="font-sans">w²_b σ²_b</span>,
             }}
             sumNote={
               <span>
@@ -748,18 +748,18 @@ export default function Lesson6_2() {
             <table className="w-full min-w-[400px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
                     Asset
                   </th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
                     Mean return
                   </th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
                     Std dev σ
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5">
                   <td className="py-3 pr-8">GM</td>
                   <td className="py-3 pr-8">1.08%</td>
@@ -804,7 +804,7 @@ export default function Lesson6_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
                 Final outputs
               </div>
               <div className="mt-4">
@@ -816,7 +816,7 @@ export default function Lesson6_2() {
               </p>
             </div>
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
                 Interpretation
               </div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
@@ -872,7 +872,7 @@ export default function Lesson6_2() {
               ]}
               interpretation={
                 <span>
-                  The four cells sum to <span className="font-mono text-slate-100">36.16</span>,
+                  The four cells sum to <span className="font-sans text-slate-100">36.16</span>,
                   and <InlineMath>{String.raw`\sigma_P = \sqrt{36.16} \approx 6.01\%`}</InlineMath>{" "}
                   — below Motorola&apos;s 9.73% because the assets are imperfectly correlated.
                 </span>
@@ -908,8 +908,8 @@ export default function Lesson6_2() {
                 <span>
                   Correlation is the dial that controls diversification. From ρ = 1 to
                   ρ = −1, the same two assets produce portfolio volatility from{" "}
-                  <span className="font-mono text-slate-100">20%</span> down to{" "}
-                  <span className="font-mono text-slate-100">0%</span>.
+                  <span className="font-sans text-slate-100">20%</span> down to{" "}
+                  <span className="font-sans text-slate-100">0%</span>.
                 </span>
               }
               interpretationTone="info"
@@ -944,12 +944,12 @@ export default function Lesson6_2() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Regime</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">ρ</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Curve position</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Regime</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">ρ</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Curve position</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5">
                   <td className="py-3 pr-8">Normal</td>
                   <td className="py-3 pr-8">0.37</td>

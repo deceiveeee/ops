@@ -32,7 +32,7 @@ function WeightBars({
       <div>
         <div className="mb-1 flex items-center justify-between text-[14px] text-slate-300">
           <span>Atlas</span>
-          <span className="font-mono tabular-nums text-slate-100">{atlas.toFixed(0)}%</span>
+          <span className="font-sans tabular-nums text-slate-100">{atlas.toFixed(0)}%</span>
         </div>
         <div className="h-3.5 w-full overflow-hidden rounded-full bg-white/10">
           <motion.div
@@ -51,7 +51,7 @@ function WeightBars({
       <div>
         <div className="mb-1 flex items-center justify-between text-[14px] text-slate-300">
           <span>Beacon</span>
-          <span className="font-mono tabular-nums text-slate-100">{beacon.toFixed(0)}%</span>
+          <span className="font-sans tabular-nums text-slate-100">{beacon.toFixed(0)}%</span>
         </div>
         <div className="h-3.5 w-full overflow-hidden rounded-full bg-white/10">
           <motion.div
@@ -99,7 +99,7 @@ function PortfolioPairCard({
         tone === "cyan" ? "border-accent-cyan/25 bg-accent-cyan/[0.05]" : "border-accent-amber/25 bg-accent-amber/[0.05]",
       )}
     >
-      <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", tone === "cyan" ? "text-accent-cyan" : "text-accent-amber")}>
+      <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", tone === "cyan" ? "text-accent-cyan" : "text-accent-amber")}>
         {label}
       </div>
       <div className="mt-1 text-[15px] text-slate-300">{sublabel}</div>
@@ -274,7 +274,7 @@ function DirectionChips({
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "inline-flex h-6 items-center rounded-md border px-2 font-mono text-[12px]",
+                    "inline-flex h-6 items-center rounded-md border px-2 font-sans text-[12px]",
                     it.asset === "Beacon"
                       ? "border-accent-purple/50 text-accent-purple"
                       : "border-accent-cyan/50 text-accent-cyan",
@@ -356,7 +356,7 @@ export default function MarketClearingLab() {
             type="button"
             onClick={() => setStage(i as StageId)}
             className={cn(
-              "flex h-9 items-center gap-2 rounded-full border px-3.5 font-mono text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+              "flex h-9 items-center gap-2 rounded-full border px-3.5 font-sans text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               stage === i
                 ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
                 : done[i]
@@ -424,8 +424,8 @@ export default function MarketClearingLab() {
                 { label: "Aggressive", tangency: 150, rf: -50 },
               ].map((inv) => (
                 <div key={inv.label} className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-                  <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">{inv.label}</div>
-                  <div className="mt-2 font-mono text-[15px] text-slate-100">
+                  <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">{inv.label}</div>
+                  <div className="mt-2 font-sans text-[15px] text-slate-100">
                     {inv.tangency}% T · <span className={inv.rf < 0 ? "text-accent-red" : "text-accent-green"}>{inv.rf > 0 ? "+" : ""}{inv.rf}% r_f</span>
                   </div>
                   <div className="mt-4">
@@ -508,7 +508,7 @@ export default function MarketClearingLab() {
             </p>
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-center">
               <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-                <div className="mb-2 font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+                <div className="mb-2 font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
                   {converging ? "After adjustment" : "Before adjustment"}
                 </div>
                 <div className="mb-1 text-[15px] text-slate-300">Tangency portfolio T</div>
@@ -535,7 +535,7 @@ export default function MarketClearingLab() {
                     transition={{ duration: 0.4 }}
                     className="rounded-2xl border border-accent-green/30 bg-accent-green/[0.06] p-6"
                   >
-                    <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">Equilibrium reached</div>
+                    <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">Equilibrium reached</div>
                     <div className="mt-3 text-[18px] text-white">T = M</div>
                     <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                       Beacon&apos;s price rose and expected return fell until investors wanted less of it;
@@ -571,11 +571,11 @@ export default function MarketClearingLab() {
           type="button"
           onClick={prev}
           disabled={stage === 0}
-          className="rounded-full border border-white/15 px-5 py-2 font-mono text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white disabled:opacity-40"
+          className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white disabled:opacity-40"
         >
           ← Back
         </button>
-        <span className="font-mono text-[13px] tabular-nums text-slate-500" aria-hidden>
+        <span className="font-sans text-[13px] tabular-nums text-slate-500" aria-hidden>
           {stage + 1} / {STAGE_LABELS.length}
         </span>
         {stage < 4 ? (
@@ -583,7 +583,7 @@ export default function MarketClearingLab() {
             type="button"
             onClick={next}
             disabled={!canAdvance(stage)}
-            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/15 px-5 py-2 font-mono text-[13px] text-accent-cyan transition-colors hover:bg-accent-cyan/25 disabled:opacity-40 disabled:hover:bg-accent-cyan/15"
+            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/15 px-5 py-2 font-sans text-[13px] text-accent-cyan transition-colors hover:bg-accent-cyan/25 disabled:opacity-40 disabled:hover:bg-accent-cyan/15"
           >
             Next →
           </button>
@@ -595,7 +595,7 @@ export default function MarketClearingLab() {
               setDone({});
               setConverging(false);
             }}
-            className="rounded-full border border-white/15 px-5 py-2 font-mono text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white"
+            className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white"
           >
             ↺ Restart
           </button>

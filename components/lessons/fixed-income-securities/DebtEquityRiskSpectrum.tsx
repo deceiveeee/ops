@@ -99,7 +99,7 @@ export default function DebtEquityRiskSpectrum() {
                   />
                   <span
                     className={cn(
-                      "font-mono text-[11px]",
+                      "font-sans text-[11px]",
                       active ? "text-accent-cyan" : "text-slate-500",
                     )}
                   >
@@ -109,7 +109,7 @@ export default function DebtEquityRiskSpectrum() {
               );
             })}
           </div>
-          <div className="mt-4 flex min-w-[560px] justify-between font-mono text-[11px] text-slate-500">
+          <div className="mt-4 flex min-w-[560px] justify-between font-sans text-[11px] text-slate-500">
             <span>← Bond-like · lower yield</span>
             <span>Equity-like · higher yield →</span>
           </div>
@@ -121,7 +121,7 @@ export default function DebtEquityRiskSpectrum() {
             <div className="ops-caption text-[11px] text-accent-cyan">
               Selected security
             </div>
-            <div className="mt-1 font-mono text-[26px] text-white">
+            <div className="mt-1 font-sans text-[26px] text-white">
               {current.label}
             </div>
             <p className="ops-body mt-3 text-[14px] leading-6 text-slate-300">
@@ -186,7 +186,7 @@ function SpectrumMeter({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className={cn("font-mono text-[13px]", text)}>
+        <span className={cn("font-sans text-[13px]", text)}>
           {invert ? `${value}%` : value}
         </span>
       </div>

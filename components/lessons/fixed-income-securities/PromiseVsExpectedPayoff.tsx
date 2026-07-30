@@ -46,7 +46,7 @@ export default function PromiseVsExpectedPayoff() {
               Promised vs expected payoff
             </span>
           </div>
-          <div className="font-mono text-[12px] text-slate-400">
+          <div className="font-sans text-[12px] text-slate-400">
             Corporate zero · face {formatMoney(FACE)} · {MATURITY}yr
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function PromiseVsExpectedPayoff() {
             <div className="ops-caption text-[11px] text-accent-green">
               Promised payoff
             </div>
-            <div className="mt-1 font-mono text-[28px] text-white">
+            <div className="mt-1 font-sans text-[28px] text-white">
               {formatMoney(FACE)}
             </div>
             <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
@@ -83,7 +83,7 @@ export default function PromiseVsExpectedPayoff() {
               initial={reduce ? false : { opacity: 0.5 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
-              className="mt-1 font-mono text-[28px] text-white"
+              className="mt-1 font-sans text-[28px] text-white"
             >
               {formatMoney(expectedPayoff)}
             </motion.div>
@@ -128,7 +128,7 @@ export default function PromiseVsExpectedPayoff() {
             &ldquo;Promised yield is what I will earn.&rdquo;
           </p>
           <div className="mt-3 rounded-lg border border-accent-green/30 bg-accent-green/10 px-4 py-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">
+            <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">
               Correction
             </span>
             <p className="ops-body mt-1 text-[15px] leading-7 text-slate-100">
@@ -187,7 +187,7 @@ function Slider({
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
         <span
           className={cn(
-            "font-mono text-[13px]",
+            "font-sans text-[13px]",
             tone === "cyan" ? "text-accent-cyan" : "text-accent-amber",
           )}
         >

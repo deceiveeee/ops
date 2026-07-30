@@ -251,7 +251,7 @@ function PriceToCurve({ reduce }: { reduce: boolean | null }) {
               initial={reduce ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.15 * i + 0.3 }}
-              className="mt-1 font-mono text-[15px] text-slate-200"
+              className="mt-1 font-sans text-[15px] text-slate-200"
             >
               P = {pt.p.toFixed(4)}
             </motion.div>
@@ -259,7 +259,7 @@ function PriceToCurve({ reduce }: { reduce: boolean | null }) {
               initial={reduce ? false : { opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15 * i + 0.55, duration: 0.35 }}
-              className="mt-1 font-mono text-[15px] text-accent-cyan"
+              className="mt-1 font-sans text-[15px] text-accent-cyan"
             >
               <InlineMath>{`r_{0,${pt.t}} = ${(pt.r * 100).toFixed(2)}\\%`}</InlineMath>
             </motion.div>
@@ -285,13 +285,13 @@ function PriceToCurve({ reduce }: { reduce: boolean | null }) {
           stroke="rgba(255,255,255,0.2)"
         />
         <line x1="40" y1="20" x2="40" y2="130" stroke="rgba(255,255,255,0.2)" />
-        <text x="40" y="150" className="fill-slate-400 font-mono" fontSize="11">
+        <text x="40" y="150" className="fill-slate-400 font-sans" fontSize="11">
           t=1
         </text>
         <text
           x="298"
           y="150"
-          className="fill-slate-400 font-mono"
+          className="fill-slate-400 font-sans"
           fontSize="11"
         >
           t=3
@@ -299,7 +299,7 @@ function PriceToCurve({ reduce }: { reduce: boolean | null }) {
         <text
           x="548"
           y="150"
-          className="fill-slate-400 font-mono"
+          className="fill-slate-400 font-sans"
           fontSize="11"
         >
           t=5
@@ -334,7 +334,7 @@ function PriceToCurve({ reduce }: { reduce: boolean | null }) {
           x={560}
           y={30}
           textAnchor="end"
-          className="fill-accent-cyan font-mono"
+          className="fill-accent-cyan font-sans"
           fontSize="11"
         >
           yield curve

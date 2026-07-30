@@ -121,7 +121,7 @@ export default function ProjectVisibilityClassifier() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Announcement {idx + 1} of {CASES.length}
         </span>
         <button
@@ -142,7 +142,7 @@ export default function ProjectVisibilityClassifier() {
           transition={{ duration: 0.25 }}
           className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6"
         >
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
             Company announcement
           </div>
           <p className="ops-body mt-3 text-[17px] leading-[1.6] text-slate-100">
@@ -152,7 +152,7 @@ export default function ProjectVisibilityClassifier() {
       </AnimatePresence>
 
       <div>
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           What level of analysis is feasible?
         </div>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -179,7 +179,7 @@ export default function ProjectVisibilityClassifier() {
               >
                 <div
                   className={cn(
-                    "font-mono text-[11px] uppercase tracking-[0.14em]",
+                    "font-sans text-[11px] uppercase tracking-[0.14em]",
                     answered && isCorrect
                       ? toneText[LEVELS[lvl].tone]
                       : "text-slate-400",
@@ -209,7 +209,7 @@ export default function ProjectVisibilityClassifier() {
           >
             <div
               className={cn(
-                "font-mono text-[12px] uppercase tracking-[0.16em]",
+                "font-sans text-[12px] uppercase tracking-[0.16em]",
                 correct ? toneText[LEVELS[c.correct].tone] : "text-accent-red",
               )}
             >

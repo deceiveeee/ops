@@ -54,7 +54,7 @@ export default function CashFlowTimeline({
       {Array.from({ length: T + 1 }).map((_, i) => (
         <g key={i}>
           <line x1={xAt(i)} y1={midY - 5} x2={xAt(i)} y2={midY + 5} stroke="rgba(255,255,255,0.3)" />
-          <text x={xAt(i)} y={midY + 22} textAnchor="middle" className="fill-slate-500 font-mono" fontSize="13">
+          <text x={xAt(i)} y={midY + 22} textAnchor="middle" className="fill-slate-500 font-sans" fontSize="13">
             {i === 0 && showToday ? "t=0" : `${i}`}
           </text>
         </g>
@@ -83,7 +83,7 @@ export default function CashFlowTimeline({
               x={x}
               y={isCost ? top + barH + 16 : top - 8}
               textAnchor="middle"
-              className="font-mono"
+              className="font-sans"
               fontSize="14"
               fontWeight="600"
               fill={color}

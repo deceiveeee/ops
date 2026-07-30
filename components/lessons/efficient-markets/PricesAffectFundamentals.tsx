@@ -36,7 +36,7 @@ export default function PricesAffectFundamentals() {
       </div>
 
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           The reflexive loop
         </div>
         <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4 overflow-x-auto">
@@ -71,7 +71,7 @@ export default function PricesAffectFundamentals() {
 
       {/* Direction toggle */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
           Direction of initial move
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -96,7 +96,7 @@ export default function PricesAffectFundamentals() {
           transition={{ duration: 0.25 }}
           className={cn("rounded-2xl border p-5 sm:p-6",
             direction === "down" ? "border-accent-red/25 bg-accent-red/[0.04]" : "border-accent-green/25 bg-accent-green/[0.04]")}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
             direction === "down" ? "text-accent-red" : "text-accent-green")}>
             {direction === "down" ? "When price falls" : "When price rises"}
           </div>

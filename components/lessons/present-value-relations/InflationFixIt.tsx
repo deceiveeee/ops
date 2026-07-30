@@ -105,7 +105,7 @@ export default function InflationFixIt() {
                 setChecked(false);
               }}
               className={cn(
-                "rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                "rounded-full px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                 world === w
                   ? w === "nominal"
                     ? "bg-accent-cyan/15 text-accent-cyan"
@@ -179,16 +179,16 @@ export default function InflationFixIt() {
           </div>
           <div className="mt-3 space-y-2.5">
             <div className="flex items-center justify-between rounded-lg border border-accent-cyan/30 bg-accent-cyan/[0.06] px-3 py-2">
-              <span className="font-mono text-[13px] text-accent-cyan">
+              <span className="font-sans text-[13px] text-accent-cyan">
                 Nominal rate
               </span>
-              <span className="font-mono text-[14px] text-slate-100">8.00%</span>
+              <span className="font-sans text-[14px] text-slate-100">8.00%</span>
             </div>
             <div className="flex items-center justify-between rounded-lg border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-2">
-              <span className="font-mono text-[13px] text-accent-amber">
+              <span className="font-sans text-[13px] text-accent-amber">
                 Real rate
               </span>
-              <span className="font-mono text-[14px] text-slate-100">
+              <span className="font-sans text-[14px] text-slate-100">
                 {pct(REAL_RATE)}
               </span>
             </div>
@@ -226,7 +226,7 @@ export default function InflationFixIt() {
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span
                       className={cn(
-                        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em]",
+                        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em]",
                         c.cfType === "nominal"
                           ? "border-accent-cyan/30 bg-accent-cyan/10 text-accent-cyan"
                           : "border-accent-amber/30 bg-accent-amber/10 text-accent-amber",
@@ -234,7 +234,7 @@ export default function InflationFixIt() {
                     >
                       {c.cfType} CF
                     </span>
-                    <span className="font-mono text-[13px] text-slate-200">
+                    <span className="font-sans text-[13px] text-slate-200">
                       {c.amount}
                     </span>
                   </div>
@@ -245,7 +245,7 @@ export default function InflationFixIt() {
 
                 {/* Connector */}
                 <div className="flex items-center justify-center">
-                  <span className="font-mono text-[12px] text-slate-500">
+                  <span className="font-sans text-[12px] text-slate-500">
                     discount at
                   </span>
                 </div>
@@ -275,7 +275,7 @@ export default function InflationFixIt() {
                         >
                           <div
                             className={cn(
-                              "font-mono text-[11px] uppercase tracking-[0.14em]",
+                              "font-sans text-[11px] uppercase tracking-[0.14em]",
                               r === "nominal"
                                 ? "text-accent-cyan"
                                 : "text-accent-amber",
@@ -283,7 +283,7 @@ export default function InflationFixIt() {
                           >
                             {r} rate
                           </div>
-                          <div className="mt-0.5 font-mono text-[14px] text-slate-100">
+                          <div className="mt-0.5 font-sans text-[14px] text-slate-100">
                             {r === "nominal" ? "8.00%" : pct(REAL_RATE)}
                           </div>
                         </button>
@@ -353,7 +353,7 @@ export default function InflationFixIt() {
         {checked && (
           <span
             className={cn(
-              "font-mono text-[12px] uppercase tracking-[0.14em]",
+              "font-sans text-[12px] uppercase tracking-[0.14em]",
               allConsistent ? "text-accent-green" : "text-slate-400",
             )}
           >

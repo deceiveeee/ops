@@ -161,7 +161,7 @@ function TimelineSprint({ onMastered }: { onMastered: () => void }) {
             }}
             aria-pressed={active === f.id}
             className={cn(
-              "rounded-lg border px-3 py-2 font-mono text-[14px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+              "rounded-lg border px-3 py-2 font-sans text-[14px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               active === f.id
                 ? "border-accent-cyan/60 bg-accent-cyan/10 text-accent-cyan"
                 : placed[f.id] !== undefined
@@ -202,12 +202,12 @@ function TimelineSprint({ onMastered }: { onMastered: () => void }) {
                   )}
                   aria-hidden
                 />
-                <div className="mt-3 font-mono text-[12px] text-slate-300">
+                <div className="mt-3 font-sans text-[12px] text-slate-300">
                   t = {t}
                 </div>
                 <div
                   className={cn(
-                    "mt-2 min-h-[20px] font-mono text-[14px]",
+                    "mt-2 min-h-[20px] font-sans text-[14px]",
                     flowHere && flowHere.amount < 0
                       ? "text-accent-red"
                       : "text-accent-green",
@@ -290,7 +290,7 @@ function NPVQuickMatch({ onMastered }: { onMastered: () => void }) {
             </div>
             <div
               className={cn(
-                "mt-1.5 font-mono text-[15px]",
+                "mt-1.5 font-sans text-[15px]",
                 p.npv < 0 ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -345,9 +345,9 @@ function PerpetuityLab({ onMastered }: { onMastered: () => void }) {
       </FormulaCard>
       <p className="ops-body mt-4 text-[15px] leading-7 text-slate-200">
         A perpetual stream pays{" "}
-        <span className="text-accent-green font-mono">{money(C)}</span> every
+        <span className="text-accent-green font-sans">{money(C)}</span> every
         year forever, discounted at{" "}
-        <span className="text-accent-cyan font-mono">
+        <span className="text-accent-cyan font-sans">
           r = {(r * 100).toFixed(0)}%
         </span>
         . What is its value today?
@@ -369,7 +369,7 @@ function PerpetuityLab({ onMastered }: { onMastered: () => void }) {
             setChecked(false);
           }}
           placeholder="e.g. 75000"
-          className="w-44 rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-50 placeholder:text-slate-600 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+          className="w-44 rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-50 placeholder:text-slate-600 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
         />
         <Button
           size="sm"
@@ -435,10 +435,10 @@ function AnnuityBuilder({ onMastered }: { onMastered: () => void }) {
       </FormulaCard>
       <p className="ops-body mt-4 text-[15px] leading-7 text-slate-200">
         A level annuity pays{" "}
-        <span className="text-accent-green font-mono">{money(C)}</span> a year
-        for <span className="text-accent-amber font-mono">{T} years</span>,
+        <span className="text-accent-green font-sans">{money(C)}</span> a year
+        for <span className="text-accent-amber font-sans">{T} years</span>,
         discounted at{" "}
-        <span className="text-accent-cyan font-mono">
+        <span className="text-accent-cyan font-sans">
           r = {(r * 100).toFixed(0)}%
         </span>
         . What is its value today?
@@ -460,7 +460,7 @@ function AnnuityBuilder({ onMastered }: { onMastered: () => void }) {
             setChecked(false);
           }}
           placeholder="e.g. 23833"
-          className="w-44 rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-50 placeholder:text-slate-600 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+          className="w-44 rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-50 placeholder:text-slate-600 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
         />
         <Button
           size="sm"
@@ -533,7 +533,7 @@ function InflationFixItMode({ onMastered }: { onMastered: () => void }) {
               setChecked(false);
             }}
             className={cn(
-              "rounded-xl border px-4 py-3 font-mono text-[13px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+              "rounded-xl border px-4 py-3 font-sans text-[13px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               pick === w
                 ? w === "nominal"
                   ? "border-accent-cyan/60 bg-accent-cyan/10 text-accent-cyan"
@@ -595,7 +595,7 @@ export default function PracticeArena() {
             Five fast challenges · replayable
           </span>
         </div>
-        <span className="ops-caption font-mono text-[12px] text-slate-300">
+        <span className="ops-caption font-sans text-[12px] text-slate-300">
           <span className="text-accent-green">{mastered.size}</span>
           <span className="text-slate-500"> / 5 cleared</span>
         </span>
@@ -639,7 +639,7 @@ export default function PracticeArena() {
               <div className="flex items-center justify-between">
                 <span
                   className={cn(
-                    "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em]",
+                    "inline-flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-[0.14em]",
                     isDone ? "text-accent-green" : t.text,
                   )}
                 >

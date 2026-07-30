@@ -150,7 +150,7 @@ function ReturnTable() {
             </th>
           </tr>
         </thead>
-        <tbody className="font-mono text-[14px] text-slate-200">
+        <tbody className="font-sans text-[14px] text-slate-200">
           {MONTHS.map((m, i) => (
             <tr key={m} className="border-b border-white/[0.06]">
               <td className="px-4 py-2.5 text-slate-400">{m}</td>
@@ -590,7 +590,7 @@ function Round3Correlation({ onComplete }: { onComplete: () => void }) {
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[14px] text-slate-200">
+              <tbody className="font-sans text-[14px] text-slate-200">
                 <tr className="border-b border-white/[0.06]">
                   <td className="px-4 py-2.5 text-accent-cyan/90">Atlas</td>
                   <td className="px-4 py-2.5">1.0000</td>
@@ -747,9 +747,9 @@ function Round4PortfolioCompare({ onComplete }: { onComplete: () => void }) {
             <div className="ops-caption text-[11px] text-slate-400">Return</div>
             <p className="ops-body mt-2 text-[15px] text-slate-200">
               Portfolio A{" "}
-              <span className="font-mono text-accent-red">0.876%</span> vs
+              <span className="font-sans text-accent-red">0.876%</span> vs
               Portfolio B{" "}
-              <span className="font-mono text-accent-green">0.818%</span>
+              <span className="font-sans text-accent-green">0.818%</span>
             </p>
             <p className="ops-muted mt-1 text-[12px]">
               A is higher by ≈ 0.058 percentage points per month — a tiny edge.
@@ -761,9 +761,9 @@ function Round4PortfolioCompare({ onComplete }: { onComplete: () => void }) {
             </div>
             <p className="ops-body mt-2 text-[15px] text-slate-200">
               Portfolio A{" "}
-              <span className="font-mono text-accent-red">3.86%</span> vs
+              <span className="font-sans text-accent-red">3.86%</span> vs
               Portfolio B{" "}
-              <span className="font-mono text-accent-green">2.42%</span>
+              <span className="font-sans text-accent-green">2.42%</span>
             </p>
             <p className="ops-muted mt-1 text-[12px]">
               B is lower by ≈ 1.45 percentage points — a material risk
@@ -883,11 +883,11 @@ function Round5Beta({ onComplete }: { onComplete: () => void }) {
               Mandate check · beta ≤ 1.00
             </div>
             <p className="ops-body mt-2 text-[15px] text-slate-200">
-              Portfolio A beta ≈ <span className="font-mono">1.54</span> →{" "}
+              Portfolio A beta ≈ <span className="font-sans">1.54</span> →{" "}
               <strong className="text-accent-red">VIOLATES</strong> the mandate.
             </p>
             <p className="ops-body mt-1 text-[15px] text-slate-200">
-              Portfolio B beta ≈ <span className="font-mono">0.96</span> →{" "}
+              Portfolio B beta ≈ <span className="font-sans">0.96</span> →{" "}
               <strong className="text-accent-green">SATISFIES</strong> the
               mandate.
             </p>
@@ -1296,7 +1296,7 @@ function RoundTabs({
               isLocked && "cursor-not-allowed border-white/5 text-slate-600",
             )}
           >
-            <span className="font-mono">
+            <span className="font-sans">
               {isDone ? "✓" : isLocked ? "🔒" : r.n}
             </span>
             {r.label}
@@ -1537,7 +1537,7 @@ export default function Lesson5_6() {
                 key={c.step}
                 className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4"
               >
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[12px] text-accent-amber">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[12px] text-accent-amber">
                   {i + 1}
                 </span>
                 <div>

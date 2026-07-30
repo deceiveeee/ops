@@ -28,7 +28,7 @@ function LabeledSlider({
     <div>
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400"
+        className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400"
       >
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">
@@ -80,19 +80,19 @@ export default function OilStageSpecificValuation() {
     <div className="space-y-6">
       {/* Simplified label */}
       <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] px-4 py-3">
-        <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-amber">
+        <p className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
           Simplified instructional model
         </p>
       </div>
 
       {/* Timeline */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Project timeline
         </div>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="flex-1 rounded-xl border border-accent-cyan/30 bg-accent-cyan/[0.04] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+            <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
               Year 1 · Exploration
             </div>
             <p className="ops-body mt-1.5 text-[13px] leading-[1.5] text-slate-200">
@@ -101,7 +101,7 @@ export default function OilStageSpecificValuation() {
           </div>
           <span className="hidden text-accent-amber sm:inline" aria-hidden>→</span>
           <div className="flex-1 rounded-xl border border-accent-amber/30 bg-accent-amber/[0.04] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">
+            <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">
               Year 2 · Production
             </div>
             <p className="ops-body mt-1.5 text-[13px] leading-[1.5] text-slate-200">
@@ -113,7 +113,7 @@ export default function OilStageSpecificValuation() {
 
       {/* Controls */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Assumptions (adjust to explore)
         </div>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -234,7 +234,7 @@ export default function OilStageSpecificValuation() {
 
       {/* Interpretation */}
       <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
           Interpretation
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-100">
@@ -280,7 +280,7 @@ function CalcStep({
       <div className="flex items-center gap-3">
         <span
           className={cn(
-            "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[12px]",
+            "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px]",
             toneBorder[tone],
             toneText[tone],
           )}
@@ -313,10 +313,10 @@ function Readout({
           : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">
         {label}
       </div>
-      <div className={cn("mt-2 font-mono text-[17px] tabular-nums", text)}>{value}</div>
+      <div className={cn("mt-2 font-sans text-[17px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

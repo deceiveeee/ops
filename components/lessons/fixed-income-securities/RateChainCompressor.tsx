@@ -30,7 +30,7 @@ export default function RateChainCompressor() {
           type="button"
           onClick={() => setCompressed((c) => !c)}
           aria-pressed={compressed}
-          className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+          className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
         >
           <MathText>{compressed ? "Expand back into chain" : "Compress into r_{0,T}"}</MathText>
         </button>
@@ -53,7 +53,7 @@ export default function RateChainCompressor() {
                 transition={{ duration: 0.3 }}
               >
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-purple">
+                  <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">
                     Chain of one-year rates
                   </span>
                 </div>
@@ -64,14 +64,14 @@ export default function RateChainCompressor() {
                       layout={!reduce}
                       className="rounded-lg border border-accent-purple/25 bg-accent-purple/[0.05] px-2 py-4 text-center"
                     >
-                      <div className="font-mono text-[15px] text-accent-purple">
+                      <div className="font-sans text-[15px] text-accent-purple">
                         R{sub(i + 1)}
                       </div>
                     </motion.div>
                   ))}
                 </div>
                 <p className="ops-caption mt-3 text-[11px] text-slate-400">
-                  Each <span className="font-mono text-accent-purple">R</span>{" "}
+                  Each <span className="font-sans text-accent-purple">R</span>{" "}
                   is one slice. Multiplied together, they compound across the
                   whole timeline.
                 </p>
@@ -86,7 +86,7 @@ export default function RateChainCompressor() {
                 className="flex justify-center"
               >
                 <div className="w-full rounded-lg border border-accent-cyan/40 bg-accent-cyan/[0.08] px-4 py-6 text-center">
-                  <div className="font-mono text-[22px] text-accent-cyan">
+                  <div className="font-sans text-[22px] text-accent-cyan">
                     r{sub("{0,T}")}
                   </div>
                   <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -124,9 +124,9 @@ export default function RateChainCompressor() {
           <span className="text-accent-cyan">r{sub("{0,T}")}</span> is a{" "}
           <span className="text-accent-amber">geometric average</span> of
           one-year rates. Compounding once at{" "}
-          <span className="font-mono">r</span> for T years must equal
+          <span className="font-sans">r</span> for T years must equal
           compounding once at each{" "}
-          <span className="font-mono text-accent-purple">R{sub("t")}</span> for
+          <span className="font-sans text-accent-purple">R{sub("t")}</span> for
           its own year.
         </p>
       </div>

@@ -97,7 +97,7 @@ export default function ProcessScorecard() {
           return (
             <div key={c.key} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <div className="flex items-baseline gap-2">
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">{c.label}</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-500">{c.label}</span>
               </div>
               <p className="mt-1.5 text-[14px] leading-[1.55] text-slate-100">{c.scenario}</p>
 
@@ -106,10 +106,10 @@ export default function ProcessScorecard() {
                   const score = c[d.key];
                   return (
                     <div key={d.key} className="rounded-lg border border-white/10 bg-white/[0.02] px-2 py-1.5 text-center">
-                      <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-slate-400">
+                      <div className="font-sans text-[9px] uppercase tracking-[0.12em] text-slate-400">
                         {d.label}
                       </div>
-                      <div className={cn("mt-0.5 font-mono text-[12px] font-semibold", scoreTone(score))}>
+                      <div className={cn("mt-0.5 font-sans text-[12px] font-semibold", scoreTone(score))}>
                         {scoreLabel(score)}
                       </div>
                     </div>
@@ -125,11 +125,11 @@ export default function ProcessScorecard() {
                     className="overflow-hidden">
                     <div className="mt-3 space-y-2">
                       <div className="rounded-lg border border-accent-cyan/25 bg-accent-cyan/[0.05] px-3 py-2.5">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Interpretation · </span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-cyan">Interpretation · </span>
                         <span className="text-[13px] leading-[1.55] text-slate-100">{c.interpretation}</span>
                       </div>
                       <div className="rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Principle · </span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Principle · </span>
                         <span className="text-[13px] leading-[1.55] text-slate-100">{c.principle}</span>
                       </div>
                     </div>
@@ -139,7 +139,7 @@ export default function ProcessScorecard() {
 
               <button type="button"
                 onClick={() => setRevealed((p) => ({ ...p, [c.key]: !p[c.key] }))}
-                className="mt-3 rounded-full border border-white/15 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-300 transition-colors hover:border-accent-cyan/60 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                className="mt-3 rounded-full border border-white/15 px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-300 transition-colors hover:border-accent-cyan/60 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                 {isOpen ? "Hide interpretation" : "Reveal interpretation"}
               </button>
             </div>

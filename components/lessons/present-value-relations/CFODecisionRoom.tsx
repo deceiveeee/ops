@@ -114,7 +114,7 @@ const REQUIRED_FLOWS: Cashflow[] = [
 
 function StepBadge({ n }: { n: number }) {
   return (
-    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
       {n}
     </span>
   );
@@ -197,7 +197,7 @@ export default function CFODecisionRoom({
             CFO Decision Room · capstone
           </span>
         </div>
-        <span className="ops-caption font-mono text-[12px] text-slate-300">
+        <span className="ops-caption font-sans text-[12px] text-slate-300">
           Step {step} of {totalSteps}
         </span>
       </div>
@@ -219,19 +219,19 @@ export default function CFODecisionRoom({
           <ul className="ops-body mt-2.5 space-y-1.5 text-[14px] leading-6 text-slate-200">
             <li>
               Upfront equipment cost today:{" "}
-              <span className="text-accent-red font-mono">
+              <span className="text-accent-red font-sans">
                 {money(INITIAL_COST)}
               </span>
             </li>
             <li>
               Annual nominal savings, Years 1–5:{" "}
-              <span className="text-accent-green font-mono">
+              <span className="text-accent-green font-sans">
                 +{money(ANNUAL_SAVINGS)}
               </span>
             </li>
             <li>
               One-off nominal maintenance in Year 3:{" "}
-              <span className="text-accent-red font-mono">
+              <span className="text-accent-red font-sans">
                 {money(MAINT_COST)}
               </span>
             </li>
@@ -244,13 +244,13 @@ export default function CFODecisionRoom({
           <ul className="ops-body mt-2.5 space-y-1.5 text-[14px] leading-6 text-slate-200">
             <li>
               Expected inflation:{" "}
-              <span className="text-accent-amber font-mono">
+              <span className="text-accent-amber font-sans">
                 {(INFLATION * 100).toFixed(0)}%
               </span>
             </li>
             <li>
               Nominal discount rate:{" "}
-              <span className="text-accent-cyan font-mono">
+              <span className="text-accent-cyan font-sans">
                 {(NOMINAL_RATE * 100).toFixed(0)}%
               </span>
             </li>
@@ -308,7 +308,7 @@ export default function CFODecisionRoom({
                           key={yr}
                           className="rounded-lg border border-white/10 bg-ink-950/40 p-3"
                         >
-                          <div className="text-center font-mono text-[12px] text-slate-300">
+                          <div className="text-center font-sans text-[12px] text-slate-300">
                             t = {yr}
                           </div>
                           <div className="mt-2 flex min-h-[44px] flex-col items-center justify-center gap-1">
@@ -319,7 +319,7 @@ export default function CFODecisionRoom({
                                 <span
                                   key={f.id}
                                   className={cn(
-                                    "font-mono text-[12px]",
+                                    "font-sans text-[12px]",
                                     f.tone === "red"
                                       ? "text-accent-red"
                                       : "text-accent-green",
@@ -351,7 +351,7 @@ export default function CFODecisionRoom({
                         })
                       }
                       className={cn(
-                        "rounded-lg border px-2.5 py-1.5 font-mono text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                        "rounded-lg border px-2.5 py-1.5 font-sans text-[12px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                         f.tone === "red"
                           ? "border-accent-red/40 bg-accent-red/10 text-accent-red hover:border-accent-red/60"
                           : "border-accent-green/40 bg-accent-green/10 text-accent-green hover:border-accent-green/60",
@@ -362,7 +362,7 @@ export default function CFODecisionRoom({
                     </button>
                   ))}
                   {allPlaced && (
-                    <span className="inline-flex items-center rounded-lg border border-accent-green/40 bg-accent-green/10 px-2.5 py-1.5 font-mono text-[12px] text-accent-green">
+                    <span className="inline-flex items-center rounded-lg border border-accent-green/40 bg-accent-green/10 px-2.5 py-1.5 font-sans text-[12px] text-accent-green">
                       ✓ all placed
                     </span>
                   )}
@@ -448,7 +448,7 @@ export default function CFODecisionRoom({
                     >
                       <div
                         className={cn(
-                          "font-mono text-[13px] uppercase tracking-[0.14em]",
+                          "font-sans text-[13px] uppercase tracking-[0.14em]",
                           opt.w === "nominal"
                             ? "text-accent-cyan"
                             : "text-accent-amber",
@@ -545,7 +545,7 @@ export default function CFODecisionRoom({
                           : "border-white/10 bg-white/[0.02] hover:border-white/25",
                       )}
                     >
-                      <div className="font-mono text-[14px] text-slate-50">
+                      <div className="font-sans text-[14px] text-slate-50">
                         {opt.lbl}
                       </div>
                       <div className="ops-body mt-1 text-[12px] text-slate-400">
@@ -621,7 +621,7 @@ export default function CFODecisionRoom({
                       setNpvChecked(false);
                     }}
                     placeholder="e.g. 53000"
-                    className="w-48 rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-50 placeholder:text-slate-600 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+                    className="w-48 rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-50 placeholder:text-slate-600 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
                   />
                   <Button
                     size="sm"
@@ -720,7 +720,7 @@ export default function CFODecisionRoom({
                 </div>
                 <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
                   You found NPV ≈{" "}
-                  <span className="font-mono text-accent-green">
+                  <span className="font-sans text-accent-green">
                     {money(expectedNPV)}
                   </span>
                   . What do you tell the CFO?
@@ -737,7 +737,7 @@ export default function CFODecisionRoom({
                         : "border-white/10 bg-white/[0.02] text-slate-200 hover:border-white/25",
                     )}
                   >
-                    <div className="font-mono text-[14px] uppercase tracking-[0.14em]">
+                    <div className="font-sans text-[14px] uppercase tracking-[0.14em]">
                       Accept
                     </div>
                     <div className="ops-body mt-1 text-[12px] text-slate-400">
@@ -755,7 +755,7 @@ export default function CFODecisionRoom({
                         : "border-white/10 bg-white/[0.02] text-slate-200 hover:border-white/25",
                     )}
                   >
-                    <div className="font-mono text-[14px] uppercase tracking-[0.14em]">
+                    <div className="font-sans text-[14px] uppercase tracking-[0.14em]">
                       Reject
                     </div>
                     <div className="ops-body mt-1 text-[12px] text-slate-400">
@@ -862,7 +862,7 @@ export default function CFODecisionRoom({
             role="status"
           >
             <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center rounded-full border border-accent-green/50 bg-accent-green/15 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">
+              <span className="inline-flex items-center rounded-full border border-accent-green/50 bg-accent-green/15 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">
                 ✓ Recommendation accepted
               </span>
             </div>

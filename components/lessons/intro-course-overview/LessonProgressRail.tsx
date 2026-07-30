@@ -36,7 +36,7 @@ export default function LessonProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
                     active
                       ? "border-accent-cyan bg-accent-cyan/20 text-accent-cyan"
                       : "border-white/15 text-slate-400 group-hover:border-white/30 group-hover:text-slate-200",

@@ -104,7 +104,7 @@ export default function PredictableBiases() {
 
       {/* Bias selector */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
           Four directly relevant biases
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -120,7 +120,7 @@ export default function PredictableBiases() {
                     ? "border-accent-cyan/50 bg-accent-cyan/[0.08]"
                     : "border-white/10 bg-white/[0.02] hover:border-white/25",
                 )}>
-                <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]", isActive ? "text-accent-cyan" : "text-slate-400")}>
+                <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", isActive ? "text-accent-cyan" : "text-slate-400")}>
                   {b.letter}
                 </div>
                 <div className={cn("mt-1 text-[13px] font-medium leading-tight", isActive ? "text-white" : "text-slate-200")}>
@@ -142,13 +142,13 @@ export default function PredictableBiases() {
           transition={{ duration: 0.25 }}
           className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6"
         >
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
             {current.label}
           </div>
           <p className="ops-body mt-2 text-[16px] leading-[1.6] text-slate-100">{current.short}</p>
 
           <div className="mt-4 rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] px-4 py-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Example</span>
+            <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Example</span>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-100">{current.example.setup}</p>
             {current.example.math && (
               <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/40 px-3 py-2.5">
@@ -162,7 +162,7 @@ export default function PredictableBiases() {
 
           <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="rounded-xl border border-accent-red/20 bg-accent-red/[0.04] px-4 py-3">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">How it shows up</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">How it shows up</div>
               <ul className="mt-2 space-y-1">
                 {CONSEQUENCES[current.key].map((c) => (
                   <li key={c} className="flex items-start gap-2 text-[13px] leading-[1.5] text-slate-200">
@@ -172,7 +172,7 @@ export default function PredictableBiases() {
               </ul>
             </div>
             <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.05] px-4 py-3">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Disciplined question</div>
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Disciplined question</div>
               <p className="ops-body mt-2 text-[14px] leading-[1.55] text-slate-100">{current.disciplined}</p>
             </div>
           </div>

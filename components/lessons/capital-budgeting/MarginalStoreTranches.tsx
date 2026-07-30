@@ -22,7 +22,7 @@ export default function MarginalStoreTranches() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Declining returns by location tranche
         </div>
         <div className="mt-4 space-y-3">
@@ -35,11 +35,11 @@ export default function MarginalStoreTranches() {
                 : "border-white/5 opacity-40")}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className={cn("flex h-6 w-6 items-center justify-center rounded-full border font-mono text-[11px]",
+                    <span className={cn("flex h-6 w-6 items-center justify-center rounded-full border font-sans text-[11px]",
                       included ? "border-accent-amber text-accent-amber" : "border-white/20 text-slate-500")}>{i + 1}</span>
                     <span className="text-[14px] text-white">{t.label} ({t.stores} stores)</span>
                   </div>
-                  <span className={cn("font-mono text-[14px] tabular-nums", t.npvPer > 0 ? "text-accent-green" : "text-accent-red")}>
+                  <span className={cn("font-sans text-[14px] tabular-nums", t.npvPer > 0 ? "text-accent-green" : "text-accent-red")}>
                     {trancheNPV >= 0 ? "+" : "−"}{fmt(Math.abs(trancheNPV))}M
                   </span>
                 </div>
@@ -51,7 +51,7 @@ export default function MarginalStoreTranches() {
           })}
         </div>
         <div className="mt-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400 mb-2">Select program size</div>
+          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400 mb-2">Select program size</div>
           <div className="flex gap-2">
             {[1, 2, 3].map((n) => (
               <button key={n} type="button"
@@ -99,8 +99,8 @@ function Readout({ label, value, tone = "neutral" }: { label: string; value: str
   const text = tone === "green" ? "text-accent-green" : tone === "red" ? "text-accent-red" : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-3">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
-      <div className={cn("mt-1.5 font-mono text-[15px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
+      <div className={cn("mt-1.5 font-sans text-[15px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

@@ -580,6 +580,7 @@ Typography guidance:
 - Keep section copy short.
 - Use labels, badges, and callouts for financial concepts.
 - Prioritize readability over visual density.
+- **Never use monospace (`font-mono`) typefaces.** This is a hard project rule. The Tailwind `mono` token is deliberately remapped to Inter, and IBM Plex Mono is not loaded. Use Inter (`font-sans`) for all UI, labels, and numeric values — it has tabular figures, so `tabular-nums` still aligns table columns. Use Fraunces (`font-display`) for editorial headlines. Avoid `uppercase` + wide `letter-spacing` on labels; prefer sentence case with `tracking-[0.01em]–[0.02em]`.
 
 ---
 

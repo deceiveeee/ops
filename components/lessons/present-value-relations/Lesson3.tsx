@@ -27,7 +27,7 @@ import InflationFixIt from "./InflationFixIt";
 
 function StepBadge({ n }: { n: number }) {
   return (
-    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
       {n}
     </span>
   );
@@ -107,10 +107,10 @@ function WorkedExample5() {
                 <div className="ops-caption text-[11px] text-slate-400">
                   {row.t}
                 </div>
-                <div className="mt-1.5 font-mono text-[16px] text-accent-green">
+                <div className="mt-1.5 font-sans text-[16px] text-accent-green">
                   {row.value}
                 </div>
-                <div className="ops-muted mt-1 font-mono text-[12px] text-slate-400">
+                <div className="ops-muted mt-1 font-sans text-[12px] text-slate-400">
                   {row.note}
                 </div>
               </div>
@@ -141,10 +141,10 @@ function WorkedExample5() {
                 <div className="ops-caption text-[11px] text-slate-400">
                   PV at {row.t}
                 </div>
-                <div className="mt-1.5 font-mono text-[16px] text-accent-cyan">
+                <div className="mt-1.5 font-sans text-[16px] text-accent-cyan">
                   {row.value}
                 </div>
-                <div className="ops-muted mt-1 font-mono text-[12px] text-slate-400">
+                <div className="ops-muted mt-1 font-sans text-[12px] text-slate-400">
                   {row.note}
                 </div>
               </div>
@@ -161,7 +161,7 @@ function WorkedExample5() {
           <div className="ops-caption text-[11px] text-accent-green">
             Present value
           </div>
-          <p className="ops-body-strong mt-2 font-mono text-[18px] text-slate-50">
+          <p className="ops-body-strong mt-2 font-sans text-[18px] text-slate-50">
             Sum of all 20 discounted real cashflows ={" "}
             <span className="text-accent-green">$1,818,674</span>
           </p>
@@ -490,7 +490,7 @@ export default function Lesson3() {
       <Reveal className="mt-12">
         <div className="rounded-2xl border border-accent-red/40 bg-accent-red/[0.07] p-6 sm:p-7">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center rounded-full border border-accent-red/50 bg-accent-red/15 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">
+            <span className="inline-flex items-center rounded-full border border-accent-red/50 bg-accent-red/15 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">
               High importance
             </span>
             <span className="ops-caption text-[11px] text-slate-400">
@@ -553,7 +553,7 @@ export default function Lesson3() {
                 key={p}
                 className="ops-body flex items-start gap-3 text-[15px] leading-7 text-slate-200"
               >
-                <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 {p}

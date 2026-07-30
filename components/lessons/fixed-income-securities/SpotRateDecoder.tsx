@@ -44,7 +44,7 @@ export default function SpotRateDecoder() {
     <div className="space-y-6">
       <DefinitionCard term="Spot rate notation">
         <InlineMath>{"r_{0,T}"}</InlineMath> reads as{" "}
-        <span className="font-mono text-slate-100">r-sub-zero-T</span>. The{" "}
+        <span className="font-sans text-slate-100">r-sub-zero-T</span>. The{" "}
         <span className="text-accent-cyan">first subscript</span> is the pricing
         date. The <span className="text-accent-amber">second subscript</span> is
         the maturity date.
@@ -138,7 +138,7 @@ export default function SpotRateDecoder() {
                   x={xAt(i)}
                   y={midY + 24}
                   textAnchor="middle"
-                  className="fill-slate-400 font-mono"
+                  className="fill-slate-400 font-sans"
                   fontSize="12"
                 >
                   {i === 0 ? "t=0" : `${i}yr`}
@@ -150,7 +150,7 @@ export default function SpotRateDecoder() {
               x={xAt(0)}
               y={midY - 26}
               textAnchor="middle"
-              className="fill-accent-cyan font-mono"
+              className="fill-accent-cyan font-sans"
               fontSize="12"
             >
               pricing date
@@ -160,7 +160,7 @@ export default function SpotRateDecoder() {
                 x={xAt(maturity)}
                 y={midY - 26}
                 textAnchor="middle"
-                className="fill-accent-amber font-mono"
+                className="fill-accent-amber font-sans"
                 fontSize="12"
               >
                 maturity
@@ -173,7 +173,7 @@ export default function SpotRateDecoder() {
         <div className="mt-5 rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5">
           {activeCard ? (
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[16px] text-slate-100">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-sans text-[16px] text-slate-100">
                 <span className="text-accent-cyan">
                   <InlineMath>{activeCard.tex}</InlineMath>
                 </span>
@@ -224,7 +224,7 @@ function ReadRow({
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
       <div
         className={cn(
-          "mt-1 font-mono text-[15px]",
+          "mt-1 font-sans text-[15px]",
           tone === "cyan" ? "text-accent-cyan" : "text-accent-amber",
         )}
       >

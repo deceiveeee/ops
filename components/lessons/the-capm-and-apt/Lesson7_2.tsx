@@ -129,7 +129,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">Central question</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">Central question</div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
           Once the market portfolio is our benchmark, how strongly does an individual asset
           participate in market movements?
@@ -239,7 +239,7 @@ function BetaInterpretationGrid() {
     <div className="space-y-3">
       {rows.map((r) => (
         <div key={r.range} className={cn("flex flex-col gap-3 rounded-2xl border p-5 sm:flex-row sm:items-center", toneCls[r.tone])}>
-          <div className={cn("min-w-[120px] font-mono text-[16px]", textCls[r.tone])}>
+          <div className={cn("min-w-[120px] font-sans text-[16px]", textCls[r.tone])}>
             <BlockMath>{r.range}</BlockMath>
           </div>
           <p className="text-[16px] leading-[1.6] text-slate-200">{r.meaning}</p>
@@ -261,13 +261,13 @@ function PracticalPayoffTable() {
       <table className="w-full min-w-[440px] border-collapse text-[16px]">
         <thead>
           <tr className="border-b border-white/20 text-left">
-            <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Portfolio</th>
-            <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">β_P</th>
-            <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-green">+8% market</th>
-            <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-red">−8% market</th>
+            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Portfolio</th>
+            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">β_P</th>
+            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-green">+8% market</th>
+            <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-red">−8% market</th>
           </tr>
         </thead>
-        <tbody className="font-mono tabular-nums text-slate-100">
+        <tbody className="font-sans tabular-nums text-slate-100">
           {rows.map((r) => (
             <tr key={r.label} className="border-b border-white/5">
               <td className="py-3 pr-6">{r.label}</td>
@@ -328,7 +328,7 @@ function FinalCheckRow({
       {answered && (
         <div className="mt-3">
           <Feedback status={isCorrect ? "correct" : "incorrect"}>
-            <span className="block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Expected: {answerLabel}</span>
+            <span className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Expected: {answerLabel}</span>
             <span className="mt-1 block">{feedback}</span>
           </Feedback>
         </div>
@@ -369,12 +369,12 @@ export default function Lesson7_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">Standalone question</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Standalone question</div>
               <p className="mt-3 text-[18px] leading-[1.5] text-white">How much does this stock fluctuate?</p>
               <p className="mt-2 text-[15px] leading-[1.6] text-slate-400">Asked in isolation — the stock by itself.</p>
             </div>
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Portfolio question</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Portfolio question</div>
               <p className="mt-3 text-[18px] leading-[1.5] text-white">How does this stock behave relative to the market portfolio I already hold?</p>
               <p className="mt-2 text-[15px] leading-[1.6] text-slate-400">Asked inside the portfolio — relative to existing holdings.</p>
             </div>
@@ -403,7 +403,7 @@ export default function Lesson7_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Market-related events</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Market-related events</div>
               <ul className="mt-3 space-y-2">
                 {[
                   "Broad recession expectations",
@@ -419,7 +419,7 @@ export default function Lesson7_2() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Company-specific events</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Company-specific events</div>
               <ul className="mt-3 space-y-2">
                 {[
                   "Product failure",
@@ -476,7 +476,7 @@ export default function Lesson7_2() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">What beta is NOT</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">What beta is NOT</div>
             <ul className="mt-3 space-y-2">
               {[
                 "It is not the ratio of two standard deviations.",
@@ -506,7 +506,7 @@ export default function Lesson7_2() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Interpreting β = 1.5</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Interpreting β = 1.5</div>
             <p className="mt-3 text-[17px] leading-[1.65] text-slate-200">
               When the market excess return changes by 1 percentage point, the asset&apos;s excess return{" "}
               <em className="text-slate-100">tends to</em> change by{" "}
@@ -600,7 +600,7 @@ export default function Lesson7_2() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Important qualification</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Important qualification</div>
             <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
               Do not equate a positive market return with an economic expansion. Use &ldquo;when the
               market&apos;s excess return is positive,&rdquo; not &ldquo;during every economic expansion.&rdquo; Stock
@@ -621,7 +621,7 @@ export default function Lesson7_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">A higher beta does NOT mean</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">A higher beta does NOT mean</div>
               <ul className="mt-3 space-y-2">
                 {[
                   "a better company",
@@ -639,7 +639,7 @@ export default function Lesson7_2() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">It DOES mean</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">It DOES mean</div>
               <ul className="mt-3 space-y-2">
                 {[
                   "greater exposure to broad market movements",
@@ -684,12 +684,12 @@ export default function Lesson7_2() {
             <table className="w-full min-w-[400px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Standard deviation</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Beta</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Standard deviation</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Beta</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">Asset A</td><td className="py-3 pr-8">30%</td><td className="py-3 text-accent-cyan">1.4</td></tr>
                 <tr><td className="py-3 pr-8">Asset B</td><td className="py-3 pr-8">30%</td><td className="py-3 text-accent-purple">0.4</td></tr>
               </tbody>

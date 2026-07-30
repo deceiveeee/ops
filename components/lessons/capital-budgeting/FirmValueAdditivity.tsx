@@ -20,7 +20,7 @@ export default function FirmValueAdditivity() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Adjust the project economics
         </div>
         <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -32,7 +32,7 @@ export default function FirmValueAdditivity() {
 
       {/* Value additivity formula */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Value additivity
         </div>
         <div className="mt-4 space-y-3">
@@ -59,15 +59,15 @@ export default function FirmValueAdditivity() {
 
       {/* Visual: the exchange */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           What actually happens
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-accent-red/25 bg-accent-red/[0.04] p-4 text-center">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">
               Company gives up
             </div>
-            <div className="mt-2 font-mono text-[20px] tabular-nums text-white">
+            <div className="mt-2 font-sans text-[20px] tabular-nums text-white">
               ${fmt(projectCost)}M
             </div>
             <div className="mt-1 text-[12px] text-slate-400">of cash/resources</div>
@@ -76,10 +76,10 @@ export default function FirmValueAdditivity() {
             <span className="text-[24px] text-accent-amber" aria-hidden>⇄</span>
           </div>
           <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.04] p-4 text-center">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">
               Company receives
             </div>
-            <div className="mt-2 font-mono text-[20px] tabular-nums text-white">
+            <div className="mt-2 font-sans text-[20px] tabular-nums text-white">
               ${fmt(projectPV)}M
             </div>
             <div className="mt-1 text-[12px] text-slate-400">of asset value</div>
@@ -121,7 +121,7 @@ function Slider({
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>

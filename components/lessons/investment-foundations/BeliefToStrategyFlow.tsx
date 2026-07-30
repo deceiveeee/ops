@@ -150,7 +150,7 @@ export default function BeliefToStrategyFlow() {
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border ${toneRing[h.tone]} bg-white/[0.04] font-mono text-[12px] ${toneText[h.tone]}`}
+                      className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border ${toneRing[h.tone]} bg-white/[0.04] font-sans text-[12px] ${toneText[h.tone]}`}
                       aria-hidden
                     >
                       {i + 1}
@@ -195,7 +195,7 @@ export default function BeliefToStrategyFlow() {
               key={s.n}
               className="flex items-start gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4"
             >
-              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 font-mono text-[12px] text-accent-amber">
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 font-sans text-[12px] text-accent-amber">
                 {s.n}
               </span>
               <div>
@@ -214,7 +214,7 @@ export default function BeliefToStrategyFlow() {
       <Reveal delay={0.05} className="mt-6">
         <Panel className="border-accent-red/25 bg-accent-red/[0.04]">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full border border-accent-red/40 bg-accent-red/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">
+            <span className="inline-flex items-center rounded-full border border-accent-red/40 bg-accent-red/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">
               Warning
             </span>
             <span className="ops-caption text-[11px] text-slate-400">

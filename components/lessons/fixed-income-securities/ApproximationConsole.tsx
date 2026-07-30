@@ -203,7 +203,7 @@ function NumField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -236,8 +236,8 @@ function TermCard({
       className={cn("rounded-xl border bg-white/[0.02] p-4", accent)}
     >
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className="mt-1 font-mono text-[12px] text-slate-300">{expr}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", accent.split(" ")[0])}>
+      <div className="mt-1 font-sans text-[12px] text-slate-300">{expr}</div>
+      <div className={cn("mt-1 font-sans text-[18px]", accent.split(" ")[0])}>
         {value.toFixed(7)}
       </div>
     </motion.div>
@@ -276,7 +276,7 @@ function PriceResult({
       )}
     >
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[22px]", accent)}>
+      <div className={cn("mt-1 font-sans text-[22px]", accent)}>
         {formatMoney(value)}
       </div>
       {err !== undefined && (

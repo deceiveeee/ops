@@ -74,7 +74,7 @@ export default function Lesson2() {
           </p>
           <div className="mt-4 overflow-hidden rounded-xl border border-white/15">
             <table className="w-full text-left text-sm">
-              <thead className="bg-white/[0.04] font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400">
+              <thead className="bg-white/[0.04] font-sans text-[10px] uppercase tracking-[0.18em] text-slate-400">
                 <tr>
                   <th className="px-4 py-2.5">Language</th>
                   <th className="px-4 py-2.5">Finance</th>

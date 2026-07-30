@@ -19,7 +19,7 @@ export default function PVInvestmentNPVDecomposition() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Adjust the two components of NPV
         </div>
         <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -30,7 +30,7 @@ export default function PVInvestmentNPVDecomposition() {
 
       {/* Formula */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           The decomposition
         </div>
         <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
@@ -50,7 +50,7 @@ export default function PVInvestmentNPVDecomposition() {
         "rounded-2xl border p-5 sm:p-6",
         npvPositive ? "border-accent-green/25" : npvZero ? "border-accent-amber/25" : "border-accent-red/25",
       )}>
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Visual decomposition
         </div>
         <div className="mt-4 space-y-3">
@@ -59,7 +59,7 @@ export default function PVInvestmentNPVDecomposition() {
             <div className="relative h-8 flex-1 overflow-hidden rounded-lg border border-white/10 bg-ink-950/40">
               <div className="absolute inset-y-0 left-0 flex items-center justify-end rounded-lg bg-accent-cyan/30 px-3"
                 style={{ width: `${Math.min(100, (pv / 200) * 100)}%` }}>
-                <span className="font-mono text-[12px] tabular-nums text-white">${fmt(pv)}M</span>
+                <span className="font-sans text-[12px] tabular-nums text-white">${fmt(pv)}M</span>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function PVInvestmentNPVDecomposition() {
             <div className="relative h-8 flex-1 overflow-hidden rounded-lg border border-white/10 bg-ink-950/40">
               <div className="absolute inset-y-0 left-0 flex items-center justify-end rounded-lg bg-accent-red/30 px-3"
                 style={{ width: `${Math.min(100, (cost / 200) * 100)}%` }}>
-                <span className="font-mono text-[12px] tabular-nums text-white">−${fmt(cost)}M</span>
+                <span className="font-sans text-[12px] tabular-nums text-white">−${fmt(cost)}M</span>
               </div>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function PVInvestmentNPVDecomposition() {
                 )}
                 style={{ width: `${Math.min(100, (Math.abs(npv) / 100) * 100)}%` }}
               >
-                <span className="font-mono text-[12px] tabular-nums text-white">
+                <span className="font-sans text-[12px] tabular-nums text-white">
                   {npv >= 0 ? "+" : "−"}${fmt(Math.abs(npv))}M
                 </span>
               </div>
@@ -137,7 +137,7 @@ function Slider({
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>

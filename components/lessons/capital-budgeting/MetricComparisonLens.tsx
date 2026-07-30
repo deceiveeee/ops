@@ -81,7 +81,7 @@ export default function MetricComparisonLens() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Same investment, six metrics
         </div>
         <p className="ops-body mt-2 text-[14px] leading-[1.55] text-slate-300">
@@ -112,21 +112,21 @@ export default function MetricComparisonLens() {
       {/* Active metric detail */}
       <div className={cn("rounded-2xl border p-5 sm:p-6", toneBorder[m.tone], "bg-white/[0.03]")}>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <span className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", toneText[m.tone])}>
+          <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[m.tone])}>
             {m.label}
           </span>
-          <span className="font-mono text-[18px] tabular-nums text-white">{m.result}</span>
+          <span className="font-sans text-[18px] tabular-nums text-white">{m.result}</span>
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-accent-green/20 bg-accent-green/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">
               What it reveals
             </div>
             <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">{m.reveals}</p>
           </div>
           <div className="rounded-xl border border-accent-red/20 bg-accent-red/[0.04] p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-red">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">
               What it omits
             </div>
             <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">{m.omits}</p>

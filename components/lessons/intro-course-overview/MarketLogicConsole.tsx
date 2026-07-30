@@ -83,7 +83,7 @@ export default function MarketLogicConsole({
               key={p.id}
               className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3"
             >
-              <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[11px] text-accent-cyan">
+              <span className="mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[11px] text-accent-cyan">
                 {p.id}
               </span>
               <span className="ops-body text-[14px] text-slate-100">
@@ -131,7 +131,7 @@ export default function MarketLogicConsole({
                         aria-pressed={isPicked}
                         onClick={() => choose(s.id, p.id)}
                         className={cn(
-                          "rounded-full border px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                          "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                           isPicked
                             ? correct
                               ? "border-accent-green bg-accent-green/15 text-accent-green"

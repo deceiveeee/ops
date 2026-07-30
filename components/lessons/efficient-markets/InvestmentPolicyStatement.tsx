@@ -116,17 +116,17 @@ export default function InvestmentPolicyStatement() {
           </p>
         </div>
         <div className="mt-3 text-[12px] text-slate-300">
-          Completed: <span className="font-mono text-accent-cyan">{filled}/{FIELDS.length}</span> · auto-saves locally
+          Completed: <span className="font-sans text-accent-cyan">{filled}/{FIELDS.length}</span> · auto-saves locally
         </div>
       </div>
 
       {/* Editable policy */}
       <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-6 sm:p-8 ops-ips-page">
         <div className="border-b border-white/10 pb-4">
-          <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-cyan">
+          <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-accent-cyan">
             Personal Investment Policy Statement
           </div>
-          <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-500">
+          <div className="mt-1 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-500">
             Educational draft · not personalized financial advice
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function InvestmentPolicyStatement() {
         <div className="mt-6 space-y-5">
           {FIELDS.map((f, i) => (
             <div key={f.key}>
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
                 {String(i + 1).padStart(2, "0")} · {labelFor(f.key)}
               </div>
               <div className="mt-1.5 text-[15px] leading-[1.7] text-slate-100">
@@ -170,11 +170,11 @@ export default function InvestmentPolicyStatement() {
       <div className="flex flex-wrap gap-2 ops-ips-no-print">
         <button type="button"
           onClick={() => { if (typeof window !== "undefined") window.print(); }}
-          className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+          className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
           Print / save as PDF
         </button>
         <button type="button" onClick={reset}
-          className="rounded-full border border-white/15 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:border-accent-red/40 hover:text-accent-red focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+          className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:border-accent-red/40 hover:text-accent-red focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
           Clear policy
         </button>
       </div>

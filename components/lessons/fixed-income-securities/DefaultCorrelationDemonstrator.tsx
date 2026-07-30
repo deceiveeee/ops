@@ -147,7 +147,7 @@ export default function DefaultCorrelationDemonstrator() {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.2, delay: reduce ? 0 : l.id * 0.01 }}
                 className={cn(
-                  "flex aspect-square items-center justify-center rounded-lg border font-mono text-[12px]",
+                  "flex aspect-square items-center justify-center rounded-lg border font-sans text-[12px]",
                   l.defaulted
                     ? "border-accent-red/60 bg-accent-red/20 text-accent-red"
                     : "border-accent-green/30 bg-accent-green/[0.06] text-accent-green",
@@ -169,7 +169,7 @@ export default function DefaultCorrelationDemonstrator() {
               <span className="ops-caption text-[11px] text-slate-400">
                 Default probability (per loan)
               </span>
-              <span className="font-mono text-[13px] text-accent-amber">
+              <span className="font-sans text-[13px] text-accent-amber">
                 {pDefault}%
               </span>
             </div>
@@ -191,7 +191,7 @@ export default function DefaultCorrelationDemonstrator() {
               </span>
               <span
                 className={cn(
-                  "font-mono text-[13px]",
+                  "font-sans text-[13px]",
                   correlation > 60
                     ? "text-accent-red"
                     : correlation > 30
@@ -291,8 +291,8 @@ function AbsorbCard({
   return (
     <div className="rounded-2xl border border-white/10 bg-ink-950/40 p-5">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[13px] text-slate-200">{name}</span>
-        <span className={cn("font-mono text-[12px]", text)}>
+        <span className="font-sans text-[13px] text-slate-200">{name}</span>
+        <span className={cn("font-sans text-[12px]", text)}>
           {loss.toFixed(0)} / {capacity}
         </span>
       </div>

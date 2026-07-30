@@ -114,7 +114,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -159,7 +159,7 @@ export default function Lesson9_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Passive investing</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Passive investing</div>
               <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">Seeks to track a predefined index or transparent rules. Accepts market weights rather than forecasting individual securities.</p>
               <div className="mt-3 text-[12px] text-slate-300">Still involves decisions:</div>
               <ul className="mt-1 space-y-1 text-[12px] text-slate-200">
@@ -169,7 +169,7 @@ export default function Lesson9_2() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">Active investing</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Active investing</div>
               <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">Deliberately deviates from a benchmark. The manager expects those deviations to improve return, reduce risk, or satisfy a specialized objective.</p>
               <div className="mt-3 text-[12px] text-slate-300">Examples:</div>
               <ul className="mt-1 space-y-1 text-[12px] text-slate-200">
@@ -205,19 +205,19 @@ export default function Lesson9_2() {
           <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.04] p-4">
-                <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">Passive portfolio</div>
+                <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Passive portfolio</div>
                 <div className="mt-2 space-y-1 text-[14px]">
-                  <div className="flex justify-between"><span className="text-slate-300">Gross return</span><span className="font-mono text-white">8.0%</span></div>
-                  <div className="flex justify-between"><span className="text-slate-300">Fees and costs</span><span className="font-mono text-accent-red">−0.1%</span></div>
-                  <div className="flex justify-between border-t border-white/10 pt-1"><span className="text-slate-200">Net return</span><span className="font-mono text-accent-green">7.9%</span></div>
+                  <div className="flex justify-between"><span className="text-slate-300">Gross return</span><span className="font-sans text-white">8.0%</span></div>
+                  <div className="flex justify-between"><span className="text-slate-300">Fees and costs</span><span className="font-sans text-accent-red">−0.1%</span></div>
+                  <div className="flex justify-between border-t border-white/10 pt-1"><span className="text-slate-200">Net return</span><span className="font-sans text-accent-green">7.9%</span></div>
                 </div>
               </div>
               <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.04] p-4">
-                <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Active fund</div>
+                <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Active fund</div>
                 <div className="mt-2 space-y-1 text-[14px]">
-                  <div className="flex justify-between"><span className="text-slate-300">Gross return</span><span className="font-mono text-white">8.7%</span></div>
-                  <div className="flex justify-between"><span className="text-slate-300">Fees and costs</span><span className="font-mono text-accent-red">−1.2%</span></div>
-                  <div className="flex justify-between border-t border-white/10 pt-1"><span className="text-slate-200">Net return</span><span className="font-mono text-accent-red">7.5%</span></div>
+                  <div className="flex justify-between"><span className="text-slate-300">Gross return</span><span className="font-sans text-white">8.7%</span></div>
+                  <div className="flex justify-between"><span className="text-slate-300">Fees and costs</span><span className="font-sans text-accent-red">−1.2%</span></div>
+                  <div className="flex justify-between border-t border-white/10 pt-1"><span className="text-slate-200">Net return</span><span className="font-sans text-accent-red">7.5%</span></div>
                 </div>
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function Lesson9_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Passive is more defensible when</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Passive is more defensible when</div>
               <ul className="mt-3 space-y-2 text-[14px] text-slate-100">
                 {["The market is broad, liquid, and heavily researched", "The investor cannot identify a credible edge", "Low costs are important", "Diversification is the primary objective", "The investor cannot continuously evaluate managers", "The investor has a long horizon"].map((x) => (
                   <li key={x} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-cyan" aria-hidden />{x}</li>
@@ -313,7 +313,7 @@ export default function Lesson9_2() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-              <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">Active may be defensible when</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Active may be defensible when</div>
               <ul className="mt-3 space-y-2 text-[14px] text-slate-100">
                 {["The source of the expected edge is specific", "The benchmark is appropriate and transparent", "Total costs are reasonable", "The process is repeatable", "The investor understands periods of underperformance", "The strategy serves a specialized objective"].map((x) => (
                   <li key={x} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-amber" aria-hidden />{x}</li>
@@ -372,7 +372,7 @@ export default function Lesson9_2() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Toward Lesson 9.5</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Toward Lesson 9.5</div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">
               If investors make behavioral mistakes, why do sophisticated traders not immediately
               eliminate every mispricing?

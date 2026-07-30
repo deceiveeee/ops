@@ -61,7 +61,7 @@ export default function ZeroCouponBondLab() {
           <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
             <Var>F</Var> = $1,000, <Var>r</Var> = 5%, <Var>T</Var> = 3 years.
           </p>
-          <div className="mt-3 font-mono text-[15px] text-slate-100">
+          <div className="mt-3 font-sans text-[15px] text-slate-100">
             <Var>P</Var><Sub>0</Sub> = 1000 / (1.05)<Sup>3</Sup> ≈ <span className="text-accent-green">$863.84</span>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function ZeroCouponBondLab() {
           <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
             <Var>F</Var> = $1, <Var>P</Var><Sub>0</Sub> = 0.797, <Var>T</Var> = 5 years.
           </p>
-          <div className="mt-3 font-mono text-[15px] text-slate-100">
+          <div className="mt-3 font-sans text-[15px] text-slate-100">
             <Var>r</Var> = (1/0.797)<Sup>1/5</Sup> − 1 ≈ <span className="text-accent-cyan">4.64%</span>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function ZeroCouponBondLab() {
 function VarDef({ sym, def }: { sym: React.ReactNode; def: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3 text-center">
-      <div className="font-mono text-[15px] text-slate-100">{sym}</div>
+      <div className="font-sans text-[15px] text-slate-100">{sym}</div>
       <div className="ops-caption mt-1 text-[11px] text-slate-400">{def}</div>
     </div>
   );
@@ -172,17 +172,17 @@ function ZeroCouponLab() {
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <div className="ops-caption text-[11px] text-accent-cyan">Price today (P₀)</div>
-                <div className="mt-1 font-mono text-[28px] text-white">{formatMoney(displayPrice)}</div>
+                <div className="mt-1 font-sans text-[28px] text-white">{formatMoney(displayPrice)}</div>
               </div>
               <div className="text-right">
                 <div className="ops-caption text-[11px] text-slate-400">Yield</div>
-                <div className="mt-1 font-mono text-[18px] text-accent-amber">
+                <div className="mt-1 font-sans text-[18px] text-accent-amber">
                   {formatPercent(displayYieldPct / 100, 2)}
                 </div>
               </div>
               <span
                 className={cn(
-                  "rounded-full border px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+                  "rounded-full border px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
                   isPar
                     ? "border-white/30 text-slate-200"
                     : isDiscount
@@ -252,7 +252,7 @@ function LabSlider({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{display}</span>
+        <span className="font-sans text-[13px] text-slate-100">{display}</span>
       </div>
       <input
         type="range"
@@ -313,7 +313,7 @@ function DiscountTunnel({
           <motion.div
             animate={{ scale: reduce ? 1 : [1, 1.05, 1] }}
             transition={{ duration: 1.6, repeat: reduce ? 0 : Infinity, ease: "easeInOut" }}
-            className="mt-2 flex items-center justify-center rounded-lg border border-accent-cyan/50 bg-accent-cyan/10 px-3 py-2 font-mono text-[14px] text-accent-cyan"
+            className="mt-2 flex items-center justify-center rounded-lg border border-accent-cyan/50 bg-accent-cyan/10 px-3 py-2 font-sans text-[14px] text-accent-cyan"
             style={{ minWidth: 90 }}
           >
             {formatMoney(price)}
@@ -335,7 +335,7 @@ function DiscountTunnel({
         {/* Future */}
         <div className="text-center">
           <div className="ops-caption text-[11px] text-accent-amber">Year {maturity} (F)</div>
-          <div className="mt-2 flex items-center justify-center rounded-lg border border-accent-amber/50 bg-accent-amber/10 px-3 py-2 font-mono text-[14px] text-accent-amber" style={{ minWidth: 90 }}>
+          <div className="mt-2 flex items-center justify-center rounded-lg border border-accent-amber/50 bg-accent-amber/10 px-3 py-2 font-sans text-[14px] text-accent-amber" style={{ minWidth: 90 }}>
             {formatMoney(face)}
           </div>
         </div>
@@ -391,7 +391,7 @@ function PriceYieldCurve() {
             Price vs yield
           </span>
         </div>
-        <span className="font-mono text-[13px] text-accent-amber">
+        <span className="font-sans text-[13px] text-accent-amber">
           r = {formatPercent(rate, 1)} · P₀ = {formatMoney(price)}
         </span>
       </div>
@@ -414,13 +414,13 @@ function PriceYieldCurve() {
           {[0, 5, 10, 15, 20].map((yp) => (
             <g key={yp}>
               <line x1={xAt(yp)} y1={padY} x2={xAt(yp)} y2={H - padY} stroke="rgba(255,255,255,0.06)" />
-              <text x={xAt(yp)} y={H - padY + 16} textAnchor="middle" className="fill-slate-500 font-mono" fontSize="10">
+              <text x={xAt(yp)} y={H - padY + 16} textAnchor="middle" className="fill-slate-500 font-sans" fontSize="10">
                 {yp}%
               </text>
             </g>
           ))}
           {[0, 250, 500, 750, 1000].map((p) => (
-            <text key={p} x={padX - 6} y={yAt(p) + 3} textAnchor="end" className="fill-slate-500 font-mono" fontSize="10">
+            <text key={p} x={padX - 6} y={yAt(p) + 3} textAnchor="end" className="fill-slate-500 font-sans" fontSize="10">
               {p}
             </text>
           ))}
@@ -452,7 +452,7 @@ function PriceYieldCurve() {
           aria-label="Yield percentage"
           className="w-full accent-accent-amber"
         />
-        <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+        <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
           <span>0%</span>
           <span>20%</span>
         </div>

@@ -16,7 +16,7 @@ function StageTag({ n, title, locked }: { n: number; title: string; locked: bool
     <div className="flex items-center gap-3">
       <span
         className={cn(
-          "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border font-mono text-[13px]",
+          "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[13px]",
           locked
             ? "border-white/15 text-slate-500"
             : "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan",
@@ -24,7 +24,7 @@ function StageTag({ n, title, locked }: { n: number; title: string; locked: bool
       >
         {n}
       </span>
-      <span className={cn("font-mono text-[12px] uppercase tracking-[0.14em]", locked ? "text-slate-500" : "text-accent-cyan")}>
+      <span className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", locked ? "text-slate-500" : "text-accent-cyan")}>
         Stage {n} · {title}
       </span>
     </div>
@@ -98,7 +98,7 @@ function MemoField({
 }) {
   return (
     <div>
-      <label className="block font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor={id}>
+      <label className="block font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor={id}>
         {label}
       </label>
       <textarea
@@ -134,7 +134,7 @@ export default function OrionFundCase() {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-accent-purple/25 bg-accent-purple/[0.05] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-purple">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-purple">
           Integrated case · The Orion Fund
         </div>
         <p className="mt-1 text-[15px] leading-[1.55] text-slate-200">
@@ -143,7 +143,7 @@ export default function OrionFundCase() {
       </div>
 
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Initial information</div>
+        <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Initial information</div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[
             ["Average annual return", "13.5%"],
@@ -153,8 +153,8 @@ export default function OrionFundCase() {
             ["CAPM regression R²", "42%"],
           ].map(([k, v]) => (
             <div key={k} className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-              <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-slate-400">{k}</div>
-              <div className="mt-1 font-mono text-[16px] text-slate-100">{v}</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.1em] text-slate-400">{k}</div>
+              <div className="mt-1 font-sans text-[16px] text-slate-100">{v}</div>
             </div>
           ))}
         </div>
@@ -266,19 +266,19 @@ export default function OrionFundCase() {
 
       <StageCard n={5} title="Reveal additional factors" locked={stage < 5}>
         <div className="rounded-xl border border-accent-purple/25 bg-accent-purple/[0.05] p-4">
-          <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-purple">New evidence</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">New evidence</div>
           <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-              <div className="font-mono text-[11px] text-slate-400">Size beta β_S</div>
-              <div className="mt-1 font-mono text-[16px] text-slate-100">0.55</div>
+              <div className="font-sans text-[11px] text-slate-400">Size beta β_S</div>
+              <div className="mt-1 font-sans text-[16px] text-slate-100">0.55</div>
             </div>
             <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-              <div className="font-mono text-[11px] text-slate-400">Value beta β_V</div>
-              <div className="mt-1 font-mono text-[16px] text-slate-100">0.70</div>
+              <div className="font-sans text-[11px] text-slate-400">Value beta β_V</div>
+              <div className="mt-1 font-sans text-[16px] text-slate-100">0.70</div>
             </div>
             <div className="rounded-lg border border-accent-purple/30 bg-accent-purple/10 p-3 text-center">
-              <div className="font-mono text-[11px] text-accent-purple">Multifactor α</div>
-              <div className="mt-1 font-mono text-[16px] text-accent-purple">0.9%</div>
+              <div className="font-sans text-[11px] text-accent-purple">Multifactor α</div>
+              <div className="mt-1 font-sans text-[16px] text-accent-purple">0.9%</div>
             </div>
           </div>
         </div>
@@ -330,7 +330,7 @@ export default function OrionFundCase() {
             Evaluate memo
           </button>
           {state.orionComplete && (
-            <span className="font-mono text-[13px] text-accent-green">✓ Memo accepted — case complete</span>
+            <span className="font-sans text-[13px] text-accent-green">✓ Memo accepted — case complete</span>
           )}
         </div>
         {memoResult && !memoResult.complete && (

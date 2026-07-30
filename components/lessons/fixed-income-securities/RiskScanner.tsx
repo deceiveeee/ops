@@ -174,7 +174,7 @@ export default function RiskScanner() {
                 >
                   <span
                     className={cn(
-                      "mt-0.5 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border font-mono text-[11px]",
+                      "mt-0.5 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border font-sans text-[11px]",
                       on
                         ? "border-accent-red/60 bg-accent-red/20 text-accent-red"
                         : "border-white/20 text-transparent",
@@ -187,7 +187,7 @@ export default function RiskScanner() {
                     <div className="ops-body-strong text-[15px] text-slate-100">
                       {r.label}
                       {locked && (
-                        <span className="ml-2 rounded border border-accent-green/40 px-1.5 py-0.5 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-green">
+                        <span className="ml-2 rounded border border-accent-green/40 px-1.5 py-0.5 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-green">
                           off · riskless
                         </span>
                       )}
@@ -222,7 +222,7 @@ export default function RiskScanner() {
                   <ul className="mt-2 space-y-1">
                     {activeRisks.map((r) => (
                       <li key={r.key} className="text-[13px] text-slate-200">
-                        <span className="font-mono text-accent-red">{r.label}</span> →{" "}
+                        <span className="font-sans text-accent-red">{r.label}</span> →{" "}
                         {TARGET_LABEL[r.target]}
                       </li>
                     ))}

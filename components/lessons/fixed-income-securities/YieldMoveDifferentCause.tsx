@@ -111,7 +111,7 @@ export default function YieldMoveDifferentCause() {
                 <tr key={c.label} className="border-b border-white/5">
                   <td
                     className={cn(
-                      "px-3 py-2.5 font-mono text-[13px] transition-colors",
+                      "px-3 py-2.5 font-sans text-[13px] transition-colors",
                       active === "treasury" && c.treasury
                         ? "text-accent-green"
                         : active === "corporate" && c.corporate
@@ -206,7 +206,7 @@ function BondCard({
           animate={{ scale: active ? 1.05 : 1 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            "rounded-md border px-2 py-0.5 font-mono text-[12px]",
+            "rounded-md border px-2 py-0.5 font-sans text-[12px]",
             active
               ? accent
               : "border-white/10 text-slate-500",
@@ -215,7 +215,7 @@ function BondCard({
           +1.00%
         </motion.span>
       </div>
-      <div className="mt-2 font-mono text-[18px] text-white">{title}</div>
+      <div className="mt-2 font-sans text-[18px] text-white">{title}</div>
       <div className="ops-caption mt-3 text-[11px] text-slate-500">
         {reduce ? "Yield change" : "Promised yield change"}
       </div>
@@ -233,14 +233,14 @@ function DriverMark({
   reduce: boolean | null;
 }) {
   if (!on) {
-    return <span className="font-mono text-[14px] text-slate-700">·</span>;
+    return <span className="font-sans text-[14px] text-slate-700">·</span>;
   }
   return (
     <motion.span
       initial={reduce ? false : { scale: 0.6, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       className={cn(
-        "inline-flex h-5 w-5 items-center justify-center rounded-full border font-mono text-[11px]",
+        "inline-flex h-5 w-5 items-center justify-center rounded-full border font-sans text-[11px]",
         highlight
           ? "border-accent-cyan/60 bg-accent-cyan/20 text-accent-cyan"
           : "border-white/15 bg-white/5 text-slate-300",

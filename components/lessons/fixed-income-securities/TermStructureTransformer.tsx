@@ -142,7 +142,7 @@ function TermStructureInteractive() {
             {PRICE_SEED.map((p) => (
               <li
                 key={p.t}
-                className="flex items-center justify-between font-mono text-[13px] text-slate-300"
+                className="flex items-center justify-between font-sans text-[13px] text-slate-300"
               >
                 <span className="text-slate-400">{p.t} yr</span>
                 <motion.span
@@ -170,7 +170,7 @@ function TermStructureInteractive() {
             {priceCurve.map((p) => (
               <div
                 key={p.t}
-                className="flex items-center justify-between gap-2 font-mono text-[13px]"
+                className="flex items-center justify-between gap-2 font-sans text-[13px]"
               >
                 <span className="text-slate-400">{p.t} yr</span>
                 <span className="text-slate-500">&rarr;</span>
@@ -291,7 +291,7 @@ function CurveChart({
           x={padX - 4}
           y={12}
           textAnchor="end"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="9"
         >
           5%
@@ -300,7 +300,7 @@ function CurveChart({
           x={padX - 4}
           y={H - padY}
           textAnchor="end"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="9"
         >
           3%

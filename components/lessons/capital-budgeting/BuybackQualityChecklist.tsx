@@ -25,7 +25,7 @@ export default function BuybackQualityChecklist() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Buyback quality checklist · {answered}/{CHECKS.length} answered
         </div>
         <div className="mt-4 space-y-4">

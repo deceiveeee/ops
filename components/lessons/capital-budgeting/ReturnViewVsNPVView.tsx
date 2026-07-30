@@ -24,7 +24,7 @@ export default function ReturnViewVsNPVView() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           One investment, two lenses
         </div>
         <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -65,7 +65,7 @@ export default function ReturnViewVsNPVView() {
       )}>
         {view === "return" ? (
           <>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
               Expected return view
             </div>
             <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-200">
@@ -90,7 +90,7 @@ export default function ReturnViewVsNPVView() {
           </>
         ) : (
           <>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               NPV view
             </div>
             <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-200">
@@ -138,7 +138,7 @@ function Slider({
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>

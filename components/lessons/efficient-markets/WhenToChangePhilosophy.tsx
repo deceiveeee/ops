@@ -35,7 +35,7 @@ export default function WhenToChangePhilosophy() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
             Do not change merely because
           </div>
           <ul className="mt-3 space-y-2">
@@ -47,7 +47,7 @@ export default function WhenToChangePhilosophy() {
           </ul>
         </div>
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
             Reconsider when
           </div>
           <ul className="mt-3 space-y-2">

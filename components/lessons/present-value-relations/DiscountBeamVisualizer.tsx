@@ -68,13 +68,13 @@ export default function DiscountBeamVisualizer() {
             value={cf}
             aria-label="Cashflow amount"
             onChange={(e) => setCf(Math.max(0, Number(e.target.value) || 0))}
-            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
+            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
           />
         </label>
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Year (t)</span>
-            <span className="font-mono text-accent-amber">{year}</span>
+            <span className="font-sans text-accent-amber">{year}</span>
           </span>
           <input
             type="range"
@@ -90,7 +90,7 @@ export default function DiscountBeamVisualizer() {
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>Discount rate (r)</span>
-            <span className="font-mono text-accent-cyan">{rate.toFixed(1)}%</span>
+            <span className="font-sans text-accent-cyan">{rate.toFixed(1)}%</span>
           </span>
           <input
             type="range"

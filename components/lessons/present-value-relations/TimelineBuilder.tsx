@@ -173,7 +173,7 @@ export default function TimelineBuilder() {
                 }
                 onClick={() => handleCardClick(c.id)}
                 className={cn(
-                  "rounded-xl border px-4 py-2.5 font-mono text-[14px] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                  "rounded-xl border px-4 py-2.5 font-sans text-[14px] transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                   isSelected
                     ? "border-accent-cyan bg-accent-cyan/15 text-accent-cyan"
                     : cn(
@@ -238,7 +238,7 @@ export default function TimelineBuilder() {
                               : { opacity: 0, scale: 0.85 }
                           }
                           transition={{ duration: 0.25 }}
-                          className="font-mono text-[14px] sm:text-[15px]"
+                          className="font-sans text-[14px] sm:text-[15px]"
                         >
                           {card!.label}
                         </motion.span>
@@ -269,7 +269,7 @@ export default function TimelineBuilder() {
                       aria-hidden
                     />
                     <div className="mt-2 text-center">
-                      <div className="font-mono text-[12px] text-slate-200">
+                      <div className="font-sans text-[12px] text-slate-200">
                         {s.label}
                       </div>
                       <div className="ops-caption text-[11px] text-slate-500">
@@ -305,7 +305,7 @@ export default function TimelineBuilder() {
           Reset
         </button>
         {selected && (
-          <span className="font-mono text-[12px] text-accent-cyan">
+          <span className="font-sans text-[12px] text-accent-cyan">
             Cashflow selected — tap a year to place it.
           </span>
         )}
@@ -325,7 +325,7 @@ export default function TimelineBuilder() {
           >
             <div
               className={cn(
-                "flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em]",
+                "flex items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em]",
                 status === "correct"
                   ? "text-accent-green"
                   : "text-accent-amber",

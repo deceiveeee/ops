@@ -165,7 +165,7 @@ export default function OnePeriodValuationExplorer() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span
             className={cn(
-              "font-mono text-[13px] uppercase tracking-[0.14em]",
+              "font-sans text-[13px] uppercase tracking-[0.14em]",
               verdictTone === "green" && "text-accent-green",
               verdictTone === "cyan" && "text-accent-cyan",
               verdictTone === "red" && "text-accent-red",
@@ -199,7 +199,7 @@ export default function OnePeriodValuationExplorer() {
             <div className="ops-caption text-[11px] text-accent-cyan">
               Estimated value
             </div>
-            <div className="mt-1 font-mono text-[22px] text-slate-100">
+            <div className="mt-1 font-sans text-[22px] text-slate-100">
               {money(value)}
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function OnePeriodValuationExplorer() {
             <div className="ops-caption text-[11px] text-slate-400">
               Purchase price
             </div>
-            <div className="mt-1 font-mono text-[22px] text-slate-100">
+            <div className="mt-1 font-sans text-[22px] text-slate-100">
               {money(purchasePrice)}
             </div>
           </div>
@@ -246,7 +246,7 @@ function NumberField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-2 w-full rounded-md border border-white/10 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-2 w-full rounded-md border border-white/10 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -273,7 +273,7 @@ function SliderField({
     <div>
       <div className="flex items-center justify-between gap-2">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-200">{display}</span>
+        <span className="font-sans text-[13px] text-slate-200">{display}</span>
       </div>
       <input
         type="range"
@@ -318,10 +318,10 @@ function OutputCard({
       className={cn("rounded-xl border bg-white/[0.02] p-4", toneBorder)}
     >
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[20px]", highlight ? toneText : "text-slate-100")}>
+      <div className={cn("mt-1 font-sans text-[20px]", highlight ? toneText : "text-slate-100")}>
         {value}
       </div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {sub}
       </div>
     </motion.div>
@@ -337,7 +337,7 @@ function ValueVsPriceBar({ value, price }: { value: number; price: number }) {
           <span className="ops-caption text-[11px] text-accent-cyan">
             Estimated value
           </span>
-          <span className="font-mono text-[13px] text-slate-200">
+          <span className="font-sans text-[13px] text-slate-200">
             {money(value)}
           </span>
         </div>
@@ -354,7 +354,7 @@ function ValueVsPriceBar({ value, price }: { value: number; price: number }) {
           <span className="ops-caption text-[11px] text-slate-400">
             Purchase price
           </span>
-          <span className="font-mono text-[13px] text-slate-200">
+          <span className="font-sans text-[13px] text-slate-200">
             {money(price)}
           </span>
         </div>

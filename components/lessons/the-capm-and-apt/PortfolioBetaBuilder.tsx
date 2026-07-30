@@ -44,7 +44,7 @@ function Phase2Adjust() {
       <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {FUNDS.map((f) => (
           <div key={f.id} className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-            <label className="block font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor={`pb-${f.id}`}>
+            <label className="block font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor={`pb-${f.id}`}>
               Fund {f.id} weight <span className="text-slate-500">(β = {f.beta.toFixed(2)})</span>
             </label>
             <div className="relative mt-2 inline-flex w-full items-center">
@@ -62,9 +62,9 @@ function Phase2Adjust() {
                   }
                 }}
                 aria-label={`Fund ${f.id} weight`}
-                className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2.5 pl-3.5 pr-9 font-mono text-[16px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 disabled:cursor-default"
+                className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2.5 pl-3.5 pr-9 font-sans text-[16px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 disabled:cursor-default"
               />
-              <span className="pointer-events-none absolute right-3 font-mono text-[15px] text-slate-400" aria-hidden>%</span>
+              <span className="pointer-events-none absolute right-3 font-sans text-[15px] text-slate-400" aria-hidden>%</span>
             </div>
           </div>
         ))}
@@ -89,7 +89,7 @@ function Phase2Adjust() {
             Try another mix
           </button>
         )}
-        <span className="font-mono text-[14px] text-slate-400">
+        <span className="font-sans text-[14px] text-slate-400">
           Weights sum to {sum.toFixed(1)}%
         </span>
       </div>
@@ -161,7 +161,7 @@ export default function PortfolioBetaBuilder() {
       </div>
 
       <div className="border-t border-white/10 pt-8">
-        <div className="mb-4 font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="mb-4 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
           Part 2 · Reduce beta toward 0.90
         </div>
         <Phase2Adjust />

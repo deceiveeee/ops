@@ -23,17 +23,17 @@ function ChallengeCard({
       <div className="flex items-center gap-3">
         <span
           className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[13px]",
+            "flex h-8 w-8 items-center justify-center rounded-full border font-sans text-[13px]",
             done ? "border-accent-green/50 bg-accent-green/10 text-accent-green" : "border-accent-purple/40 bg-accent-purple/10 text-accent-purple",
           )}
         >
           {n}
         </span>
         <div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-purple">Challenge {n}</div>
+          <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">Challenge {n}</div>
           <h4 className="ops-interactive-title text-[18px] text-white">{title}</h4>
         </div>
-        {done && <span className="ml-auto font-mono text-[12px] text-accent-green">✓</span>}
+        {done && <span className="ml-auto font-sans text-[12px] text-accent-green">✓</span>}
       </div>
       <div className="mt-4 space-y-4">{children}</div>
     </div>
@@ -66,7 +66,7 @@ function ChallengeOne() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {C1_FUNDS.map((f) => (
           <div key={f.id}>
-            <label className="block font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400" htmlFor={`c1-${f.id}`}>
+            <label className="block font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400" htmlFor={`c1-${f.id}`}>
               {f.label}
             </label>
             <div className="relative mt-1.5 inline-flex w-full items-center">
@@ -80,10 +80,10 @@ function ChallengeOne() {
                   setW((p) => ({ ...p, [f.id]: e.target.value }));
                   if (checked) setChecked(false);
                 }}
-                className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2 pl-3 pr-8 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2 pl-3 pr-8 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
                 aria-label={`${f.label} weight`}
               />
-              <span className="pointer-events-none absolute right-2.5 font-mono text-[13px] text-slate-400">%</span>
+              <span className="pointer-events-none absolute right-2.5 font-sans text-[13px] text-slate-400">%</span>
             </div>
           </div>
         ))}
@@ -98,7 +98,7 @@ function ChallengeOne() {
             Check mix
           </button>
         )}
-        <span className="font-mono text-[13px] text-slate-400">Weights sum to {sum.toFixed(1)}%</span>
+        <span className="font-sans text-[13px] text-slate-400">Weights sum to {sum.toFixed(1)}%</span>
       </div>
       {checked && !ok && (
         <Feedback status="incorrect">
@@ -176,17 +176,17 @@ function ChallengeThree() {
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="block font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400" htmlFor="c3-lo">Low required return (β = 0.90)</label>
+          <label className="block font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400" htmlFor="c3-lo">Low required return (β = 0.90)</label>
           <div className="relative mt-1.5 inline-flex w-full items-center">
-            <input id="c3-lo" type="number" inputMode="decimal" value={lo} disabled={checked && ok} onChange={(e) => { setLo(e.target.value); if (checked) setChecked(false); }} className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2 pl-3 pr-8 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40" aria-label="low required return" />
-            <span className="pointer-events-none absolute right-2.5 font-mono text-[13px] text-slate-400">%</span>
+            <input id="c3-lo" type="number" inputMode="decimal" value={lo} disabled={checked && ok} onChange={(e) => { setLo(e.target.value); if (checked) setChecked(false); }} className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2 pl-3 pr-8 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40" aria-label="low required return" />
+            <span className="pointer-events-none absolute right-2.5 font-sans text-[13px] text-slate-400">%</span>
           </div>
         </div>
         <div>
-          <label className="block font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400" htmlFor="c3-hi">High required return (β = 1.50)</label>
+          <label className="block font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400" htmlFor="c3-hi">High required return (β = 1.50)</label>
           <div className="relative mt-1.5 inline-flex w-full items-center">
-            <input id="c3-hi" type="number" inputMode="decimal" value={hi} disabled={checked && ok} onChange={(e) => { setHi(e.target.value); if (checked) setChecked(false); }} className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2 pl-3 pr-8 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40" aria-label="high required return" />
-            <span className="pointer-events-none absolute right-2.5 font-mono text-[13px] text-slate-400">%</span>
+            <input id="c3-hi" type="number" inputMode="decimal" value={hi} disabled={checked && ok} onChange={(e) => { setHi(e.target.value); if (checked) setChecked(false); }} className="w-full rounded-lg border border-white/20 bg-ink-950/60 py-2 pl-3 pr-8 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40" aria-label="high required return" />
+            <span className="pointer-events-none absolute right-2.5 font-sans text-[13px] text-slate-400">%</span>
           </div>
         </div>
       </div>
@@ -222,8 +222,8 @@ function ChallengeFour() {
           ["α_five-factor", "0.6%"],
         ].map(([k, v]) => (
           <div key={k} className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-            <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-slate-400">{k}</div>
-            <div className="mt-1 font-mono text-[16px] text-slate-100">{v}</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.1em] text-slate-400">{k}</div>
+            <div className="mt-1 font-sans text-[16px] text-slate-100">{v}</div>
           </div>
         ))}
       </div>
@@ -249,7 +249,7 @@ export default function Challenges() {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-accent-purple/25 bg-accent-purple/[0.05] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-purple">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-purple">
           Optional challenge problems
         </div>
         <p className="mt-1 text-[14px] leading-[1.55] text-slate-300">

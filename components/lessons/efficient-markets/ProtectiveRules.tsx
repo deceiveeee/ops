@@ -110,7 +110,7 @@ export default function ProtectiveRules() {
               <button type="button" aria-expanded={isOpen}
                 onClick={() => setOpen(isOpen ? null : r.n)}
                 className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
-                <span className={cn("flex h-7 w-9 flex-shrink-0 items-center justify-center rounded-md border font-mono text-[11px]",
+                <span className={cn("flex h-7 w-9 flex-shrink-0 items-center justify-center rounded-md border font-sans text-[11px]",
                   isOpen ? "border-accent-cyan text-accent-cyan" : "border-accent-amber/40 text-accent-amber")}>
                   {String(r.n).padStart(2, "0")}
                 </span>
@@ -118,7 +118,7 @@ export default function ProtectiveRules() {
                   <span className={cn("block text-[15px] font-medium", isOpen ? "text-white" : "text-slate-200")}>{r.title}</span>
                   <span className="block text-[12px] leading-snug text-slate-400">{r.prompt}</span>
                 </span>
-                <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-sm text-accent-cyan transition-transform",
+                <span className={cn("flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-sm text-accent-cyan transition-transform",
                   isOpen && "rotate-45")} aria-hidden>+</span>
               </button>
               <AnimatePresence initial={false}>

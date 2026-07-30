@@ -102,7 +102,7 @@ export default function BetaWindowExplorer() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Company · Helix Industries (fictional)</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Company · Helix Industries (fictional)</div>
         <p className="mt-2 text-[15px] leading-[1.6] text-slate-300">
           Over ten years Helix moved through three phases: stable operations, acquisition-driven
           expansion, and highly leveraged cyclical operations. The window you choose changes both the
@@ -111,7 +111,7 @@ export default function BetaWindowExplorer() {
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {PHASES.map((p) => (
             <div key={p.id} className={cn("rounded-xl border bg-white/[0.02] p-3", TONE_BORDER[p.tone])}>
-              <div className={cn("font-mono text-[12px] uppercase tracking-[0.14em]", TONE_TEXT[p.tone])}>{p.label}</div>
+              <div className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", TONE_TEXT[p.tone])}>{p.label}</div>
               <p className="mt-1 text-[13px] leading-[1.5] text-slate-400">{p.detail}</p>
             </div>
           ))}
@@ -139,42 +139,42 @@ export default function BetaWindowExplorer() {
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
           <div className="flex items-baseline justify-between">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">{win.years}</div>
-            <div className="font-mono text-[12px] text-slate-500">{win.phases.length} phase{win.phases.length > 1 ? "s" : ""} covered</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">{win.years}</div>
+            <div className="font-sans text-[12px] text-slate-500">{win.phases.length} phase{win.phases.length > 1 ? "s" : ""} covered</div>
           </div>
           <div className="mt-4">
             <div className="mb-1 flex items-center justify-between text-[13px]">
               <span className="text-slate-400">Estimated beta</span>
-              <span className={cn("font-mono text-[18px]", TONE_TEXT[win.id === "ten" ? "cyan" : win.id === "five" ? "amber" : "red"])}>{win.beta.toFixed(2)}</span>
+              <span className={cn("font-sans text-[18px]", TONE_TEXT[win.id === "ten" ? "cyan" : win.id === "five" ? "amber" : "red"])}>{win.beta.toFixed(2)}</span>
             </div>
             <BetaBar beta={win.beta} tone={win.id === "ten" ? "cyan" : win.id === "five" ? "amber" : "red"} />
           </div>
           <div className="mt-5">
             <div className="mb-1 flex items-center justify-between text-[13px]">
               <span className="text-slate-400">Approximate uncertainty range <InlineMath>{String.raw`\hat{\beta} \pm 2SE`}</InlineMath></span>
-              <span className="font-mono text-[13px] text-slate-300">{(win.beta - 2 * win.se).toFixed(2)} – {(win.beta + 2 * win.se).toFixed(2)}</span>
+              <span className="font-sans text-[13px] text-slate-300">{(win.beta - 2 * win.se).toFixed(2)} – {(win.beta + 2 * win.se).toFixed(2)}</span>
             </div>
             <UncertaintyRange beta={win.beta} se={win.se} />
             <p className="mt-1 text-[12px] text-slate-500">An approximate range from the sample, not a guarantee or a permanent interval.</p>
           </div>
           <div className="mt-5 grid grid-cols-3 gap-3 text-center">
             <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3">
-              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">SE(β)</div>
-              <div className="mt-1 font-mono text-[16px] text-slate-100">{win.se.toFixed(2)}</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">SE(β)</div>
+              <div className="mt-1 font-sans text-[16px] text-slate-100">{win.se.toFixed(2)}</div>
             </div>
             <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3">
-              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">R²</div>
-              <div className="mt-1 font-mono text-[16px] text-slate-100">{(win.r2 * 100).toFixed(0)}%</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">R²</div>
+              <div className="mt-1 font-sans text-[16px] text-slate-100">{(win.r2 * 100).toFixed(0)}%</div>
             </div>
             <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3">
-              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-400">Phases</div>
-              <div className="mt-1 font-mono text-[16px] text-slate-100">{win.phases.length} of 3</div>
+              <div className="font-sans text-[11px] uppercase tracking-[0.12em] text-slate-400">Phases</div>
+              <div className="mt-1 font-sans text-[16px] text-slate-100">{win.phases.length} of 3</div>
             </div>
           </div>
         </div>
 
         <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Read this window</div>
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Read this window</div>
           <p className="mt-3 text-[15px] leading-[1.6] text-slate-200">{win.note}</p>
         </div>
       </div>

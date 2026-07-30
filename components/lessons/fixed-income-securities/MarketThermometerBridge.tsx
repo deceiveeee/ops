@@ -195,7 +195,7 @@ export default function MarketThermometerBridge() {
                   x={padX - 8}
                   y={yAt(y) + 3}
                   textAnchor="end"
-                  className="fill-slate-500 font-mono"
+                  className="fill-slate-500 font-sans"
                   fontSize="10"
                 >
                   {formatPercent(y, 1)}
@@ -208,7 +208,7 @@ export default function MarketThermometerBridge() {
                 x={xAt(m)}
                 y={H - padY + 16}
                 textAnchor="middle"
-                className="fill-slate-500 font-mono"
+                className="fill-slate-500 font-sans"
                 fontSize="10"
               >
                 {m}y
@@ -261,7 +261,7 @@ export default function MarketThermometerBridge() {
               x={W - padX}
               y={padY - 8}
               textAnchor="end"
-              className="fill-slate-500 font-mono"
+              className="fill-slate-500 font-sans"
               fontSize="10"
             >
               dashed = baseline
@@ -353,7 +353,7 @@ function PriceCard({
         <span className="ops-caption text-[11px] text-slate-500">
           Treasury price
         </span>
-        <span className={cn("font-mono text-[18px]", accent)}>
+        <span className={cn("font-sans text-[18px]", accent)}>
           {priceMove}
         </span>
       </div>

@@ -16,7 +16,7 @@ function LabeledSlider({ label, value, min, max, step, suffix, prefix, onChange,
   const id = useId();
   return (
     <div>
-      <label htmlFor={id} className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label htmlFor={id} className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label} {tag && <span className="ml-1 text-[9px] text-accent-cyan">{tag}</span>}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>
@@ -98,13 +98,13 @@ export default function MeridianStoreNPVModel() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] px-4 py-3">
-        <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-amber">
+        <p className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
           Fictional case · simplified model · all figures illustrative
         </p>
       </div>
 
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">Per-store assumptions</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Per-store assumptions</div>
         <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <LabeledSlider label="Physical development" value={devCost} min={1.0} max={2.0} step={0.05} prefix="$" suffix="M" onChange={setDevCost} tag="mgmt target" />
           <LabeledSlider label="Pre-opening costs" value={preOpening} min={0} max={0.3} step={0.05} prefix="$" suffix="M" onChange={setPreOpening} tag="assumption" />
@@ -127,13 +127,13 @@ export default function MeridianStoreNPVModel() {
           <table className="w-full min-w-[480px] border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-white/20 text-right">
-                <th className="py-2 pr-4 text-left font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Year</th>
-                <th className="py-2 pr-4 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Cash flow</th>
-                <th className="py-2 pr-4 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Disc. factor</th>
-                <th className="py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">PV</th>
+                <th className="py-2 pr-4 text-left font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Year</th>
+                <th className="py-2 pr-4 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Cash flow</th>
+                <th className="py-2 pr-4 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Disc. factor</th>
+                <th className="py-2 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">PV</th>
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums">
+            <tbody className="font-sans tabular-nums">
               <tr className="border-b border-white/5">
                 <td className="py-2 pr-4 text-left text-slate-300">Year 0</td>
                 <td className="py-2 pr-4 text-accent-red">−{fmtK(Math.round(totalInitial * 1000))}</td>
@@ -152,7 +152,7 @@ export default function MeridianStoreNPVModel() {
                 );
               })}
               <tr className="border-t-2 border-white/20">
-                <td className="py-3 pr-4 text-left font-mono text-[11px] uppercase text-slate-400">NPV per store</td>
+                <td className="py-3 pr-4 text-left font-sans text-[11px] uppercase text-slate-400">NPV per store</td>
                 <td colSpan={2} />
                 <td className={cn("py-3 text-[16px]", npvPositive ? "text-accent-green" : "text-accent-red")}>
                   {npv >= 0 ? "+" : "−"}{fmtK(Math.abs(Math.round(npv)))}
@@ -190,8 +190,8 @@ function Readout({ label, value, tone = "neutral" }: {
   const text = tone === "green" ? "text-accent-green" : tone === "red" ? "text-accent-red" : tone === "amber" ? "text-accent-amber" : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-3">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
-      <div className={cn("mt-1.5 font-mono text-[15px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
+      <div className={cn("mt-1.5 font-sans text-[15px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

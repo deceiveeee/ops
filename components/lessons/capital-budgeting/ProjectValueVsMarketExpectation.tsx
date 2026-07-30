@@ -18,7 +18,7 @@ export default function ProjectValueVsMarketExpectation() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Corporate value vs. market expectation
         </div>
         <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -30,7 +30,7 @@ export default function ProjectValueVsMarketExpectation() {
       {/* Two separate effects */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Corporate value created
           </div>
           <div className="mt-3">
@@ -46,7 +46,7 @@ export default function ProjectValueVsMarketExpectation() {
           surprisePositive ? "border-accent-green/25 bg-accent-green/[0.04]" : "border-accent-red/25 bg-accent-red/[0.04]",
         )}>
           <div className={cn(
-            "font-mono text-[11px] uppercase tracking-[0.16em]",
+            "font-sans text-[11px] uppercase tracking-[0.16em]",
             surprisePositive ? "text-accent-green" : "text-accent-red",
           )}>
             Surprise vs. market expectations
@@ -73,7 +73,7 @@ export default function ProjectValueVsMarketExpectation() {
           </span>
           <div>
             <div className={cn(
-              "font-mono text-[12px] uppercase tracking-[0.16em]",
+              "font-sans text-[12px] uppercase tracking-[0.16em]",
               surprisePositive ? "text-accent-green" : "text-accent-red",
             )}>
               Possible market reaction: {surprisePositive ? "upward pressure" : "downward pressure"}
@@ -89,7 +89,7 @@ export default function ProjectValueVsMarketExpectation() {
 
       {/* Caveats */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Important caveats
         </div>
         <ul className="mt-3 space-y-2.5">
@@ -118,7 +118,7 @@ function Slider({
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>

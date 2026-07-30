@@ -261,7 +261,7 @@ export default function STRIPSReplicatorDesk() {
                       {cfs.map((cf, i) => (
                         <td
                           key={i}
-                          className="px-3 py-2 font-mono text-[13px] text-slate-200"
+                          className="px-3 py-2 font-sans text-[13px] text-slate-200"
                         >
                           {formatMoney(cf)}
                         </td>
@@ -274,7 +274,7 @@ export default function STRIPSReplicatorDesk() {
                       {stripPrices.map((p, i) => (
                         <td
                           key={i}
-                          className="px-3 py-2 font-mono text-[13px] text-slate-200"
+                          className="px-3 py-2 font-sans text-[13px] text-slate-200"
                         >
                           {p.toFixed(2)}
                         </td>
@@ -287,7 +287,7 @@ export default function STRIPSReplicatorDesk() {
                       {cfs.map((cf, i) => (
                         <td
                           key={i}
-                          className="px-3 py-2 font-mono text-[13px] text-accent-cyan"
+                          className="px-3 py-2 font-sans text-[13px] text-accent-cyan"
                         >
                           {formatMoney(cf * (stripPrices[i] ?? 0))}
                         </td>
@@ -424,10 +424,10 @@ function NumInput({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-1 w-full rounded-md border border-white/10 bg-ink-950/60 px-2 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
       {frac && (
-        <span className="mt-0.5 block font-mono text-[11px] text-slate-500">
+        <span className="mt-0.5 block font-sans text-[11px] text-slate-500">
           {value.toFixed(2)}
         </span>
       )}
@@ -453,7 +453,7 @@ function ResultCard({
   return (
     <div className={cn("rounded-xl border bg-white/[0.02] p-4", accent)}>
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className="mt-1 font-mono text-[18px] text-slate-100">{value}</div>
+      <div className="mt-1 font-sans text-[18px] text-slate-100">{value}</div>
     </div>
   );
 }
@@ -475,7 +475,7 @@ function TradeArrow({
   return (
     <div className={cn("rounded-lg border px-3 py-2", accent)}>
       <div className="ops-caption text-[10px] opacity-90">{label}</div>
-      <div className="mt-0.5 font-mono text-[14px]">{sub}</div>
+      <div className="mt-0.5 font-sans text-[14px]">{sub}</div>
     </div>
   );
 }

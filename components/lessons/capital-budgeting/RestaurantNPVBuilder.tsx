@@ -13,7 +13,7 @@ function LabeledSlider({
   const id = useId();
   return (
     <div>
-      <label htmlFor={id} className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label htmlFor={id} className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>
@@ -121,7 +121,7 @@ export default function RestaurantNPVBuilder() {
     <div className="space-y-6">
       {/* Illustrative label */}
       <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] px-4 py-3">
-        <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-amber">
+        <p className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
           Illustrative investor estimate based on simplified assumptions
         </p>
       </div>
@@ -129,30 +129,30 @@ export default function RestaurantNPVBuilder() {
       {/* Management-provided facts vs investor assumptions */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
             Management-provided facts
           </div>
           <div className="mt-3 space-y-1 text-[13px] text-slate-200">
-            <div className="flex justify-between"><span>Construction & equipment</span><span className="font-mono">{fmtK(construction)}</span></div>
-            <div className="flex justify-between"><span>Pre-opening expenses</span><span className="font-mono">{fmtK(preOpening)}</span></div>
-            <div className="flex justify-between"><span>Working capital</span><span className="font-mono">{fmtK(workingCapital)}</span></div>
+            <div className="flex justify-between"><span>Construction & equipment</span><span className="font-sans">{fmtK(construction)}</span></div>
+            <div className="flex justify-between"><span>Pre-opening expenses</span><span className="font-sans">{fmtK(preOpening)}</span></div>
+            <div className="flex justify-between"><span>Working capital</span><span className="font-sans">{fmtK(workingCapital)}</span></div>
           </div>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
             Investor assumptions
           </div>
           <div className="mt-3 space-y-1 text-[13px] text-slate-200">
-            <div className="flex justify-between"><span>Mature sales</span><span className="font-mono">{fmtM(matureSales)}/yr</span></div>
-            <div className="flex justify-between"><span>Operating margin</span><span className="font-mono">{margin}%</span></div>
-            <div className="flex justify-between"><span>Discount rate</span><span className="font-mono">{discountRate}%</span></div>
+            <div className="flex justify-between"><span>Mature sales</span><span className="font-sans">{fmtM(matureSales)}/yr</span></div>
+            <div className="flex justify-between"><span>Operating margin</span><span className="font-sans">{margin}%</span></div>
+            <div className="flex justify-between"><span>Discount rate</span><span className="font-sans">{discountRate}%</span></div>
           </div>
         </div>
       </div>
 
       {/* Controls */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Investment assumptions
         </div>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -171,21 +171,21 @@ export default function RestaurantNPVBuilder() {
 
       {/* Cash flow table */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Incremental cash flows and present values
         </div>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[560px] border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/20 text-right">
-                <th className="py-2 pr-4 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Year</th>
-                <th className="py-2 pr-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Cash flow</th>
-                <th className="py-2 pr-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Ramp</th>
-                <th className="py-2 pr-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Disc. factor</th>
-                <th className="py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">PV</th>
+                <th className="py-2 pr-4 text-left font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Year</th>
+                <th className="py-2 pr-4 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Cash flow</th>
+                <th className="py-2 pr-4 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Ramp</th>
+                <th className="py-2 pr-4 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Disc. factor</th>
+                <th className="py-2 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">PV</th>
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums">
+            <tbody className="font-sans tabular-nums">
               <tr className="border-b border-white/5">
                 <td className="py-2 pr-4 text-left text-slate-300">Year 0 (initial)</td>
                 <td className="py-2 pr-4 text-accent-red">{fmtK(initial)}</td>
@@ -209,17 +209,17 @@ export default function RestaurantNPVBuilder() {
                 );
               })}
               <tr className="border-t-2 border-white/20">
-                <td className="py-3 pr-4 text-left font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">Total PV of cash flows</td>
+                <td className="py-3 pr-4 text-left font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Total PV of cash flows</td>
                 <td colSpan={3} />
                 <td className="py-3 text-accent-cyan">{fmtK(totalPV)}</td>
               </tr>
               <tr>
-                <td className="py-2 pr-4 text-left font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">Initial investment</td>
+                <td className="py-2 pr-4 text-left font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Initial investment</td>
                 <td colSpan={3} />
                 <td className="py-2 text-accent-red">−{fmtK(totalInvestment)}</td>
               </tr>
               <tr>
-                <td className="py-3 pr-4 text-left font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">NPV</td>
+                <td className="py-3 pr-4 text-left font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">NPV</td>
                 <td colSpan={3} />
                 <td className={cn("py-3 text-[16px]", npvPositive ? "text-accent-green" : "text-accent-red")}>
                   {npvPositive ? "+" : "−"}{fmtK(Math.abs(projectNPV))}
@@ -242,19 +242,19 @@ export default function RestaurantNPVBuilder() {
       {/* Break-even readouts */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">NPV</div>
-          <div className={cn("mt-2 font-mono text-[18px] tabular-nums", npvPositive ? "text-accent-green" : "text-accent-red")}>
+          <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">NPV</div>
+          <div className={cn("mt-2 font-sans text-[18px] tabular-nums", npvPositive ? "text-accent-green" : "text-accent-red")}>
             {npvPositive ? "+" : "−"}{fmtK(Math.abs(projectNPV))}
           </div>
         </div>
         <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-amber">Break-even mature sales</div>
-          <div className="mt-2 font-mono text-[18px] tabular-nums text-white">{fmtM(breakEvenSales)}</div>
+          <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-accent-amber">Break-even mature sales</div>
+          <div className="mt-2 font-sans text-[18px] tabular-nums text-white">{fmtM(breakEvenSales)}</div>
           <div className="mt-1 text-[11px] text-slate-400">per store / year</div>
         </div>
         <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-amber">Max tolerable dev cost</div>
-          <div className="mt-2 font-mono text-[18px] tabular-nums text-white">{fmtK(Math.round(breakEvenCost))}</div>
+          <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-accent-amber">Max tolerable dev cost</div>
+          <div className="mt-2 font-sans text-[18px] tabular-nums text-white">{fmtK(Math.round(breakEvenCost))}</div>
           <div className="mt-1 text-[11px] text-slate-400">total initial investment</div>
         </div>
       </div>

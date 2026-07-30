@@ -131,12 +131,12 @@ export default function CreditRatingLadder() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="mt-2 font-mono text-[40px] text-white">
+                <div className="mt-2 font-sans text-[40px] text-white">
                   {current.moodys} / {current.sp}
                 </div>
                 <div
                   className={cn(
-                    "mt-2 inline-flex items-center rounded-full border px-3 py-1 font-mono text-[12px] uppercase tracking-[0.14em]",
+                    "mt-2 inline-flex items-center rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.14em]",
                     isDefault
                       ? "border-accent-red/50 text-accent-red"
                       : current.grade === "IG"
@@ -199,16 +199,16 @@ export default function CreditRatingLadder() {
                     i === idx ? "bg-accent-cyan/[0.08]" : "hover:bg-white/[0.03]",
                   )}
                 >
-                  <td className="px-3 py-2.5 font-mono text-[13px] text-slate-200">
+                  <td className="px-3 py-2.5 font-sans text-[13px] text-slate-200">
                     {r.moodys}
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-[13px] text-slate-200">
+                  <td className="px-3 py-2.5 font-sans text-[13px] text-slate-200">
                     {r.sp}
                   </td>
                   <td className="px-3 py-2.5">
                     <span
                       className={cn(
-                        "inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em]",
+                        "inline-flex items-center rounded-md border px-2 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em]",
                         r.grade === "IG"
                           ? "border-accent-green/40 text-accent-green"
                           : "border-accent-amber/40 text-accent-amber",
@@ -217,10 +217,10 @@ export default function CreditRatingLadder() {
                       {r.grade === "IG" ? "Investment" : "Non-Investment"}
                     </span>
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-[13px] text-slate-300">
+                  <td className="px-3 py-2.5 font-sans text-[13px] text-slate-300">
                     {r.risk}
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-[13px] text-slate-300">
+                  <td className="px-3 py-2.5 font-sans text-[13px] text-slate-300">
                     {r.yield}
                   </td>
                 </tr>
@@ -280,7 +280,7 @@ function Meter({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className={cn("font-mono text-[13px]", text)}>{value}</span>
+        <span className={cn("font-sans text-[13px]", text)}>{value}</span>
       </div>
       <div className="mt-2 h-3 overflow-hidden rounded-full border border-white/10 bg-ink-950/60">
         <motion.div

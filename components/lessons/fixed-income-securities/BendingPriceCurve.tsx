@@ -111,7 +111,7 @@ export default function BendingPriceCurve() {
               Bending price curve
             </span>
           </div>
-          <span className="font-mono text-[12px] text-slate-400">
+          <span className="font-sans text-[12px] text-slate-400">
             base y = {formatPercent(BASE_Y, 2)} · P₀ = {formatMoney(basePrice)}
           </span>
         </div>
@@ -149,7 +149,7 @@ export default function BendingPriceCurve() {
                     x={xAt(y)}
                     y={H - padY + 16}
                     textAnchor="middle"
-                    className="fill-slate-500 font-mono"
+                    className="fill-slate-500 font-sans"
                     fontSize="10"
                   >
                     {formatPercent(y, 0)}
@@ -162,7 +162,7 @@ export default function BendingPriceCurve() {
             <text
               x={xAt(yMin) + 4}
               y={yPxAt(pAt(yMin)) + 4}
-              className="fill-accent-cyan/80 font-mono"
+              className="fill-accent-cyan/80 font-sans"
               fontSize="10"
             >
               true (convex)
@@ -182,7 +182,7 @@ export default function BendingPriceCurve() {
               x={tanX2 - 4}
               y={tanY2 - 6}
               textAnchor="end"
-              className="fill-accent-amber/80 font-mono"
+              className="fill-accent-amber/80 font-sans"
               fontSize="10"
             >
               duration-only
@@ -241,7 +241,7 @@ export default function BendingPriceCurve() {
             </span>
             <span
               className={cn(
-                "font-mono text-[13px]",
+                "font-sans text-[13px]",
                 shockBps >= 0 ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -259,7 +259,7 @@ export default function BendingPriceCurve() {
             aria-label="Yield shock in basis points"
             className="mt-2 w-full accent-accent-amber"
           />
-          <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+          <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
             <span>−300 bps</span>
             <span>+300 bps</span>
           </div>
@@ -326,7 +326,7 @@ function PriceRow({
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[20px]", accent)}>
+      <div className={cn("mt-1 font-sans text-[20px]", accent)}>
         {formatMoney(value)}
       </div>
       {err !== undefined && (

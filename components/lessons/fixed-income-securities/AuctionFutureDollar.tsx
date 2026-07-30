@@ -60,7 +60,7 @@ export default function AuctionFutureDollar() {
         </h4>
 
         <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
-          Each bond below pays exactly <span className="font-mono text-accent-green">$1</span>{" "}
+          Each bond below pays exactly <span className="font-sans text-accent-green">$1</span>{" "}
           at maturity and nothing before. Click a bond to discover what market
           price that implies for today&apos;s spot rate.
         </p>
@@ -86,7 +86,7 @@ export default function AuctionFutureDollar() {
                   <span className="ops-caption text-[11px] text-accent-amber">
                     {b.label}
                   </span>
-                  <span className="font-mono text-[11px] text-slate-400">
+                  <span className="font-sans text-[11px] text-slate-400">
                     T = {b.maturity}
                   </span>
                 </div>
@@ -95,7 +95,7 @@ export default function AuctionFutureDollar() {
                   <div className="ops-caption text-[11px] text-slate-400">
                     Market price
                   </div>
-                  <div className="mt-1 font-mono text-[22px] text-white">
+                  <div className="mt-1 font-sans text-[22px] text-white">
                     ${b.price.toFixed(3)}
                   </div>
                   <div className="ops-caption mt-1 text-[11px] text-slate-500">
@@ -116,7 +116,7 @@ export default function AuctionFutureDollar() {
                       <div className="ops-caption text-[11px] text-accent-cyan">
                         Implied rate
                       </div>
-                      <div className="mt-1 font-mono text-[22px] text-accent-cyan">
+                      <div className="mt-1 font-sans text-[22px] text-accent-cyan">
                         {formatPercent(rate, 2)}
                       </div>
                     </motion.div>
@@ -126,7 +126,7 @@ export default function AuctionFutureDollar() {
                       initial={false}
                       className="rounded-xl border border-dashed border-white/15 px-3 py-3 text-center"
                     >
-                      <div className="font-mono text-[12px] text-slate-400">
+                      <div className="font-sans text-[12px] text-slate-400">
                         Tap to solve rate
                       </div>
                     </motion.div>
@@ -144,7 +144,7 @@ export default function AuctionFutureDollar() {
             Notice the longer you wait for your dollar, the lower the price — and
             the higher the implied rate.
           </p>
-          <div className="mt-3 flex items-center gap-2 font-mono text-[15px] text-slate-100">
+          <div className="mt-3 flex items-center gap-2 font-sans text-[15px] text-slate-100">
             <InlineMath>{"r_{0,T} = \\left(\\tfrac{1}{P_0}\\right)^{1/T} - 1"}</InlineMath>
           </div>
         </div>

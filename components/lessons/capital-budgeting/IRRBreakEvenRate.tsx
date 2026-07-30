@@ -30,7 +30,7 @@ export default function IRRBreakEvenRate() {
 
       {/* Definition */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           IRR definition
         </div>
         <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
@@ -95,7 +95,7 @@ function Slider({ label, value, min, max, step, suffix, prefix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>
@@ -114,8 +114,8 @@ function Readout({ label, value, tone = "neutral" }: {
   const text = tone === "green" ? "text-accent-green" : tone === "red" ? "text-accent-red" : tone === "amber" ? "text-accent-amber" : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
-      <div className={cn("mt-2 font-mono text-[17px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
+      <div className={cn("mt-2 font-sans text-[17px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

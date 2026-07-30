@@ -148,7 +148,7 @@ export default function PhilosophyCoordinates() {
                     {allAnswered && (
                       <span
                         className={cn(
-                          "font-mono text-[11px] uppercase tracking-[0.14em]",
+                          "font-sans text-[11px] uppercase tracking-[0.14em]",
                           allOk ? "text-accent-green" : "text-accent-amber",
                         )}
                       >

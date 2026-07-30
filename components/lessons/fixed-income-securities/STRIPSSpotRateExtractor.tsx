@@ -133,7 +133,7 @@ export default function STRIPSSpotRateExtractor() {
                         >
                           <span
                             className={cn(
-                              "font-mono text-[14px]",
+                              "font-sans text-[14px]",
                               isSel ? "text-accent-cyan" : "text-slate-200",
                             )}
                           >
@@ -146,7 +146,7 @@ export default function STRIPSSpotRateExtractor() {
                       </td>
                       <td
                         className={cn(
-                          "px-4 py-3 font-mono text-[14px]",
+                          "px-4 py-3 font-sans text-[14px]",
                           isSel ? "text-slate-50" : "text-slate-300",
                         )}
                       >
@@ -154,7 +154,7 @@ export default function STRIPSSpotRateExtractor() {
                       </td>
                       <td
                         className={cn(
-                          "px-4 py-3 font-mono text-[14px]",
+                          "px-4 py-3 font-sans text-[14px]",
                           isSel ? "text-accent-cyan" : "text-slate-300",
                         )}
                       >
@@ -254,7 +254,7 @@ function DiscountTunnel({
             initial={reduce ? false : { opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="mt-2 flex items-center justify-center rounded-lg border border-accent-cyan/50 bg-accent-cyan/10 px-3 py-2 font-mono text-[14px] text-accent-cyan"
+            className="mt-2 flex items-center justify-center rounded-lg border border-accent-cyan/50 bg-accent-cyan/10 px-3 py-2 font-sans text-[14px] text-accent-cyan"
             style={{ minWidth: 78 }}
           >
             ${price.toFixed(3)}
@@ -295,7 +295,7 @@ function DiscountTunnel({
             Year {maturity}
           </div>
           <div
-            className="mt-2 flex items-center justify-center rounded-lg border border-accent-amber/50 bg-accent-amber/10 px-3 py-2 font-mono text-[14px] text-accent-amber"
+            className="mt-2 flex items-center justify-center rounded-lg border border-accent-amber/50 bg-accent-amber/10 px-3 py-2 font-sans text-[14px] text-accent-amber"
             style={{ minWidth: 78 }}
           >
             $1.000
@@ -367,7 +367,7 @@ function MiniCurve({
           x={padX - 4}
           y={padY + 6}
           textAnchor="end"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="10"
         >
           6%
@@ -376,7 +376,7 @@ function MiniCurve({
           x={padX - 4}
           y={H - padY}
           textAnchor="end"
-          className="fill-slate-500 font-mono"
+          className="fill-slate-500 font-sans"
           fontSize="10"
         >
           3%
@@ -416,7 +416,7 @@ function MiniCurve({
                 x={xAt(p.t)}
                 y={H - 6}
                 textAnchor="middle"
-                className="fill-slate-500 font-mono"
+                className="fill-slate-500 font-sans"
                 fontSize="9"
               >
                 {p.label}

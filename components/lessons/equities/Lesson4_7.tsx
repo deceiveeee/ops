@@ -174,7 +174,7 @@ export default function Lesson4_7() {
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[420px] border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-white/10 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-500">
+                <tr className="border-b border-white/10 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-500">
                   <th className="px-3 py-2">Assumption</th>
                   <th className="px-3 py-2">Years 1–3</th>
                   <th className="px-3 py-2">Year 4+</th>
@@ -183,33 +183,33 @@ export default function Lesson4_7() {
               <tbody>
                 <tr className="border-b border-white/5">
                   <td className="px-3 py-2.5 text-slate-300">BVPS₀</td>
-                  <td className="px-3 py-2.5 font-mono text-slate-100">
+                  <td className="px-3 py-2.5 font-sans text-slate-100">
                     $100.00
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-slate-400">—</td>
+                  <td className="px-3 py-2.5 font-sans text-slate-400">—</td>
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="px-3 py-2.5 text-slate-300">ROE</td>
-                  <td className="px-3 py-2.5 font-mono text-accent-green">
+                  <td className="px-3 py-2.5 font-sans text-accent-green">
                     15%
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-accent-amber">
+                  <td className="px-3 py-2.5 font-sans text-accent-amber">
                     10%
                   </td>
                 </tr>
                 <tr className="border-b border-white/5">
                   <td className="px-3 py-2.5 text-slate-300">Payout ratio</td>
-                  <td className="px-3 py-2.5 font-mono text-slate-100">30%</td>
-                  <td className="px-3 py-2.5 font-mono text-slate-100">60%</td>
+                  <td className="px-3 py-2.5 font-sans text-slate-100">30%</td>
+                  <td className="px-3 py-2.5 font-sans text-slate-100">60%</td>
                 </tr>
                 <tr>
                   <td className="px-3 py-2.5 text-slate-300">
                     Cost of equity (r)
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-accent-cyan">
+                  <td className="px-3 py-2.5 font-sans text-accent-cyan">
                     10%
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-accent-cyan">
+                  <td className="px-3 py-2.5 font-sans text-accent-cyan">
                     10%
                   </td>
                 </tr>
@@ -275,7 +275,7 @@ export default function Lesson4_7() {
               "Analyst judgment → which growth is temporary? Which earnings are sustainable? How sensitive is the conclusion?",
             ].map((point, i) => (
               <div key={i} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">

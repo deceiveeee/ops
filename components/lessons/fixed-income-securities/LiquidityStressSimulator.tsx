@@ -169,7 +169,7 @@ export default function LiquidityStressSimulator() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "rounded-full border px-3 py-1 font-mono text-[12px] uppercase tracking-[0.14em]",
+              "rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.14em]",
               regime === "Normal"
                 ? "border-accent-green/50 text-accent-green"
                 : regime === "Cautious"
@@ -190,7 +190,7 @@ export default function LiquidityStressSimulator() {
           aria-label="Market stress level from normal to stressed"
           className="mt-4 w-full accent-accent-cyan"
         />
-        <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+        <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
           <span>Normal</span>
           <span>Cautious</span>
           <span>Stressed</span>
@@ -231,7 +231,7 @@ export default function LiquidityStressSimulator() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.2 }}
                         className={cn(
-                          "inline-flex items-center rounded-md border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+                          "inline-flex items-center rounded-md border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
                           LEVEL_CELL[lvl],
                         )}
                       >

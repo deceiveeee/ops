@@ -81,7 +81,7 @@ export default function IndependentVsExclusiveDecision() {
       {/* Rules */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Independent investments
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
@@ -90,7 +90,7 @@ export default function IndependentVsExclusiveDecision() {
           </p>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
             Mutually exclusive investments
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
@@ -118,8 +118,8 @@ export default function IndependentVsExclusiveDecision() {
                     o.npv.startsWith("+") ? "border-accent-green/25 bg-accent-green/[0.04]" : "border-accent-red/25 bg-accent-red/[0.04]",
                   )}>
                     <span className="text-slate-200">{o.name}</span>
-                    <span className={cn("ml-2 font-mono", o.npv.startsWith("+") ? "text-accent-green" : "text-accent-red")}>{o.npv}</span>
-                    {o.irr && <span className="ml-2 font-mono text-slate-400">IRR {o.irr}</span>}
+                    <span className={cn("ml-2 font-sans", o.npv.startsWith("+") ? "text-accent-green" : "text-accent-red")}>{o.npv}</span>
+                    {o.irr && <span className="ml-2 font-sans text-slate-400">IRR {o.irr}</span>}
                   </div>
                 ))}
               </div>

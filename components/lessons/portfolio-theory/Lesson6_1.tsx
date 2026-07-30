@@ -117,16 +117,16 @@ function AllocationTable() {
       <table className="w-full min-w-[440px] border-collapse text-[16px]">
         <thead>
           <tr className="border-b border-white/20 text-left">
-            <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Asset
             </th>
-            <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Market value
             </th>
-            <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Weight
             </th>
-            <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Share of $100K
             </th>
           </tr>
@@ -135,8 +135,8 @@ function AllocationTable() {
           {HOLDINGS.map((row) => (
             <tr key={row.asset} className="border-b border-white/5">
               <td className="py-3 pr-8">{row.asset}</td>
-              <td className="py-3 pr-8 font-mono tabular-nums">{row.value}</td>
-              <td className="py-3 pr-8 font-mono tabular-nums text-accent-cyan">{row.weight}</td>
+              <td className="py-3 pr-8 font-sans tabular-nums">{row.value}</td>
+              <td className="py-3 pr-8 font-sans tabular-nums text-accent-cyan">{row.weight}</td>
               <td className="py-3">
                 <div className="h-2.5 w-full max-w-[160px] overflow-hidden rounded-full bg-white/10">
                   <div
@@ -149,8 +149,8 @@ function AllocationTable() {
           ))}
           <tr>
             <td className="py-3 pr-8 font-semibold text-slate-50">Total</td>
-            <td className="py-3 pr-8 font-mono font-semibold tabular-nums text-slate-50">$100,000</td>
-            <td className="py-3 pr-8 font-mono font-semibold tabular-nums text-accent-green">100%</td>
+            <td className="py-3 pr-8 font-sans font-semibold tabular-nums text-slate-50">$100,000</td>
+            <td className="py-3 pr-8 font-sans font-semibold tabular-nums text-accent-green">100%</td>
             <td className="py-3" />
           </tr>
         </tbody>
@@ -163,25 +163,25 @@ function ContributionDiagram() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
       <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Asset A
         </div>
         <div className="mt-2 text-[17px] text-slate-100">
-          own return <span className="font-mono text-accent-amber">10%</span>
+          own return <span className="font-sans text-accent-amber">10%</span>
         </div>
         <div className="mt-1 text-[15px] text-slate-400">
-          weight <span className="font-mono text-accent-cyan">0.60</span>
+          weight <span className="font-sans text-accent-cyan">0.60</span>
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <span className="font-mono text-[14px] text-slate-500">×</span>
+        <span className="font-sans text-[14px] text-slate-500">×</span>
       </div>
       <div className="rounded-xl border border-accent-cyan/30 bg-accent-cyan/[0.06] p-5">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Contribution to R_P
         </div>
         <div className="mt-2 text-[17px] text-slate-100">
-          <span className="font-mono text-accent-cyan">6 percentage points</span>
+          <span className="font-sans text-accent-cyan">6 percentage points</span>
         </div>
         <div className="mt-1 text-[15px] text-slate-400">
           the part of portfolio return A actually delivers
@@ -201,7 +201,7 @@ function TransitionCheck() {
     <div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-accent-green/30 bg-accent-green/[0.05] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
             Expected return
           </div>
           <p className="mt-2 text-[16px] leading-[1.65] text-slate-200">
@@ -213,7 +213,7 @@ function TransitionCheck() {
           </div>
         </div>
         <div className="rounded-xl border border-accent-red/30 bg-accent-red/[0.05] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
             Risk — what people assume
           </div>
           <p className="mt-2 text-[16px] leading-[1.65] text-slate-200">
@@ -361,10 +361,10 @@ export default function Lesson6_1() {
             <table className="w-full min-w-[360px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
                     Position
                   </th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
                     Weight
                   </th>
                 </tr>
@@ -375,7 +375,7 @@ export default function Lesson6_1() {
                     <td className="py-3 pr-8">{row.position}</td>
                     <td
                       className={cn(
-                        "py-3 font-mono tabular-nums",
+                        "py-3 font-sans tabular-nums",
                         row.tone === "cyan" && "text-accent-cyan",
                         row.tone === "red" && "text-accent-red",
                         row.tone === "green" && "font-semibold text-accent-green",
@@ -604,9 +604,9 @@ export default function Lesson6_1() {
               interpretation={
                 <span>
                   Both realized and expected portfolio returns are clean weighted
-                  averages. The realized <span className="font-mono text-slate-100">5.00%</span>{" "}
+                  averages. The realized <span className="font-sans text-slate-100">5.00%</span>{" "}
                   came in below the expected{" "}
-                  <span className="font-mono text-slate-100">5.90%</span> because the bond
+                  <span className="font-sans text-slate-100">5.90%</span> because the bond
                   fund lost more than expected. Risk is the gap between expectation
                   and outcome — and it does <em className="text-slate-100">not</em> combine
                   like these returns.

@@ -44,12 +44,12 @@ export default function StudioPage() {
         <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {previews.map((p) => (
             <div key={p.key} className={`relative overflow-hidden rounded-2xl border ${toneBorder[p.tone]} bg-white/[0.02] p-6`}>
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+              <div className="flex items-center justify-between font-sans text-[10px] uppercase tracking-[0.18em] text-slate-500">
                 <span>Panel</span>
                 <span className={toneText[p.tone]}>{p.label}</span>
               </div>
               <div className="mt-6 flex h-32 items-center justify-center rounded-lg border border-dashed border-white/10 bg-ink-900/40">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-600">interactive panel</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.18em] text-slate-600">interactive panel</span>
               </div>
               <p className="mt-4 text-sm text-slate-400">{p.note}</p>
             </div>
@@ -62,7 +62,7 @@ export default function StudioPage() {
             <Stat label="Portfolio vol (mock)" value="11.4%" tone="purple" />
             <Stat label="Diversification ratio" value="1.62x" tone="green" />
           </div>
-          <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+          <p className="mt-4 font-sans text-[10px] uppercase tracking-[0.18em] text-slate-500">
             Mock / static · no live market data · for education only
           </p>
         </div>
@@ -84,7 +84,7 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: "cya
   const color = { cyan: "text-accent-cyan", purple: "text-accent-purple", green: "text-accent-green" }[tone];
   return (
     <div>
-      <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
+      <div className="font-sans text-[9px] uppercase tracking-[0.18em] text-slate-500">{label}</div>
       <div className={`mt-1 text-3xl font-semibold ${color}`}>{value}</div>
     </div>
   );

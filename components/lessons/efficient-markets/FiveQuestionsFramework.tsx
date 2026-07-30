@@ -121,7 +121,7 @@ export default function FiveQuestionsFramework() {
 
       {/* Question selector */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
           Five organizing questions
         </div>
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-5">
@@ -135,7 +135,7 @@ export default function FiveQuestionsFramework() {
                   "rounded-xl border px-3 py-2.5 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                   isActive ? "border-accent-cyan/50 bg-accent-cyan/[0.08]" : "border-white/10 bg-white/[0.02] hover:border-white/25",
                 )}>
-                <div className={cn("font-mono text-[10px]", isActive ? "text-accent-cyan" : "text-slate-400")}>
+                <div className={cn("font-sans text-[10px]", isActive ? "text-accent-cyan" : "text-slate-400")}>
                   {q.num}
                 </div>
                 <div className={cn("mt-0.5 text-[12px] leading-tight font-medium", isActive ? "text-white" : "text-slate-200")}>
@@ -155,7 +155,7 @@ export default function FiveQuestionsFramework() {
           exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
           transition={{ duration: 0.25 }}
           className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
             Question {current.num} · {current.title}
           </div>
           <p className="ops-body mt-3 text-[17px] leading-[1.5] text-white">{current.question}</p>
@@ -163,7 +163,7 @@ export default function FiveQuestionsFramework() {
 
           {current.examples && (
             <div className="mt-4">
-              <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+              <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
                 Defensible answers / examples
               </div>
               <ul className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
@@ -178,7 +178,7 @@ export default function FiveQuestionsFramework() {
 
           {current.balancedExample && (
             <div className="mt-4 rounded-lg border border-accent-green/25 bg-accent-green/[0.05] px-3 py-2.5">
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-green">
+              <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">
                 Balanced example
               </div>
               <p className="ops-body mt-1 text-[14px] italic leading-[1.55] text-slate-100">
@@ -189,7 +189,7 @@ export default function FiveQuestionsFramework() {
 
           {current.warning && (
             <div className="mt-3 rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Caveat · </span>
+              <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Caveat · </span>
               <span className="text-[13px] leading-[1.55] text-slate-100">{current.warning}</span>
             </div>
           )}

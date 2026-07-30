@@ -250,7 +250,7 @@ export default function MasteryCheck({
         {submitted && (
           <span
             className={cn(
-              "font-mono text-[13px] tabular-nums",
+              "font-sans text-[13px] tabular-nums",
               passed ? "text-accent-green" : "text-accent-amber",
             )}
           >

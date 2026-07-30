@@ -148,7 +148,7 @@ export default function DrugMilestoneValuationTimeline() {
     <div className="space-y-6">
       {/* Timeline rail */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Pharmaceutical development timeline
         </div>
         <p className="ops-body mt-2 text-[13px] leading-[1.5] text-slate-400">
@@ -171,7 +171,7 @@ export default function DrugMilestoneValuationTimeline() {
             >
               <span
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-full border font-mono text-[10px]",
+                  "flex h-6 w-6 items-center justify-center rounded-full border font-sans text-[10px]",
                   active === ms.id
                     ? "border-accent-amber text-accent-amber"
                     : "border-white/20 text-slate-400",
@@ -212,7 +212,7 @@ export default function DrugMilestoneValuationTimeline() {
             </span>
             <span
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em]",
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
                 toneBorder[risk.tone],
                 toneText[risk.tone],
               )}
@@ -229,7 +229,7 @@ export default function DrugMilestoneValuationTimeline() {
           </div>
 
           <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
               Major uncertainty
             </div>
             <p className="ops-body mt-1.5 text-[15px] leading-[1.6] text-slate-100">
@@ -238,7 +238,7 @@ export default function DrugMilestoneValuationTimeline() {
           </div>
 
           <div className={cn("mt-3 rounded-xl border p-4", toneBorderSoft[risk.tone])}>
-            <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]", toneText[risk.tone])}>
+            <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", toneText[risk.tone])}>
               Risk classification
             </div>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-100">
@@ -247,7 +247,7 @@ export default function DrugMilestoneValuationTimeline() {
           </div>
 
           <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 p-4">
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
               What an investor would seek
             </div>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-200">
@@ -274,7 +274,7 @@ export default function DrugMilestoneValuationTimeline() {
 function Detail({ label, value, fullWidth }: { label: string; value: string; fullWidth?: boolean }) {
   return (
     <div className={cn("rounded-lg border border-white/10 bg-ink-950/40 px-3 py-2.5", fullWidth && "sm:col-span-2")}>
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
       <div className="mt-1 text-[14px] text-slate-100">{value}</div>
     </div>
   );

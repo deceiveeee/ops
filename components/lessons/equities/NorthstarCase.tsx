@@ -123,7 +123,7 @@ function AnswerInput({
         <div className="mt-2 flex items-center gap-3">
           <span
             className={cn(
-              "rounded-lg border px-3 py-2 font-mono text-[15px]",
+              "rounded-lg border px-3 py-2 font-sans text-[15px]",
               status === "accepted"
                 ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
                 : "border-accent-amber/40 bg-accent-amber/10 text-accent-amber",
@@ -143,7 +143,7 @@ function AnswerInput({
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <div className="relative">
             {inputType === "dollar" && (
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[15px] text-slate-400">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-sans text-[15px] text-slate-400">
                 $
               </span>
             )}
@@ -158,14 +158,14 @@ function AnswerInput({
               placeholder={ph}
               aria-label={typeof label === "string" ? label : "answer input"}
               className={cn(
-                "rounded-lg border bg-ink-950/60 py-2 pr-8 font-mono text-[15px] text-slate-100 placeholder:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40",
+                "rounded-lg border bg-ink-950/60 py-2 pr-8 font-sans text-[15px] text-slate-100 placeholder:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40",
                 inputType === "dollar" ? "pl-7" : "pl-3",
                 status === "wrong" ? "border-accent-red/50" : "border-white/15",
                 "w-36",
               )}
             />
             {suffix && (
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[15px] text-slate-400">
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-sans text-[15px] text-slate-400">
                 {suffix}
               </span>
             )}
@@ -185,7 +185,7 @@ function AnswerInput({
         <div className="mt-3 space-y-1.5">
           {hints.slice(0, hintLevel).map((h, i) => (
             <p key={i} className="ops-muted flex items-start gap-2 text-[13px]">
-              <span className="mt-0.5 font-mono text-accent-amber">💡</span>
+              <span className="mt-0.5 font-sans text-accent-amber">💡</span>
               {h}
             </p>
           ))}
@@ -259,7 +259,7 @@ function RoundTabs({
               isLocked && "cursor-not-allowed border-white/5 text-slate-600",
             )}
           >
-            <span className="font-mono">
+            <span className="font-sans">
               {isDone ? "✓" : isLocked ? "🔒" : r.n}
             </span>
             {r.label}
@@ -315,7 +315,7 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
       <div className="mt-5 overflow-x-auto">
         <table className="w-full min-w-[680px] border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-white/10 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-500">
+            <tr className="border-b border-white/10 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-500">
               <th className="px-3 py-2">Year</th>
               <th className="px-3 py-2">Begin BVPS</th>
               <th className="px-3 py-2">ROE</th>
@@ -338,14 +338,14 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
                     isLocked && "opacity-40",
                   )}
                 >
-                  <td className="px-3 py-3 font-mono text-accent-cyan">
+                  <td className="px-3 py-3 font-sans text-accent-cyan">
                     {r.year}
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-200">
+                  <td className="px-3 py-3 font-sans text-slate-200">
                     {fmtN(r.beginBVPS)}
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-300">15%</td>
-                  <td className="px-3 py-3 font-mono text-slate-200">
+                  <td className="px-3 py-3 font-sans text-slate-300">15%</td>
+                  <td className="px-3 py-3 font-sans text-slate-200">
                     {accepted ? (
                       fmtN(accepted.eps, 3)
                     ) : isLocked ? (
@@ -354,8 +354,8 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
                       <span className="text-slate-600">input</span>
                     )}
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-300">30%</td>
-                  <td className="px-3 py-3 font-mono text-slate-200">
+                  <td className="px-3 py-3 font-sans text-slate-300">30%</td>
+                  <td className="px-3 py-3 font-sans text-slate-200">
                     {accepted ? (
                       fmtN(accepted.dps, 3)
                     ) : isLocked ? (
@@ -364,7 +364,7 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
                       <span className="text-slate-600">input</span>
                     )}
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-200">
+                  <td className="px-3 py-3 font-sans text-slate-200">
                     {accepted ? (
                       fmtN(accepted.retained, 3)
                     ) : isLocked ? (
@@ -373,7 +373,7 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
                       <span className="text-slate-600">input</span>
                     )}
                   </td>
-                  <td className="px-3 py-3 font-mono text-accent-green">
+                  <td className="px-3 py-3 font-sans text-accent-green">
                     {accepted ? (
                       fmtN(accepted.endBVPS, 3)
                     ) : isLocked ? (
@@ -397,7 +397,7 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
           </h4>
           <p className="ops-muted mt-1 text-[13px]">
             Beginning BVPS:{" "}
-            <span className="font-mono text-slate-200">
+            <span className="font-sans text-slate-200">
               {fmtN(rows[currentYear - 1].beginBVPS)}
             </span>
           </p>
@@ -543,7 +543,7 @@ function YearInputSet({
               {f.label}
             </label>
             <div className="relative mt-1">
-              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 font-mono text-[14px] text-slate-400">
+              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 font-sans text-[14px] text-slate-400">
                 $
               </span>
               <input
@@ -558,7 +558,7 @@ function YearInputSet({
                   if (e.key === "Enter") submit();
                 }}
                 placeholder={f.ph}
-                className="w-full rounded-lg border border-white/15 bg-ink-950/60 py-2 pl-7 pr-2 font-mono text-[14px] text-slate-100 placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
+                className="w-full rounded-lg border border-white/15 bg-ink-950/60 py-2 pl-7 pr-2 font-sans text-[14px] text-slate-100 placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
               />
             </div>
           </div>
@@ -599,7 +599,7 @@ function YearInputSet({
           <div className="ops-caption text-[10px] text-accent-amber">
             Worked solution
           </div>
-          <div className="mt-1.5 space-y-1 font-mono text-[14px] text-slate-200">
+          <div className="mt-1.5 space-y-1 font-sans text-[14px] text-slate-200">
             <div>
               EPS = 15% × {fmtN(target.eps / 0.15, 3)} = {fmtN(target.eps, 3)}
             </div>
@@ -654,7 +654,7 @@ function TerminalValueWorksheet({ onComplete }: { onComplete: () => void }) {
       </div>
       <p className="ops-body mt-4 text-[15px] text-slate-300">
         From Year 4 onward: ROE = 10%, payout = 60%. BVPS₃ (accepted from Round
-        1) = <span className="font-mono text-accent-cyan">{fmtN(bvps3)}</span>.
+        1) = <span className="font-sans text-accent-cyan">{fmtN(bvps3)}</span>.
         The formula reference is{" "}
         <InlineMath>{String.raw`TV_3 = \frac{DPS_4}{r - g_S}`}</InlineMath>.
         Calculate each component.
@@ -861,7 +861,7 @@ function DCFWorksheet({ onComplete }: { onComplete: () => void }) {
                 : "Use the accepted DPS and TV values from earlier rounds.",
             ]}
             solution={
-              <span className="font-mono">
+              <span className="font-sans">
                 {f.isPct
                   ? `${f.target.toFixed(1)}%`
                   : `$${f.target.toFixed(4)}`}
@@ -1171,7 +1171,7 @@ function CostOfEquityStressWorksheet({
                   `TV₃ = ${fmtN(base.dps4, 4)} / ${(res.r - 0.04).toFixed(2)}.`,
                 ]}
                 solution={
-                  <span className="font-mono">
+                  <span className="font-sans">
                     TV₃ = {fmtN(res.terminalValue)}
                   </span>
                 }
@@ -1186,7 +1186,7 @@ function CostOfEquityStressWorksheet({
                   "Discount each accepted DPS and the TV at this rate.",
                 ]}
                 solution={
-                  <span className="font-mono">P₀ = {fmtN(res.totalValue)}</span>
+                  <span className="font-sans">P₀ = {fmtN(res.totalValue)}</span>
                 }
                 onAccepted={(v) => {
                   const updated = { ...answers, [`s${i}`]: v };
@@ -1206,7 +1206,7 @@ function CostOfEquityStressWorksheet({
         <div className="mt-5 overflow-x-auto">
           <table className="w-full min-w-[360px] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-500">
+              <tr className="border-b border-white/10 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-500">
                 <th className="px-3 py-2">r</th>
                 <th className="px-3 py-2">P₀</th>
                 <th className="px-3 py-2">Δ vs r=10%</th>
@@ -1216,20 +1216,20 @@ function CostOfEquityStressWorksheet({
             <tbody>
               {results.map((res) => (
                 <tr key={res.r} className="border-b border-white/5">
-                  <td className="px-3 py-3 font-mono text-accent-cyan">
+                  <td className="px-3 py-3 font-sans text-accent-cyan">
                     {(res.r * 100).toFixed(0)}%
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-100">
+                  <td className="px-3 py-3 font-sans text-slate-100">
                     {fmt(res.totalValue)}
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-400">
+                  <td className="px-3 py-3 font-sans text-slate-400">
                     {res.r < 0.1
                       ? `+${fmt(res.totalValue - base.totalValue)}`
                       : res.r > 0.1
                         ? `−${fmt(base.totalValue - res.totalValue)}`
                         : "—"}
                   </td>
-                  <td className="px-3 py-3 font-mono text-slate-400">
+                  <td className="px-3 py-3 font-sans text-slate-400">
                     {(res.terminalShare * 100).toFixed(1)}%
                   </td>
                 </tr>

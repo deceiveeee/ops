@@ -47,8 +47,8 @@ export default function CapitalAllocationScorecard() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Capital-allocation scorecard</span>
-          <span className="font-mono text-[12px] text-slate-400">{answered}/{CATEGORIES.length} rated</span>
+          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Capital-allocation scorecard</span>
+          <span className="font-sans text-[12px] text-slate-400">{answered}/{CATEGORIES.length} rated</span>
         </div>
       </div>
 
@@ -58,7 +58,7 @@ export default function CapitalAllocationScorecard() {
             <div className="flex items-baseline justify-between">
               <span className="text-[15px] font-medium text-white">{cat.label}</span>
               {ratings[cat.key] && (
-                <span className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", toneText[ratings[cat.key]])}>
+                <span className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", toneText[ratings[cat.key]])}>
                   {RATINGS.find((r) => r.key === ratings[cat.key])?.label}
                 </span>
               )}

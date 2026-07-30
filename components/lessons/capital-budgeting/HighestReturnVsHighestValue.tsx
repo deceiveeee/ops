@@ -59,7 +59,7 @@ export default function HighestReturnVsHighestValue() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Two mutually exclusive investments · required return 10%
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -71,7 +71,7 @@ export default function HighestReturnVsHighestValue() {
                 p.tone === "cyan" ? "border-accent-cyan/25 bg-accent-cyan/[0.04]" : "border-accent-amber/25 bg-accent-amber/[0.04]",
               )}>
                 <div className={cn(
-                  "font-mono text-[11px] uppercase tracking-[0.16em]",
+                  "font-sans text-[11px] uppercase tracking-[0.16em]",
                   p.tone === "cyan" ? "text-accent-cyan" : "text-accent-amber",
                 )}>
                   {p.name}
@@ -79,19 +79,19 @@ export default function HighestReturnVsHighestValue() {
                 <div className="mt-3 space-y-1">
                   <div className="flex justify-between text-[14px]">
                     <span className="text-slate-400">Cost</span>
-                    <span className="font-mono tabular-nums text-white">${fmt(p.cost, 0)}M</span>
+                    <span className="font-sans tabular-nums text-white">${fmt(p.cost, 0)}M</span>
                   </div>
                   <div className="flex justify-between text-[14px]">
                     <span className="text-slate-400">Expected payoff (1 yr)</span>
-                    <span className="font-mono tabular-nums text-white">${fmt(p.payoff)}M</span>
+                    <span className="font-sans tabular-nums text-white">${fmt(p.payoff)}M</span>
                   </div>
                   <div className="flex justify-between border-t border-white/10 pt-1 text-[14px]">
                     <span className="text-slate-400">Expected return</span>
-                    <span className="font-mono tabular-nums text-white">{fmt(ret(p))}%</span>
+                    <span className="font-sans tabular-nums text-white">{fmt(ret(p))}%</span>
                   </div>
                   <div className="flex justify-between text-[14px]">
                     <span className="text-slate-400">NPV</span>
-                    <span className={cn("font-mono tabular-nums", npv(p) > 0 ? "text-accent-green" : "text-accent-red")}>
+                    <span className={cn("font-sans tabular-nums", npv(p) > 0 ? "text-accent-green" : "text-accent-red")}>
                       ${fmt(npv(p))}M
                     </span>
                   </div>

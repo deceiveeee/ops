@@ -63,7 +63,7 @@ export default function MathDerivationStepper({
                   aria-current={active ? "step" : undefined}
                   aria-label={`Step ${idx + 1}: ${s.heading}`}
                   className={cn(
-                    "flex h-9 items-center gap-2 rounded-full border px-3.5 font-mono text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                    "flex h-9 items-center gap-2 rounded-full border px-3.5 font-sans text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                     active
                       ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
                       : done
@@ -81,7 +81,7 @@ export default function MathDerivationStepper({
           })}
         </ol>
         {title !== undefined && (
-          <span className="ml-auto font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">
+          <span className="ml-auto font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
             {title}
           </span>
         )}
@@ -96,7 +96,7 @@ export default function MathDerivationStepper({
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="font-mono text-[13px] uppercase tracking-[0.18em] text-accent-cyan">
+            <div className="font-sans text-[13px] uppercase tracking-[0.18em] text-accent-cyan">
               Step {i + 1} · {step.heading}
             </div>
             <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-ink-950/50 px-5 py-8 text-slate-50">
@@ -123,18 +123,18 @@ export default function MathDerivationStepper({
           type="button"
           onClick={() => goto(i - 1)}
           disabled={first}
-          className="rounded-full border border-white/15 px-5 py-2 font-mono text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white disabled:opacity-40 disabled:hover:border-white/15 disabled:hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+          className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white disabled:opacity-40 disabled:hover:border-white/15 disabled:hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
         >
           ← Back
         </button>
-        <span className="font-mono text-[13px] tabular-nums text-slate-500" aria-hidden>
+        <span className="font-sans text-[13px] tabular-nums text-slate-500" aria-hidden>
           {i + 1} / {steps.length}
         </span>
         {!last ? (
           <button
             type="button"
             onClick={() => goto(i + 1)}
-            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/15 px-5 py-2 font-mono text-[13px] text-accent-cyan transition-colors hover:bg-accent-cyan/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/15 px-5 py-2 font-sans text-[13px] text-accent-cyan transition-colors hover:bg-accent-cyan/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
           >
             Next →
           </button>
@@ -142,7 +142,7 @@ export default function MathDerivationStepper({
           <button
             type="button"
             onClick={() => setI(0)}
-            className="rounded-full border border-white/15 px-5 py-2 font-mono text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+            className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
           >
             ↺ Restart
           </button>

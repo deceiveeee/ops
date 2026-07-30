@@ -207,7 +207,7 @@ function RangeSlider({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{display}</span>
+        <span className="font-sans text-[13px] text-slate-100">{display}</span>
       </div>
       <input
         type="range"
@@ -240,7 +240,7 @@ function ReadCard({
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[20px]", accent)}>{value}</div>
+      <div className={cn("mt-1 font-sans text-[20px]", accent)}>{value}</div>
     </div>
   );
 }

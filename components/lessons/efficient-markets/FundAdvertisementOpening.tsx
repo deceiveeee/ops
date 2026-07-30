@@ -38,7 +38,7 @@ export default function FundAdvertisementOpening() {
     <div className="space-y-6">
       {/* Advertisement */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Fund advertisement
         </div>
         <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 p-5">
@@ -83,8 +83,8 @@ export default function FundAdvertisementOpening() {
               className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.04] p-4"
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 font-mono text-[10px] text-accent-amber">{i + 1}</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">{r.label}</span>
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 font-sans text-[10px] text-accent-amber">{i + 1}</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">{r.label}</span>
               </div>
               <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-100">{r.text}</p>
               <p className="ops-body mt-1 text-[13px] leading-[1.55] text-slate-300">{r.impact}</p>
@@ -93,7 +93,7 @@ export default function FundAdvertisementOpening() {
 
           {stage < REVEALS.length && (
             <button type="button" onClick={() => setStage((s) => Math.min(REVEALS.length, s + 1) as Stage)}
-              className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+              className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
               Reveal more →
             </button>
           )}

@@ -71,7 +71,7 @@ export default function ArbitragePreview() {
             </Feedback>
           ) : (
             <Feedback status="info">
-              <span className="font-mono text-accent-amber">
+              <span className="font-sans text-accent-amber">
                 Price gap: ${Math.abs(diff).toFixed(2)}
               </span>
               <br />
@@ -131,7 +131,7 @@ function PriceInput({
         {label}
       </label>
       <div className="mt-2 flex items-center gap-2">
-        <span className={cn("font-mono text-[18px]", text)}>$</span>
+        <span className={cn("font-sans text-[18px]", text)}>$</span>
         <input
           id={`${label}-input`}
           type="number"
@@ -141,7 +141,7 @@ function PriceInput({
           onChange={(e) => onChange(Number(e.target.value))}
           aria-label={label}
           className={cn(
-            "w-full rounded-lg border border-white/10 bg-ink-950/60 px-3 py-2 font-mono text-[18px] text-slate-100",
+            "w-full rounded-lg border border-white/10 bg-ink-950/60 px-3 py-2 font-sans text-[18px] text-slate-100",
             "focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
           )}
         />

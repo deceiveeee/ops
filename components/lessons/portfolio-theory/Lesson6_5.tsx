@@ -268,7 +268,7 @@ function LineBuilder() {
                 solved[i] ? "border-accent-green/40 bg-accent-green/[0.05]" : "border-white/12 bg-white/[0.03]",
               )}
             >
-              <div className="font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+              <div className="font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
                 y = <span className="text-accent-cyan">{pt.y.toFixed(2)}</span>
               </div>
               <CalculationWorksheet
@@ -390,8 +390,8 @@ function MaxSharpeChallenge() {
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {SHARPE_PORTFOLIOS.map((p) => (
           <div key={p.id} className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-            <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">Portfolio {p.id}</div>
-            <div className="mt-2 font-mono text-[14px] text-slate-200">E[R] = {p.er}%, σ = {p.sd}%</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Portfolio {p.id}</div>
+            <div className="mt-2 font-sans text-[14px] text-slate-200">E[R] = {p.er}%, σ = {p.sd}%</div>
             <div className="mt-3">
               <CalculationWorksheet
                 submitLabel={`Check ${p.id}`}
@@ -569,7 +569,7 @@ function AllocationWorksheet() {
       <div className="mt-6 space-y-5">
         {investors.map((inv) => (
           <div key={inv.id} className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-            <div className="font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               Investor {inv.id} — {inv.label} · y = <span className="text-accent-cyan">{inv.y.toFixed(2)}</span>
             </div>
             <div className="mt-4">
@@ -692,12 +692,12 @@ export default function Lesson6_5() {
 
       <Reveal className="mt-8">
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 sm:p-7">
-          <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">Learning objectives</div>
+          <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">Learning objectives</div>
           <p className="mt-3 text-[16px] text-slate-300">By the end of this lesson, you should be able to:</p>
           <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[13px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[13px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="text-[16px] leading-[1.6] text-slate-200">{o}</span>
@@ -717,7 +717,7 @@ export default function Lesson6_5() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Important caveat</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Important caveat</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 Risk-free in this model does not mean free of every economic risk. Treasury
                 bills still carry:
@@ -758,13 +758,13 @@ export default function Lesson6_5() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">Complete portfolio return</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Complete portfolio return</div>
               <div className="mt-3">
                 <BlockMath>{String.raw`E[R_C] = r_f + y(E[R_P] - r_f)`}</BlockMath>
               </div>
             </div>
             <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">Complete portfolio volatility</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Complete portfolio volatility</div>
               <div className="mt-3">
                 <BlockMath>{String.raw`\sigma_C = y\sigma_P`}</BlockMath>
               </div>
@@ -866,11 +866,11 @@ export default function Lesson6_5() {
             <table className="w-full min-w-[400px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Tangency weight</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Tangency weight</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">GM</td><td className="py-3 text-accent-cyan">{(tangencyWeights[0] * 100).toFixed(2)}%</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">IBM</td><td className="py-3 text-accent-cyan">{(tangencyWeights[1] * 100).toFixed(2)}%</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-8">Motorola</td><td className="py-3 text-accent-cyan">{(tangencyWeights[2] * 100).toFixed(2)}%</td></tr>
@@ -898,14 +898,14 @@ export default function Lesson6_5() {
             <table className="w-full min-w-[520px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Position</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">y</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">rf weight</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">E[R_C]</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">σ_C</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Position</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">y</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">rf weight</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">E[R_C]</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">σ_C</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5"><td className="py-3 pr-6">Lending</td><td className="py-3 pr-6">0.40</td><td className="py-3 pr-6 text-accent-green">+60%</td><td className="py-3 pr-6">4.4%</td><td className="py-3">4.8%</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-6">Full investment</td><td className="py-3 pr-6">1.00</td><td className="py-3 pr-6">0%</td><td className="py-3 pr-6">8.0%</td><td className="py-3">12.0%</td></tr>
                 <tr><td className="py-3 pr-6">Leverage</td><td className="py-3 pr-6">1.50</td><td className="py-3 pr-6 text-accent-red">-50%</td><td className="py-3 pr-6">11.0%</td><td className="py-3">18.0%</td></tr>
@@ -936,14 +936,14 @@ export default function Lesson6_5() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Decision 1 · Which risky portfolio?</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Decision 1 · Which risky portfolio?</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 The tangency portfolio — maximum Sharpe ratio. This decision is the{" "}
                 <em className="text-slate-100">same</em> for every investor.
               </p>
             </div>
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Decision 2 · How much total risk?</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Decision 2 · How much total risk?</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 Choose y — the split between tangency and rf. This decision is{" "}
                 <em className="text-slate-100">different</em> for each investor.
@@ -954,13 +954,13 @@ export default function Lesson6_5() {
             <table className="w-full min-w-[480px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Investor type</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Tangency</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Risk-free</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Position</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Investor type</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Tangency</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Risk-free</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Position</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5"><td className="py-3 pr-6">Conservative</td><td className="py-3 pr-6">40%</td><td className="py-3 pr-6 text-accent-green">+60%</td><td className="py-3">Lending</td></tr>
                 <tr className="border-b border-white/5"><td className="py-3 pr-6">Moderate</td><td className="py-3 pr-6">100%</td><td className="py-3 pr-6">0%</td><td className="py-3">Full</td></tr>
                 <tr><td className="py-3 pr-6">Aggressive</td><td className="py-3 pr-6">130%</td><td className="py-3 pr-6 text-accent-red">-30%</td><td className="py-3">Leverage</td></tr>
@@ -977,7 +977,7 @@ export default function Lesson6_5() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Why the line replaces the curve</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Why the line replaces the curve</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 Under equal borrowing/lending rates, the tangency line dominates the curved
                 frontier at every risk level (except at the tangency point itself). The
@@ -986,7 +986,7 @@ export default function Lesson6_5() {
               </p>
             </div>
             <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">Borrowing assumption</div>
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">Borrowing assumption</div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
                 This result assumes investors can borrow and lend at the{" "}
                 <em className="text-slate-100">same</em> rate r_f. In reality borrowing
@@ -999,7 +999,7 @@ export default function Lesson6_5() {
 
         <Reveal>
           <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">Assumptions and limitations</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Assumptions and limitations</div>
             <ol className="mt-4 space-y-3">
               {[
                 ["Equal borrowing/lending rate.", "In reality borrowing exceeds lending, producing a kinked efficient set above the tangency point."],
@@ -1009,7 +1009,7 @@ export default function Lesson6_5() {
                 ["Tangency ≠ market portfolio.", "Identifying it with the market portfolio requires equilibrium assumptions beyond this lesson."],
               ].map(([head, body], i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[13px] text-accent-amber">{i + 1}</span>
+                  <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[13px] text-accent-amber">{i + 1}</span>
                   <span className="text-[16px] leading-[1.6] text-slate-200">
                     <strong className="text-white">{head}</strong> {body}
                   </span>

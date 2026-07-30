@@ -66,7 +66,7 @@ export default function FilingCashFlowChapter() {
               <span className="text-[14px] font-medium uppercase tracking-[0.06em] text-stone-500">
                 Form 10-K · Annual Report
               </span>
-              <span className="font-mono text-[13px] tabular-nums text-stone-400">
+              <span className="font-sans text-[13px] tabular-nums text-stone-400">
                 L{String(active + 1).padStart(2, "0")}
               </span>
             </div>
@@ -166,7 +166,7 @@ export default function FilingCashFlowChapter() {
                 className="relative"
               >
                 <div className="flex items-baseline gap-3">
-                  <span className="font-mono text-[14px] tabular-nums text-stone-400">
+                  <span className="font-sans text-[14px] tabular-nums text-stone-400">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-[15px] font-medium uppercase tracking-[0.04em] text-stone-500">

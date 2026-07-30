@@ -122,7 +122,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-amber/25 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-amber/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-amber">Central question</div>
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-amber">Central question</div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
           Once a company generates cash, how should management deploy it — and how can investors
           determine whether those decisions create shareholder value?
@@ -321,7 +321,7 @@ export default function Lesson8_6() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Toward Lesson 8.7</div>
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Toward Lesson 8.7</div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">
               The final lesson should combine discount rates, project analysis, NPV, alternative
               metrics, and management&apos;s capital-allocation record into one complete investor case.

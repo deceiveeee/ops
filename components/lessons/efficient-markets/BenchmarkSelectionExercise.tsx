@@ -81,7 +81,7 @@ export default function BenchmarkSelectionExercise() {
           return (
             <div key={p.id} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <div className="flex items-baseline gap-2">
-                <span className="font-mono text-[11px] text-slate-500">{pi + 1}</span>
+                <span className="font-sans text-[11px] text-slate-500">{pi + 1}</span>
                 <p className="text-[15px] leading-[1.55] text-slate-100">{p.description}</p>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">

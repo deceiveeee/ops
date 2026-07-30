@@ -190,7 +190,7 @@ export default function CashFlowMatchScanner() {
                           key="ok"
                           initial={reduce ? false : { scale: 0.5, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
-                          className="mt-1 inline-block font-mono text-[16px] text-accent-green"
+                          className="mt-1 inline-block font-sans text-[16px] text-accent-green"
                         >
                           ✓ Match
                         </motion.span>
@@ -198,7 +198,7 @@ export default function CashFlowMatchScanner() {
                         <motion.span
                           key="wait"
                           initial={false}
-                          className="mt-1 inline-block font-mono text-[14px] text-slate-600"
+                          className="mt-1 inline-block font-sans text-[14px] text-slate-600"
                         >
                           —
                         </motion.span>
@@ -256,7 +256,7 @@ function CFRow({
               }
               transition={{ duration: 0.4 }}
               className={cn(
-                "rounded-lg border px-3 py-3 text-center font-mono text-[16px] transition-colors",
+                "rounded-lg border px-3 py-3 text-center font-sans text-[16px] transition-colors",
                 done ? accent : "border-white/10 bg-white/[0.02] text-slate-300",
               )}
             >

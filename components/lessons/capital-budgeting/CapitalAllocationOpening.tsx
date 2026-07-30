@@ -56,7 +56,7 @@ export default function CapitalAllocationOpening() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl border border-accent-amber/30 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-5 sm:p-6"
           >
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Before choosing, the investor must ask
             </div>
             <ul className="mt-3 space-y-2">

@@ -165,7 +165,7 @@ export default function BondMarketExplorer() {
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {SUPPLEMENTAL.map((s) => (
             <div key={s.term} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-              <div className="font-mono text-[12px] text-accent-cyan">{s.term}</div>
+              <div className="font-sans text-[12px] text-accent-cyan">{s.term}</div>
               <p className="ops-body mt-1.5 text-[14px] leading-6 text-slate-300">{s.def}</p>
             </div>
           ))}
@@ -191,10 +191,10 @@ function CategoryCard({ cat }: { cat: Category }) {
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="ops-caption font-mono text-[11px] text-accent-purple">
+        <span className="ops-caption font-sans text-[11px] text-accent-purple">
           {cat.id.toUpperCase()}
         </span>
-        <div className="flex gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
+        <div className="flex gap-3 font-sans text-[10px] uppercase tracking-[0.14em]">
           <Micro label="liq" value={cat.liquidity} />
           <Micro label="cx" value={cat.complexity} />
           <Micro label="def" value={cat.defaultSensitivity} />
@@ -299,7 +299,7 @@ function BuildTheMarket() {
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="font-mono text-[12px] text-slate-500"
+              className="font-sans text-[12px] text-slate-500"
             >
               All categories placed.
             </motion.span>
@@ -376,7 +376,7 @@ function Bucket({
       <div className="ops-caption text-[11px] text-slate-300">{bucket}</div>
       <div className="mt-3 flex min-h-[2.5rem] flex-wrap gap-2">
         {items.length === 0 && (
-          <span className="font-mono text-[11px] text-slate-600">empty</span>
+          <span className="font-sans text-[11px] text-slate-600">empty</span>
         )}
         {items.map((c) => {
           const correct = c.bucket === bucket;

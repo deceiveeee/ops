@@ -93,12 +93,16 @@ html {
         @apply font-sans text-slate-400 antialiased;
         line-height: 1.7;
     }
-    /* Metadata labels — mono, intentionally muted */
+    /* Metadata labels — quiet Inter sentence case (never monospace, never shouty caps) */
     .ops-caption {
-        @apply font-mono uppercase tracking-[0.18em] text-slate-500;
+        @apply font-sans font-medium tracking-[0.01em] text-slate-400 antialiased;
+        line-height: 1.5;
+        text-transform: none;
     }
     .ops-eyebrow {
-        @apply font-mono uppercase tracking-[0.22em] text-slate-400;
+        @apply font-sans font-semibold tracking-[0.02em] text-slate-300 antialiased;
+        line-height: 1.5;
+        text-transform: none;
     }
 
     /* ─────────────────────────────────────────────────────────────

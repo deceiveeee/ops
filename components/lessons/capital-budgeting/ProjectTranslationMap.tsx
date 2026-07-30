@@ -135,7 +135,7 @@ export default function ProjectTranslationMap() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Choose an investment type
         </div>
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Investment type">
@@ -181,7 +181,7 @@ export default function ProjectTranslationMap() {
                   <span className={cn("h-1.5 w-1.5 rounded-full", toneDot[label.tone])} aria-hidden />
                   <span
                     className={cn(
-                      "font-mono text-[11px] uppercase tracking-[0.16em]",
+                      "font-sans text-[11px] uppercase tracking-[0.16em]",
                       toneText[label.tone],
                     )}
                   >

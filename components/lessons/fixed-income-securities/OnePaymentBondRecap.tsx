@@ -47,7 +47,7 @@ export default function OnePaymentBondRecap() {
                 <div className="ops-caption text-[11px] text-accent-cyan">
                   Today · t = 0
                 </div>
-                <div className="mt-1 font-mono text-[20px] text-white">
+                <div className="mt-1 font-sans text-[20px] text-white">
                   P<sub>0</sub>
                 </div>
                 <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -82,7 +82,7 @@ export default function OnePaymentBondRecap() {
                   x={160}
                   y={18}
                   textAnchor="middle"
-                  className="fill-slate-300 font-mono"
+                  className="fill-slate-300 font-sans"
                   fontSize="12"
                 >
                   discount back
@@ -91,7 +91,7 @@ export default function OnePaymentBondRecap() {
                   x={160}
                   y={50}
                   textAnchor="middle"
-                  className="fill-accent-amber font-mono"
+                  className="fill-accent-amber font-sans"
                   fontSize="12"
                 >
                   T years
@@ -105,7 +105,7 @@ export default function OnePaymentBondRecap() {
                 <div className="ops-caption text-[11px] text-accent-green">
                   Maturity · t = T
                 </div>
-                <div className="mt-1 font-mono text-[20px] text-white">
+                <div className="mt-1 font-sans text-[20px] text-white">
                   F
                 </div>
                 <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -117,10 +117,10 @@ export default function OnePaymentBondRecap() {
         </div>
 
         <p className="ops-body mt-5 text-[15px] leading-7 text-slate-200">
-          If you know <span className="text-accent-green font-mono">F</span>,{" "}
-          <span className="text-accent-cyan font-mono">P<sub>0</sub></span>, and{" "}
-          <span className="text-accent-amber font-mono">T</span>, you can solve
-          for <span className="font-mono text-slate-100">r</span>. That
+          If you know <span className="text-accent-green font-sans">F</span>,{" "}
+          <span className="text-accent-cyan font-sans">P<sub>0</sub></span>, and{" "}
+          <span className="text-accent-amber font-sans">T</span>, you can solve
+          for <span className="font-sans text-slate-100">r</span>. That
           single rate — the price-implied rate for the whole interval — is exactly
           what we will turn into the <span className="text-accent-cyan">spot rate</span>{" "}
           in this lesson.

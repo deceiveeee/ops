@@ -65,7 +65,7 @@ export function Matrix2x2({
         {isLit && (
           <span
             className={cn(
-              "absolute right-2 top-2 font-mono text-[11px] uppercase tracking-[0.16em]",
+              "absolute right-2 top-2 font-sans text-[11px] uppercase tracking-[0.16em]",
               toneText[highlightTone],
             )}
             aria-hidden
@@ -81,7 +81,7 @@ export function Matrix2x2({
   return (
     <figure className="w-full">
       {title && (
-        <figcaption className="mb-3 font-mono text-[12px] uppercase tracking-[0.18em] text-slate-400">
+        <figcaption className="mb-3 font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
           {title}
         </figcaption>
       )}
@@ -93,7 +93,7 @@ export function Matrix2x2({
             {colLabels.map((c) => (
               <div
                 key={c}
-                className="pb-2 text-center font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400"
+                className="pb-2 text-center font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400"
               >
                 {c}
               </div>
@@ -101,14 +101,14 @@ export function Matrix2x2({
           </div>
           {/* rows */}
           <div className="grid grid-cols-[auto_1fr_1fr] items-stretch gap-2">
-            <div className="flex items-center pr-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="flex items-center pr-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               {rowLabels[0]}
             </div>
             {renderCell("tl", topLeft, "diag")}
             {renderCell("tr", topRight, "off")}
           </div>
           <div className="mt-2 grid grid-cols-[auto_1fr_1fr] items-stretch gap-2">
-            <div className="flex items-center pr-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="flex items-center pr-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
               {rowLabels[1]}
             </div>
             {renderCell("bl", bottomLeft, "off")}
@@ -117,7 +117,7 @@ export function Matrix2x2({
         </div>
       </div>
       {centerLabel && (
-        <div className="mt-3 text-center font-mono text-[13px] text-slate-500">{centerLabel}</div>
+        <div className="mt-3 text-center font-sans text-[13px] text-slate-500">{centerLabel}</div>
       )}
       {caption && (
         <figcaption className="mt-3 text-[15px] leading-[1.6] text-slate-400">{caption}</figcaption>
@@ -159,7 +159,7 @@ export default function PortfolioMatrixVisual({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
       <div>
-        <div className="mb-3 font-mono text-[12px] uppercase tracking-[0.18em] text-accent-purple">
+        <div className="mb-3 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-purple">
           Raw matrix
         </div>
         <p className="mb-4 max-w-sm text-[15px] leading-[1.6] text-slate-400">
@@ -177,15 +177,15 @@ export default function PortfolioMatrixVisual({
       </div>
 
       <div className="flex items-center justify-center lg:flex-col lg:gap-2">
-        <div className="flex items-center gap-3 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-2 font-mono text-[13px] text-accent-cyan">
+        <div className="flex items-center gap-3 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-2 font-sans text-[13px] text-accent-cyan">
           × w<sub>i</sub> w<sub>j</sub>
         </div>
         <div className="hidden h-px w-px lg:block" />
-        <div className="font-mono text-[12px] text-slate-500 lg:rotate-0">apply weights</div>
+        <div className="font-sans text-[12px] text-slate-500 lg:rotate-0">apply weights</div>
       </div>
 
       <div>
-        <div className="mb-3 font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="mb-3 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
           Weighted matrix
         </div>
         <p className="mb-4 max-w-sm text-[15px] leading-[1.6] text-slate-400">

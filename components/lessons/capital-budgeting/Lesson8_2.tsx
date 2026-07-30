@@ -132,7 +132,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-amber/25 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-amber/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-amber">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -199,7 +199,7 @@ function SecondaryExamples() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {examples.map((ex) => (
           <div key={ex.title} className={`rounded-2xl border bg-white/[0.03] p-5 ${toneBorder[ex.tone]}`}>
-            <div className={`font-mono text-[11px] uppercase tracking-[0.16em] ${toneText[ex.tone]}`}>
+            <div className={`font-sans text-[11px] uppercase tracking-[0.16em] ${toneText[ex.tone]}`}>
               {ex.title}
             </div>
             <ul className="mt-3 space-y-2">
@@ -332,7 +332,7 @@ export default function Lesson8_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
                 Known (management-provided)
               </div>
               <ul className="mt-3 space-y-2">
@@ -351,7 +351,7 @@ export default function Lesson8_2() {
               </ul>
             </div>
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 Still missing (investor must estimate)
               </div>
               <ul className="mt-3 space-y-2">
@@ -463,8 +463,8 @@ export default function Lesson8_2() {
             <table className="w-full min-w-[520px] border-collapse text-[15px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">Before / during</th>
-                  <th className="py-3 font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">After</th>
+                  <th className="py-3 pr-8 font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Before / during</th>
+                  <th className="py-3 font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">After</th>
                 </tr>
               </thead>
               <tbody className="text-slate-200">
@@ -627,7 +627,7 @@ export default function Lesson8_2() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Toward Lesson 8.3
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

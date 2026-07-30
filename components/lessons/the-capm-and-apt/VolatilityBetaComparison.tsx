@@ -216,15 +216,15 @@ export default function VolatilityBetaComparison() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan">Asset A</span>
-            <span className="font-mono text-[14px] text-slate-300">σ = 30% · β = 1.4</span>
+            <span className="font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan">Asset A</span>
+            <span className="font-sans text-[14px] text-slate-300">σ = 30% · β = 1.4</span>
           </div>
           <Scatter spec={ASSETS[0]} points={POINTS_A} />
         </div>
         <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="font-mono text-[13px] uppercase tracking-[0.14em] text-accent-purple">Asset B</span>
-            <span className="font-mono text-[14px] text-slate-300">σ = 30% · β = 0.4</span>
+            <span className="font-sans text-[13px] uppercase tracking-[0.14em] text-accent-purple">Asset B</span>
+            <span className="font-sans text-[14px] text-slate-300">σ = 30% · β = 0.4</span>
           </div>
           <Scatter spec={ASSETS[1]} points={POINTS_B} />
         </div>

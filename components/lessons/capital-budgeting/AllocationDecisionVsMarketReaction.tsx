@@ -22,14 +22,14 @@ export default function AllocationDecisionVsMarketReaction() {
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Buyback decision</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Buyback decision</div>
             <div className="mt-2 space-y-2">
               <Slider label="Market expected" value={expectedBuyback} min={0} max={1000} step={50} prefix="$" suffix="M" onChange={setExpectedBuyback} />
               <Slider label="Company announced" value={actualBuyback} min={0} max={1000} step={50} prefix="$" suffix="M" onChange={setActualBuyback} />
             </div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Growth investment</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Growth investment</div>
             <div className="mt-2 space-y-2">
               <Slider label="Market expected" value={expectedGrowth} min={0} max={800} step={50} prefix="$" suffix="M" onChange={setExpectedGrowth} />
               <Slider label="Company announced" value={actualGrowth} min={0} max={800} step={50} prefix="$" suffix="M" onChange={setActualGrowth} />
@@ -42,9 +42,9 @@ export default function AllocationDecisionVsMarketReaction() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className={cn("rounded-2xl border p-5",
           buybackSurprise >= 0 ? "border-accent-green/25 bg-accent-green/[0.04]" : "border-accent-red/25 bg-accent-red/[0.04]")}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
             buybackSurprise >= 0 ? "text-accent-green" : "text-accent-red")}>Buyback surprise</div>
-          <div className="mt-2 font-mono text-[22px] tabular-nums text-white">
+          <div className="mt-2 font-sans text-[22px] tabular-nums text-white">
             {buybackSurprise >= 0 ? "+" : "−"}${fmt(Math.abs(buybackSurprise))}M
           </div>
           <p className="ops-body mt-1.5 text-[13px] leading-[1.5] text-slate-300">
@@ -53,9 +53,9 @@ export default function AllocationDecisionVsMarketReaction() {
         </div>
         <div className={cn("rounded-2xl border p-5",
           growthSurprise >= 0 ? "border-accent-green/25 bg-accent-green/[0.04]" : "border-accent-red/25 bg-accent-red/[0.04]")}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]",
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
             growthSurprise >= 0 ? "text-accent-green" : "text-accent-red")}>Growth surprise</div>
-          <div className="mt-2 font-mono text-[22px] tabular-nums text-white">
+          <div className="mt-2 font-sans text-[22px] tabular-nums text-white">
             {growthSurprise >= 0 ? "+" : "−"}${fmt(Math.abs(growthSurprise))}M
           </div>
           <p className="ops-body mt-1.5 text-[13px] leading-[1.5] text-slate-300">
@@ -89,7 +89,7 @@ function Slider({ label, value, min, max, step, suffix, prefix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span><span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>
       <input type="range" min={min} max={max} step={step} value={value}

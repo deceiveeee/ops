@@ -89,7 +89,7 @@ export default function Lesson4() {
         ) : (
           <InteractiveFrame>
             <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">
+              <span className="inline-flex items-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">
                 Locked
               </span>
               <span className="ops-caption text-[11px] text-slate-400">

@@ -95,10 +95,10 @@ export default function NPVScenarioExplorer() {
               )}
             >
               <div className="flex items-center gap-2">
-                <span className={cn("font-mono text-[16px]", active === sc.key ? toneText[sc.tone] : "text-slate-400")}>{sc.icon}</span>
+                <span className={cn("font-sans text-[16px]", active === sc.key ? toneText[sc.tone] : "text-slate-400")}>{sc.icon}</span>
                 <span className={cn("font-display text-[17px] font-medium", active === sc.key ? "text-white" : "text-slate-200")}>{sc.name}</span>
               </div>
-              <div className={cn("mt-2 font-mono text-[15px] tabular-nums", n > 0 ? "text-accent-green" : "text-accent-red")}>
+              <div className={cn("mt-2 font-sans text-[15px] tabular-nums", n > 0 ? "text-accent-green" : "text-accent-red")}>
                 {fmtK(Math.round(n))}
               </div>
             </button>
@@ -112,13 +112,13 @@ export default function NPVScenarioExplorer() {
           <table className="w-full min-w-[480px] border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/20 text-right">
-                <th className="py-2 pr-6 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Assumption</th>
-                <th className="py-2 pr-6 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">Bear</th>
-                <th className="py-2 pr-6 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">Base</th>
-                <th className="py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">Bull</th>
+                <th className="py-2 pr-6 text-left font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Assumption</th>
+                <th className="py-2 pr-6 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">Bear</th>
+                <th className="py-2 pr-6 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">Base</th>
+                <th className="py-2 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">Bull</th>
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums">
+            <tbody className="font-sans tabular-nums">
               {[
                 { label: "Mature sales", get: (s: Scenario) => `$${s.matureSales.toFixed(1)}M` },
                 { label: "Margin", get: (s: Scenario) => `${s.margin}%` },
@@ -137,11 +137,11 @@ export default function NPVScenarioExplorer() {
                 </tr>
               ))}
               <tr>
-                <td className="py-3 pr-6 text-left font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">NPV</td>
+                <td className="py-3 pr-6 text-left font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">NPV</td>
                 {SCENARIOS.map((sc) => {
                   const n = computeNPV(sc.matureSales, sc.margin, sc.yearsToMature, sc.maintPct, sc.construction, PRE_OPENING, WORKING_CAPITAL, sc.cannibalization, sc.residual, sc.rate);
                   return (
-                    <td key={sc.key} className={cn("py-3 pr-6 text-right font-mono text-[15px]", n > 0 ? "text-accent-green" : "text-accent-red")}>
+                    <td key={sc.key} className={cn("py-3 pr-6 text-right font-sans text-[15px]", n > 0 ? "text-accent-green" : "text-accent-red")}>
                       {fmtK(Math.round(n))}
                     </td>
                   );
@@ -154,7 +154,7 @@ export default function NPVScenarioExplorer() {
 
       {/* Active scenario interpretation */}
       <div className={cn("rounded-2xl border p-5 sm:p-6", toneBorder[s.tone], toneBg[s.tone])}>
-        <div className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", toneText[s.tone])}>
+        <div className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[s.tone])}>
           {s.name} case · interpretation
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-100">
@@ -176,7 +176,7 @@ export default function NPVScenarioExplorer() {
 
       {/* Analytical questions */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Questions the investor should answer
         </div>
         <ul className="mt-3 space-y-2.5">

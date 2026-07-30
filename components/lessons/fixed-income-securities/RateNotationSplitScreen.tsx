@@ -47,7 +47,7 @@ export default function RateNotationSplitScreen() {
             {/* TOP ROW — year-by-year R blocks */}
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-purple">
+                <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">
                   Capital R · one slice each
                 </span>
                 <span className="ops-caption text-[11px] text-slate-400">
@@ -71,7 +71,7 @@ export default function RateNotationSplitScreen() {
                         : "border-accent-purple/25 bg-accent-purple/[0.05]",
                     )}
                   >
-                    <div className="font-mono text-[15px] text-accent-purple">
+                    <div className="font-sans text-[15px] text-accent-purple">
                       <InlineMath>{`R_{${i + 1}}`}</InlineMath>
                     </div>
                     <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -85,7 +85,7 @@ export default function RateNotationSplitScreen() {
             {/* connector */}
             <div className="flex items-center justify-center gap-2 text-slate-500">
               <span className="h-px w-12 bg-white/15" />
-              <span className="font-mono text-[12px] text-slate-400">
+              <span className="font-sans text-[12px] text-slate-400">
                 compressed into
               </span>
               <span className="h-px w-12 bg-white/15" />
@@ -94,7 +94,7 @@ export default function RateNotationSplitScreen() {
             {/* BOTTOM ROW — single r_{0,T} spanning whole timeline */}
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+                <span className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
                   Lowercase r · whole interval
                 </span>
                 <span className="ops-caption text-[11px] text-slate-400">
@@ -115,7 +115,7 @@ export default function RateNotationSplitScreen() {
                     : "border-accent-cyan/25 bg-accent-cyan/[0.05]",
                 )}
               >
-                <div className="font-mono text-[18px] text-accent-cyan">
+                <div className="font-sans text-[18px] text-accent-cyan">
                   <InlineMath>{"r_{0,T}"}</InlineMath>
                 </div>
                 <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -134,8 +134,8 @@ export default function RateNotationSplitScreen() {
             </div>
             <p className="ops-body mt-2 text-[15px] leading-7 text-slate-200">
               <InlineMath>{"R_t"}</InlineMath> is the one-year rate that applies
-              to the single year from <span className="font-mono">t−1</span> to{" "}
-              <span className="font-mono">t</span>. Each{" "}
+              to the single year from <span className="font-sans">t−1</span> to{" "}
+              <span className="font-sans">t</span>. Each{" "}
               <InlineMath>{"R_t"}</InlineMath> is its own slice.
             </p>
           </div>

@@ -121,7 +121,7 @@ export default function ModuleSevenConceptMap() {
                 >
                   <span
                     className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[13px]",
+                      "flex h-8 w-8 items-center justify-center rounded-full border font-sans text-[13px]",
                       isActive ? cn(t.border, t.text) : "border-white/20 text-slate-400",
                     )}
                   >
@@ -129,7 +129,7 @@ export default function ModuleSevenConceptMap() {
                   </span>
                   <span
                     className={cn(
-                      "font-mono text-[11px] uppercase leading-tight tracking-[0.1em]",
+                      "font-sans text-[11px] uppercase leading-tight tracking-[0.1em]",
                       isActive ? t.text : "text-slate-400",
                     )}
                   >
@@ -145,7 +145,7 @@ export default function ModuleSevenConceptMap() {
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <span className={cn("h-2 w-2 rounded-full", tone.dot)} aria-hidden />
-          <span className={cn("font-mono text-[12px] uppercase tracking-[0.16em]", tone.text)}>
+          <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", tone.text)}>
             Stage {stage.n} · {stage.short}
           </span>
         </div>
@@ -157,11 +157,11 @@ export default function ModuleSevenConceptMap() {
 
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.05] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-green">Key interpretation</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">Key interpretation</div>
             <p className="mt-2 text-[15px] leading-[1.6] text-slate-200">{stage.interpretation}</p>
           </div>
           <div className="rounded-xl border border-accent-red/25 bg-accent-red/[0.05] p-4">
-            <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">Common mistake</div>
+            <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">Common mistake</div>
             <p className="mt-2 text-[15px] leading-[1.6] text-slate-200">{stage.mistake}</p>
           </div>
         </div>

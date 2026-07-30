@@ -98,7 +98,7 @@ export default function TotalUncertaintyVsSystematicRisk() {
     <div className="space-y-6">
       {/* Setup */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           The clinical-trial question
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.65] text-slate-100">
@@ -118,7 +118,7 @@ export default function TotalUncertaintyVsSystematicRisk() {
       {/* Contrast table */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className={cn("rounded-2xl border p-5", toneBorder.cyan, toneBg.cyan)}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]", toneText.cyan)}>
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText.cyan)}>
             Scientific uncertainty
           </div>
           <ul className="mt-3 space-y-2">
@@ -135,7 +135,7 @@ export default function TotalUncertaintyVsSystematicRisk() {
           </ul>
         </div>
         <div className={cn("rounded-2xl border p-5", toneBorder.red, toneBg.red)}>
-          <div className={cn("font-mono text-[11px] uppercase tracking-[0.16em]", toneText.red)}>
+          <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText.red)}>
             Commercial market exposure
           </div>
           <ul className="mt-3 space-y-2">
@@ -155,7 +155,7 @@ export default function TotalUncertaintyVsSystematicRisk() {
 
       {/* Classification exercise */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Classify each uncertain event
         </div>
         <p className="ops-body mt-2 text-[14px] leading-[1.55] text-slate-300">

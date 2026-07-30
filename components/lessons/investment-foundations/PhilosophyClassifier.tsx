@@ -260,7 +260,7 @@ export default function PhilosophyClassifier() {
                   See summary →
                 </button>
               )}
-              <span className="ml-auto font-mono text-[12px] tabular-nums text-slate-500">
+              <span className="ml-auto font-sans text-[12px] tabular-nums text-slate-500">
                 {answeredCount}/{CASES.length} answered
               </span>
             </div>
@@ -296,13 +296,13 @@ function FinalSummary({
       <div className="mt-2 flex items-baseline gap-3">
         <span
           className={cn(
-            "font-mono text-4xl tabular-nums",
+            "font-sans text-4xl tabular-nums",
             passed ? "text-accent-green" : "text-accent-amber",
           )}
         >
           {correctCount}/{total}
         </span>
-        <span className="font-mono text-sm text-slate-400">{pct}%</span>
+        <span className="font-sans text-sm text-slate-400">{pct}%</span>
       </div>
       <div className="ops-definition-card mt-5 p-5">
         <div className="ops-caption text-[10px] text-accent-cyan">

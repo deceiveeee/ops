@@ -56,7 +56,7 @@ export default function PromisedVsExpectedYieldSplitter() {
               Promised vs expected yield splitter
             </span>
           </div>
-          <div className="font-mono text-[12px] text-slate-400">
+          <div className="font-sans text-[12px] text-slate-400">
             P=$700 · F=$1,000 · E[Payoff]=$900 · T=10yr
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function PromisedVsExpectedYieldSplitter() {
               <div className="ops-caption text-[11px] text-accent-cyan">
                 Risky bond
               </div>
-              <div className="mt-1 font-mono text-[15px] text-white">
+              <div className="mt-1 font-sans text-[15px] text-white">
                 P = $700
               </div>
             </div>
@@ -169,7 +169,7 @@ function Branch({
   return (
     <div className={cn("rounded-xl border px-4 py-3 text-center", map)}>
       <div className="ops-caption text-[11px]">{label}</div>
-      <div className="mt-1 font-mono text-[15px] text-white">{value}</div>
+      <div className="mt-1 font-sans text-[15px] text-white">{value}</div>
     </div>
   );
 }

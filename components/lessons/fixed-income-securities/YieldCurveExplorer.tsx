@@ -197,7 +197,7 @@ function CurveChart({
       {[3, 4, 5].map((gy) => (
         <g key={gy}>
           <line x1={padX} y1={yAt(gy)} x2={W - 10} y2={yAt(gy)} stroke="rgba(255,255,255,0.08)" />
-          <text x={padX - 6} y={yAt(gy) + 3} textAnchor="end" className="fill-slate-500 font-mono" fontSize="9">{gy}%</text>
+          <text x={padX - 6} y={yAt(gy) + 3} textAnchor="end" className="fill-slate-500 font-sans" fontSize="9">{gy}%</text>
         </g>
       ))}
       <line x1={padX} y1={H - padY} x2={W - 10} y2={H - padY} stroke="rgba(255,255,255,0.2)" />
@@ -242,11 +242,11 @@ function CurveChart({
             {/* invisible hit area */}
             <rect x={cx - 16} y={cy - 16} width={32} height={32} fill="transparent" />
             <circle cx={cx} cy={cy} r={isHover ? 6 : 4} fill="#22d3ee" stroke="#05070d" strokeWidth="1.5" />
-            <text x={cx} y={H - padY + 16} textAnchor="middle" className="fill-slate-400 font-mono" fontSize="9">{p.label}</text>
+            <text x={cx} y={H - padY + 16} textAnchor="middle" className="fill-slate-400 font-sans" fontSize="9">{p.label}</text>
             {isHover && (
               <g>
                 <rect x={cx - 34} y={cy - 34} width={68} height={20} rx={4} fill="#0a0e18" stroke="rgba(34,211,238,0.5)" />
-                <text x={cx} y={cy - 20} textAnchor="middle" className="fill-accent-cyan font-mono" fontSize="11">
+                <text x={cx} y={cy - 20} textAnchor="middle" className="fill-accent-cyan font-sans" fontSize="11">
                   {p.y.toFixed(2)}%
                 </text>
               </g>
@@ -282,8 +282,8 @@ function SteepnessBadge({ points }: { points: Point[] }) {
   return (
     <div className={cn("rounded-xl border p-4", tone)}>
       <div className="ops-caption text-[11px]">Shape</div>
-      <div className="mt-1 font-mono text-[22px]">{label}</div>
-      <div className="ops-muted mt-1 font-mono text-[12px]">
+      <div className="mt-1 font-sans text-[22px]">{label}</div>
+      <div className="ops-muted mt-1 font-sans text-[12px]">
         {short.toFixed(2)}% → {long.toFixed(2)}% (Δ {slope >= 0 ? "+" : "−"}
         {Math.abs(slope).toFixed(2)} pp)
       </div>

@@ -92,7 +92,7 @@ export default function MultiStageValuationBuilder() {
             Multi-stage valuation builder
           </span>
         </div>
-        <span className="ops-caption font-mono text-[11px] text-slate-500">
+        <span className="ops-caption font-sans text-[11px] text-slate-500">
           <MathText>P₀ = Σ Dₜ/(1+r)ᵗ + TV_N/(1+r)ᴺ</MathText>
         </span>
       </div>
@@ -190,21 +190,21 @@ export default function MultiStageValuationBuilder() {
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Year t
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Dividend Dₜ
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     Discount (1+r)ᵗ
                   </th>
-                  <th className="border-b border-white/15 px-4 py-2 font-mono font-normal">
+                  <th className="border-b border-white/15 px-4 py-2 font-sans font-normal">
                     PV of Dₜ
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[14px] text-slate-200">
+              <tbody className="font-sans text-[14px] text-slate-200">
                 {rows.map((row) => (
                   <tr key={row.t} className="odd:bg-white/[0.015]">
                     <td className="px-4 py-1.5">{row.t}</td>
@@ -219,7 +219,7 @@ export default function MultiStageValuationBuilder() {
                 ))}
               </tbody>
               <tfoot>
-                <tr className="font-mono text-[14px] text-accent-green">
+                <tr className="font-sans text-[14px] text-accent-green">
                   <td className="border-t border-white/15 px-4 py-2" colSpan={3}>
                     PV of explicit dividends (years 1–{n})
                   </td>
@@ -266,7 +266,7 @@ export default function MultiStageValuationBuilder() {
               <div className="ops-caption text-[11px] text-accent-cyan">
                 Share of value from terminal value
               </div>
-              <span className="font-mono text-[14px] text-slate-100">
+              <span className="font-sans text-[14px] text-slate-100">
                 {pct(tvShare, 1)}
               </span>
             </div>
@@ -286,7 +286,7 @@ export default function MultiStageValuationBuilder() {
                 aria-hidden
               />
             </div>
-            <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 font-mono text-[12px] text-slate-300">
+            <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 font-sans text-[12px] text-slate-300">
               <span className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-accent-green/70" aria-hidden />
                 PV of dividends {pct(pvDividends / total, 1)}
@@ -329,7 +329,7 @@ function NumberField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -362,7 +362,7 @@ function SliderField({
         <span className="ops-caption text-[11px] text-slate-400"><MathText>{label}</MathText></span>
         <span
           className={cn(
-            "font-mono text-[12px]",
+            "font-sans text-[12px]",
             danger ? "text-accent-red" : "text-slate-200",
           )}
         >
@@ -411,18 +411,18 @@ function OutputCard({
       layout
       className={cn("rounded-xl border bg-white/[0.02] p-4", toneBorder)}
     >
-      <div className="ops-caption font-mono text-[11px] text-slate-400">
+      <div className="ops-caption font-sans text-[11px] text-slate-400">
         <MathText>{label}</MathText>
       </div>
       <div
         className={cn(
-          "mt-1 font-mono text-[18px]",
+          "mt-1 font-sans text-[18px]",
           highlight ? toneText : "text-slate-100",
         )}
       >
         {value}
       </div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {sub}
       </div>
     </motion.div>

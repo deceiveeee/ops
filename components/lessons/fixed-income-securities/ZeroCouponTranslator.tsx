@@ -70,12 +70,12 @@ export default function ZeroCouponTranslator() {
             <div className="ops-caption text-[11px] text-accent-cyan">
               Implied {maturity}-year spot rate
             </div>
-            <div className="mt-1 font-mono text-[32px] text-white">{rateLabel}</div>
+            <div className="mt-1 font-sans text-[32px] text-white">{rateLabel}</div>
             <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
               This price implies today&apos;s{" "}
-              <span className="text-accent-amber font-mono">{maturity}-year</span>{" "}
+              <span className="text-accent-amber font-sans">{maturity}-year</span>{" "}
               spot rate of{" "}
-              <span className="text-accent-cyan font-mono">{rateLabel}</span>.
+              <span className="text-accent-cyan font-sans">{rateLabel}</span>.
             </p>
           </motion.div>
 
@@ -114,7 +114,7 @@ function Slider({
     <div>
       <div className="flex items-center justify-between">
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">{display}</span>
+        <span className="font-sans text-[13px] text-slate-100">{display}</span>
       </div>
       <input
         type="range"

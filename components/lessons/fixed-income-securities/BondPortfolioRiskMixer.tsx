@@ -132,7 +132,7 @@ export default function BondPortfolioRiskMixer() {
               );
             })}
           </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-slate-400">
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-sans text-[11px] text-slate-400">
             {bonds.map((b, i) => (
               <span key={b.key}>
                 {b.key}: {formatPercent(weights[i], 1)}
@@ -149,7 +149,7 @@ export default function BondPortfolioRiskMixer() {
             </span>
             <span
               className={cn(
-                "font-mono text-[13px]",
+                "font-sans text-[13px]",
                 bps >= 0 ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -167,7 +167,7 @@ export default function BondPortfolioRiskMixer() {
             aria-label="Parallel yield shock in basis points"
             className="mt-2 w-full accent-accent-amber"
           />
-          <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
+          <div className="mt-1 flex justify-between font-sans text-[11px] text-slate-500">
             <span>−300 bps</span>
             <span>+300 bps</span>
           </div>
@@ -207,7 +207,7 @@ export default function BondPortfolioRiskMixer() {
           </div>
           <div
             className={cn(
-              "mt-1 font-mono text-[26px]",
+              "mt-1 font-sans text-[26px]",
               dollarImpact >= 0 ? "text-accent-green" : "text-accent-red",
             )}
           >
@@ -256,11 +256,11 @@ function BondCard({
         <span className={cn("ops-caption text-[11px]", accent)}>
           Bond {bond.key} · {bond.name}
         </span>
-        <span className="font-mono text-[11px] text-slate-500">
+        <span className="font-sans text-[11px] text-slate-500">
           {formatPercent(weight, 1)}
         </span>
       </div>
-      <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-[12px] text-slate-400">
+      <div className="mt-2 grid grid-cols-2 gap-2 font-sans text-[12px] text-slate-400">
         <div>
           modDur <span className="text-slate-200">{bond.modDur.toFixed(1)}</span>
         </div>
@@ -282,7 +282,7 @@ function BondCard({
           aria-label={`Bond ${bond.key} market value`}
           className="mt-2 w-full accent-accent-cyan"
         />
-        <div className="mt-1 font-mono text-[13px] text-slate-100">
+        <div className="mt-1 font-sans text-[13px] text-slate-100">
           {formatMoney(bond.mv)}
         </div>
       </label>
@@ -309,7 +309,7 @@ function OutCard({
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px]", accent)}>{value}</div>
+      <div className={cn("mt-1 font-sans text-[18px]", accent)}>{value}</div>
     </div>
   );
 }

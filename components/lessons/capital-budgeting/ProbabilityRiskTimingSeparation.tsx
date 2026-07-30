@@ -128,7 +128,7 @@ export default function ProbabilityRiskTimingSeparation() {
 
       {/* Worked example for expected CF */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Worked example · expected cash flow
         </div>
         <div className="mt-4 space-y-2">
@@ -146,7 +146,7 @@ export default function ProbabilityRiskTimingSeparation() {
 
       {/* Sorting exercise */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Sort each statement into its concept
         </div>
         <p className="ops-body mt-2 text-[14px] leading-[1.55] text-slate-300">
@@ -234,7 +234,7 @@ function ConceptCard({
 }) {
   return (
     <div className={cn("rounded-xl border p-4", toneBorder[tone], toneBg[tone])}>
-      <div className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", toneText[tone])}>
+      <div className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", toneText[tone])}>
         {label}
       </div>
       {children}

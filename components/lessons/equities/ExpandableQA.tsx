@@ -28,7 +28,7 @@ export default function ExpandableQA({
         <span className="ops-body-strong text-[15px] text-slate-50"><MathText>{question}</MathText></span>
         <span
           className={cn(
-            "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-mono text-sm text-accent-cyan transition-transform",
+            "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-sm text-accent-cyan transition-transform",
             open && "rotate-45",
           )}
           aria-hidden

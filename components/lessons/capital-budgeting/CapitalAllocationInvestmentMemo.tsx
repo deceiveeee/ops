@@ -44,8 +44,8 @@ export default function CapitalAllocationInvestmentMemo() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">Investment memo</span>
-          <span className="font-mono text-[12px] text-slate-400">{completed}/{SECTIONS.length} sections</span>
+          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Investment memo</span>
+          <span className="font-sans text-[12px] text-slate-400">{completed}/{SECTIONS.length} sections</span>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function CapitalAllocationInvestmentMemo() {
         {SECTIONS.map((s, i) => (
           <div key={s.key} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
             <div className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 font-mono text-[11px] text-accent-amber">
+              <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 font-sans text-[11px] text-accent-amber">
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
@@ -77,13 +77,13 @@ export default function CapitalAllocationInvestmentMemo() {
         <button type="button"
           onClick={() => setSubmitted(true)}
           disabled={completed < 5}
-          className={cn("rounded-full border px-6 py-2.5 font-mono text-[13px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
+          className={cn("rounded-full border px-6 py-2.5 font-sans text-[13px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
             completed >= 5 ? "border-accent-amber/50 bg-accent-amber/10 text-accent-amber hover:bg-accent-amber/20" : "border-white/15 text-slate-500")}>
           {completed < 5 ? `Complete ${5 - completed} more section${5 - completed > 1 ? "s" : ""}` : "Submit memo"}
         </button>
       ) : (
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.05] p-5 sm:p-6">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">Memo submitted</div>
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">Memo submitted</div>
           <p className="ops-body mt-3 text-[15px] leading-[1.65] text-slate-100">
             Your memo has been recorded. The rubric below shows the dimensions of analytical quality.
             A strong memo distinguishes facts from assumptions, uses incremental cash flow correctly,

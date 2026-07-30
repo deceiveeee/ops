@@ -154,7 +154,7 @@ function MatrixGrowthVisual() {
         { n: 10, diag: 10, off: 90, label: "n×n" },
       ].map((m) => (
         <div key={m.n} className="rounded-2xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
             {m.label}
           </div>
           <div className="mt-4">
@@ -214,7 +214,7 @@ const DERIVATION_STEPS: DerivationStep[] = [
 function EqualWeightSummary() {
   return (
     <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6 sm:p-8">
-      <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+      <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
         Equal-weight portfolio variance
       </div>
       <div className="mt-5">
@@ -222,7 +222,7 @@ function EqualWeightSummary() {
       </div>
       <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div className="rounded-xl border border-accent-cyan/30 bg-accent-cyan/[0.06] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
             Company-specific component
           </div>
           <div className="mt-3">
@@ -233,7 +233,7 @@ function EqualWeightSummary() {
           </p>
         </div>
         <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] p-5">
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
             Common component
           </div>
           <div className="mt-3">
@@ -345,11 +345,11 @@ function DiversificationCurveExplorer() {
 
       <div className="space-y-5">
         <div>
-          <label className="block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <label className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
             Assets (n): <span className="text-accent-cyan">{n}</span>
           </label>
           <input type="range" min={1} max={100} step={1} value={n} onChange={(e) => setN(Number(e.target.value))} className="mt-2 w-full accent-accent-cyan" aria-label="Number of assets" />
-          <label className="mt-4 block font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <label className="mt-4 block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
             Correlation ρ: <span className="text-accent-cyan">{rho.toFixed(2)}</span>
           </label>
           <input type="range" min={0} max={1} step={0.01} value={rho} onChange={(e) => setRho(Number(e.target.value))} className="mt-2 w-full accent-accent-cyan" aria-label="Correlation" />
@@ -360,7 +360,7 @@ function DiversificationCurveExplorer() {
                 type="button"
                 onClick={() => setRho(p.value)}
                 className={cn(
-                  "rounded-full border px-3 py-1 font-mono text-[13px] transition-colors",
+                  "rounded-full border px-3 py-1 font-sans text-[13px] transition-colors",
                   Math.abs(rho - p.value) < 0.005
                     ? "border-accent-cyan bg-accent-cyan/15 text-accent-cyan"
                     : "border-white/20 text-slate-300 hover:border-accent-cyan/60 hover:text-accent-cyan",
@@ -402,8 +402,8 @@ function Readout({
 }) {
   return (
     <div className="rounded-xl border border-white/12 bg-white/[0.03] px-4 py-3">
-      <div className="font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[17px]", tone === "cyan" ? "text-accent-cyan" : "text-slate-100")}>
+      <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className={cn("mt-1 font-sans text-[17px]", tone === "cyan" ? "text-accent-cyan" : "text-slate-100")}>
         {value}
       </div>
     </div>
@@ -464,13 +464,13 @@ export default function Lesson6_3() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">n</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Variance cells</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Covariance cells</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Total</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">n</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Variance cells</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Covariance cells</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Total</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 {GROWTH_TABLE.map((row) => (
                   <tr key={String(row[0])} className="border-b border-white/5">
                     <td className="py-3 pr-8">{row[0]}</td>
@@ -582,12 +582,12 @@ export default function Lesson6_3() {
             <table className="w-full min-w-[420px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">n</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">σ²_P</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">σ_P</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">n</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">σ²_P</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">σ_P</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 {[
                   [1, "0.010000", "10.00%"],
                   [2, "0.007000", "8.37%"],
@@ -643,7 +643,7 @@ export default function Lesson6_3() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="rounded-2xl border border-accent-green/30 bg-accent-green/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-green">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
                 Idiosyncratic (diversifiable)
               </div>
               <div className="mt-3">
@@ -655,7 +655,7 @@ export default function Lesson6_3() {
               </p>
             </div>
             <div className="rounded-2xl border border-accent-red/30 bg-accent-red/[0.05] p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
                 Systematic (non-diversifiable)
               </div>
               <div className="mt-3">
@@ -687,7 +687,7 @@ export default function Lesson6_3() {
 
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Limitations of the model
             </div>
             <ul className="mt-4 space-y-3">

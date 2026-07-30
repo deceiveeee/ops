@@ -166,7 +166,7 @@ function SortCard({
                   : "border-accent-red/30 bg-accent-red/10 text-slate-100",
               )}
             >
-              <span className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", correct ? "text-accent-green" : "text-accent-red")}>
+              <span className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", correct ? "text-accent-green" : "text-accent-red")}>
                 {correct ? "Correct" : "Try again"}
               </span>
               <p className="mt-1">{item.explain}</p>

@@ -99,7 +99,7 @@ export default function MeridianDisclosurePacket() {
               active === key ? "border-accent-amber/50 bg-accent-amber/10" : "border-white/12 hover:border-white/25")}>
             <span className="text-[16px]" aria-hidden>{DOCUMENTS[key].icon}</span>
             <div>
-              <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]", active === key ? "text-accent-amber" : "text-slate-400")}>
+              <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", active === key ? "text-accent-amber" : "text-slate-400")}>
                 Document {key}
               </div>
               <div className={cn("text-[12px]", active === key ? "text-white" : "text-slate-300")}>{DOCUMENTS[key].title}</div>
@@ -118,7 +118,7 @@ export default function MeridianDisclosurePacket() {
           transition={{ duration: 0.2 }}
           className="rounded-2xl border border-white/12 bg-ink-950/50 p-5 sm:p-6"
         >
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
             Document {doc.label} · {doc.title}
           </div>
           <div className="mt-4 space-y-2.5">
@@ -128,7 +128,7 @@ export default function MeridianDisclosurePacket() {
                 <div key={i} className={cn("rounded-lg border p-3", toneBorder[info.tone], "bg-white/[0.02]")}>
                   <div className="flex items-start justify-between gap-3">
                     <p className="flex-1 text-[14px] leading-[1.55] text-slate-100">{item.text}</p>
-                    <span className={cn("flex-shrink-0 rounded-full border border-current px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em]", toneText[info.tone])}>
+                    <span className={cn("flex-shrink-0 rounded-full border border-current px-2 py-0.5 font-sans text-[9px] uppercase tracking-[0.14em]", toneText[info.tone])}>
                       {info.label}
                     </span>
                   </div>

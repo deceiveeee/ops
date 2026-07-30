@@ -144,7 +144,7 @@ export default function PhilosophyLocationMap() {
         <div className="flex items-center justify-center gap-3 sm:gap-6">
           {["Asset allocation", "Security selection", "Execution"].map((s, i, arr) => (
             <div key={s} className="flex items-center gap-3 sm:gap-6">
-              <span className="rounded-lg border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">
+              <span className="rounded-lg border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-2 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">
                 {s}
               </span>
               {i < arr.length - 1 && (
@@ -254,7 +254,7 @@ export default function PhilosophyLocationMap() {
                     </div>
                     {showFeedback && (
                       <div className="mt-2 text-[12px] text-slate-400">
-                        <span className={cn("font-mono uppercase tracking-[0.14em]", correct ? "text-accent-green" : "text-accent-amber")}>
+                        <span className={cn("font-sans uppercase tracking-[0.14em]", correct ? "text-accent-green" : "text-accent-amber")}>
                           {correct ? "Correct" : "Review"} · primary stage: {STAGE_LABELS.find((s) => s.id === p.stage)?.label}
                         </span>
                       </div>

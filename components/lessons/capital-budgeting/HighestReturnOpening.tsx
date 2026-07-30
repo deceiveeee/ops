@@ -43,12 +43,12 @@ export default function HighestReturnOpening() {
             )}
           >
             <div className={cn(
-              "font-mono text-[11px] uppercase tracking-[0.16em]",
+              "font-sans text-[11px] uppercase tracking-[0.16em]",
               p.tone === "cyan" ? "text-accent-cyan" : "text-accent-amber",
             )}>{p.name}</div>
             <div className="mt-3 space-y-1 text-[14px]">
-              <div className="flex justify-between"><span className="text-slate-400">Investment</span><span className="font-mono text-white">{p.cost}</span></div>
-              <div className="flex justify-between"><span className="text-slate-400">Payoff (1 yr)</span><span className="font-mono text-white">{p.payoff}</span></div>
+              <div className="flex justify-between"><span className="text-slate-400">Investment</span><span className="font-sans text-white">{p.cost}</span></div>
+              <div className="flex justify-between"><span className="text-slate-400">Payoff (1 yr)</span><span className="font-sans text-white">{p.payoff}</span></div>
             </div>
           </button>
         ))}
@@ -58,7 +58,7 @@ export default function HighestReturnOpening() {
         <button
           type="button"
           onClick={() => setRevealed(true)}
-          className="rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
+          className="rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
         >
           Reveal the calculations
         </button>
@@ -69,18 +69,18 @@ export default function HighestReturnOpening() {
           <motion.div initial={reduce ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Project A</div>
+                <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Project A</div>
                 <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
                   <BlockMath>{String.raw`NPV_A = \frac{\$1.30}{1.10} - 1 \approx \$${fmt(npvA)}\,\text{M}`}</BlockMath>
                 </div>
-                <div className="mt-2 text-[13px] text-slate-300">IRR: <span className="font-mono text-accent-cyan">30%</span> · Required: 10%</div>
+                <div className="mt-2 text-[13px] text-slate-300">IRR: <span className="font-sans text-accent-cyan">30%</span> · Required: 10%</div>
               </div>
               <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">Project B</div>
+                <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Project B</div>
                 <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-3">
                   <BlockMath>{String.raw`NPV_B = \frac{\$120}{1.10} - 100 \approx \$${fmt(npvB)}\,\text{M}`}</BlockMath>
                 </div>
-                <div className="mt-2 text-[13px] text-slate-300">IRR: <span className="font-mono text-accent-amber">20%</span> · Required: 10%</div>
+                <div className="mt-2 text-[13px] text-slate-300">IRR: <span className="font-sans text-accent-amber">20%</span> · Required: 10%</div>
               </div>
             </div>
             <div className="rounded-2xl border border-accent-amber/30 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-5 sm:p-6">

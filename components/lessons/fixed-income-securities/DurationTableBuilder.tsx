@@ -94,7 +94,7 @@ export default function DurationTableBuilder() {
               Duration table builder
             </span>
           </div>
-          <div className="font-mono text-[12px] text-slate-400">
+          <div className="font-sans text-[12px] text-slate-400">
             MIT 4yr Treasury · 7% coupon · y=6% · semiannual
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function DurationTableBuilder() {
               onClick={() => setStep(Math.max(step, i + 1))}
               aria-pressed={step >= i + 1}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.1em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                 step >= i + 1
                   ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
                   : "border-white/10 text-slate-500",
@@ -171,13 +171,13 @@ export default function DurationTableBuilder() {
                     hoverRow === r.t ? "bg-accent-cyan/[0.06]" : "",
                   )}
                 >
-                  <td className="px-3 py-2 text-left font-mono text-[13px] text-slate-300">
+                  <td className="px-3 py-2 text-left font-sans text-[13px] text-slate-300">
                     {r.t}
                   </td>
-                  <td className="px-3 py-2 font-mono text-[13px] text-slate-200">
+                  <td className="px-3 py-2 font-sans text-[13px] text-slate-200">
                     {formatMoney(r.cf)}
                   </td>
-                  <td className="px-3 py-2 font-mono text-[13px]">
+                  <td className="px-3 py-2 font-sans text-[13px]">
                     <RevealCell
                       show={revealCol("pv")}
                       tone="cyan"
@@ -186,7 +186,7 @@ export default function DurationTableBuilder() {
                       {formatMoney(r.pv)}
                     </RevealCell>
                   </td>
-                  <td className="px-3 py-2 font-mono text-[13px]">
+                  <td className="px-3 py-2 font-sans text-[13px]">
                     <RevealCell
                       show={revealCol("tPV")}
                       tone="purple"
@@ -199,11 +199,11 @@ export default function DurationTableBuilder() {
               ))}
               {/* Sum rows */}
               <tr className="border-t border-white/15">
-                <td className="px-3 py-2.5 text-left font-mono text-[13px] text-slate-300">
+                <td className="px-3 py-2.5 text-left font-sans text-[13px] text-slate-300">
                   Σ
                 </td>
                 <td className="px-3 py-2.5" />
-                <td className="px-3 py-2.5 font-mono text-[14px]">
+                <td className="px-3 py-2.5 font-sans text-[14px]">
                   <RevealCell
                     show={revealCol("sum")}
                     tone="green"
@@ -213,7 +213,7 @@ export default function DurationTableBuilder() {
                     {formatMoney(sumPV)}
                   </RevealCell>
                 </td>
-                <td className="px-3 py-2.5 font-mono text-[14px]">
+                <td className="px-3 py-2.5 font-sans text-[14px]">
                   <RevealCell
                     show={step >= 4}
                     tone="green"
@@ -271,7 +271,7 @@ export default function DurationTableBuilder() {
                 <motion.div
                   initial={reduce ? false : { opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-1 font-mono text-[24px] text-white"
+                  className="mt-1 font-sans text-[24px] text-white"
                 >
                   D_m = {formatMoney(sumTPV)} / {formatMoney(sumPV)} ={" "}
                   <span className="text-accent-amber">
@@ -279,7 +279,7 @@ export default function DurationTableBuilder() {
                   </span>
                 </motion.div>
               ) : (
-                <div className="mt-1 font-mono text-[16px] text-slate-600">
+                <div className="mt-1 font-sans text-[16px] text-slate-600">
                   Reveal step 6…
                 </div>
               )}
@@ -299,7 +299,7 @@ export default function DurationTableBuilder() {
                   initial={reduce ? false : { opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-3 font-mono text-[16px] text-accent-green"
+                  className="mt-3 font-sans text-[16px] text-accent-green"
                 >
                   {macPeriods.toFixed(2)} / {FREQ} ={" "}
                   <span className="text-accent-green">

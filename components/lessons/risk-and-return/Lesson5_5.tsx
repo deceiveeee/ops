@@ -164,7 +164,7 @@ export default function Lesson5_5() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-mono text-[12px] text-accent-amber">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-amber/40 bg-accent-amber/10 px-1.5 font-sans text-[12px] text-accent-amber">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -243,8 +243,8 @@ export default function Lesson5_5() {
                     <td className="px-4 py-3 font-medium text-slate-200">
                       {row[0]}
                     </td>
-                    <td className="px-4 py-3 font-mono">{row[1]}</td>
-                    <td className="px-4 py-3 font-mono">{row[2]}</td>
+                    <td className="px-4 py-3 font-sans">{row[1]}</td>
+                    <td className="px-4 py-3 font-sans">{row[2]}</td>
                   </tr>
                 ))}
               </tbody>
@@ -308,7 +308,7 @@ export default function Lesson5_5() {
               <div className="ops-caption text-[11px] text-accent-purple">
                 Motorola (single stock)
               </div>
-              <div className="mt-2 font-mono text-[28px] text-white">
+              <div className="mt-2 font-sans text-[28px] text-white">
                 10.02%
               </div>
               <div className="text-[13px] text-slate-400">monthly SD</div>
@@ -317,7 +317,7 @@ export default function Lesson5_5() {
               <div className="ops-caption text-[11px] text-accent-green">
                 VW market index
               </div>
-              <div className="mt-2 font-mono text-[28px] text-white">4.23%</div>
+              <div className="mt-2 font-sans text-[28px] text-white">4.23%</div>
               <div className="text-[13px] text-slate-400">monthly SD</div>
             </div>
           </div>

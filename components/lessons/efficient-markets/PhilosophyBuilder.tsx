@@ -210,7 +210,7 @@ export default function PhilosophyBuilder() {
                     : isDone ? "border-accent-green/40 bg-accent-green/[0.06] text-accent-green"
                       : "border-white/15 text-slate-300 hover:border-white/30",
                 )}>
-                <span className="font-mono text-[10px]">{String(s.n).padStart(2, "0")}</span>
+                <span className="font-sans text-[10px]">{String(s.n).padStart(2, "0")}</span>
                 <span>{s.label}</span>
               </button>
             );
@@ -333,23 +333,23 @@ export default function PhilosophyBuilder() {
 
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button type="button" onClick={copyToClipboard}
-                    className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                    className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                     {copied ? "✓ Copied" : "Copy statement"}
                   </button>
                   <button type="button"
                     onClick={() => setState((s) => ({ ...s, customDraft: buildStatement(s) }))}
-                    className="rounded-full border border-white/20 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                    className="rounded-full border border-white/20 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                     Regenerate from selections
                   </button>
                   <button type="button" onClick={reset}
-                    className="rounded-full border border-white/15 px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:border-accent-red/40 hover:text-accent-red focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+                    className="rounded-full border border-white/15 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:border-accent-red/40 hover:text-accent-red focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
                     Reset all
                   </button>
                 </div>
 
                 <div className="mt-4 rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
                   <p className="text-[13px] leading-[1.55] text-slate-100">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">Educational draft · </span>
+                    <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Educational draft · </span>
                     Revise this statement until it accurately reflects your reasoning. A real
                     investment policy should be reviewed with a qualified professional and tailored
                     to your specific financial situation, tax status, and regulatory jurisdiction.
@@ -363,13 +363,13 @@ export default function PhilosophyBuilder() {
         {/* Nav */}
         <div className="mt-6 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
           <button type="button" onClick={goPrev} disabled={step === 1}
-            className={cn("rounded-full border px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+            className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               step === 1 ? "border-white/10 text-slate-500 cursor-not-allowed" : "border-white/20 text-slate-200 hover:border-white/40")}>
             ← Previous
           </button>
-          <span className="font-mono text-[11px] text-slate-400">{step} of {STEPS.length}</span>
+          <span className="font-sans text-[11px] text-slate-400">{step} of {STEPS.length}</span>
           <button type="button" onClick={goNext} disabled={step === STEPS.length}
-            className={cn("rounded-full border px-4 py-1.5 font-mono text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+            className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               step === STEPS.length ? "border-white/10 text-slate-500 cursor-not-allowed" : "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20")}>
             Next →
           </button>
@@ -382,7 +382,7 @@ export default function PhilosophyBuilder() {
 function StepHeader({ num, title, hint }: { num: string; title: string; hint?: string }) {
   return (
     <div>
-      <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+      <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
         Step {num}
       </div>
       <h4 className="ops-section-title mt-2 text-[20px] leading-tight text-white sm:text-[22px]">
@@ -405,7 +405,7 @@ function ChoiceRow({ label, selected, multi, onClick }: {
         selected ? "border-accent-cyan/50 bg-accent-cyan/[0.08] text-white" : "border-white/12 bg-white/[0.02] text-slate-200 hover:border-white/25",
       )}>
       <span className={cn(
-        "flex h-5 w-5 flex-shrink-0 items-center justify-center border font-mono text-[11px]",
+        "flex h-5 w-5 flex-shrink-0 items-center justify-center border font-sans text-[11px]",
         selected ? "border-accent-cyan bg-accent-cyan/20 text-accent-cyan" : "border-white/25 text-transparent",
       )}>
         {multi ? "✓" : selected ? "●" : ""}

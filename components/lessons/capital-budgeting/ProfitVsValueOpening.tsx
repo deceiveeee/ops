@@ -32,7 +32,7 @@ export default function ProfitVsValueOpening() {
     <div className="space-y-6">
       {/* The deal */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           The investment
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -47,14 +47,14 @@ export default function ProfitVsValueOpening() {
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
           <p className="ops-body text-[17px] leading-[1.6] text-slate-100">
             The project is expected to make{" "}
-            <span className="font-mono text-accent-amber">${fmt(Math.abs(profit))}M</span>{" "}
+            <span className="font-sans text-accent-amber">${fmt(Math.abs(profit))}M</span>{" "}
             {profit >= 0 ? "in profit" : "in loss"}. Does it create value?
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setRevealed(true)}
-              className="rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
+              className="rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
             >
               Reveal the calculation
             </button>
@@ -72,7 +72,7 @@ export default function ProfitVsValueOpening() {
           >
             {/* Step 1: Undiscounted profit */}
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
                 Step 1 · Expected dollar profit
               </div>
               <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
@@ -86,13 +86,13 @@ export default function ProfitVsValueOpening() {
                   ${fmt(Math.abs(profit))}M {profitPositive ? "more" : "less"}
                 </span>{" "}
                 than it costs. Expected return:{" "}
-                <span className="font-mono text-white">{fmt(pctReturn)}%</span>.
+                <span className="font-sans text-white">{fmt(pctReturn)}%</span>.
               </p>
             </div>
 
             {/* Step 2: Present value */}
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
                 Step 2 · Present value at the required return
               </div>
               <div className="mt-3 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
@@ -108,7 +108,7 @@ export default function ProfitVsValueOpening() {
               npvPositive ? "border-accent-green/30 bg-accent-green/[0.06]" : "border-accent-red/30 bg-accent-red/[0.06]",
             )}>
               <div className={cn(
-                "font-mono text-[12px] uppercase tracking-[0.16em]",
+                "font-sans text-[12px] uppercase tracking-[0.16em]",
                 npvPositive ? "text-accent-green" : "text-accent-red",
               )}>
                 Step 3 · Net present value
@@ -160,7 +160,7 @@ export default function ProfitVsValueOpening() {
 
               {/* Opportunity cost comparison */}
               <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 px-4 py-4">
-                <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+                <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
                   Opportunity cost comparison
                 </div>
                 <div className="mt-2">
@@ -213,7 +213,7 @@ function Control({
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">
           {prefix}{value}{suffix}
@@ -251,8 +251,8 @@ function Readout({
     : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
-      <div className={cn("mt-2 font-mono text-[16px] tabular-nums", text)}>
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
+      <div className={cn("mt-2 font-sans text-[16px] tabular-nums", text)}>
         {mark && <span className="mr-1">{mark}</span>}
         {value}
       </div>

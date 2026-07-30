@@ -112,7 +112,7 @@ export default function ForecastVsActualTracker() {
     <div className="space-y-6">
       {/* Period selector */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Original target vs. actual result
         </div>
         <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Reporting period">
@@ -142,10 +142,10 @@ export default function ForecastVsActualTracker() {
           <table className="w-full min-w-[520px] border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/20 text-left">
-                <th className="py-2 pr-6 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
-                <th className="py-2 pr-6 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Original target</th>
-                <th className="py-2 pr-6 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Actual</th>
-                <th className="py-2 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-accent-amber">Variance</th>
+                <th className="py-2 pr-6 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Metric</th>
+                <th className="py-2 pr-6 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Original target</th>
+                <th className="py-2 pr-6 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Actual</th>
+                <th className="py-2 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">Variance</th>
               </tr>
             </thead>
             <tbody>
@@ -153,7 +153,7 @@ export default function ForecastVsActualTracker() {
                 <Fragment key={cat}>
                   <tr className="border-b border-white/5">
                     <td colSpan={4} className="pt-4 pb-1">
-                      <span className={cn("font-mono text-[11px] uppercase tracking-[0.16em]", toneText[CATEGORY_INFO[cat].tone])}>
+                      <span className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText[CATEGORY_INFO[cat].tone])}>
                         {CATEGORY_INFO[cat].label} · {CATEGORY_INFO[cat].desc}
                       </span>
                     </td>
@@ -166,9 +166,9 @@ export default function ForecastVsActualTracker() {
                     return (
                       <tr key={m.label} className="border-b border-white/5">
                         <td className="py-2.5 pr-6 text-slate-200">{m.label}</td>
-                        <td className="py-2.5 pr-6 text-right font-mono tabular-nums text-slate-300">{fmt(f, m.unit)}</td>
-                        <td className="py-2.5 pr-6 text-right font-mono tabular-nums text-white">{fmt(a, m.unit)}</td>
-                        <td className={cn("py-2.5 text-right font-mono tabular-nums", adverse ? "text-accent-red" : "text-accent-green")}>
+                        <td className="py-2.5 pr-6 text-right font-sans tabular-nums text-slate-300">{fmt(f, m.unit)}</td>
+                        <td className="py-2.5 pr-6 text-right font-sans tabular-nums text-white">{fmt(a, m.unit)}</td>
+                        <td className={cn("py-2.5 text-right font-sans tabular-nums", adverse ? "text-accent-red" : "text-accent-green")}>
                           {v > 0 ? "+" : ""}{v.toFixed(0)}%
                         </td>
                       </tr>
@@ -188,12 +188,12 @@ export default function ForecastVsActualTracker() {
           return (
             <div key={cat} className={cn("rounded-xl border p-4", toneBorder[cat])}>
               <div className="flex items-center justify-between gap-2">
-                <span className={cn("font-mono text-[11px] uppercase tracking-[0.16em]", toneText[cat])}>
+                <span className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText[cat])}>
                   {CATEGORY_INFO[cat].label}
                 </span>
                 <span
                   className={cn(
-                    "rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em]",
+                    "rounded-full px-2 py-0.5 font-sans text-[10px] uppercase tracking-[0.14em]",
                     miss ? "bg-accent-red/15 text-accent-red" : "bg-accent-green/15 text-accent-green",
                   )}
                 >
@@ -218,7 +218,7 @@ export default function ForecastVsActualTracker() {
           transition={{ duration: 0.25 }}
           className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6"
         >
-          <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
             Interpretation · {PERIODS.find((p) => p.key === period)?.label}
           </div>
           <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-100">

@@ -62,10 +62,10 @@ export default function PracticalInvestmentChecklist() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
             Pre-investment checklist
           </span>
-          <span className="font-mono text-[12px] text-slate-400">{completed}/{CHECKLIST.length}</span>
+          <span className="font-sans text-[12px] text-slate-400">{completed}/{CHECKLIST.length}</span>
         </div>
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/8">
           <div className="h-full rounded-full bg-accent-cyan transition-all duration-300"
@@ -93,7 +93,7 @@ export default function PracticalInvestmentChecklist() {
                     {item.q}
                   </span>
                 </div>
-                <span className={cn("flex h-5 w-5 flex-shrink-0 items-center justify-center font-mono text-xs text-accent-cyan transition-transform",
+                <span className={cn("flex h-5 w-5 flex-shrink-0 items-center justify-center font-sans text-xs text-accent-cyan transition-transform",
                   isChecked && "rotate-45")} aria-hidden>+</span>
               </button>
               <AnimatePresence initial={false}>

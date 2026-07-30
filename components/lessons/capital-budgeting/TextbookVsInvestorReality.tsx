@@ -60,7 +60,7 @@ export default function TextbookVsInvestorReality() {
           <button
             type="button"
             onClick={() => setRevealed(true)}
-            className="mt-4 rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
+            className="mt-4 rounded-full border border-accent-amber/50 bg-accent-amber/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50"
           >
             Translate textbook → reality
           </button>
@@ -71,10 +71,10 @@ export default function TextbookVsInvestorReality() {
         {/* Textbook panel */}
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-6">
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-mono text-[11px] text-accent-cyan">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-sans text-[11px] text-accent-cyan">
               A
             </span>
-            <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+            <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
               Textbook presentation
             </span>
           </div>
@@ -100,7 +100,7 @@ export default function TextbookVsInvestorReality() {
           <div className="flex items-center gap-2">
             <span
               className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-full border font-mono text-[11px]",
+                "flex h-6 w-6 items-center justify-center rounded-full border font-sans text-[11px]",
                 revealed
                   ? "border-accent-amber/40 text-accent-amber"
                   : "border-white/20 text-slate-400",
@@ -110,7 +110,7 @@ export default function TextbookVsInvestorReality() {
             </span>
             <span
               className={cn(
-                "font-mono text-[12px] uppercase tracking-[0.16em]",
+                "font-sans text-[12px] uppercase tracking-[0.16em]",
                 revealed ? "text-accent-amber" : "text-slate-400",
               )}
             >
@@ -142,7 +142,7 @@ export default function TextbookVsInvestorReality() {
                       key="hidden"
                       initial={reduce ? false : { opacity: 0.55 }}
                       animate={{ opacity: 0.55 }}
-                      className="font-mono text-[13px] uppercase tracking-[0.14em] text-slate-500"
+                      className="font-sans text-[13px] uppercase tracking-[0.14em] text-slate-500"
                     >
                       — reveal to compare —
                     </motion.span>

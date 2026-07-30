@@ -273,7 +273,7 @@ function IssuanceView({
                   aria-label={`${s.label} issuance ${s.value} billion dollars`}
                   className="group flex h-full flex-1 flex-col items-center justify-end focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
                 >
-                  <span className="mb-1 font-mono text-[11px] text-slate-300">
+                  <span className="mb-1 font-sans text-[11px] text-slate-300">
                     {s.value.toLocaleString("en-US", { maximumFractionDigits: 1 })}
                   </span>
                   <motion.div
@@ -374,10 +374,10 @@ function Donut({
           />
         );
       })}
-      <text x={cx} y={cy - 4} textAnchor="middle" className="fill-slate-200 font-mono" fontSize="13">
+      <text x={cx} y={cy - 4} textAnchor="middle" className="fill-slate-200 font-sans" fontSize="13">
         2006
       </text>
-      <text x={cx} y={cy + 14} textAnchor="middle" className="fill-slate-500 font-mono" fontSize="10">
+      <text x={cx} y={cy + 14} textAnchor="middle" className="fill-slate-500 font-sans" fontSize="10">
         $ billions
       </text>
     </svg>
@@ -404,7 +404,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className="mt-1 font-mono text-[18px] text-slate-50">{value}</div>
+      <div className="mt-1 font-sans text-[18px] text-slate-50">{value}</div>
     </div>
   );
 }

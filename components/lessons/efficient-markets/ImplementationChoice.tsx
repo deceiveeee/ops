@@ -40,13 +40,13 @@ export default function ImplementationChoice() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Passive */}
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
             Passive approach
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Accept benchmark weights through low-cost diversified funds.
           </p>
-          <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+          <div className="mt-3 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
             Generally more defensible when
           </div>
           <ul className="mt-2 space-y-2">
@@ -60,13 +60,13 @@ export default function ImplementationChoice() {
 
         {/* Active */}
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
             Active approach
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Deliberately depart from benchmark weights to add value or manage risk.
           </p>
-          <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+          <div className="mt-3 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
             Potentially defensible when
           </div>
           <ul className="mt-2 space-y-2">
@@ -80,13 +80,13 @@ export default function ImplementationChoice() {
 
         {/* Blended */}
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
             Blended approach
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Combine a low-cost passive core with smaller active satellite positions.
           </p>
-          <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+          <div className="mt-3 font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
             Coherent when
           </div>
           <ul className="mt-2 space-y-2">

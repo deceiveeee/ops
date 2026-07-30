@@ -99,7 +99,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-amber/25 bg-gradient-to-br from-accent-amber/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-amber/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-amber">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -219,12 +219,12 @@ export default function Lesson8_1() {
             <table className="w-full min-w-[460px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Investment</th>
-                  <th className="py-3 pr-8 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Required return</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Present value</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Investment</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Required return</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Present value</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5">
                   <td className="py-3 pr-8 text-accent-green">A · lower risk</td>
                   <td className="py-3 pr-8">5%</td>
@@ -374,13 +374,13 @@ export default function Lesson8_1() {
             <table className="w-full min-w-[520px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Required return</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Present value</th>
-                  <th className="py-3 pr-6 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-400">Cost</th>
-                  <th className="py-3 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-amber">NPV</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Required return</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Present value</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Cost</th>
+                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber">NPV</th>
                 </tr>
               </thead>
-              <tbody className="font-mono tabular-nums text-slate-100">
+              <tbody className="font-sans tabular-nums text-slate-100">
                 <tr className="border-b border-white/5">
                   <td className="py-3 pr-6 text-accent-red">12%</td>
                   <td className="py-3 pr-6">$98.21</td>
@@ -402,7 +402,7 @@ export default function Lesson8_1() {
             <p className="text-[18px] leading-[1.5] text-white">The essential distinction</p>
             <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-white/10 bg-ink-950/40 p-5">
-                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+                <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
                   Expected undiscounted payoff
                 </div>
                 <div className="mt-2 text-slate-100">
@@ -410,7 +410,7 @@ export default function Lesson8_1() {
                 </div>
               </div>
               <div className="rounded-xl border border-accent-red/25 bg-ink-950/40 p-5">
-                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-red">
+                <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">
                   NPV at 12%
                 </div>
                 <div className="mt-2 text-slate-100">
@@ -478,7 +478,7 @@ export default function Lesson8_1() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
               Toward Lesson 8.2
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

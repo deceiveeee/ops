@@ -155,7 +155,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -432,7 +432,7 @@ export default function Lesson9_4() {
             {FINAL_PRINCIPLES.map((p) => (
               <div key={p.n} className="rounded-2xl border border-white/15 bg-white/[0.04] p-5">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/40 bg-accent-cyan/10 font-mono text-[14px] text-accent-cyan">
+                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/40 bg-accent-cyan/10 font-sans text-[14px] text-accent-cyan">
                     {p.n}
                   </span>
                   <h4 className="ops-section-title text-[18px] leading-tight text-white sm:text-[20px]">
@@ -447,7 +447,7 @@ export default function Lesson9_4() {
 
         <Reveal>
           <Panel>
-            <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
               Module 9 complete
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

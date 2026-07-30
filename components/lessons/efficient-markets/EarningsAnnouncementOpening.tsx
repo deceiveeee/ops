@@ -16,8 +16,8 @@ export default function EarningsAnnouncementOpening() {
       {/* News flash */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-mono text-[10px] text-accent-cyan" aria-hidden>!</span>
-          <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-sans text-[10px] text-accent-cyan" aria-hidden>!</span>
+          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
             Breaking news · earnings release
           </span>
         </div>
@@ -72,11 +72,11 @@ export default function EarningsAnnouncementOpening() {
             className="space-y-4"
           >
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
                 The market already reacted
               </div>
               <p className="ops-body mt-3 text-[18px] leading-[1.5] text-white">
-                The stock is already up <span className="font-mono text-accent-amber">12%</span>.
+                The stock is already up <span className="font-sans text-accent-amber">12%</span>.
               </p>
               <p className="ops-body mt-2 text-[15px] leading-[1.65] text-slate-200">
                 By the time you read the earnings release, thousands of other investors had already
@@ -86,7 +86,7 @@ export default function EarningsAnnouncementOpening() {
 
             {/* Follow-up questions */}
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-              <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
                 Questions to consider
               </div>
               <ul className="mt-3 space-y-2.5">

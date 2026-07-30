@@ -28,7 +28,7 @@ function LabeledSlider({
     <div>
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400"
+        className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400"
       >
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">
@@ -183,39 +183,39 @@ export default function RestaurantInvestmentReconstruction() {
     <div className="space-y-6">
       {/* Illustrative label */}
       <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] px-4 py-3">
-        <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-accent-amber">
+        <p className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
           Illustrative investor estimate, not management&apos;s internal project model
         </p>
       </div>
 
       {/* Scenario: management-provided facts */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           Management-provided information
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">New locations</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">New locations</div>
             <div className="mt-1 text-[18px] text-white">100 stores</div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Opening schedule</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Opening schedule</div>
             <div className="mt-1 text-[18px] text-white">50/yr over 2 yrs</div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Dev cost / store</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Dev cost / store</div>
             <div className="mt-1 text-[18px] text-white">{fmtM(devCost)}</div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Mature sales / store</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Mature sales / store</div>
             <div className="mt-1 text-[18px] text-white">{fmtM(matureSales)}/yr</div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Store-level margin</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Store-level margin</div>
             <div className="mt-1 text-[18px] text-white">{margin}%</div>
           </div>
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">Time to maturity</div>
+            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Time to maturity</div>
             <div className="mt-1 text-[18px] text-white">{yearsToMature} yrs</div>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function RestaurantInvestmentReconstruction() {
 
       {/* Investor assumption controls */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Investor assumptions (what is still missing)
         </div>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -240,7 +240,7 @@ export default function RestaurantInvestmentReconstruction() {
 
       {/* The naive shortcut and why it is wrong */}
       <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-red">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
           Why the obvious shortcut is incomplete
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -261,22 +261,22 @@ export default function RestaurantInvestmentReconstruction() {
 
       {/* Per-store cash-flow model output */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
           Per-store illustrative cash-flow model
         </div>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[640px] border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/20 text-left">
-                <th className="py-2 pr-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">Year after opening</th>
+                <th className="py-2 pr-4 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Year after opening</th>
                 {Array.from({ length: HORIZON + 1 }, (_, i) => i).map((y) => (
-                  <th key={y} className="py-2 pr-3 text-right font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+                  <th key={y} className="py-2 pr-3 text-right font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
                     {y === 0 ? "Yr 0" : `Yr ${y}`}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="font-mono tabular-nums text-slate-100">
+            <tbody className="font-sans tabular-nums text-slate-100">
               <tr className="border-b border-white/5">
                 <td className="py-2 pr-4 text-slate-300">Cash flow ($M)</td>
                 {flows.map((f, i) => (
@@ -313,7 +313,7 @@ export default function RestaurantInvestmentReconstruction() {
 
       {/* Sensitivity: which assumptions matter most */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           Which assumptions move NPV the most?
         </div>
         <div className="mt-4 space-y-3">
@@ -328,12 +328,12 @@ export default function RestaurantInvestmentReconstruction() {
                   )}
                   style={{ width: `${Math.max(8, (s.swing / maxSwing) * 100)}%` }}
                 />
-                <div className="absolute inset-0 flex items-center justify-between px-3 font-mono text-[11px] tabular-nums">
+                <div className="absolute inset-0 flex items-center justify-between px-3 font-sans text-[11px] tabular-nums">
                   <span className="text-accent-red/90">{fmtM(s.lo)}</span>
                   <span className="text-accent-green/90">{fmtM(s.hi)}</span>
                 </div>
               </div>
-              <div className="w-14 flex-shrink-0 text-right font-mono text-[11px] tabular-nums text-slate-400">
+              <div className="w-14 flex-shrink-0 text-right font-sans text-[11px] tabular-nums text-slate-400">
                 ±{fmtM(s.swing / 2)}
               </div>
             </div>
@@ -358,7 +358,7 @@ export default function RestaurantInvestmentReconstruction() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-[13px] uppercase tracking-[0.14em]",
+              "inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-sans text-[13px] uppercase tracking-[0.14em]",
               npvPositive
                 ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
                 : "border-accent-red/50 bg-accent-red/10 text-accent-red",
@@ -366,7 +366,7 @@ export default function RestaurantInvestmentReconstruction() {
           >
             {npvPositive ? "Appears value-creating" : "Appears value-destroying"}
           </span>
-          <span className="font-mono text-[13px] tabular-nums text-slate-300">
+          <span className="font-sans text-[13px] tabular-nums text-slate-300">
             per-store NPV {fmtM(perStoreNPV)} at {discountRate}%
           </span>
         </div>
@@ -415,10 +415,10 @@ function Readout({
           : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">
+      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">
         {label}
       </div>
-      <div className={cn("mt-2 font-mono text-[17px] tabular-nums", text)}>{value}</div>
+      <div className={cn("mt-2 font-sans text-[17px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

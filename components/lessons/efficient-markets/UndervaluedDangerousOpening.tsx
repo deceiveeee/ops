@@ -68,7 +68,7 @@ export default function UndervaluedDangerousOpening() {
     <div className="space-y-6">
       {/* Initial facts */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
           The situation
         </div>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -104,7 +104,7 @@ export default function UndervaluedDangerousOpening() {
       {/* Complications reveal */}
       {stage > 0 && (
         <div className="space-y-3">
-          <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
             Complications · {stage} of {COMPLICATIONS.length}
           </div>
           {COMPLICATIONS.slice(0, stage).map((c, i) => (
@@ -116,8 +116,8 @@ export default function UndervaluedDangerousOpening() {
               className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.04] p-4"
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 font-mono text-[10px] text-accent-amber">{i + 1}</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-amber">{c.label}</span>
+                <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-accent-amber/40 font-sans text-[10px] text-accent-amber">{i + 1}</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">{c.label}</span>
               </div>
               <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-100">{c.text}</p>
               <p className="ops-body mt-1 text-[13px] leading-[1.55] text-slate-300">{c.impact}</p>
@@ -126,12 +126,12 @@ export default function UndervaluedDangerousOpening() {
 
           {stage < COMPLICATIONS.length ? (
             <button type="button" onClick={advance}
-              className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+              className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
               Reveal another complication →
             </button>
           ) : (
             <button type="button" onClick={reset}
-              className="rounded-full border border-white/20 px-5 py-2 font-mono text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+              className="rounded-full border border-white/20 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
               ↻ Restart scenario
             </button>
           )}
@@ -196,8 +196,8 @@ function Fact({ label, value, tone }: { label: string; value: string; tone: "cya
   const border = tone === "cyan" ? "border-accent-cyan/25" : tone === "green" ? "border-accent-green/25" : "border-accent-red/25";
   return (
     <div className={cn("rounded-xl border bg-ink-950/40 px-4 py-3", border)}>
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[18px] tabular-nums", text)}>{value}</div>
+      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className={cn("mt-1 font-sans text-[18px] tabular-nums", text)}>{value}</div>
     </div>
   );
 }

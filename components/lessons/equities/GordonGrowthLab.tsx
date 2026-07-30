@@ -136,7 +136,7 @@ export default function GordonGrowthLab() {
       {invalid && (
         <div className="mt-5 rounded-xl border border-accent-red/40 bg-accent-red/10 p-5">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full border border-accent-red/60 px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-red">
+            <span className="inline-flex items-center rounded-full border border-accent-red/60 px-2 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">
               <span className="mr-1" aria-hidden>
                 !
               </span>
@@ -191,12 +191,12 @@ export default function GordonGrowthLab() {
             </div>
             <p className="ops-body mt-2 text-[15px] leading-7 text-slate-200">
               Expected total return = dividend yield + growth ={" "}
-              <span className="font-mono text-accent-green">
+              <span className="font-sans text-accent-green">
                 {pct(dividendYield)}
               </span>{" "}
               +{" "}
-              <span className="font-mono text-accent-green">{pct(g)}</span> ={" "}
-              <span className="font-mono text-accent-cyan">
+              <span className="font-sans text-accent-green">{pct(g)}</span> ={" "}
+              <span className="font-sans text-accent-cyan">
                 {pct(totalReturn)}
               </span>
               . Under Gordon, price grows at g, so the capital-gains yield equals
@@ -215,21 +215,21 @@ export default function GordonGrowthLab() {
           <table className="w-full min-w-[440px] border-collapse text-left">
             <thead>
               <tr className="text-[12px] text-slate-400">
-                <th className="border-b border-white/10 pb-2 pr-4 font-mono font-normal">
+                <th className="border-b border-white/10 pb-2 pr-4 font-sans font-normal">
                   g
                 </th>
-                <th className="border-b border-white/10 pb-2 pr-4 font-mono font-normal">
+                <th className="border-b border-white/10 pb-2 pr-4 font-sans font-normal">
                   r − g
                 </th>
-                <th className="border-b border-white/10 pb-2 pr-4 font-mono font-normal">
+                <th className="border-b border-white/10 pb-2 pr-4 font-sans font-normal">
                   P₀
                 </th>
-                <th className="border-b border-white/10 pb-2 font-mono font-normal">
+                <th className="border-b border-white/10 pb-2 font-sans font-normal">
                   bar
                 </th>
               </tr>
             </thead>
-            <tbody className="font-mono text-[13px]">
+            <tbody className="font-sans text-[13px]">
               {sensitivity.map((row) => {
                 const isCurrent = Math.abs(row.gPct - gPct) < 0.01;
                 const rg = rPct - row.gPct;
@@ -315,11 +315,11 @@ export default function GordonGrowthLab() {
               </div>
               <div className="border-t border-white/10 pt-3">
                 {invalid ? (
-                  <p className="font-mono text-[13px] text-accent-red">
+                  <p className="font-sans text-[13px] text-accent-red">
                     Invalid: g ≥ r
                   </p>
                 ) : (
-                  <p className="font-mono text-[15px] text-accent-cyan">
+                  <p className="font-sans text-[15px] text-accent-cyan">
                     P₀ = {money(p0 ?? 0)}
                   </p>
                 )}
@@ -364,11 +364,11 @@ export default function GordonGrowthLab() {
               </div>
               <div className="border-t border-white/10 pt-3">
                 {invalidB ? (
-                  <p className="font-mono text-[13px] text-accent-red">
+                  <p className="font-sans text-[13px] text-accent-red">
                     Invalid: g ≥ r
                   </p>
                 ) : (
-                  <p className="font-mono text-[15px] text-accent-purple">
+                  <p className="font-sans text-[15px] text-accent-purple">
                     P₀ = {money(p0b ?? 0)}
                   </p>
                 )}
@@ -380,10 +380,10 @@ export default function GordonGrowthLab() {
           {!invalid && !invalidB && p0 !== null && p0b !== null && yieldB !== null && dividendYield !== null ? (
             <>
               Scenario A values the stock at{" "}
-              <span className="font-mono text-accent-cyan">{money(p0)}</span> on
+              <span className="font-sans text-accent-cyan">{money(p0)}</span> on
               a {pct(r)} required return and {pct(g)} growth. Scenario B values
               it at{" "}
-              <span className="font-mono text-accent-purple">{money(p0b)}</span>{" "}
+              <span className="font-sans text-accent-purple">{money(p0b)}</span>{" "}
               — the difference comes entirely from the assumptions, not the
               formula.
             </>
@@ -420,7 +420,7 @@ function NumberField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -453,7 +453,7 @@ function SliderField({
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
         <span
           className={cn(
-            "font-mono text-[12px]",
+            "font-sans text-[12px]",
             danger ? "text-accent-red" : "text-slate-200",
           )}
         >
@@ -501,10 +501,10 @@ function OutputCard({
       className={cn("rounded-xl border bg-white/[0.02] p-4", toneBorder)}
     >
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
-      <div className={cn("mt-1 font-mono text-[20px]", highlight ? toneText : "text-slate-100")}>
+      <div className={cn("mt-1 font-sans text-[20px]", highlight ? toneText : "text-slate-100")}>
         {value}
       </div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {sub}
       </div>
     </motion.div>

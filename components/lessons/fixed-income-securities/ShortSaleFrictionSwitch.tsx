@@ -223,13 +223,13 @@ function GapBar({
     <div>
       <div className="flex items-center justify-between">
         <span className="text-[13px] text-slate-300">{label}</span>
-        <span className="font-mono text-[13px] text-slate-100">
+        <span className="font-sans text-[13px] text-slate-100">
           {blocked ? "0 (blocked)" : formatMoney(value)}
         </span>
       </div>
       <div className="mt-1.5 h-6 overflow-hidden rounded-md bg-white/5">
         {blocked ? (
-          <div className="flex h-full items-center justify-center font-mono text-[11px] text-accent-red">
+          <div className="flex h-full items-center justify-center font-sans text-[11px] text-accent-red">
             ✕ cannot short
           </div>
         ) : (

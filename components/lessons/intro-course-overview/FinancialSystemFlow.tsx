@@ -102,7 +102,7 @@ export default function FinancialSystemFlow({
               Financial system · flow model
             </span>
           </div>
-          <span className="font-mono text-[12px] tabular-nums text-accent-cyan">
+          <span className="font-sans text-[12px] tabular-nums text-accent-cyan">
             {visited.size}/{ORDER.length} explored
           </span>
         </div>
@@ -127,7 +127,7 @@ export default function FinancialSystemFlow({
             <text
               x="34"
               y="24"
-              className="fill-slate-500 font-mono"
+              className="fill-slate-500 font-sans"
               fontSize="13"
               letterSpacing="2"
             >
@@ -232,7 +232,7 @@ export default function FinancialSystemFlow({
                     <text
                       x={n.x + 24}
                       y={n.y - 20}
-                      className="fill-accent-green font-mono"
+                      className="fill-accent-green font-sans"
                       fontSize="13"
                       aria-hidden
                     >

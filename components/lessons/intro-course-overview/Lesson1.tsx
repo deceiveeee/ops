@@ -55,7 +55,7 @@ export default function Lesson1() {
       </Reveal>
       <Reveal delay={0.05} className="mt-5">
         <Panel>
-          <div className="flex flex-wrap items-center gap-3 font-mono text-sm">
+          <div className="flex flex-wrap items-center gap-3 font-sans text-sm">
             <span className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-slate-100">
               Mathematics
             </span>
@@ -152,7 +152,7 @@ export default function Lesson1() {
             <strong className="text-white">valuation of assets</strong> and{" "}
             <strong className="text-white">management of assets</strong>.
           </p>
-          <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-lg border border-accent-cyan/30 bg-accent-cyan/5 px-3 py-2 font-mono text-sm">
+          <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-lg border border-accent-cyan/30 bg-accent-cyan/5 px-3 py-2 font-sans text-sm">
             <span className="text-slate-100">Objectives</span>
             <span className="text-accent-cyan">+</span>
             <span className="text-slate-100">Valuations</span>

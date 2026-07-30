@@ -93,13 +93,13 @@ export default function CompoundingSimulator() {
             value={principal}
             aria-label="Principal amount"
             onChange={(e) => setPrincipal(Math.max(0, Number(e.target.value) || 0))}
-            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-mono text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
+            className="ops-body mt-2 w-full rounded-lg border border-white/15 bg-ink-950/60 px-3 py-2 font-sans text-[15px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/30"
           />
         </label>
         <label className="block">
           <span className="ops-caption flex items-center justify-between text-[11px] text-slate-400">
             <span>APR (r)</span>
-            <span className="font-mono text-accent-amber">{apr.toFixed(2)}%</span>
+            <span className="font-sans text-accent-amber">{apr.toFixed(2)}%</span>
           </span>
           <input
             type="range"
@@ -144,19 +144,19 @@ export default function CompoundingSimulator() {
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
           <div className="ops-caption text-[11px] text-slate-400">Per-period rate</div>
-          <div className="mt-1 font-mono text-[15px] text-slate-100">{pct(perPeriod, 4)}</div>
+          <div className="mt-1 font-sans text-[15px] text-slate-100">{pct(perPeriod, 4)}</div>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
           <div className="ops-caption text-[11px] text-slate-400">Final balance</div>
-          <div className="mt-1 font-mono text-[15px] text-accent-green">{fmtCents(finalBalance)}</div>
+          <div className="mt-1 font-sans text-[15px] text-accent-green">{fmtCents(finalBalance)}</div>
         </div>
         <div className="rounded-xl border border-accent-green/30 bg-accent-green/[0.07] p-4">
           <div className="ops-caption text-[11px] text-accent-green">EAR</div>
-          <div className="mt-1 font-mono text-[15px] text-accent-green">{pct(ear)}</div>
+          <div className="mt-1 font-sans text-[15px] text-accent-green">{pct(ear)}</div>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
           <div className="ops-caption text-[11px] text-slate-400">APR (quoted)</div>
-          <div className="mt-1 font-mono text-[15px] text-slate-300">{apr.toFixed(3)}%</div>
+          <div className="mt-1 font-sans text-[15px] text-slate-300">{apr.toFixed(3)}%</div>
         </div>
       </div>
 

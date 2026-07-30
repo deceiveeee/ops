@@ -130,7 +130,7 @@ export default function Lesson4_1() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -232,12 +232,12 @@ export default function Lesson4_1() {
             <table className="w-full min-w-[320px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">Item</th>
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">Amount</th>
-                  <th className="border-b border-white/15 pb-2 font-mono font-normal">Claim type</th>
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">Item</th>
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">Amount</th>
+                  <th className="border-b border-white/15 pb-2 font-sans font-normal">Claim type</th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[15px] text-slate-200">
+              <tbody className="font-sans text-[15px] text-slate-200">
                 <tr>
                   <td className="py-2 pr-6">Assets</td>
                   <td className="py-2 pr-6 text-slate-50">$10M</td>
@@ -543,12 +543,12 @@ export default function Lesson4_1() {
             <table className="w-full min-w-[460px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">Concept</th>
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">Type</th>
-                  <th className="border-b border-white/15 pb-2 font-mono font-normal">Value (poor case)</th>
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">Concept</th>
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">Type</th>
+                  <th className="border-b border-white/15 pb-2 font-sans font-normal">Value (poor case)</th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[15px] text-slate-200">
+              <tbody className="font-sans text-[15px] text-slate-200">
                 <tr>
                   <td className="py-2 pr-6">Actual dollar return produced</td>
                   <td className="py-2 pr-6 text-slate-300">dollars</td>
@@ -603,11 +603,11 @@ export default function Lesson4_1() {
             <table className="w-full min-w-[420px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">Perspective</th>
-                  <th className="border-b border-white/15 pb-2 font-mono font-normal">Name for the same rate</th>
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">Perspective</th>
+                  <th className="border-b border-white/15 pb-2 font-sans font-normal">Name for the same rate</th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[15px] text-slate-200">
+              <tbody className="font-sans text-[15px] text-slate-200">
                 <tr>
                   <td className="py-2 pr-6">Shareholder (investor)</td>
                   <td className="py-2 text-accent-cyan">Required return</td>
@@ -777,8 +777,8 @@ function ConceptCheck() {
           <div className="ops-caption text-[11px] text-slate-400">
             Dollar return produced
           </div>
-          <div className="mt-1 font-mono text-[18px] text-accent-red">$3.20</div>
-          <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+          <div className="mt-1 font-sans text-[18px] text-accent-red">$3.20</div>
+          <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
             $40 × 8%
           </div>
         </div>
@@ -786,8 +786,8 @@ function ConceptCheck() {
           <div className="ops-caption text-[11px] text-slate-400">
             Required dollar return
           </div>
-          <div className="mt-1 font-mono text-[18px] text-accent-cyan">$4.80</div>
-          <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+          <div className="mt-1 font-sans text-[18px] text-accent-cyan">$4.80</div>
+          <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
             $40 × 12%
           </div>
         </div>
@@ -795,8 +795,8 @@ function ConceptCheck() {
           <div className="ops-caption text-[11px] text-slate-400">
             PV of FV
           </div>
-          <div className="mt-1 font-mono text-[18px] text-slate-100">$38.57</div>
-          <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+          <div className="mt-1 font-sans text-[18px] text-slate-100">$38.57</div>
+          <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
             $43.20 ÷ 1.12
           </div>
         </div>
@@ -804,8 +804,8 @@ function ConceptCheck() {
           <div className="ops-caption text-[11px] text-slate-400">
             NPV
           </div>
-          <div className="mt-1 font-mono text-[18px] text-accent-red">−$1.43</div>
-          <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+          <div className="mt-1 font-sans text-[18px] text-accent-red">−$1.43</div>
+          <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
             $38.57 − $40
           </div>
         </div>
@@ -824,9 +824,9 @@ function ConceptCheck() {
       {checked && (
         <Feedback status="incorrect">
           <strong className="text-white">No — it destroys value.</strong> The
-          company produced <span className="font-mono">$3.20</span> of return on
+          company produced <span className="font-sans">$3.20</span> of return on
           the retained $40, but shareholders required{" "}
-          <span className="font-mono">$4.80</span>. The $1.43 negative NPV is
+          <span className="font-sans">$4.80</span>. The $1.43 negative NPV is
           the value destroyed. Even though earnings grew (by $3.20), the project
           earned less than the cost of equity, so shareholder value fell.
         </Feedback>

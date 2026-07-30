@@ -112,7 +112,7 @@ export default function PVGODecompositionLab() {
             PVGO decomposition lab
           </span>
         </div>
-        <span className="ops-caption font-mono text-[11px] text-slate-500">
+        <span className="ops-caption font-sans text-[11px] text-slate-500">
           P₀ = EPS₁/r + PVGO
         </span>
       </div>
@@ -211,7 +211,7 @@ export default function PVGODecompositionLab() {
           <div className={cn("ops-caption text-[11px]", verdictText)}>
             Growth-opportunity verdict
           </div>
-          <div className={cn("mt-2 font-mono text-[20px]", verdictText)}>
+          <div className={cn("mt-2 font-sans text-[20px]", verdictText)}>
             {verdict.label}
           </div>
           <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
@@ -225,7 +225,7 @@ export default function PVGODecompositionLab() {
             <div className="ops-caption text-[11px] text-accent-cyan">
               Stock price = existing business + PVGO
             </div>
-            <div className="mt-2 font-mono text-[18px] text-slate-100">
+            <div className="mt-2 font-sans text-[18px] text-slate-100">
               {money(price)} = {money(noGrowth)} + {money(pvgo)}
             </div>
             <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full border border-white/10 bg-ink-950/60">
@@ -267,10 +267,10 @@ export default function PVGODecompositionLab() {
               <div className="ops-caption text-[11px] text-slate-400">
                 Forward P/E
               </div>
-              <div className="mt-1 font-mono text-[18px] text-slate-100">
+              <div className="mt-1 font-sans text-[18px] text-slate-100">
                 {forwardPE > 0 ? `${forwardPE.toFixed(2)}×` : "—"}
               </div>
-              <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+              <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
                 {money(price)} ÷ {money(eps)}
               </div>
             </div>
@@ -278,10 +278,10 @@ export default function PVGODecompositionLab() {
               <div className="ops-caption text-[11px] text-slate-400">
                 Risk component 1/r
               </div>
-              <div className="mt-1 font-mono text-[18px] text-accent-cyan">
+              <div className="mt-1 font-sans text-[18px] text-accent-cyan">
                 {noGrowthPE > 0 ? `${noGrowthPE.toFixed(2)}×` : "—"}
               </div>
-              <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+              <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
                 1 ÷ {pct(r)}
               </div>
             </div>
@@ -291,13 +291,13 @@ export default function PVGODecompositionLab() {
               </div>
               <div
                 className={cn(
-                  "mt-1 font-mono text-[18px]",
+                  "mt-1 font-sans text-[18px]",
                   invalid ? "text-slate-400" : pvgo >= 0 ? "text-accent-green" : "text-accent-red",
                 )}
               >
                 {invalid ? "—" : `${growthPEComponent.toFixed(2)}×`}
               </div>
-              <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+              <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
                 {invalid ? "—" : `${money(pvgo)} ÷ ${money(eps)}`}
               </div>
             </div>
@@ -336,7 +336,7 @@ function NumberField({
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-mono text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-1.5 w-full rounded-md border border-white/10 bg-ink-950/60 px-2.5 py-1.5 font-sans text-[14px] text-slate-100 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
       />
     </label>
   );
@@ -369,7 +369,7 @@ function SliderField({
         <span className="ops-caption text-[11px] text-slate-400">{label}</span>
         <span
           className={cn(
-            "font-mono text-[12px]",
+            "font-sans text-[12px]",
             danger ? "text-accent-red" : "text-slate-200",
           )}
         >
@@ -419,13 +419,13 @@ function OutputCard({
       <div className="ops-caption text-[11px] text-slate-400">{label}</div>
       <div
         className={cn(
-          "mt-1 font-mono text-[18px]",
+          "mt-1 font-sans text-[18px]",
           highlight ? toneText : "text-slate-100",
         )}
       >
         {value}
       </div>
-      <div className="ops-caption mt-1 font-mono text-[11px] text-slate-500">
+      <div className="ops-caption mt-1 font-sans text-[11px] text-slate-500">
         {sub}
       </div>
     </motion.div>

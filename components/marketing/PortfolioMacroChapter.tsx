@@ -352,7 +352,7 @@ function MacroPart() {
                 className="relative border-t border-white/10 pt-5"
                 style={{ borderTopColor: isLast ? colorHex : "rgba(255,255,255,0.1)" }}
               >
-                <div className="font-mono text-[14px] tabular-nums text-slate-500">
+                <div className="font-sans text-[14px] tabular-nums text-slate-500">
                   {String(i + 1).padStart(2, "0")}
                 </div>
                 <div

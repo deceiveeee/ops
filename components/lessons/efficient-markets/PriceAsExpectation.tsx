@@ -44,7 +44,7 @@ export default function PriceAsExpectation() {
 
       {/* Incorporation spectrum */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-mono text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
           How much is already in the price?
         </div>
         <div className="mt-4 space-y-4">
@@ -52,7 +52,7 @@ export default function PriceAsExpectation() {
             <div key={item.label}>
               <div className="flex items-baseline justify-between gap-3">
                 <span className="text-[15px] font-medium text-white">{item.label}</span>
-                <span className={cn("font-mono text-[11px] uppercase tracking-[0.14em]", toneText[item.incorporated])}>
+                <span className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", toneText[item.incorporated])}>
                   {toneLabel[item.incorporated]}
                 </span>
               </div>
@@ -64,7 +64,7 @@ export default function PriceAsExpectation() {
             </div>
           ))}
         </div>
-        <div className="mt-4 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.14em] text-slate-500">
+        <div className="mt-4 flex items-center justify-between text-[10px] font-sans uppercase tracking-[0.14em] text-slate-500">
           <span>← Not in price</span>
           <span>Fully reflected →</span>
         </div>

@@ -89,7 +89,7 @@ export default function PracticalMispricingFramework() {
                 aria-pressed={isActive}
                 className={cn("rounded-xl border px-3 py-3 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                   isActive ? "border-accent-cyan/50 bg-accent-cyan/[0.08]" : "border-white/10 bg-white/[0.02] hover:border-white/25")}>
-                <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]", isActive ? "text-accent-cyan" : "text-slate-400")}>
+                <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", isActive ? "text-accent-cyan" : "text-slate-400")}>
                   {p.letter}
                 </div>
                 <div className={cn("mt-1 text-[13px] font-medium leading-tight", isActive ? "text-white" : "text-slate-200")}>
@@ -114,7 +114,7 @@ export default function PracticalMispricingFramework() {
             const p = PILLARS.find((x) => x.key === open)!;
             return (
               <>
-                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+                <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
                   Pillar {p.letter} · {p.title}
                 </div>
                 <p className="ops-body mt-2 text-[15px] leading-[1.6] text-slate-100">{p.prompt}</p>

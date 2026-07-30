@@ -86,12 +86,12 @@ function MiniTimeline({ cf }: { cf: WorkedExampleData["cashflows"] }) {
               )}
               aria-hidden
             />
-            <div className="mt-3 font-mono text-[12px] text-slate-300">
+            <div className="mt-3 font-sans text-[12px] text-slate-300">
               {n.t}
             </div>
             <div
               className={cn(
-                "mt-2 font-mono text-[15px] sm:text-[16px]",
+                "mt-2 font-sans text-[15px] sm:text-[16px]",
                 n.cf.tone === "red" ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -106,7 +106,7 @@ function MiniTimeline({ cf }: { cf: WorkedExampleData["cashflows"] }) {
 
 function StepBadge({ n }: { n: number }) {
   return (
-    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
       {n}
     </span>
   );
@@ -246,7 +246,7 @@ function WorkedExample({ data }: { data: WorkedExampleData }) {
             </div>
             <div
               className={cn(
-                "mt-1.5 font-mono text-[16px]",
+                "mt-1.5 font-sans text-[16px]",
                 row.cf.tone === "red" ? "text-accent-red" : "text-accent-green",
               )}
             >
@@ -555,7 +555,7 @@ export default function Lesson1() {
                     className="h-3.5 w-3.5 rounded-full bg-accent-amber ring-4 ring-ink-950"
                     aria-hidden
                   />
-                  <div className="mt-3 font-mono text-[13px] text-slate-100">
+                  <div className="mt-3 font-sans text-[13px] text-slate-100">
                     {n.t}
                   </div>
                   <div className="ops-caption mt-1 text-[11px] text-slate-400">
@@ -614,7 +614,7 @@ export default function Lesson1() {
             both are converted into the same date.
           </BodyLead>
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center rounded-lg border border-accent-amber/40 bg-accent-amber/10 px-3 py-1.5 font-mono text-[14px] text-accent-amber">
+            <span className="inline-flex items-center rounded-lg border border-accent-amber/40 bg-accent-amber/10 px-3 py-1.5 font-sans text-[14px] text-accent-amber">
               ¥150 + £300 = ?
             </span>
             <span className="ops-muted text-[14px] text-slate-400">

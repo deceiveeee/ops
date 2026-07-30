@@ -147,14 +147,14 @@ export default function HeroObject({ scrollYProgress, className }: Props) {
         <motion.div
           animate={reduce ? {} : { y: [0, -8, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-0 top-[15%] rounded border border-white/10 bg-ink-950/60 px-2 py-1 font-mono text-[9px] text-accent-cyan backdrop-blur-sm"
+          className="absolute right-0 top-[15%] rounded border border-white/10 bg-ink-950/60 px-2 py-1 font-sans text-[9px] text-accent-cyan backdrop-blur-sm"
         >
           SIGNAL
         </motion.div>
         <motion.div
           animate={reduce ? {} : { y: [0, 6, 0] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-[12%] left-[5%] rounded border border-white/10 bg-ink-950/60 px-2 py-1 font-mono text-[9px] text-accent-purple backdrop-blur-sm"
+          className="absolute bottom-[12%] left-[5%] rounded border border-white/10 bg-ink-950/60 px-2 py-1 font-sans text-[9px] text-accent-purple backdrop-blur-sm"
         >
           STRUCTURE
         </motion.div>

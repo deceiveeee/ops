@@ -156,7 +156,7 @@ export default function Lesson4_3() {
           <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
               <li key={o} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-mono text-[12px] text-accent-cyan">
+                <span className="mt-0.5 inline-flex h-6 min-w-6 flex-shrink-0 items-center justify-center rounded-md border border-accent-cyan/40 bg-accent-cyan/10 px-1.5 font-sans text-[12px] text-accent-cyan">
                   {i + 1}
                 </span>
                 <span className="ops-body text-[15px] leading-7 text-slate-200">
@@ -417,7 +417,7 @@ export default function Lesson4_3() {
           <div className="ops-caption text-[11px] text-slate-400">
             Payment timeline
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[13px] text-slate-200">
+          <div className="mt-4 flex flex-wrap items-center gap-2 font-sans text-[13px] text-slate-200">
             <span className="rounded-md border border-accent-amber/40 bg-accent-amber/10 px-3 py-1.5 text-accent-amber">
               D₀ (just paid)
             </span>
@@ -514,18 +514,18 @@ export default function Lesson4_3() {
             <table className="w-full min-w-[420px] border-collapse text-left">
               <thead>
                 <tr className="text-[12px] text-slate-400">
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">
                     g
                   </th>
-                  <th className="border-b border-white/15 pb-2 pr-6 font-mono font-normal">
+                  <th className="border-b border-white/15 pb-2 pr-6 font-sans font-normal">
                     r − g
                   </th>
-                  <th className="border-b border-white/15 pb-2 font-mono font-normal">
+                  <th className="border-b border-white/15 pb-2 font-sans font-normal">
                     P₀ = 2 / (r − g)
                   </th>
                 </tr>
               </thead>
-              <tbody className="font-mono text-[15px] text-slate-200">
+              <tbody className="font-sans text-[15px] text-slate-200">
                 <tr>
                   <td className="py-1.5 pr-6">2%</td>
                   <td className="py-1.5 pr-6">8%</td>

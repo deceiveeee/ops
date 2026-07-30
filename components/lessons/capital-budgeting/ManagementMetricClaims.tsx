@@ -82,7 +82,7 @@ export default function ManagementMetricClaims() {
             <div key={c.id} className="rounded-xl border border-white/10 bg-ink-950/30 p-4">
               <p className="text-[15px] font-medium leading-[1.55] text-slate-100">{c.statement}</p>
               <div className="mt-3">
-                <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-slate-400">
+                <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
                   Which metric is being emphasized?
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -107,7 +107,7 @@ export default function ManagementMetricClaims() {
                   <motion.div initial={reduce ? false : { opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
                     <div className={cn("mt-3 rounded-lg border p-3",
                       isCorrect ? "border-accent-green/20 bg-accent-green/[0.04]" : "border-accent-red/20 bg-accent-red/[0.04]")}>
-                      <div className={cn("font-mono text-[10px] uppercase tracking-[0.14em]",
+                      <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]",
                         isCorrect ? "text-accent-green" : "text-accent-red")}>
                         {isCorrect ? "Correct metric identified" : "Reconsider"}
                       </div>

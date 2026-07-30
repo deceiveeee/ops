@@ -140,7 +140,7 @@ export default function AllocationVsSelection() {
                     </div>
                     {showFeedback && (
                       <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/40 p-2.5 text-[13px] text-slate-300">
-                        <span className={cn("font-mono text-[10px] uppercase tracking-[0.14em]", picked === c.correct ? "text-accent-green" : "text-accent-amber")}>
+                        <span className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", picked === c.correct ? "text-accent-green" : "text-accent-amber")}>
                           {picked === c.correct ? "Correct" : "Review"}
                         </span>
                         <span className="ml-2">{c.feedback}</span>
@@ -157,7 +157,7 @@ export default function AllocationVsSelection() {
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <span
               className={cn(
-                "font-mono text-[14px] tabular-nums",
+                "font-sans text-[14px] tabular-nums",
                 correctCount === CASES.length ? "text-accent-green" : "text-accent-amber",
               )}
             >

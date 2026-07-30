@@ -110,7 +110,7 @@ export default function CreditSpreadThermometer() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
               className={cn(
-                "rounded-full border px-3 py-1 font-mono text-[13px]",
+                "rounded-full border px-3 py-1 font-sans text-[13px]",
                 regime === "easy"
                   ? "border-accent-green/50 text-accent-green"
                   : regime === "normal"
@@ -155,7 +155,7 @@ export default function CreditSpreadThermometer() {
                   )}
                   title={e.note}
                 />
-                <span className="font-mono text-[11px] text-slate-400">
+                <span className="font-sans text-[11px] text-slate-400">
                   {e.year}
                 </span>
                 <span className="ops-caption text-[10px] text-slate-500">
