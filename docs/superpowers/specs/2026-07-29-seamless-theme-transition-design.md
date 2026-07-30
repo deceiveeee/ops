@@ -50,7 +50,7 @@ The morph compares the **previous** route's theme to the **new** one and fires *
 Header/footer are persistent; their text/border colors are set by `.ops-theme-light` overrides and would otherwise snap instantly. A transient `is-theme-transitioning` class on the shell, held for the ~500ms window, applies `transition: color .45s, background-color .45s, border-color .45s` to `.site-header` and `.site-footer`. It is only active during the switch, so normal hover transitions stay snappy at all other times.
 
 **Layer 3 — Content crossfade (prevents text color flashing mid-flight).**
-`<main>`'s children are wrapped in a pathname-keyed Motion `AnimatePresence` (`mode="wait"`): old content fades out (~180ms), new content fades in (~180ms), opacity only. Because it is opacity-based, old *dark* text dissolves out and new *light* text dissolves in — no moment where text color inverts over a mismatched background.
+`<main>`'s children are wrapped in a **theme-keyed** Motion `AnimatePresence` (`mode="wait"`): old content fades out (~180ms), new content fades in (~180ms), opacity only. Because it is opacity-based, old *dark* text dissolves out and new *light* text dissolves in — no moment where text color inverts over a mismatched background. Keying on *theme* (not pathname) means same-theme navigations don't change the key, so they swap instantly with no animation — implementing the boundary-conditional rule for free, with no gating logic.
 
 **Orchestration on a boundary crossing:**
 - t=0: add `is-theme-transitioning`; Layer 1 + Layer 2 begin their .45s ease; old content begins its 180ms fade-out.
