@@ -165,130 +165,132 @@ function DiscountPaths({
   const barScale = (H / 2 - padY - 10) / maxBar;
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full min-w-[520px]"
-      role="img"
-      aria-label="Each coupon discounted along its own path back to today"
-    >
-      {/* today axis */}
-      <line
-        x1={todayX}
-        y1={padY}
-        x2={todayX}
-        y2={H - padY}
-        stroke="rgba(34,211,238,0.4)"
-        strokeWidth="1.5"
-        strokeDasharray="4 3"
-      />
-      <text
-        x={todayX}
-        y={padY - 8}
-        textAnchor="middle"
-        className="fill-accent-cyan font-sans"
-        fontSize="11"
+    <div className="overflow-x-auto pb-2">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full min-w-[520px]"
+        role="img"
+        aria-label="Each coupon discounted along its own path back to today"
       >
-        today
-      </text>
-      {/* year axis */}
-      <line
-        x1={padX}
-        y1={H - padY}
-        x2={W - 20}
-        y2={H - padY}
-        stroke="rgba(255,255,255,0.2)"
-      />
-      {[1, 2, 3].map((y) => (
+        {/* today axis */}
+        <line
+          x1={todayX}
+          y1={padY}
+          x2={todayX}
+          y2={H - padY}
+          stroke="rgba(34,211,238,0.4)"
+          strokeWidth="1.5"
+          strokeDasharray="4 3"
+        />
         <text
-          key={y}
-          x={xAt(y)}
-          y={H - padY + 18}
+          x={todayX}
+          y={padY - 8}
           textAnchor="middle"
-          className="fill-slate-400 font-sans"
-          fontSize="12"
+          className="fill-accent-cyan font-sans"
+          fontSize="11"
         >
-          Y{y}
+          today
         </text>
-      ))}
+        {/* year axis */}
+        <line
+          x1={padX}
+          y1={H - padY}
+          x2={W - 20}
+          y2={H - padY}
+          stroke="rgba(255,255,255,0.2)"
+        />
+        {[1, 2, 3].map((y) => (
+          <text
+            key={y}
+            x={xAt(y)}
+            y={H - padY + 18}
+            textAnchor="middle"
+            className="fill-slate-400 font-sans"
+            fontSize="12"
+          >
+            Y{y}
+          </text>
+        ))}
 
-      {FLOWS.map((f, i) => {
-        const x = xAt(f.year);
-        const r = rates[i] / 100;
-        const faceH = f.amount * barScale;
-        const pvH = pvs[i] * barScale;
-        const color = f.year === 3 ? "#34d399" : "#22d3ee";
-        // discount path: curved line from top of face bar to top of pv bar (at todayX)
-        const midX = (todayX + x) / 2;
-        return (
-          <g key={f.year}>
-            {/* future face bar */}
-            <rect
-              x={x - 14}
-              y={H - padY - faceH}
-              width={28}
-              height={faceH}
-              rx={3}
-              fill={color}
-              fillOpacity={0.85}
-            />
-            <text
-              x={x}
-              y={H - padY - faceH - 6}
-              textAnchor="middle"
-              fill={color}
-              className="font-sans"
-              fontSize="11"
-            >
-              ${f.amount}
-            </text>
-            {/* discount path */}
-            <motion.path
-              d={`M ${x} ${H - padY - faceH} Q ${midX} ${H - padY - faceH * 0.5} ${todayX} ${H - padY - pvH}`}
-              fill="none"
-              stroke="rgba(251,191,36,0.55)"
-              strokeWidth="1.4"
-              strokeDasharray="3 3"
-              animate={reduce ? undefined : { pathLength: [0, 1] }}
-              transition={{
-                duration: 0.8,
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
-            />
-            {/* PV bar at today */}
-            <rect
-              x={todayX - 12}
-              y={H - padY - pvH}
-              width={24}
-              height={pvH}
-              rx={3}
-              fill={color}
-              fillOpacity={0.55}
-              style={reduce ? undefined : { transition: "all 0.3s ease" }}
-            />
-            <text
-              x={todayX}
-              y={H - padY - pvH - 6}
-              textAnchor="middle"
-              className="fill-slate-200 font-sans"
-              fontSize="10"
-            >
-              ${pvs[i].toFixed(0)}
-            </text>
-            {/* rate label */}
-            <text
-              x={midX}
-              y={H - padY - faceH * 0.5 + 3}
-              textAnchor="middle"
-              className="fill-accent-amber font-sans"
-              fontSize="10"
-            >
-              {formatPct(r)}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+        {FLOWS.map((f, i) => {
+          const x = xAt(f.year);
+          const r = rates[i] / 100;
+          const faceH = f.amount * barScale;
+          const pvH = pvs[i] * barScale;
+          const color = f.year === 3 ? "#34d399" : "#22d3ee";
+          // discount path: curved line from top of face bar to top of pv bar (at todayX)
+          const midX = (todayX + x) / 2;
+          return (
+            <g key={f.year}>
+              {/* future face bar */}
+              <rect
+                x={x - 14}
+                y={H - padY - faceH}
+                width={28}
+                height={faceH}
+                rx={3}
+                fill={color}
+                fillOpacity={0.85}
+              />
+              <text
+                x={x}
+                y={H - padY - faceH - 6}
+                textAnchor="middle"
+                fill={color}
+                className="font-sans"
+                fontSize="11"
+              >
+                ${f.amount}
+              </text>
+              {/* discount path */}
+              <motion.path
+                d={`M ${x} ${H - padY - faceH} Q ${midX} ${H - padY - faceH * 0.5} ${todayX} ${H - padY - pvH}`}
+                fill="none"
+                stroke="rgba(251,191,36,0.55)"
+                strokeWidth="1.4"
+                strokeDasharray="3 3"
+                animate={reduce ? undefined : { pathLength: [0, 1] }}
+                transition={{
+                  duration: 0.8,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              />
+              {/* PV bar at today */}
+              <rect
+                x={todayX - 12}
+                y={H - padY - pvH}
+                width={24}
+                height={pvH}
+                rx={3}
+                fill={color}
+                fillOpacity={0.55}
+                style={reduce ? undefined : { transition: "all 0.3s ease" }}
+              />
+              <text
+                x={todayX}
+                y={H - padY - pvH - 6}
+                textAnchor="middle"
+                className="fill-slate-200 font-sans"
+                fontSize="10"
+              >
+                ${pvs[i].toFixed(0)}
+              </text>
+              {/* rate label */}
+              <text
+                x={midX}
+                y={H - padY - faceH * 0.5 + 3}
+                textAnchor="middle"
+                className="fill-accent-amber font-sans"
+                fontSize="10"
+              >
+                {formatPct(r)}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 

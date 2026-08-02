@@ -26,10 +26,10 @@ export default function ScrollScene({ id, className, stickyClassName, children, 
     <section
       id={id}
       ref={ref}
-      className={cn("relative", className)}
+      className={cn("relative isolate z-10", className)}
       style={{ height: `${runway}vh` }}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 z-10 h-screen w-full overflow-hidden">
         <SceneProgress progress={scrollYProgress} />
         <div className={cn("relative z-10 mx-auto flex h-full max-w-7xl items-center px-5 sm:px-8", stickyClassName)}>
           {children}

@@ -74,8 +74,11 @@ export default function CashFlowValueChapter() {
     : stage.note;
 
   return (
-    <section ref={ref} className="relative hp-atmosphere-deep" style={{ height: "560vh" }}>
-      <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
+    <section
+      ref={ref}
+      className="relative isolate z-10 hp-atmosphere-deep h-[360vh] sm:h-[480vh] lg:h-[560vh]"
+    >
+      <div className="sticky top-0 z-10 flex h-[100svh] items-center overflow-hidden">
         <div className="pointer-events-none absolute inset-0 opacity-50" aria-hidden>
           {/* Faint cash-flow stream — animated curves flowing horizontally */}
           <FlowStreamBackground reduce={!!reduce} />

@@ -42,58 +42,60 @@ export default function CashFlowTimeline({
   const scale = (H / 2 - padY - 8) / maxAbs;
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full min-w-[420px]"
-      role="img"
-      aria-label={ariaLabel}
-    >
-      {/* axis */}
-      <line x1={padX} y1={midY} x2={W - padX} y2={midY} stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} />
-      {/* period ticks */}
-      {Array.from({ length: T + 1 }).map((_, i) => (
-        <g key={i}>
-          <line x1={xAt(i)} y1={midY - 5} x2={xAt(i)} y2={midY + 5} stroke="rgba(255,255,255,0.3)" />
-          <text x={xAt(i)} y={midY + 22} textAnchor="middle" className="fill-slate-500 font-sans" fontSize="13">
-            {i === 0 && showToday ? "t=0" : `${i}`}
-          </text>
-        </g>
-      ))}
-      {/* flows */}
-      {flows.map((f, i) => {
-        const x = xAt(f.period);
-        const isCost = f.amount < 0;
-        const barH = Math.max(6, Math.abs(f.amount) * scale);
-        const isFinal = highlightFinal && f.period === T;
-        const color = isCost ? "#f87171" : isFinal ? "#34d399" : "#22d3ee";
-        const top = isCost ? midY : midY - barH;
-        return (
+    <div className="overflow-x-auto pb-2">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full min-w-[420px]"
+        role="img"
+        aria-label={ariaLabel}
+      >
+        {/* axis */}
+        <line x1={padX} y1={midY} x2={W - padX} y2={midY} stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} />
+        {/* period ticks */}
+        {Array.from({ length: T + 1 }).map((_, i) => (
           <g key={i}>
-            <rect
-              x={x - 10}
-              y={top}
-              width={20}
-              height={barH}
-              rx={3}
-              fill={color}
-              fillOpacity={0.85}
-              style={reduce ? undefined : { transition: "all 0.3s ease" }}
-            />
-            <text
-              x={x}
-              y={isCost ? top + barH + 16 : top - 8}
-              textAnchor="middle"
-              className="font-sans"
-              fontSize="14"
-              fontWeight="600"
-              fill={color}
-            >
-              {f.amount >= 0 ? "+" : "−"}
-              {Math.abs(f.amount).toLocaleString("en-US", { maximumFractionDigits: 0 })}
+            <line x1={xAt(i)} y1={midY - 5} x2={xAt(i)} y2={midY + 5} stroke="rgba(255,255,255,0.3)" />
+            <text x={xAt(i)} y={midY + 22} textAnchor="middle" className="fill-slate-500 font-sans" fontSize="13">
+              {i === 0 && showToday ? "t=0" : `${i}`}
             </text>
           </g>
-        );
-      })}
-    </svg>
+        ))}
+        {/* flows */}
+        {flows.map((f, i) => {
+          const x = xAt(f.period);
+          const isCost = f.amount < 0;
+          const barH = Math.max(6, Math.abs(f.amount) * scale);
+          const isFinal = highlightFinal && f.period === T;
+          const color = isCost ? "#f87171" : isFinal ? "#34d399" : "#22d3ee";
+          const top = isCost ? midY : midY - barH;
+          return (
+            <g key={i}>
+              <rect
+                x={x - 10}
+                y={top}
+                width={20}
+                height={barH}
+                rx={3}
+                fill={color}
+                fillOpacity={0.85}
+                style={reduce ? undefined : { transition: "all 0.3s ease" }}
+              />
+              <text
+                x={x}
+                y={isCost ? top + barH + 16 : top - 8}
+                textAnchor="middle"
+                className="font-sans"
+                fontSize="14"
+                fontWeight="600"
+                fill={color}
+              >
+                {f.amount >= 0 ? "+" : "−"}
+                {Math.abs(f.amount).toLocaleString("en-US", { maximumFractionDigits: 0 })}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }

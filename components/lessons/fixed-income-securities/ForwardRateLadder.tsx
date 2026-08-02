@@ -230,12 +230,13 @@ function ForwardLadderSVG({
   const xAt = (p: number) => padX + span * p;
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="w-full min-w-[620px]"
-      role="img"
-      aria-label="Timeline of spot rates and forward rates"
-    >
+    <div className="overflow-x-auto pb-2">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full min-w-[620px]"
+        role="img"
+        aria-label="Timeline of spot rates and forward rates"
+      >
       {/* axis */}
       <line
         x1={padX}
@@ -339,7 +340,8 @@ function ForwardLadderSVG({
       >
         spot rates (today &rarr; t)
       </text>
-    </svg>
+      </svg>
+    </div>
   );
 }
 

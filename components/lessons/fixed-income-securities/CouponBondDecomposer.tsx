@@ -160,74 +160,76 @@ function CouponTimeline({ reduce }: { reduce: boolean | null }) {
   const maxA = 1050;
   const scale = (H - baseY - 18) / maxA;
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="mt-3 w-full min-w-[520px]"
-      role="img"
-      aria-label="Coupon bond paying 50, 50, and 1050 across three years"
-    >
-      <line
-        x1={padX}
-        y1={baseY}
-        x2={W - padX}
-        y2={baseY}
-        stroke="rgba(255,255,255,0.2)"
-      />
-      {[0, 1, 2, 3].map((i) => (
-        <g key={i}>
-          <line
-            x1={xAt(i)}
-            y1={baseY - 5}
-            x2={xAt(i)}
-            y2={baseY + 5}
-            stroke="rgba(255,255,255,0.3)"
-          />
-          <text
-            x={xAt(i)}
-            y={baseY + 22}
-            textAnchor="middle"
-            className="fill-slate-400 font-sans"
-            fontSize="12"
-          >
-            Y{i}
-          </text>
-        </g>
-      ))}
-      {flows.map((f, i) => {
-        const h = f.amount * scale;
-        const color = f.year === 3 ? "#34d399" : "#22d3ee";
-        return (
-          <motion.rect
-            key={f.year}
-            x={xAt(f.year) - 12}
-            initial={reduce ? false : { y: baseY, height: 0 }}
-            animate={{ y: baseY - h, height: h }}
-            transition={{ delay: i * 0.1, duration: 0.3 }}
-            width={24}
-            rx={3}
-            fill={color}
-            fillOpacity={0.85}
-          />
-        );
-      })}
-      {flows.map((f) => {
-        const h = f.amount * scale;
-        const color = f.year === 3 ? "#34d399" : "#22d3ee";
-        return (
-          <text
-            key={`t${f.year}`}
-            x={xAt(f.year)}
-            y={baseY - h - 6}
-            textAnchor="middle"
-            fill={color}
-            className="font-sans"
-            fontSize="12"
-          >
-            ${f.amount}
-          </text>
-        );
-      })}
-    </svg>
+    <div className="overflow-x-auto pb-2">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="mt-3 w-full min-w-[520px]"
+        role="img"
+        aria-label="Coupon bond paying 50, 50, and 1050 across three years"
+      >
+        <line
+          x1={padX}
+          y1={baseY}
+          x2={W - padX}
+          y2={baseY}
+          stroke="rgba(255,255,255,0.2)"
+        />
+        {[0, 1, 2, 3].map((i) => (
+          <g key={i}>
+            <line
+              x1={xAt(i)}
+              y1={baseY - 5}
+              x2={xAt(i)}
+              y2={baseY + 5}
+              stroke="rgba(255,255,255,0.3)"
+            />
+            <text
+              x={xAt(i)}
+              y={baseY + 22}
+              textAnchor="middle"
+              className="fill-slate-400 font-sans"
+              fontSize="12"
+            >
+              Y{i}
+            </text>
+          </g>
+        ))}
+        {flows.map((f, i) => {
+          const h = f.amount * scale;
+          const color = f.year === 3 ? "#34d399" : "#22d3ee";
+          return (
+            <motion.rect
+              key={f.year}
+              x={xAt(f.year) - 12}
+              initial={reduce ? false : { y: baseY, height: 0 }}
+              animate={{ y: baseY - h, height: h }}
+              transition={{ delay: i * 0.1, duration: 0.3 }}
+              width={24}
+              rx={3}
+              fill={color}
+              fillOpacity={0.85}
+            />
+          );
+        })}
+        {flows.map((f) => {
+          const h = f.amount * scale;
+          const color = f.year === 3 ? "#34d399" : "#22d3ee";
+          return (
+            <text
+              key={`t${f.year}`}
+              x={xAt(f.year)}
+              y={baseY - h - 6}
+              textAnchor="middle"
+              fill={color}
+              className="font-sans"
+              fontSize="12"
+            >
+              ${f.amount}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
@@ -261,28 +263,30 @@ function StripRow({
           +${count} @ Y{year}
         </span>
       </div>
-      <svg
-        viewBox={`0 0 ${W} 40`}
-        className="mt-2 w-full min-w-[520px]"
-        aria-hidden
-      >
-        <line
-          x1={x0}
-          y1={baseY}
-          x2={xEnd}
-          y2={baseY}
-          stroke="rgba(167,139,250,0.3)"
-          strokeWidth="1.4"
-          strokeDasharray="3 3"
-        />
-        <circle cx={x0} cy={baseY} r="3" fill="rgba(167,139,250,0.6)" />
-        <circle
-          cx={xEnd * (year / 3) + x0 * (1 - year / 3)}
-          cy={baseY}
-          r="5"
-          fill="#a78bfa"
-        />
-      </svg>
+      <div className="overflow-x-auto pb-2">
+        <svg
+          viewBox={`0 0 ${W} 40`}
+          className="mt-2 w-full min-w-[520px]"
+          aria-hidden
+        >
+          <line
+            x1={x0}
+            y1={baseY}
+            x2={xEnd}
+            y2={baseY}
+            stroke="rgba(167,139,250,0.3)"
+            strokeWidth="1.4"
+            strokeDasharray="3 3"
+          />
+          <circle cx={x0} cy={baseY} r="3" fill="rgba(167,139,250,0.6)" />
+          <circle
+            cx={xEnd * (year / 3) + x0 * (1 - year / 3)}
+            cy={baseY}
+            r="5"
+            fill="#a78bfa"
+          />
+        </svg>
+      </div>
     </motion.div>
   );
 }

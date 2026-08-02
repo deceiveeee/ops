@@ -399,101 +399,103 @@ function CFDesk({
   };
 
   return (
-    <div className="min-w-[480px]">
-      <table className="w-full border-collapse text-center">
-        <thead>
-          <tr className="border-b border-white/10">
-            <th className="px-4 py-2.5 text-left ops-caption text-[11px] text-slate-400">
-              Cash flow ($MM)
-            </th>
-            <th className="px-4 py-2.5 ops-caption text-[11px] text-slate-400">
-              Year 0
-            </th>
-            <th className="px-4 py-2.5 ops-caption text-[11px] text-slate-400">
-              Year 1
-            </th>
-            <th className="px-4 py-2.5 ops-caption text-[11px] text-slate-400">
-              Year 2
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.key} className="border-b border-white/5">
-              <td className="px-4 py-3 text-left">
-                <span
-                  className={cn(
-                    "text-[13px]",
-                    r.active ? toneText[r.tone] : "text-slate-500",
-                  )}
-                >
-                  {r.label}
-                </span>
-              </td>
-              {([r.y0, r.y1, r.y2] as (number | null)[]).map((v, i) => (
-                <td key={i} className="px-4 py-3">
-                  <AnimatePresence mode="popLayout">
-                    {v !== null ? (
-                      <motion.span
-                        key={v.toFixed(3)}
-                        initial={reduce ? false : { opacity: 0, scale: 0.85 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.25 }}
-                        className={cn(
-                          "inline-block rounded-md border px-2.5 py-1 font-sans text-[14px]",
-                          v > 0
-                            ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
-                            : "border-accent-red/40 bg-accent-red/10 text-accent-red",
-                        )}
-                      >
-                        {v >= 0 ? "+" : "−"}
-                        {Math.abs(v).toFixed(3)}
-                      </motion.span>
-                    ) : (
-                      <span className="font-sans text-[14px] text-slate-700">
-                        0
-                      </span>
-                    )}
-                  </AnimatePresence>
-                </td>
-              ))}
+    <div className="overflow-x-auto pb-2">
+      <div className="min-w-[480px]">
+        <table className="w-full border-collapse text-center">
+          <thead>
+            <tr className="border-b border-white/10">
+              <th className="px-4 py-2.5 text-left ops-caption text-[11px] text-slate-400">
+                Cash flow ($MM)
+              </th>
+              <th className="px-4 py-2.5 ops-caption text-[11px] text-slate-400">
+                Year 0
+              </th>
+              <th className="px-4 py-2.5 ops-caption text-[11px] text-slate-400">
+                Year 1
+              </th>
+              <th className="px-4 py-2.5 ops-caption text-[11px] text-slate-400">
+                Year 2
+              </th>
             </tr>
-          ))}
-          {showNet && (
-            <tr>
-              <td className="px-4 py-3 text-left">
-                <span className="ops-body-strong text-[13px] text-slate-100">
-                  Net
-                </span>
-              </td>
-              {[
-                { v: net0, glow: borrowed && !invested },
-                { v: net1, glow: false },
-                { v: net2, glow: revealed || invested },
-              ].map((c, i) => (
-                <td key={i} className="px-4 py-3">
-                  <motion.span
-                    initial={reduce ? false : { opacity: 0 }}
-                    animate={{ opacity: 1 }}
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.key} className="border-b border-white/5">
+                <td className="px-4 py-3 text-left">
+                  <span
                     className={cn(
-                      "inline-block rounded-md border px-2.5 py-1 font-sans text-[15px] font-semibold",
-                      Math.abs(c.v) < 0.001
-                        ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
-                        : c.v > 0
-                          ? "border-accent-green/50 bg-accent-green/15 text-accent-green"
-                          : "border-accent-red/50 bg-accent-red/15 text-accent-red",
+                      "text-[13px]",
+                      r.active ? toneText[r.tone] : "text-slate-500",
                     )}
                   >
-                    {Math.abs(c.v) < 0.001
-                      ? "0"
-                      : `${c.v >= 0 ? "+" : "−"}${Math.abs(c.v).toFixed(3)}`}
-                  </motion.span>
+                    {r.label}
+                  </span>
                 </td>
-              ))}
-            </tr>
-          )}
-        </tbody>
-      </table>
+                {([r.y0, r.y1, r.y2] as (number | null)[]).map((v, i) => (
+                  <td key={i} className="px-4 py-3">
+                    <AnimatePresence mode="popLayout">
+                      {v !== null ? (
+                        <motion.span
+                          key={v.toFixed(3)}
+                          initial={reduce ? false : { opacity: 0, scale: 0.85 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.25 }}
+                          className={cn(
+                            "inline-block rounded-md border px-2.5 py-1 font-sans text-[14px]",
+                            v > 0
+                              ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
+                              : "border-accent-red/40 bg-accent-red/10 text-accent-red",
+                          )}
+                        >
+                          {v >= 0 ? "+" : "−"}
+                          {Math.abs(v).toFixed(3)}
+                        </motion.span>
+                      ) : (
+                        <span className="font-sans text-[14px] text-slate-700">
+                          0
+                        </span>
+                      )}
+                    </AnimatePresence>
+                  </td>
+                ))}
+              </tr>
+            ))}
+            {showNet && (
+              <tr>
+                <td className="px-4 py-3 text-left">
+                  <span className="ops-body-strong text-[13px] text-slate-100">
+                    Net
+                  </span>
+                </td>
+                {[
+                  { v: net0, glow: borrowed && !invested },
+                  { v: net1, glow: false },
+                  { v: net2, glow: revealed || invested },
+                ].map((c, i) => (
+                  <td key={i} className="px-4 py-3">
+                    <motion.span
+                      initial={reduce ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className={cn(
+                        "inline-block rounded-md border px-2.5 py-1 font-sans text-[15px] font-semibold",
+                        Math.abs(c.v) < 0.001
+                          ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
+                          : c.v > 0
+                            ? "border-accent-green/50 bg-accent-green/15 text-accent-green"
+                            : "border-accent-red/50 bg-accent-red/15 text-accent-red",
+                      )}
+                    >
+                      {Math.abs(c.v) < 0.001
+                        ? "0"
+                        : `${c.v >= 0 ? "+" : "−"}${Math.abs(c.v).toFixed(3)}`}
+                    </motion.span>
+                  </td>
+                ))}
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

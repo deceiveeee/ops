@@ -110,10 +110,9 @@ export default function PortfolioChapter() {
   return (
     <section
       ref={ref}
-      className="relative hp-atmosphere-teal"
-      style={{ height: "440vh" }}
+      className="relative isolate z-10 hp-atmosphere-teal h-[300vh] sm:h-[380vh] lg:h-[440vh]"
     >
-      <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
+      <div className="sticky top-0 z-10 flex h-[100svh] items-center overflow-hidden">
         <div className="hp-canvas w-full">
           {/* Headline — white, no cyan */}
           <motion.h2
