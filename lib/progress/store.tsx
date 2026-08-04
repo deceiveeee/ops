@@ -54,18 +54,23 @@ function writeModuleLocal(moduleKey: string, mod: ModuleCompletion) {
   }
 }
 
+const isOnline = () =>
+  typeof navigator === "undefined" ? true : navigator.onLine;
+
 export function ProgressProvider({ children }: { children: ReactNode }) {
-  const { user } = useSession();
-  const userId = user?.id ?? null;
+  const session = useSession();
+  const supabase = session.client;
+  const liveUserId = session.user?.id ?? null;
 
   const [doc, setDoc] = useState<ProgressDoc>({});
   const [ready, setReady] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("guest");
   const docRef = useRef<ProgressDoc>({});
-
+  const userIdRef = useRef<string | null>(liveUserId);
   useEffect(() => {
-    setSyncStatus(userId ? "synced" : "guest");
-  }, [userId]);
+    userIdRef.current = liveUserId;
+    setSyncStatus(liveUserId ? "synced" : "guest");
+  }, [liveUserId]);
 
   const refreshFromLocal = useCallback(() => {
     const next = readLocal();
@@ -81,15 +86,54 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setReady(true);
     }, 0);
     const onChange = () => refreshFromLocal();
+    const onOnline = () => setSyncStatus(userIdRef.current ? "synced" : "guest");
+    const onOffline = () => setSyncStatus("offline");
     window.addEventListener("storage", onChange);
     window.addEventListener(CHANGE_EVENT, onChange);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
     return () => {
       active = false;
       clearTimeout(tick);
       window.removeEventListener("storage", onChange);
       window.removeEventListener(CHANGE_EVENT, onChange);
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
     };
   }, [refreshFromLocal]);
+
+  useEffect(() => {
+    if (!liveUserId) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("user_progress")
+        .select("completion")
+        .eq("user_id", liveUserId)
+        .single();
+      if (cancelled) return;
+      const cloud = (!error && data?.completion) ? (data.completion as ProgressDoc) : {};
+      const merged = unionDocs(readLocal(), cloud);
+      docRef.current = merged;
+      setDoc(merged);
+      for (const key of Object.keys(merged)) {
+        writeModuleLocal(key, merged[key]);
+      }
+      if (!error) {
+        await supabase
+          .from("user_progress")
+          .upsert({
+            user_id: liveUserId,
+            completion: merged,
+            updated_at: new Date().toISOString(),
+          });
+      }
+      if (!cancelled) setSyncStatus(error ? "error" : "synced");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [liveUserId, supabase]);
 
   const markComplete = useCallback(
     (moduleKey: string, slug: string) => {
@@ -100,8 +144,26 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       docRef.current = nextDoc;
       setDoc(nextDoc);
       writeModuleLocal(moduleKey, nextMod);
+
+      const uid = userIdRef.current;
+      if (!uid) return;
+      if (!isOnline()) {
+        setSyncStatus("offline");
+        return;
+      }
+      setSyncStatus("saving");
+      supabase
+        .from("user_progress")
+        .upsert({
+          user_id: uid,
+          completion: nextDoc,
+          updated_at: new Date().toISOString(),
+        })
+        .then(({ error }: { error: unknown }) => {
+          setSyncStatus(error ? "error" : "synced");
+        });
     },
-    [],
+    [supabase],
   );
 
   const getModuleCompletion = useCallback(

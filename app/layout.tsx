@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SiteShell from "@/components/layout/SiteShell";
 import { SessionProvider } from "@/lib/supabase/session";
+import { ProgressProvider } from "@/lib/progress/store";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -38,7 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <SessionProvider>
-          <SiteShell>{children}</SiteShell>
+          <ProgressProvider>
+            <SiteShell>{children}</SiteShell>
+          </ProgressProvider>
         </SessionProvider>
         <Analytics />
         <SpeedInsights />
