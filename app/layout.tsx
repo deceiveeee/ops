@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SiteShell from "@/components/layout/SiteShell";
 
@@ -35,6 +37,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <SiteShell>{children}</SiteShell>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
