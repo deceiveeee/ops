@@ -1,15 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useProgressStore } from "@/lib/progress/store";
 
-/**
- * Browser-local (localStorage) progress for Investment Foundations.
- * Completely separate from Finance Foundations progress keys.
- * No backend. Used to mark Lesson 1.1 complete after the assessment
- * and to persist the learner's Investment Philosophy Draft 0.1.
- */
-
-const COMPLETION_KEY = "ops-if-completion-v1";
+const MODULE_KEY = "ops-if-completion-v1";
 const DRAFT_KEY = "ops-if-philosophy-draft-v1";
 const PROGRESS_EVENT = "ops-if-progress";
 
@@ -63,16 +57,6 @@ export const EMPTY_DRAFT: PhilosophyDraft = {
   updatedAt: "",
 };
 
-function readCompletion(): Record<string, boolean> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(COMPLETION_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
-  } catch {
-    return {};
-  }
-}
-
 function readDraft(): PhilosophyDraft {
   if (typeof window === "undefined") return EMPTY_DRAFT;
   try {
@@ -80,16 +64,6 @@ function readDraft(): PhilosophyDraft {
     return raw ? ({ ...EMPTY_DRAFT, ...(JSON.parse(raw) as Partial<PhilosophyDraft>) }) : EMPTY_DRAFT;
   } catch {
     return EMPTY_DRAFT;
-  }
-}
-
-function writeCompletion(v: Record<string, boolean>) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(COMPLETION_KEY, JSON.stringify(v));
-    window.dispatchEvent(new Event(PROGRESS_EVENT));
-  } catch {
-    /* ignore quota / private mode errors */
   }
 }
 
@@ -104,19 +78,16 @@ function writeDraft(d: PhilosophyDraft) {
 }
 
 export function useIFProgress() {
-  const [completion, setCompletion] = useState<Record<string, boolean>>({});
+  const store = useProgressStore();
+  const completion = useMemo(
+    () => store.getModuleCompletion(MODULE_KEY),
+    [store, store.getModuleCompletion],
+  );
   const [draft, setDraftState] = useState<PhilosophyDraft>(EMPTY_DRAFT);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setCompletion(readCompletion());
     setDraftState(readDraft());
-    setReady(true);
-
-    const onChange = () => {
-      setCompletion(readCompletion());
-      setDraftState(readDraft());
-    };
+    const onChange = () => setDraftState(readDraft());
     window.addEventListener(PROGRESS_EVENT, onChange);
     window.addEventListener("storage", onChange);
     return () => {
@@ -125,14 +96,10 @@ export function useIFProgress() {
     };
   }, []);
 
-  const markComplete = useCallback((slug: string) => {
-    setCompletion((prev) => {
-      if (prev[slug]) return prev;
-      const next = { ...prev, [slug]: true };
-      writeCompletion(next);
-      return next;
-    });
-  }, []);
+  const markComplete = useCallback(
+    (slug: string) => store.markComplete(MODULE_KEY, slug),
+    [store],
+  );
 
   const isComplete = useCallback(
     (slug: string) => Boolean(completion[slug]),
@@ -151,7 +118,7 @@ export function useIFProgress() {
   }, []);
 
   return {
-    ready,
+    ready: store.ready,
     completion,
     draft,
     isComplete,

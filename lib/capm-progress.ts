@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-
-const COMPLETION_KEY = "ops-m7-completion-v1";
+import { useCallback, useMemo } from "react";
+import { useProgressStore } from "@/lib/progress/store";
 
 export const CAPM_MODULE_LESSONS = [
   {
@@ -37,62 +36,26 @@ export const CAPM_MODULE_LESSONS = [
   },
 ] as const;
 
-function readCompletion(): Record<string, boolean> {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(COMPLETION_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
-  } catch {
-    return {};
-  }
-}
-
-function writeCompletion(v: Record<string, boolean>) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(COMPLETION_KEY, JSON.stringify(v));
-    window.dispatchEvent(new Event("ops-m7-progress"));
-  } catch {
-    /* ignore */
-  }
-}
+const MODULE_KEY = "ops-m7-completion-v1";
 
 export function useCAPMProgress() {
-  const [completion, setCompletion] = useState<Record<string, boolean>>({});
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    setCompletion(readCompletion());
-    setReady(true);
-    const onChange = () => setCompletion(readCompletion());
-    window.addEventListener("ops-m7-progress", onChange);
-    window.addEventListener("storage", onChange);
-    return () => {
-      window.removeEventListener("ops-m7-progress", onChange);
-      window.removeEventListener("storage", onChange);
-    };
-  }, []);
-
-  const markComplete = useCallback((slug: string) => {
-    setCompletion((prev) => {
-      if (prev[slug]) return prev;
-      const next = { ...prev, [slug]: true };
-      writeCompletion(next);
-      return next;
-    });
-  }, []);
-
+  const store = useProgressStore();
+  const completion = useMemo(
+    () => store.getModuleCompletion(MODULE_KEY),
+    [store, store.getModuleCompletion],
+  );
   const isComplete = useCallback(
     (slug: string) => Boolean(completion[slug]),
     [completion],
   );
-
-  return { ready, completion, isComplete, markComplete };
+  const markComplete = useCallback(
+    (slug: string) => store.markComplete(MODULE_KEY, slug),
+    [store],
+  );
+  return { ready: store.ready, completion, isComplete, markComplete };
 }
 
 export function useReportCAPMComplete(slug: string) {
   const { markComplete } = useCAPMProgress();
-  return useCallback(() => {
-    markComplete(slug);
-  }, [markComplete, slug]);
+  return useCallback(() => markComplete(slug), [markComplete, slug]);
 }
