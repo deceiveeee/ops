@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import { useSession } from "@/lib/supabase/session";
+import { useProgressStore } from "@/lib/progress/store";
+import { syncStatusText } from "./sync-indicator";
 
 const nav = [
   { href: "/courses", label: "Courses" },
@@ -17,6 +20,9 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const { user, status, client } = useSession();
+  const { syncStatus } = useProgressStore();
+  const signedIn = status === "authenticated" && !!user;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -68,7 +74,13 @@ export default function SiteHeader() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          <SyncChip status={syncStatus} />
+          {signedIn ? (
+            <AccountMenu email={user!.email ?? ""} onSignOut={() => void client.auth.signOut()} />
+          ) : (
+            <Button href="/login" variant="outline" size="md">Sign in</Button>
+          )}
           <Button href="/studio" size="md">
             Enter the studio
           </Button>
@@ -111,6 +123,41 @@ export default function SiteHeader() {
         </div>
       )}
     </header>
+  );
+}
+
+function SyncChip({ status }: { status: ReturnType<typeof useProgressStore>["syncStatus"] }) {
+  if (status === "guest") return null;
+  const { label, dot } = syncStatusText(status);
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[13px] text-slate-300">
+      <span className={dot} />
+      {label}
+    </span>
+  );
+}
+
+function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="rounded-full border border-white/10 px-3 py-1.5 text-[14px] text-slate-200 hover:bg-white/5"
+      >
+        {email}
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-40 rounded-lg border border-white/10 bg-ink-950/95 p-1">
+          <button
+            onClick={onSignOut}
+            className="w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
+          >
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
