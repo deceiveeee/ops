@@ -119,6 +119,22 @@ export default function SiteHeader() {
                 Studio
               </Button>
             </div>
+            <div className="mt-2">
+              {signedIn ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => void client.auth.signOut()}
+                >
+                  Sign out
+                </Button>
+              ) : (
+                <Button href="/login" variant="outline" size="sm" className="w-full">
+                  Sign in
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}

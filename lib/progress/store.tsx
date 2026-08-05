@@ -69,7 +69,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const userIdRef = useRef<string | null>(liveUserId);
   useEffect(() => {
     userIdRef.current = liveUserId;
-    setSyncStatus(liveUserId ? "synced" : "guest");
+    setSyncStatus(liveUserId ? "saving" : "guest");
   }, [liveUserId]);
 
   const refreshFromLocal = useCallback(() => {
@@ -119,16 +119,17 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       for (const key of Object.keys(merged)) {
         writeModuleLocal(key, merged[key]);
       }
+      let upsertError: unknown = null;
       if (!error) {
-        await supabase
+        ({ error: upsertError } = await supabase
           .from("user_progress")
           .upsert({
             user_id: liveUserId,
             completion: merged,
             updated_at: new Date().toISOString(),
-          });
+          }));
       }
-      if (!cancelled) setSyncStatus(error ? "error" : "synced");
+      if (!cancelled) setSyncStatus(error || upsertError ? "error" : "synced");
     })();
     return () => {
       cancelled = true;
@@ -152,16 +153,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         return;
       }
       setSyncStatus("saving");
-      supabase
-        .from("user_progress")
-        .upsert({
-          user_id: uid,
-          completion: nextDoc,
-          updated_at: new Date().toISOString(),
-        })
+      Promise.resolve(
+        supabase
+          .from("user_progress")
+          .upsert({
+            user_id: uid,
+            completion: nextDoc,
+            updated_at: new Date().toISOString(),
+          }),
+      )
         .then(({ error }: { error: unknown }) => {
           setSyncStatus(error ? "error" : "synced");
-        });
+        })
+        .catch(() => setSyncStatus("error"));
     },
     [supabase],
   );

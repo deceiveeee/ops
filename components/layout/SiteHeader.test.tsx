@@ -39,6 +39,6 @@ describe("SiteHeader account affordance", () => {
   it("shows email and Synced when authenticated", async () => {
     renderWith({ id: "u1", email: "a@b.com" } as unknown as User);
     expect(await screen.findByText("a@b.com")).toBeInTheDocument();
-    expect(screen.getByText("Synced")).toBeInTheDocument();
+    expect(await screen.findByText("Synced")).toBeInTheDocument();
   });
 });

@@ -182,4 +182,17 @@ describe("ProgressProvider (signed-in)", () => {
     expect(result.current.isComplete("ops-m3-completion-v1", "z")).toBe(true);
     await waitFor(() => expect(result.current.syncStatus).toBe("error"));
   });
+
+  it("marks sync error when merge write-back upsert fails", async () => {
+    const client = makeSignedClient({ id: "u4" });
+    (client.from as unknown) = (_t: string) => ({
+      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+      upsert: () => Promise.resolve({ error: { message: "boom" } }),
+    });
+    const { result } = renderHook(() => useProgressStore(), {
+      wrapper: signedWrapper(client),
+    });
+    await act(() => new Promise((r) => setTimeout(r, 0)));
+    await waitFor(() => expect(result.current.syncStatus).toBe("error"));
+  });
 });
