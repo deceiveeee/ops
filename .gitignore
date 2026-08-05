@@ -7,3 +7,5 @@ dist
 *.log
 .DS_Store
 docs/superpowers/qa/**/captures/
+test-results
+playwright-report

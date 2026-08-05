@@ -16,11 +16,14 @@ const fakeClient = {
 } as unknown as SupabaseClient;
 
 function guestWrapper(client: SupabaseClient = fakeClient) {
-  return ({ children }: { children: React.ReactNode }) => (
-    <SessionProvider client={client}>
-      <ProgressProvider>{children}</ProgressProvider>
-    </SessionProvider>
-  );
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <SessionProvider client={client}>
+        <ProgressProvider>{children}</ProgressProvider>
+      </SessionProvider>
+    );
+  }
+  return Wrapper;
 }
 
 describe("ProgressProvider (guest)", () => {
@@ -120,11 +123,14 @@ function makeSignedClient(startUser: { id: string } | null = null) {
 }
 
 function signedWrapper(client: ReturnType<typeof makeSignedClient>) {
-  return ({ children }: { children: React.ReactNode }) => (
-    <SessionProvider client={client as unknown as SupabaseClient}>
-      <ProgressProvider>{children}</ProgressProvider>
-    </SessionProvider>
-  );
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <SessionProvider client={client as unknown as SupabaseClient}>
+        <ProgressProvider>{children}</ProgressProvider>
+      </SessionProvider>
+    );
+  }
+  return Wrapper;
 }
 
 describe("ProgressProvider (signed-in)", () => {

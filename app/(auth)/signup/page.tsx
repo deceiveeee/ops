@@ -2,13 +2,12 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import GlassPanel from "@/components/ui/GlassPanel";
 import Button from "@/components/ui/Button";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 function SignupForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") ?? "/";
   const [email, setEmail] = useState("");

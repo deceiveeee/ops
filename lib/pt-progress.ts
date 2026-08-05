@@ -42,7 +42,7 @@ export function usePTProgress() {
   const store = useProgressStore();
   const completion = useMemo(
     () => store.getModuleCompletion(MODULE_KEY),
-    [store, store.getModuleCompletion],
+    [store],
   );
   const isComplete = useCallback(
     (slug: string) => Boolean(completion[slug]),

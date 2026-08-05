@@ -25,8 +25,12 @@ function makeFakeClient(user?: { id: string }) {
   return client;
 }
 
-const wrapper = (client: SupabaseClient) => ({ children }: { children: React.ReactNode }) =>
-  <SessionProvider client={client}>{children}</SessionProvider>;
+function wrapper(client: SupabaseClient) {
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return <SessionProvider client={client}>{children}</SessionProvider>;
+  }
+  return Wrapper;
+}
 
 describe("SessionProvider", () => {
   it("starts loading then resolves unauthenticated", async () => {
