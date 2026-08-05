@@ -110,7 +110,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         .from("user_progress")
         .select("completion")
         .eq("user_id", liveUserId)
-        .single();
+        .maybeSingle();
       if (cancelled) return;
       const cloud = (!error && data?.completion) ? (data.completion as ProgressDoc) : {};
       const merged = unionDocs(readLocal(), cloud);

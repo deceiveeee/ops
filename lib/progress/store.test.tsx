@@ -93,14 +93,15 @@ function makeSignedClient(startUser: { id: string } | null = null) {
     },
     from: (table: string) => ({
       select: () => ({
-        eq: (_col: string, _val: string) => ({
-          single: async () => ({
+        eq: (_col: string, _val: string) => {
+          const run = async () => ({
             data: table === "user_progress" && state.user && state.rows[state.user.id]
               ? { user_id: state.user.id, completion: state.rows[state.user.id] }
               : null,
             error: null,
-          }),
-        }),
+          });
+          return { single: run, maybeSingle: run };
+        },
       }),
       upsert: (payload: UpsertPayload) => {
         if (table !== "user_progress" || !state.user) {
@@ -171,7 +172,7 @@ describe("ProgressProvider (signed-in)", () => {
   it("keeps local progress on cloud error", async () => {
     const client = makeSignedClient({ id: "u3" });
     (client.from as unknown) = (_t: string) => ({
-      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }), maybeSingle: async () => ({ data: null, error: null }) }) }),
       upsert: () => Promise.resolve({ error: { message: "boom" } }),
     });
     const { result } = renderHook(() => useProgressStore(), {
@@ -186,7 +187,7 @@ describe("ProgressProvider (signed-in)", () => {
   it("marks sync error when merge write-back upsert fails", async () => {
     const client = makeSignedClient({ id: "u4" });
     (client.from as unknown) = (_t: string) => ({
-      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }), maybeSingle: async () => ({ data: null, error: null }) }) }),
       upsert: () => Promise.resolve({ error: { message: "boom" } }),
     });
     const { result } = renderHook(() => useProgressStore(), {
@@ -194,5 +195,28 @@ describe("ProgressProvider (signed-in)", () => {
     });
     await act(() => new Promise((r) => setTimeout(r, 0)));
     await waitFor(() => expect(result.current.syncStatus).toBe("error"));
+  });
+
+  it("syncs as 'synced' for a new user with no cloud row", async () => {
+    const client = makeSignedClient({ id: "u5" });
+    const rows = client.__rows;
+    (client.from as unknown) = (_t: string) => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: "PGRST116" } }),
+          maybeSingle: async () => ({ data: null, error: null }),
+        }),
+      }),
+      upsert: (payload: UpsertPayload) => {
+        rows[payload.user_id] = payload.completion;
+        return Promise.resolve({ error: null });
+      },
+    });
+    const { result } = renderHook(() => useProgressStore(), {
+      wrapper: signedWrapper(client),
+    });
+    await act(() => new Promise((r) => setTimeout(r, 0)));
+    await waitFor(() => expect(result.current.syncStatus).toBe("synced"));
+    expect(rows["u5"]).toBeDefined();
   });
 });

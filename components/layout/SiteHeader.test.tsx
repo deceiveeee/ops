@@ -13,7 +13,7 @@ function baseClient(user: User | null) {
       signOut: async () => ({}),
     },
     from: () => ({
-      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+      select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }), maybeSingle: async () => ({ data: null, error: null }) }) }),
       upsert: () => Promise.resolve({ error: null }),
     }),
   } as unknown as SupabaseClient;
