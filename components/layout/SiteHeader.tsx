@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import OnboardingPrompt from "@/components/onboarding/OnboardingPrompt";
 import { useSession } from "@/lib/supabase/session";
 import { useProgressStore } from "@/lib/progress/store";
 import { syncStatusText } from "./sync-indicator";
@@ -44,6 +45,7 @@ export default function SiteHeader() {
           : "border-b border-transparent bg-transparent",
       )}
     >
+      <OnboardingPrompt />
       <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-6 sm:px-8">
         <Link href="/" className="group flex items-center gap-2.5" aria-label="Open Portfolio Studio home">
           <Logo />
@@ -164,7 +166,14 @@ function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => voi
         {email}
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-40 rounded-lg border border-white/10 bg-ink-950/95 p-1">
+        <div className="absolute right-0 mt-2 w-56 rounded-lg border border-white/10 bg-ink-950/95 p-1">
+          <Link
+            href="/start?retake=1"
+            onClick={() => setOpen(false)}
+            className="block w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
+          >
+            Update my starting point
+          </Link>
           <button
             onClick={onSignOut}
             className="w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
