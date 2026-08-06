@@ -6,6 +6,7 @@ import "./globals.css";
 import SiteShell from "@/components/layout/SiteShell";
 import { SessionProvider } from "@/lib/supabase/session";
 import { ProgressProvider } from "@/lib/progress/store";
+import { OnboardingProvider } from "@/lib/onboarding/store";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -39,9 +40,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         <SessionProvider>
-          <ProgressProvider>
-            <SiteShell>{children}</SiteShell>
-          </ProgressProvider>
+          <OnboardingProvider>
+            <ProgressProvider>
+              <SiteShell>{children}</SiteShell>
+            </ProgressProvider>
+          </OnboardingProvider>
         </SessionProvider>
         <Analytics />
         <SpeedInsights />
