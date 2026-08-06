@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { SessionProvider } from "@/lib/supabase/session";
 import { ProgressProvider } from "@/lib/progress/store";
+import { OnboardingProvider } from "@/lib/onboarding/store";
 import SiteHeader from "./SiteHeader";
 
 function baseClient(user: User | null) {
@@ -23,9 +24,11 @@ function renderWith(user: User | null) {
   const client = baseClient(user);
   return render(
     <SessionProvider client={client}>
-      <ProgressProvider>
-        <SiteHeader />
-      </ProgressProvider>
+      <OnboardingProvider>
+        <ProgressProvider>
+          <SiteHeader />
+        </ProgressProvider>
+      </OnboardingProvider>
     </SessionProvider>,
   );
 }
