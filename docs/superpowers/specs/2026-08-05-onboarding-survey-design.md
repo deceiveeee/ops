@@ -15,7 +15,7 @@ Capture the entering state of every learner in a way that:
 
 1. **Does not feel like a survey.** Reads like a Bloomberg-terminal intake — one question at a time, full-screen, animated transitions.
 2. **Works identically for guests and signed-in users.** No auth gate. Guests' answers live in localStorage; signed-in users' answers sync to a dedicated table.
-3. **Produces a concrete, personalized payoff at the end** — a "Your OPS starting point" card that recommends a primary course and a next step, with a deep-link into the recommended first lesson.
+3. **Produces a concrete, personalized payoff at the end** — a "Your OPS starting point" card that recommends a primary course and a next step, with a deep-link to the recommended course's landing page.
 4. **Yields clean analytics.** A dedicated table with typed columns enables real SQL KPI queries (distributions, funnels, cross-tabs), not JSONB spelunking.
 5. **Pairs with a future exit survey** to measure change in confidence over the course (out of scope here; schema does not block it).
 
@@ -154,7 +154,7 @@ Maps `(goal, experience)` → `(primary course, next-step copy)`:
 
 ### "Pathway" language caveat
 
-The codebase has `ModuleRole` tags (`foundation`, `security-pricing`, `risk-and-portfolio`, etc.) but **no first-class "pathway" object yet**. For V1, phrases like "valuation pathway" / "foundations pathway" / "portfolio theory" are **copy strings only** — they deep-link into the relevant module's first lesson, not to a real pathway abstraction. If real pathway objects (a `pathways` table, dedicated URLs) are desired later, that is a separate project. The current spec does not promise pathway infrastructure the code cannot deliver.
+The codebase has `ModuleRole` tags (`foundation`, `security-pricing`, `risk-and-portfolio`, etc.) but **no first-class "pathway" object yet**. For V1, phrases like "valuation pathway" / "foundations pathway" / "portfolio theory" are **copy strings only** — they reference the relevant module's topic, not a real pathway abstraction. The primary CTA deep-links to the recommended course's landing page (`/courses/<slug>`), not to a per-pathway URL. If real pathway objects (a `pathways` table, dedicated URLs) are desired later, that is a separate project. The current spec does not promise pathway infrastructure the code cannot deliver.
 
 ## Questions (single source of truth)
 
@@ -251,7 +251,7 @@ Mirrors the existing `lib/progress/store.tsx` pattern almost exactly:
 - Layout: vertical label/value rows (`Goal`, `Current experience`, `Recommended starting point`, `Suggested next step`).
 - Labels: `text-[12px] uppercase tracking-[0.02em] text-slate-500` (these are small label eyebrows, not body — `uppercase + tracking` is acceptable for label eyebrows per AGENTS.md; body stays sentence case).
 - Recommended course row emphasized: larger value, `text-accent-cyan`.
-- Primary CTA `Begin my first lesson`: filled `accent-cyan` button, deep-links into the recommended course's first lesson.
+- Primary CTA `Begin course`: filled `accent-cyan` button, deep-links to the recommended course's landing page (`/courses/<slug>`).
 - Secondary `Explore all courses`: muted text link below → `/courses`.
 
 **Fonts:** Fraunces (`font-display`) for headlines, Inter (`font-sans`) for everything else. **No `font-mono` anywhere** (hard project rule).

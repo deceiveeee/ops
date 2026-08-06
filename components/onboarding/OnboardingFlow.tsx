@@ -8,7 +8,7 @@ import OnboardingResults from "./OnboardingResults";
 import ProgressScanLine from "./ProgressScanLine";
 import { ONBOARDING_QUESTIONS } from "@/lib/onboarding/questions";
 import { useOnboarding } from "@/lib/onboarding/store";
-import { courseFirstLessonHref } from "@/lib/onboarding/course-meta";
+import { courseHref } from "@/lib/onboarding/course-meta";
 import type { OnboardingAnswers, QuestionId, SegmentOption } from "@/lib/onboarding/types";
 
 type Phase = "intro" | QuestionId | "results";
@@ -34,8 +34,8 @@ function firstUnansweredPhase(answers: OnboardingAnswers): Phase {
   return "segment";
 }
 
-function recommendedLessonHref(courseSlug: string): string {
-  return courseFirstLessonHref(courseSlug);
+function recommendedCourseHref(courseSlug: string): string {
+  return courseHref(courseSlug);
 }
 
 export default function OnboardingFlow({ retake }: { retake: boolean }) {
@@ -170,7 +170,7 @@ export default function OnboardingFlow({ retake }: { retake: boolean }) {
               answers={snapshot?.answers ?? {}}
               segment={snapshot?.segment ?? null}
               recommendation={recommendation}
-              primaryLessonHref={recommendedLessonHref(recommendation.primaryCourseSlug)}
+              primaryCourseHref={recommendedCourseHref(recommendation.primaryCourseSlug)}
             />
           )}
         </motion.div>

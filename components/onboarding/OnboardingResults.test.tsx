@@ -22,7 +22,7 @@ describe("OnboardingResults", () => {
           primaryCourseSlug: "finance-foundations",
           nextStepCopy: "Work through equities and valuation, then try a company case.",
         }}
-        primaryLessonHref="/lessons/equity-what-does-owning-a-stock-mean"
+        primaryCourseHref="/courses/finance-foundations"
       />,
     );
     expect(screen.getByText("Goal")).toBeTruthy();
@@ -40,7 +40,7 @@ describe("OnboardingResults", () => {
           primaryCourseSlug: "finance-foundations",
           nextStepCopy: "...",
         }}
-        primaryLessonHref="/lessons/x"
+        primaryCourseHref="/courses/foo"
       />,
     );
     expect(screen.getByText("Learn to analyze companies")).toBeTruthy();
@@ -56,13 +56,13 @@ describe("OnboardingResults", () => {
           primaryCourseSlug: "finance-foundations",
           nextStepCopy: "...",
         }}
-        primaryLessonHref="/lessons/x"
+        primaryCourseHref="/courses/foo"
       />,
     );
     expect(screen.getByText("Finance Foundations")).toBeTruthy();
   });
 
-  it("primary CTA points to primaryLessonHref and secondary link points to /courses", () => {
+  it("primary CTA points to primaryCourseHref and secondary link points to /courses", () => {
     render(
       <OnboardingResults
         answers={answers}
@@ -71,11 +71,11 @@ describe("OnboardingResults", () => {
           primaryCourseSlug: "finance-foundations",
           nextStepCopy: "...",
         }}
-        primaryLessonHref="/lessons/foo"
+        primaryCourseHref="/courses/foo"
       />,
     );
-    const primary = screen.getByText("Begin my first lesson").closest("a");
-    expect(primary?.getAttribute("href")).toBe("/lessons/foo");
+    const primary = screen.getByText("Begin course").closest("a");
+    expect(primary?.getAttribute("href")).toBe("/courses/foo");
     const secondary = screen.getByText("Explore all courses").closest("a");
     expect(secondary?.getAttribute("href")).toBe("/courses");
   });

@@ -24,12 +24,12 @@ export default function OnboardingResults({
   answers,
   segment,
   recommendation,
-  primaryLessonHref,
+  primaryCourseHref,
 }: {
   answers: OnboardingAnswers;
   segment: SegmentOption | null;
   recommendation: Recommendation;
-  primaryLessonHref: string;
+  primaryCourseHref: string;
 }) {
   return (
     <div className="mx-auto w-full max-w-2xl px-6">
@@ -55,8 +55,8 @@ export default function OnboardingResults({
       </div>
 
       <div className="mt-12 flex flex-col items-start gap-4">
-        <Button href={primaryLessonHref} size="lg">
-          Begin my first lesson
+        <Button href={primaryCourseHref} size="lg">
+          Begin course
         </Button>
         <Link
           href="/courses"

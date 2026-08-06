@@ -1,16 +1,16 @@
 export type CourseMeta = {
   title: string;
-  firstLessonHref: string;
+  courseHref: string;
 };
 
 export const COURSE_META: Record<string, CourseMeta> = {
   "finance-foundations": {
     title: "Finance Foundations",
-    firstLessonHref: "/lessons/what-is-finance-value-time-risk",
+    courseHref: "/courses/finance-foundations",
   },
   "investment-foundations": {
     title: "Investment Foundations",
-    firstLessonHref: "/lessons/if-1-1-how-an-investor-builds-a-philosophy",
+    courseHref: "/courses/investment-foundations",
   },
 };
 
@@ -18,6 +18,6 @@ export function courseTitle(slug: string): string {
   return COURSE_META[slug]?.title ?? slug;
 }
 
-export function courseFirstLessonHref(slug: string): string {
-  return COURSE_META[slug]?.firstLessonHref ?? "/courses";
+export function courseHref(slug: string): string {
+  return COURSE_META[slug]?.courseHref ?? `/courses/${slug}`;
 }

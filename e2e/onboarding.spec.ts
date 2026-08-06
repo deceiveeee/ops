@@ -64,8 +64,11 @@ test.describe("Onboarding flow", () => {
       page.getByRole("main").getByText("Finance Foundations"),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Begin my first lesson" }),
+      page.getByRole("link", { name: "Begin course" }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Begin course" }),
+    ).toHaveAttribute("href", "/courses/finance-foundations");
     await expect(
       page.getByRole("link", { name: "Explore all courses" }),
     ).toHaveAttribute("href", "/courses");
