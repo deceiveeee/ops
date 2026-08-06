@@ -80,8 +80,8 @@ export default function HeroChapter() {
           transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
           className="mt-12 flex flex-wrap items-center gap-4"
         >
-          <Button href="/courses" size="lg">
-            Explore courses
+          <Button href="/start" size="lg">
+            Find your starting point
           </Button>
           <Button href="/studio" variant="outline" size="lg">
             Enter the studio
