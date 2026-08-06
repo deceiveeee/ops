@@ -101,4 +101,67 @@ describe("OnboardingQuestion", () => {
     );
     expect(screen.getByRole("radiogroup")).toBeTruthy();
   });
+
+  it("roves tabindex to the first card when nothing is selected", () => {
+    render(
+      <OnboardingQuestion
+        question={question}
+        selectedValue={undefined}
+        onSelect={() => {}}
+        onSkip={() => {}}
+      />,
+    );
+    const radios = screen.getAllByRole("radio");
+    expect(radios[0]).toHaveAttribute("tabindex", "0");
+    expect(radios[1]).toHaveAttribute("tabindex", "-1");
+  });
+
+  it("roves tabindex to the selected card when a value is selected", () => {
+    render(
+      <OnboardingQuestion
+        question={question}
+        selectedValue="build-a-diversified-portfolio"
+        onSelect={() => {}}
+        onSkip={() => {}}
+      />,
+    );
+    const radios = screen.getAllByRole("radio");
+    expect(radios[0]).toHaveAttribute("tabindex", "-1");
+    expect(radios[1]).toHaveAttribute("tabindex", "0");
+  });
+
+  it("ArrowDown moves focus to the next card and follows the tab stop", () => {
+    render(
+      <OnboardingQuestion
+        question={question}
+        selectedValue={undefined}
+        onSelect={() => {}}
+        onSkip={() => {}}
+      />,
+    );
+    const group = screen.getByRole("radiogroup");
+    const radios = screen.getAllByRole("radio");
+    radios[0].focus();
+    expect(document.activeElement).toBe(radios[0]);
+    fireEvent.keyDown(group, { key: "ArrowDown" });
+    expect(document.activeElement).toBe(radios[1]);
+    expect(radios[1]).toHaveAttribute("tabindex", "0");
+    expect(radios[0]).toHaveAttribute("tabindex", "-1");
+  });
+
+  it("ArrowDown wraps from the last card back to the first", () => {
+    render(
+      <OnboardingQuestion
+        question={question}
+        selectedValue="build-a-diversified-portfolio"
+        onSelect={() => {}}
+        onSkip={() => {}}
+      />,
+    );
+    const group = screen.getByRole("radiogroup");
+    const radios = screen.getAllByRole("radio");
+    radios[1].focus();
+    fireEvent.keyDown(group, { key: "ArrowDown" });
+    expect(document.activeElement).toBe(radios[0]);
+  });
 });

@@ -125,13 +125,19 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       setReady(true);
     }, 0);
     const onChange = () => refreshFromLocal();
+    const onOnline = () => setSyncStatus(userIdRef.current ? "synced" : "guest");
+    const onOffline = () => setSyncStatus("offline");
     window.addEventListener("storage", onChange);
     window.addEventListener(ONBOARDING_CHANGE_EVENT, onChange);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
     return () => {
       active = false;
       clearTimeout(tick);
       window.removeEventListener("storage", onChange);
       window.removeEventListener(ONBOARDING_CHANGE_EVENT, onChange);
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
     };
   }, [refreshFromLocal]);
 
