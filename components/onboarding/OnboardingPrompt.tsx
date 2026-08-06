@@ -2,10 +2,13 @@
 
 import Button from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding/store";
+import { useSession } from "@/lib/supabase/session";
 
 export default function OnboardingPrompt() {
+  const { user } = useSession();
   const { ready, isComplete, snapshot, dismissPrompt } = useOnboarding();
 
+  if (!user) return null;
   if (!ready) return null;
   if (isComplete) return null;
   if (snapshot?.prompt_dismissed) return null;
@@ -24,7 +27,7 @@ export default function OnboardingPrompt() {
             type="button"
             onClick={dismissPrompt}
             aria-label="Dismiss"
-            className="text-[14px] text-slate-400 hover:text-slate-200"
+            className="rounded text-[14px] text-slate-400 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
           >
             Dismiss
           </button>
