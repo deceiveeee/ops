@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { ONBOARDING_QUESTIONS } from "@/lib/onboarding/questions";
-import { courses } from "@/data/courses";
+import { courseTitle } from "@/lib/onboarding/course-meta";
 import type {
   OnboardingAnswers,
   Recommendation,
@@ -18,10 +18,6 @@ function labelFor(
   const q = ONBOARDING_QUESTIONS.find((x) => x.id === questionId);
   const opt = q?.options.find((o) => o.id === value);
   return opt?.label ?? value;
-}
-
-function courseTitle(slug: string): string {
-  return courses.find((c) => c.slug === slug)?.title ?? slug;
 }
 
 export default function OnboardingResults({

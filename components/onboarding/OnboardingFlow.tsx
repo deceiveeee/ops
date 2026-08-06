@@ -8,7 +8,7 @@ import OnboardingResults from "./OnboardingResults";
 import ProgressScanLine from "./ProgressScanLine";
 import { ONBOARDING_QUESTIONS } from "@/lib/onboarding/questions";
 import { useOnboarding } from "@/lib/onboarding/store";
-import { courses } from "@/data/courses";
+import { courseFirstLessonHref } from "@/lib/onboarding/course-meta";
 import type { OnboardingAnswers, QuestionId, SegmentOption } from "@/lib/onboarding/types";
 
 type Phase = "intro" | QuestionId | "results";
@@ -35,9 +35,7 @@ function firstUnansweredPhase(answers: OnboardingAnswers): Phase {
 }
 
 function recommendedLessonHref(courseSlug: string): string {
-  const course = courses.find((c) => c.slug === courseSlug);
-  const firstSlug = course?.modules[0]?.lessonSlugs[0];
-  return firstSlug ? `/lessons/${firstSlug}` : "/courses";
+  return courseFirstLessonHref(courseSlug);
 }
 
 export default function OnboardingFlow({ retake }: { retake: boolean }) {
