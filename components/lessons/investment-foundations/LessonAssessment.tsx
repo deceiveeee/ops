@@ -1,108 +1,136 @@
 "use client";
 
 import { Reveal } from "./shared";
-import { default as MasteryCheck, type MasteryQuestion } from "@/components/lessons/present-value-relations/MasteryCheck";
+import {
+  default as MasteryCheck,
+  type MasteryQuestion,
+} from "@/components/lessons/present-value-relations/MasteryCheck";
 import { useIFProgress } from "@/lib/if-progress";
-
-/**
- * Section 16 — Check your understanding.
- * Six questions. Pass with 5 of 6 correct to mark Lesson 1.1 complete.
- * Uses the existing MasteryCheck component to preserve OPS quiz design.
- */
 
 const QUESTIONS: MasteryQuestion[] = [
   {
-    id: "q1",
+    id: "coherent-process",
     type: "single",
     prompt:
-      "Which statement is an investment philosophy rather than merely a strategy?",
+      "Two investors buy the same stock after a positive earnings surprise. Investor A expects gradual revisions, checks whether the surprise changes long-term cash flows, and states what evidence would reject the idea. Investor B buys because the stock ranks highly on three screens. Which conclusion is strongest?",
     choices: [
-      { id: "a", label: "“Buy stocks with low P/E ratios.”" },
-      { id: "b", label: "“Buy companies that pay high dividends.”" },
-      { id: "c", label: "“Buy undervalued companies.”" },
-      { id: "d", label: "“Investors tend to overreact to major announcements, and prices may correct gradually.”" },
-    ],
-    correctId: "d",
-    hint:
-      "The other choices describe actions without explaining why they should work. (A low-P/E rule is a strategy that requires an underlying belief about why low-P/E stocks may be mispriced. A high-dividend rule needs an explanation of why dividends create a return advantage. “Buy undervalued companies” states an intention, not the market mistake, valuation method, catalyst, or implementation rule.)",
-  },
-  {
-    id: "q2",
-    type: "single",
-    prompt:
-      "Suppose your philosophy is based on the belief that investors update their expectations slowly after positive earnings surprises. Which strategy best fits that belief?",
-    choices: [
-      { id: "a", label: "Buy after a significant positive earnings surprise, then investigate whether the price has fully adjusted." },
-      { id: "b", label: "Buy after a significant negative earnings surprise." },
-      { id: "c", label: "Buy before every earnings announcement." },
-      { id: "d", label: "Sell every company that reports earnings growth." },
+      {
+        id: "a",
+        label:
+          "Investor A has the stronger philosophy because the trade follows from a testable account of market behavior.",
+      },
+      {
+        id: "b",
+        label:
+          "Investor B has the stronger philosophy because several independent screens reduce model risk.",
+      },
+      {
+        id: "c",
+        label:
+          "Both have equally strong philosophies because the position and entry price are identical.",
+      },
+      {
+        id: "d",
+        label:
+          "Neither can have a philosophy until the outcome reveals which reasoning was correct.",
+      },
     ],
     correctId: "a",
     hint:
-      "If investors respond slowly to positive news, the price may continue adjusting after the announcement. The strategy must occur after the information that investors are supposedly processing slowly.",
+      "Multiple signals can improve a strategy, but they do not replace an explanation for why the signals should predict returns. A philosophy can be evaluated before one trade succeeds or fails.",
   },
   {
-    id: "q3",
+    id: "underreaction-strategy",
     type: "single",
     prompt:
-      "A portfolio manager reduces stocks from 70% of the portfolio to 50% because expectations for the economy and interest rates changed. Which stage of the process is this?",
+      "An investor believes prices sometimes underreact when new earnings information changes long-term expectations. Which strategy most faithfully implements that belief?",
     choices: [
-      { id: "a", label: "Investor analysis" },
-      { id: "b", label: "Asset allocation" },
-      { id: "c", label: "Security selection" },
-      { id: "d", label: "Execution" },
-      { id: "e", label: "Performance evaluation" },
+      {
+        id: "a",
+        label:
+          "Buy every company with a positive surprise immediately, because the belief makes further analysis unnecessary.",
+      },
+      {
+        id: "b",
+        label:
+          "After a positive surprise, test whether expected cash flows changed more than the price and hold while revisions diffuse.",
+      },
+      {
+        id: "c",
+        label:
+          "Buy before earnings announcements, because underreaction implies positive surprises can be forecast reliably.",
+      },
+      {
+        id: "d",
+        label:
+          "Buy low-P/E companies after negative surprises, because any contrarian strategy follows from underreaction.",
+      },
     ],
     correctId: "b",
     hint:
-      "The manager changed exposure to an entire asset class rather than choosing a specific stock.",
+      "The strategy must occur after the new information, verify that the information matters, and depend on gradual—not instantaneous or contrarian—price adjustment.",
   },
   {
-    id: "q4",
+    id: "implementation-drift",
     type: "single",
     prompt:
-      "A manager compares expected cash flows and valuation multiples to choose between two restaurant companies. Which stage is this?",
+      "A post-earnings strategy trails its benchmark for 18 months. Independent evidence still finds post-announcement drift after costs, but the manager has begun buying before announcements rather than after confirmed surprises. What is the best diagnosis?",
     choices: [
-      { id: "a", label: "Investor analysis" },
-      { id: "b", label: "Asset allocation" },
-      { id: "c", label: "Security selection" },
-      { id: "d", label: "Execution" },
-      { id: "e", label: "Performance evaluation" },
+      {
+        id: "a",
+        label:
+          "The philosophy has been disproved because any 18-month underperformance is long enough to reject it.",
+      },
+      {
+        id: "b",
+        label:
+          "The philosophy remains plausible, but the manager's implementation no longer tests the stated belief cleanly.",
+      },
+      {
+        id: "c",
+        label:
+          "The strategy should be retained unchanged because evidence matters and realized performance does not.",
+      },
+      {
+        id: "d",
+        label:
+          "The manager should switch to the best recent strategy until post-announcement drift begins working again.",
+      },
     ],
-    correctId: "c",
+    correctId: "b",
     hint:
-      "The manager is choosing a specific security within the equity allocation.",
+      "The market belief and the manager's actions must be diagnosed separately. Buying before the surprise introduces a different forecasting claim.",
   },
   {
-    id: "q5",
+    id: "strategy-switching",
     type: "single",
     prompt:
-      "An investor searches for the same or economically linked asset trading at inconsistent prices in two markets. Which philosophy is most closely associated with this activity?",
+      "An investor moves from growth to value to momentum, each time after the new strategy leads the market. Which criticism is most precise?",
     choices: [
-      { id: "a", label: "Market timing" },
-      { id: "b", label: "Growth investing" },
-      { id: "c", label: "Arbitrage" },
-      { id: "d", label: "Indexing" },
-      { id: "e", label: "Asset allocation" },
+      {
+        id: "a",
+        label:
+          "Switching is always irrational because a portfolio should never change once it is built.",
+      },
+      {
+        id: "b",
+        label:
+          "The investor may be buying after outperformance, realizing costs and taxes, and abandoning methods without testing their underlying beliefs.",
+      },
+      {
+        id: "c",
+        label:
+          "The only problem is tax; in a tax-advantaged account, recent performance becomes sufficient evidence for switching.",
+      },
+      {
+        id: "d",
+        label:
+          "The sequence is sound if each chosen strategy has a positive long-run average return, regardless of entry timing.",
+      },
     ],
-    correctId: "c",
+    correctId: "b",
     hint:
-      "Arbitrage and relative-value approaches attempt to exploit inconsistent pricing relationships, usually through execution.",
-  },
-  {
-    id: "q6",
-    type: "single",
-    prompt:
-      "Two investors believe that markets overreact to negative news. One has a 20-year horizon and stable income. The other needs the money in 18 months. What is the best conclusion?",
-    choices: [
-      { id: "a", label: "They should use the same portfolio because they share the same belief." },
-      { id: "b", label: "The second investor should take more risk because the horizon is shorter." },
-      { id: "c", label: "They may require different strategies, position sizes, or no trade at all." },
-      { id: "d", label: "The first investor’s belief must be correct." },
-    ],
-    correctId: "c",
-    hint:
-      "Market beliefs are only one part of the decision. Horizon, liquidity, risk tolerance, taxes, and resources affect whether and how the strategy can be implemented.",
+      "Changing strategy can be rational when evidence changes. The problem here is that recent performance—not a revised market belief—is driving every decision.",
   },
 ];
 
@@ -112,10 +140,12 @@ export default function LessonAssessment() {
   return (
     <Reveal>
       <MasteryCheck
-        title="Check your understanding"
+        title="Philosophy before strategy"
         questions={QUESTIONS}
-        passCount={5}
-        onComplete={() => markComplete("if-1-1-how-an-investor-builds-a-philosophy")}
+        passCount={3}
+        onComplete={() =>
+          markComplete("if-1-1-how-an-investor-builds-a-philosophy")
+        }
         continueLabel="Back to Investment Foundations"
         continueHref="/courses/investment-foundations"
       />

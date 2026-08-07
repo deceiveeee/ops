@@ -1719,30 +1719,28 @@ const specs: LessonSpec[] = [
     slug: "if-1-1-how-an-investor-builds-a-philosophy",
     moduleId: "if-m01-introduction-to-investment-philosophies",
     order: 1,
-    shortTitle: "How an Investor Builds a Philosophy",
-    title: "How an Investor Builds a Philosophy",
+    shortTitle: "Philosophy Before Strategy",
+    title: "Philosophy Before Strategy",
     subtitle:
-      "Map the investment process, identify where strategies seek an advantage, and begin defining the approach that fits you.",
+      "Separate a market belief from a strategy, follow the reasoning from evidence to action, and write one hypothesis the course can test.",
     description:
-      "The organizing framework for the entire Investment Foundations course: distinguish philosophy from strategy, trace the investment process from investor to execution, locate where each philosophy seeks an edge, and draft a provisional philosophy.",
+      "The conceptual opening to Investment Foundations: distinguish market beliefs, investment philosophies, strategies, and trades; diagnose performance chasing; and save a provisional market hypothesis.",
     type: "interactive",
     lessonType: "Interactive Lesson",
-    estimatedMinutes: 45,
+    estimatedMinutes: 15,
     sourceRequired: true,
     conceptRole: "investment-philosophy",
     skills: [
+      "Belief vs Philosophy",
       "Philosophy vs Strategy",
-      "Investment Process Mapping",
-      "Investor Fit Analysis",
-      "Drafting an Investment Philosophy",
+      "Performance-Chasing Diagnosis",
+      "Hypothesis Formation",
     ],
     objectives: [
-      "Distinguish an investment philosophy from a strategy and a trade.",
-      "Explain why repeatedly chasing recent performance is not a coherent investment process.",
-      "Trace an investment decision from the investor to asset allocation, security selection, execution, and performance evaluation.",
-      "Identify where market timing, asset selection, information-based investing, and arbitrage operate.",
-      "Explain why the same market belief may lead to different portfolios for different investors.",
-      "Draft a provisional investment philosophy that the rest of the course will test.",
+      "Distinguish a market belief, an investment philosophy, a strategy, and an individual trade.",
+      "Connect evidence to a market belief and then to a strategy that logically follows from it.",
+      "Explain why recent performance alone is not a sound reason to adopt or abandon a strategy.",
+      "Write one provisional market hypothesis that later lessons can test.",
     ],
   },
 ];
@@ -1904,7 +1902,7 @@ const IF_MODULE1_SOURCE: SourceSlot = {
     "Aswath Damodaran, Investment Philosophies — Session 1: Introduction",
   type: "course-note",
   required: true,
-  note: "This lesson adapts Damodaran's framework for distinguishing investment philosophy from strategy, mapping the investment process, locating investment philosophies within that process, and matching philosophies to investor characteristics. The diagrams, examples, interactions, and instructional wording on this page are original OPS implementations.",
+  note: "This lesson adapts Damodaran's distinction between investment philosophy and strategy, and his argument for beginning with a defensible view of how markets work. The examples, interactions, and instructional wording are original OPS implementations.",
 };
 
 const IF_MODULE1_SLUGS = new Set(["if-1-1-how-an-investor-builds-a-philosophy"]);

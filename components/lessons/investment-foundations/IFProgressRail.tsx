@@ -26,7 +26,7 @@ export default function IFProgressRail() {
         </span>
       </div>
       <div className="ops-body-strong mt-1.5 text-[15px] text-white">
-        Introduction to Investment Philosophies
+        Building an Investment Philosophy
       </div>
       <ol className="mt-5 space-y-2">
         {IF_MODULE_LESSONS.map((l) => {

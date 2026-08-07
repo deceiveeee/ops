@@ -245,9 +245,9 @@ export const investmentFoundations: Course = {
     module(
       "if-m01-introduction-to-investment-philosophies",
       1,
-      "Introduction to Investment Philosophies",
-      "Map the investment process, distinguish a philosophy from a strategy, and locate where different investment approaches seek an advantage. Begin drafting the philosophy the rest of the course will test.",
-      "Build a working map of the investment process and a provisional investment philosophy.",
+      "Building an Investment Philosophy",
+      "Begin with a defensible market belief, map where it affects the investment process, compare major philosophy families, and determine which approaches fit the investor who must carry them out.",
+      "Build and test a provisional investment philosophy before committing capital.",
       "investment-philosophy",
       ["if-1-1-how-an-investor-builds-a-philosophy"],
     ),

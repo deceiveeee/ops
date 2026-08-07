@@ -22,28 +22,25 @@ export {
 
 export const IF_SOURCE_BASIS = {
   course: "Investment Foundations",
-  lecture:
-    "Module 1 · Lesson 1.1 — How an Investor Builds a Philosophy",
+  lecture: "Module 1 · Lesson 1.1 — Philosophy Before Strategy",
   instructor: "Adapted from Aswath Damodaran, Investment Philosophies (Session 1)",
-  note: "Adapted from Damodaran's framework for distinguishing investment philosophy from strategy, mapping the investment process, locating investment philosophies within that process, and matching philosophies to investor characteristics. Diagrams, examples, interactions, and wording on this page are original OPS implementations. No live market data.",
+  note: "Adapted from Damodaran's distinction between investment philosophy and strategy, and his argument for beginning with a defensible view of how markets work. Examples, interactions, and wording are original OPS implementations. No live market data.",
 } as const;
 
 export const IF_MODULE_LESSONS = [
   {
     slug: "if-1-1-how-an-investor-builds-a-philosophy",
-    title: "How an Investor Builds a Philosophy",
-    shortTitle: "How an Investor Builds a Philosophy",
+    title: "Philosophy Before Strategy",
+    shortTitle: "Philosophy Before Strategy",
     n: 1,
   },
 ] as const;
 
 export const IF_LEARNING_OBJECTIVES = [
-  "Distinguish an investment philosophy from a strategy and a trade.",
-  "Explain why repeatedly chasing recent performance is not a coherent investment process.",
-  "Trace an investment decision from the investor to asset allocation, security selection, execution, and performance evaluation.",
-  "Identify where market timing, asset selection, information-based investing, and arbitrage operate.",
-  "Explain why the same market belief may lead to different portfolios for different investors.",
-  "Draft a provisional investment philosophy that the rest of the course will test.",
+  "Distinguish a market belief, an investment philosophy, a strategy, and an individual trade.",
+  "Connect evidence to a market belief and then to a strategy that logically follows from it.",
+  "Explain why recent performance alone is not a sound reason to adopt or abandon a strategy.",
+  "Write one provisional market hypothesis that later lessons can test.",
 ] as const;
 
 /** Course-accent color used across IF components (amber = research lens). */
