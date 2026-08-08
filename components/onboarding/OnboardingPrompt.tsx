@@ -27,7 +27,7 @@ export default function OnboardingPrompt() {
             type="button"
             onClick={dismissPrompt}
             aria-label="Dismiss"
-            className="rounded text-[14px] text-slate-400 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+            className="rounded text-[14px] text-slate-300 hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
           >
             Dismiss
           </button>
