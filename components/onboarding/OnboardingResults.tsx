@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { ONBOARDING_QUESTIONS } from "@/lib/onboarding/questions";
 import { courseTitle } from "@/lib/onboarding/course-meta";
@@ -33,9 +32,9 @@ export default function OnboardingResults({
 }) {
   return (
     <div className="mx-auto w-full max-w-2xl px-6">
-      <div className="text-[13px] tracking-[0.01em] text-slate-300">
+      <h1 className="font-display text-[32px] leading-[1.1] text-slate-50 md:text-[40px]">
         Your OPS starting point
-      </div>
+      </h1>
 
       <div className="mt-8 space-y-6">
         <Row label="Goal" value={labelFor("goal", answers.goal)} />
@@ -58,12 +57,9 @@ export default function OnboardingResults({
         <Button href={primaryCourseHref} size="lg">
           Begin course
         </Button>
-        <Link
-          href="/courses"
-          className="text-[15px] text-slate-300 underline-offset-4 hover:text-slate-200 hover:underline"
-        >
+        <Button href="/courses" variant="outline" size="lg">
           Explore all courses
-        </Link>
+        </Button>
       </div>
     </div>
   );
