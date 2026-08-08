@@ -33,7 +33,7 @@ export default function OnboardingResults({
 }) {
   return (
     <div className="mx-auto w-full max-w-2xl px-6">
-      <div className="text-[12px] uppercase tracking-[0.02em] text-slate-500">
+      <div className="text-[13px] tracking-[0.01em] text-slate-300">
         Your OPS starting point
       </div>
 
@@ -60,7 +60,7 @@ export default function OnboardingResults({
         </Button>
         <Link
           href="/courses"
-          className="text-[15px] text-slate-400 underline-offset-4 hover:text-slate-200 hover:underline"
+          className="text-[15px] text-slate-300 underline-offset-4 hover:text-slate-200 hover:underline"
         >
           Explore all courses
         </Link>
@@ -80,7 +80,7 @@ function Row({
 }) {
   return (
     <div>
-      <div className="text-[12px] uppercase tracking-[0.02em] text-slate-500">
+      <div className="text-[13px] tracking-[0.01em] text-slate-300">
         {label}
       </div>
       <div
