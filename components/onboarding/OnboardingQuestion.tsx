@@ -57,7 +57,7 @@ export default function OnboardingQuestion({
         {question.prompt}
       </h2>
       {question.helper && (
-        <p className="mt-3 text-[14px] tracking-[0.01em] text-slate-400">
+        <p className="mt-3 text-[15px] tracking-[0.01em] text-slate-300">
           {question.helper}
         </p>
       )}
@@ -85,7 +85,7 @@ export default function OnboardingQuestion({
           <button
             type="button"
             onClick={onSkip}
-            className="text-[14px] text-slate-400 underline-offset-4 hover:text-slate-200 hover:underline"
+            className="text-[14px] text-slate-300 underline-offset-4 hover:text-slate-200 hover:underline"
           >
             Skip
           </button>
