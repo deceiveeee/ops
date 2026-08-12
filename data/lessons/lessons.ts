@@ -1743,6 +1743,668 @@ const specs: LessonSpec[] = [
       "Write one provisional market hypothesis that later lessons can test.",
     ],
   },
+  {
+    slug: "if-1-2-where-philosophy-enters-the-investment-process",
+    moduleId: "if-m01-introduction-to-investment-philosophies",
+    order: 2,
+    shortTitle: "Where Philosophy Enters",
+    title: "Where Philosophy Enters the Process",
+    subtitle:
+      "Map the five-stage investment process, locate where a philosophy claims an advantage, and keep its logic intact through execution and evaluation.",
+    description:
+      "A guided process lab covering investor mandate, asset allocation, security selection, execution, and evaluation; the distinction between allocation and selection; philosophy placement; implementation coherence; and a saved process-placement card.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 18,
+    sourceRequired: true,
+    conceptRole: "investment-philosophy",
+    skills: [
+      "Investment Process Mapping",
+      "Allocation vs Selection",
+      "Philosophy Placement",
+      "Implementation Coherence",
+      "Benchmark Discipline",
+    ],
+    objectives: [
+      "Sequence the five stages of the investment process from investor mandate through evaluation.",
+      "Distinguish asset-allocation decisions from security-selection decisions.",
+      "Identify the stage where a philosophy claims its primary advantage.",
+      "Trace one market belief through a coherent set of portfolio, execution, and evaluation decisions.",
+      "Save a process placement, execution rule, and evaluation rule for a provisional philosophy.",
+    ],
+  },
+  {
+    slug: "if-1-3-comparing-investment-philosophy-families",
+    moduleId: "if-m01-introduction-to-investment-philosophies",
+    order: 3,
+    shortTitle: "Six Ways Investors Claim an Edge",
+    title: "Six Ways Investors Claim an Edge",
+    subtitle:
+      "Compare market timing, value, growth, momentum, information-based investing, and relative-value arbitrage by the opportunity each claims, the evidence it needs, and the ways it can fail.",
+    description:
+      "An interactive research lab for decoding the six major active philosophy families, comparing their company lenses and process coordinates, stress-testing their claimed advantages, and saving a provisional research shortlist without treating recent returns as proof.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 20,
+    sourceRequired: true,
+    conceptRole: "investment-philosophy",
+    skills: [
+      "Philosophy Family Classification",
+      "Claimed-Edge Analysis",
+      "Failure-Mode Diagnosis",
+      "Process Coordinate Mapping",
+      "Evidence Standard Design",
+    ],
+    objectives: [
+      "Define six major investment-philosophy families by their claimed source of advantage rather than by recent performance.",
+      "Identify which philosophy family a market claim supports.",
+      "Compare how different philosophy families interpret the same company or market evidence.",
+      "Match each family with a material failure mode and an evidence test.",
+      "Map selected families by decision stage, investor involvement, and typical horizon.",
+      "Save a provisional family shortlist and evidence standard for later investor-fit analysis.",
+    ],
+  },
+  {
+    slug: "if-1-4-when-a-philosophy-fits-the-investor",
+    moduleId: "if-m01-introduction-to-investment-philosophies",
+    order: 4,
+    shortTitle: "Investor–Philosophy Fit",
+    title: "When a Philosophy Fits the Investor",
+    subtitle:
+      "Match a philosophy's implementation demands with the investor's horizon, liquidity, loss capacity, behavior, resources, and account context.",
+    description:
+      "A guided investor-fit lab defining demand–capacity matching, separating strategy demands from investor capacity and preference, comparing two investors with the same market belief, diagnosing binding constraints, rehearsing difficult moments, and saving a provisional fit charter.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 22,
+    sourceRequired: true,
+    conceptRole: "investment-philosophy",
+    skills: [
+      "Investor–Philosophy Fit",
+      "Demand–Capacity Analysis",
+      "Constraint Diagnosis",
+      "Behavioral Review Rules",
+      "Implementation Charter Design",
+    ],
+    objectives: [
+      "Define investor–philosophy fit as a match between a philosophy's implementation demands and the investor's actual capacity.",
+      "Distinguish strategy demand, investor capacity, and investor preference.",
+      "Explain how horizon, liquidity, loss capacity, behavior, resources, costs, and tax context affect implementation.",
+      "Derive different portfolio actions for two investors who share the same market belief.",
+      "Identify the binding constraint that prevents a philosophy from being executed as designed.",
+      "Apply evidence-based review rules during losses, thesis changes, and emerging cash needs.",
+      "Save a provisional investor-fit charter for one shortlisted philosophy family.",
+    ],
+  },
+  {
+    slug: "if-2-1-reading-a-bonds-promise",
+    moduleId: "if-m02-risk-in-bonds",
+    order: 1,
+    shortTitle: "Reading the Promise",
+    title: "Reading a Bond’s Promise",
+    subtitle:
+      "Decode a conventional fixed-rate bond, construct its promised cash flows, and identify the two bond risks emphasized in this source session.",
+    description:
+      "A guided bond-contract lab defining issuer, bondholder, coupon, face value, and maturity before learners build a ten-year payment map and distinguish interest-rate risk from default risk.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 18,
+    sourceRequired: true,
+    conceptRole: "bond-risk",
+    skills: [
+      "Bond Contract Reading",
+      "Cash-Flow Timeline Construction",
+      "Interest-Rate Risk Classification",
+      "Default-Risk Classification",
+    ],
+    objectives: [
+      "Define a conventional fixed-rate bond through its issuer, bondholder, coupon, face value, and maturity.",
+      "Translate a 4% coupon rate on $1,000 face value into a $40 annual payment.",
+      "Construct the complete payment timeline for a ten-year coupon bond.",
+      "Distinguish interest-rate risk from default risk using concrete events.",
+      "Produce a Bond Payment Map for the scholarship-fund case.",
+    ],
+  },
+  {
+    slug: "if-2-2-why-market-rates-change-bond-prices",
+    moduleId: "if-m02-risk-in-bonds",
+    order: 2,
+    shortTitle: "Rates and Bond Prices",
+    title: "Why Market Rates Change Bond Prices",
+    subtitle:
+      "Use present value to connect changes in market yield to bond price, premium or discount status, and an investor’s holding-period return.",
+    description:
+      "An interactive repricing lab using Damodaran’s verified 4% coupon, ten-year bond values and one-year holding-period assessment to make the inverse rate-price relationship visible.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 20,
+    sourceRequired: true,
+    conceptRole: "bond-risk",
+    skills: [
+      "Present-Value Reasoning",
+      "Bond Repricing",
+      "Premium-Par-Discount Classification",
+      "Holding-Period Return Analysis",
+    ],
+    objectives: [
+      "Define market yield and present value before using them to price a bond.",
+      "Explain why rising market yields lower the present value of fixed promised payments.",
+      "Classify a bond as trading at a premium, par, or discount from its coupon-yield relationship.",
+      "Separate coupon income from market-price change in a one-year holding-period return.",
+      "State the investor’s holding horizon when interpreting an interest-rate-driven price change.",
+    ],
+  },
+  {
+    slug: "if-2-3-duration-measuring-interest-rate-sensitivity",
+    moduleId: "if-m02-risk-in-bonds",
+    order: 3,
+    shortTitle: "Measuring Duration",
+    title: "Duration: Measuring Interest-Rate Sensitivity",
+    subtitle:
+      "Measure weighted-average cash-flow timing, test how coupon and maturity change duration, and rank bonds by interest-rate exposure.",
+    description:
+      "A cash-flow center-of-gravity lab that reconstructs the verified 8.36-year Macaulay duration example, tests coupon and maturity one at a time, and distinguishes Macaulay from modified duration.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 22,
+    sourceRequired: true,
+    conceptRole: "bond-risk",
+    skills: [
+      "Macaulay Duration Interpretation",
+      "Coupon Sensitivity Analysis",
+      "Maturity Sensitivity Analysis",
+      "Bond Duration Ranking",
+    ],
+    objectives: [
+      "Define Macaulay duration as weighted-average cash-flow timing expressed in years.",
+      "Reconstruct the verified $922.78 price and 8.36-year duration source example.",
+      "Explain why lower coupons and longer maturities produce higher duration when other inputs are comparable.",
+      "Rank four bonds by duration using coupon and maturity evidence.",
+      "Distinguish Macaulay duration from modified duration’s approximate percentage price sensitivity.",
+    ],
+  },
+  {
+    slug: "if-2-4-default-risk-can-the-issuer-deliver",
+    moduleId: "if-m02-risk-in-bonds",
+    order: 4,
+    shortTitle: "Default Risk",
+    title: "Default Risk: Can the Issuer Deliver?",
+    subtitle:
+      "Connect operating cash-flow capacity, stability, and fixed commitments to the issuer’s ability to make promised bond payments.",
+    description:
+      "A guided issuer stress lab defining default risk and its three source drivers before learners construct a credit-rating evidence file and compare two fictional issuers.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 20,
+    sourceRequired: true,
+    conceptRole: "bond-risk",
+    skills: [
+      "Default-Risk Analysis",
+      "Payment-Cushion Analysis",
+      "Credit Evidence Evaluation",
+      "Issuer Comparison",
+    ],
+    objectives: [
+      "Define default risk as the possibility that an issuer misses some or all promised payments.",
+      "Explain how operating cash-flow capacity, cash-flow stability, and fixed commitments affect default risk.",
+      "Trace business events through the issuer’s payment cushion to a change in default risk.",
+      "Define a credit rating as an agency estimate based on quantitative and qualitative evidence.",
+      "Compare two issuers using payment capacity, stability, and fixed commitments.",
+    ],
+  },
+  {
+    slug: "if-2-5-from-credit-rating-to-bond-price",
+    moduleId: "if-m02-risk-in-bonds",
+    order: 5,
+    shortTitle: "Rating to Price",
+    title: "From Credit Rating to Bond Price",
+    subtitle:
+      "Build a required yield from a risk-free yield and default spread, calculate interest coverage, and translate credit evidence into price.",
+    description:
+      "A required-yield and synthetic-rating lab using verified source calculations, explicitly dated historical tables, and a final Bond Risk Brief integrating all five lessons.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 24,
+    sourceRequired: true,
+    conceptRole: "bond-risk",
+    skills: [
+      "Required-Yield Construction",
+      "Default-Spread Interpretation",
+      "Interest-Coverage Calculation",
+      "Synthetic-Rating Qualification",
+      "Bond Risk Communication",
+    ],
+    objectives: [
+      "Define risk-free yield, default spread, and required yield and combine them correctly.",
+      "Price the source assessment bond at a 5.5% required yield and explain its $962.31 discount price.",
+      "Calculate interest coverage as EBIT divided by interest expense.",
+      "Explain why a synthetic rating depends on a specified table’s date, thresholds, and company-size category.",
+      "Produce a Bond Risk Brief connecting payments, rate exposure, duration, default evidence, required yield, and price.",
+    ],
+  },
+  {
+    slug: "if-3-1-what-risk-means-for-a-shareholder",
+    moduleId: "if-m03-risk-in-stocks",
+    order: 1,
+    shortTitle: "Shareholder Risk",
+    title: "What Risk Means for a Shareholder",
+    subtitle:
+      "Define uncertain outcomes and the shareholder's residual claim, then inspect equity risk through three independent dimensions.",
+    description:
+      "A guided risk-lens lab that defines equity before use, follows a company cash waterfall to the shareholder residual, and separates price from cash-flow risk, total from downside risk, and standalone from portfolio-added risk.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 20,
+    sourceRequired: true,
+    conceptRole: "equity-risk",
+    skills: [
+      "Equity and Residual-Claim Interpretation",
+      "Expected vs Actual Return",
+      "Price vs Cash-Flow Risk",
+      "Total vs Downside Risk",
+      "Standalone vs Portfolio-Added Risk",
+    ],
+    objectives: [
+      "Define risk as exposure to uncertain outcomes that may finish above or below expectations.",
+      "Define equity as a residual claim on earnings and cash flow after other claims are met.",
+      "Distinguish expected return from the actual return that occurs.",
+      "Distinguish price risk from cash-flow risk using a stable-dividend, changing-price case.",
+      "Distinguish total from downside risk and standalone from portfolio-added risk.",
+      "Produce a Three-Lens Risk Map before selecting any risk measure.",
+    ],
+  },
+  {
+    slug: "if-3-2-why-diversification-changes-the-question",
+    moduleId: "if-m03-risk-in-stocks",
+    order: 2,
+    shortTitle: "Diversification",
+    title: "Why Diversification Changes the Question",
+    subtitle:
+      "Map return dispersion, build a diversified portfolio, and separate company-specific risk from market risk.",
+    description:
+      "A portfolio-constellation lab defining expected return, variance, portfolio, diversification, company-specific risk, market risk, and the marginal investor before learners diagnose which shocks diversification can soften.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 22,
+    sourceRequired: true,
+    conceptRole: "equity-risk",
+    skills: [
+      "Expected-Return and Variance Interpretation",
+      "Portfolio Construction",
+      "Diversification Reasoning",
+      "Company-Specific vs Market Risk",
+      "Marginal-Investor Interpretation",
+    ],
+    objectives: [
+      "Define expected return as a probability-weighted average and variance as dispersion around that expectation.",
+      "Define a portfolio and diversification before using them in a risk prompt.",
+      "Explain why diversification can reduce company-specific risk but provides less protection from shared market risk.",
+      "Define the marginal investor as the investor whose trade sets the current price.",
+      "Explain why theory-based models use the perspective of a diversified marginal investor.",
+      "Classify concrete events as company-specific or market risk from portfolio evidence.",
+    ],
+  },
+  {
+    slug: "if-3-3-what-beta-measures",
+    moduleId: "if-m03-risk-in-stocks",
+    order: 3,
+    shortTitle: "What Beta Measures",
+    title: "What Beta Measures",
+    subtitle:
+      "Build CAPM, use beta 1 as the market benchmark, and inspect the estimation uncertainty inside regression beta.",
+    description:
+      "An interactive CAPM and beta lab defining every input, modeling positive and negative market responses, reconstructing the historical 2005–07 weekly Amgen regression, and correcting beta misconceptions before assessment.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 25,
+    sourceRequired: true,
+    conceptRole: "equity-risk",
+    skills: [
+      "CAPM Required-Return Construction",
+      "Beta Benchmark Interpretation",
+      "Regression-Beta Reading",
+      "Estimation-Uncertainty Analysis",
+      "Beta Misconception Diagnosis",
+    ],
+    objectives: [
+      "Define CAPM, the risk-free rate, beta, and the equity risk premium before calculating required return.",
+      "Calculate a 10% required return from a 4% risk-free rate, beta 1.20, and a 5% equity risk premium in an OPS case.",
+      "Interpret beta 1.20 as 20% more market sensitivity than beta 1 for a diversified investor.",
+      "Define regression beta as an estimated slope relating historical stock and market returns.",
+      "Explain how index, frequency, period, and statistical error affect a beta estimate.",
+      "Explain why beta is not total risk, a precise permanent fact, or investment quality.",
+    ],
+  },
+  {
+    slug: "if-3-4-what-makes-beta-rise-or-fall",
+    moduleId: "if-m03-risk-in-stocks",
+    order: 4,
+    shortTitle: "Beta Drivers",
+    title: "What Makes Beta Rise or Fall",
+    subtitle:
+      "Trace product demand, fixed operating costs, and debt through cash-flow sensitivity to predicted beta.",
+    description:
+      "A business beta engine that runs common economic shocks through discretionary demand, operating leverage, and financial leverage, making each cause-and-effect mechanism visible and preserving the other-things-equal qualification.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 22,
+    sourceRequired: true,
+    conceptRole: "equity-risk",
+    skills: [
+      "Product-Cyclicality Analysis",
+      "Operating-Leverage Analysis",
+      "Financial-Leverage Analysis",
+      "Cash-Flow Sensitivity Mapping",
+      "Conditional Beta Reasoning",
+    ],
+    objectives: [
+      "Define product cyclicality through customer-demand sensitivity to broad economic conditions.",
+      "Define operating leverage as the sensitivity of operating profit created by fixed operating costs.",
+      "Define financial leverage as shareholder sensitivity created by debt and fixed interest payments.",
+      "Trace a broad economic shock through revenue, operating profit, and the shareholder residual.",
+      "Explain why discretionary demand, higher fixed costs, and more debt can raise predicted beta, other things held equal.",
+      "Treat the fundamental relationships as conditional mechanisms rather than deterministic company labels.",
+    ],
+  },
+  {
+    slug: "if-3-5-choosing-a-risk-measure",
+    moduleId: "if-m03-risk-in-stocks",
+    order: 5,
+    shortTitle: "Risk Measures",
+    title: "Choosing a Risk Measure",
+    subtitle:
+      "State CAPM's limitations and match theory, accounting, proxy, market-implied, cash-flow, and price-buffer methods to investor questions.",
+    description:
+      "A risk-method switchboard covering CAPM limitations, APT and multi-factor alternatives, accounting ratios and accounting beta, proxy variables, market-implied return, certainty-equivalent cash flow, and margin of safety.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 25,
+    sourceRequired: true,
+    conceptRole: "equity-risk",
+    skills: [
+      "CAPM Limitation Analysis",
+      "Multi-Factor Model Comparison",
+      "Accounting and Proxy Evidence Classification",
+      "Risk-Method Selection",
+      "Method-Limitation Communication",
+    ],
+    objectives: [
+      "Explain CAPM's strong assumptions, noisy estimated inputs, and limited empirical explanatory power.",
+      "Distinguish CAPM, APT, multi-factor, and proxy model structures.",
+      "Distinguish accounting indicators from proxy characteristics associated with returns.",
+      "Explain why proxy association does not establish causation or persistence.",
+      "Match seven investor questions to appropriate risk-measure families and state each method's limitation.",
+      "Choose a primary risk method and a secondary check based on the investor and decision.",
+    ],
+  },
+  {
+    slug: "if-3-6-build-an-equity-risk-policy",
+    moduleId: "if-m03-risk-in-stocks",
+    order: 6,
+    shortTitle: "Equity Risk Policy",
+    title: "Build an Equity Risk Policy",
+    subtitle:
+      "Apply market-implied return, certainty-equivalent cash flow, and margin of safety, then defend a structured equity-risk decision.",
+    description:
+      "A capstone policy lab reconstructing the source-verified 8% model-implied return and $44 margin-of-safety threshold, applying certainty-equivalent reasoning, and saving a complete Equity Risk Policy with remaining uncertainty stated explicitly.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 28,
+    sourceRequired: true,
+    conceptRole: "equity-risk",
+    skills: [
+      "Market-Implied Return Calculation",
+      "Certainty-Equivalent Cash-Flow Reasoning",
+      "Margin-of-Safety Calculation",
+      "Equity Risk Policy Design",
+      "Decision and Uncertainty Communication",
+    ],
+    objectives: [
+      "Calculate the source's 8% model-implied required return from a $20 price, $1 next-year dividend, and 3% perpetual growth.",
+      "Define a certainty-equivalent cash flow and explain why its value depends on a defensible risk judgment.",
+      "Calculate a $44 maximum purchase price from $55 estimated value and a 20% margin-of-safety rule.",
+      "Explain why the current $50 price provides only a 9.09% discount to the $55 value estimate.",
+      "Build a policy connecting risk dimensions, portfolio context, beta, business fundamentals, alternative methods, and a price rule.",
+      "Explain why research can reduce estimation uncertainty but cannot remove economic uncertainty.",
+      "Save and defend a complete Equity Risk Policy.",
+    ],
+  },
+  {
+    slug: "if-4-1-the-three-financial-statements",
+    moduleId: "if-m04-financial-statement-analysis",
+    order: 1,
+    shortTitle: "Three Statements",
+    title: "The Three Financial Statements",
+    subtitle:
+      "Follow one sale through the balance sheet, income statement, and statement of cash flows before reading any ratio.",
+    description:
+      "A filing-map investigation that defines the three statements, separates point-in-time from period evidence, and traces a credit sale through revenue, receivables, and cash collection.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 20,
+    sourceRequired: true,
+    conceptRole: "filing-analysis",
+    skills: [
+      "Three-Statement Navigation",
+      "Point-in-Time vs Period Reasoning",
+      "Credit-Sale Flow Tracing",
+      "Investor Question Mapping",
+    ],
+    objectives: [
+      "Define the balance sheet, income statement, and statement of cash flows before using them.",
+      "Distinguish a point-in-time statement from statements covering a period.",
+      "Trace a sale on credit from revenue to accounts receivable and later cash collection.",
+      "Match an investor question to the statement and time lens that can answer it.",
+      "Produce a Three-Statement Evidence Map.",
+    ],
+  },
+  {
+    slug: "if-4-2-read-the-balance-sheet",
+    moduleId: "if-m04-financial-statement-analysis",
+    order: 2,
+    shortTitle: "Balance-Sheet X-ray",
+    title: "Read the Balance Sheet",
+    subtitle:
+      "Reconcile what Cedar Works controls with the creditor and shareholder claims that fund it, then inspect how each number was measured.",
+    description:
+      "A balance-sheet X-ray that classifies assets and claims, proves the accounting equation, and separates book values from current economic values without treating either as automatically correct.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 24,
+    sourceRequired: true,
+    conceptRole: "filing-analysis",
+    skills: [
+      "Accounting-Equation Reconciliation",
+      "Line-Item Classification",
+      "Measurement-Basis Interpretation",
+      "Book vs Market Value Reasoning",
+    ],
+    objectives: [
+      "Define assets, liabilities, and shareholders' equity and reconcile the accounting equation.",
+      "Classify current, long-lived, intangible, debt, and operating claim line items.",
+      "Distinguish historical cost, carrying amount, fair value, and market value.",
+      "Explain why receivables and inventory may be closer to current value without assuming they equal fair value.",
+      "Produce a Balance-Sheet X-ray.",
+    ],
+  },
+  {
+    slug: "if-4-3-recast-the-business",
+    moduleId: "if-m04-financial-statement-analysis",
+    order: 3,
+    shortTitle: "Financial Balance Sheet",
+    title: "Recast the Business",
+    subtitle:
+      "Transform a reported balance sheet into assets in place, growth assets, debt claims, and the shareholder residual.",
+    description:
+      "A financial-balance-sheet routing lab that distinguishes reported accounting from Damodaran's analytical valuation framework and keeps unreported growth expectations out of the accounting equation.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 22,
+    sourceRequired: true,
+    conceptRole: "filing-analysis",
+    skills: [
+      "Accounting-to-Financial Recasting",
+      "Assets-in-Place Interpretation",
+      "Growth-Asset Reasoning",
+      "Debt and Residual-Claim Mapping",
+    ],
+    objectives: [
+      "Define assets in place and growth assets with concrete cash-flow examples.",
+      "Define debt as a contractual claim and equity as the residual claim.",
+      "Route reported line items into a financial balance-sheet framework.",
+      "Explain why expected future projects can have value without appearing as reported assets.",
+      "Produce a Financial Balance-Sheet Map.",
+    ],
+  },
+  {
+    slug: "if-4-4-read-profit-and-leverage",
+    moduleId: "if-m04-financial-statement-analysis",
+    order: 4,
+    shortTitle: "Profit and Leverage",
+    title: "Read Profit and Leverage",
+    subtitle:
+      "Run the income-statement waterfall, build compatible profitability ratios, and separate borrowing level from debt-service capacity.",
+    description:
+      "An income-engine investigation that models accrual accounting, expense classification, margins, returns, debt to capital, and interest coverage from a single reconciled company case.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 26,
+    sourceRequired: true,
+    conceptRole: "filing-analysis",
+    skills: [
+      "Accrual and Expense Classification",
+      "Income-Waterfall Interpretation",
+      "Profitability-Ratio Construction",
+      "Leverage and Coverage Analysis",
+    ],
+    objectives: [
+      "Define accrual accounting with a credit-sale example.",
+      "Distinguish operating, financing, and capital expenditure treatment.",
+      "Calculate operating margin, net margin, and return on equity with named inputs.",
+      "Calculate debt to capital and interest coverage and explain the different question each answers.",
+      "Diagnose why operating margin can exceed net margin.",
+    ],
+  },
+  {
+    slug: "if-4-5-repair-the-investor-view",
+    moduleId: "if-m04-financial-statement-analysis",
+    order: 5,
+    shortTitle: "Analyst Adjustments",
+    title: "Repair the Investor View",
+    subtitle:
+      "Reconcile source-era lease accounting with today's reported statements, then build an explicit analytical R&D capitalization model.",
+    description:
+      "An analyst repair bench that prevents lease double counting, discounts contractual payments, distinguishes US GAAP from IFRS R&D treatment, and shows why adjusted profit can rise while return on capital falls.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 28,
+    sourceRequired: true,
+    conceptRole: "filing-analysis",
+    skills: [
+      "Lease Present-Value Analysis",
+      "Current-Standard Reconciliation",
+      "R&D Analytical Capitalization",
+      "Adjusted Return-on-Capital Interpretation",
+    ],
+    objectives: [
+      "Explain why the source capitalizes contractual lease commitments economically.",
+      "Identify a current right-of-use asset and lease liability before making an analyst adjustment.",
+      "Calculate the present value of twelve $1 million end-of-year payments at 4%.",
+      "Distinguish US GAAP R&D expensing from IAS 38 research and qualifying development treatment.",
+      "Construct a five-year R&D asset and explain its effect on operating income and return on capital.",
+    ],
+  },
+  {
+    slug: "if-4-6-trace-cash-to-the-investor",
+    moduleId: "if-m04-financial-statement-analysis",
+    order: 6,
+    shortTitle: "Cash to Investors",
+    title: "Trace Cash to the Investor",
+    subtitle:
+      "Scan operating, investing, and financing cash flows, then change perspective from the company cash balance to FCFE and FCFF.",
+    description:
+      "A cash-flow scanner and capstone brief that reconciles the change in cash, tests working-capital direction, calculates FCFE and FCFF, and completes five corrected source-assessment concepts.",
+    type: "interactive",
+    lessonType: "Interactive Lesson",
+    estimatedMinutes: 30,
+    sourceRequired: true,
+    conceptRole: "filing-analysis",
+    skills: [
+      "Cash-Flow Classification",
+      "Working-Capital Direction",
+      "FCFE and FCFF Calculation",
+      "Investor Statement Brief Design",
+      "Source-Concept Mastery",
+    ],
+    objectives: [
+      "Reconcile CFO, CFI, and CFF to the net change in cash.",
+      "Explain why an increase in accounts payable preserves cash, other things held constant.",
+      "Distinguish company cash-flow classification from the shareholder's cash-flow perspective.",
+      "Calculate simplified FCFE and FCFF from the Cedar Works case.",
+      "Save and defend a complete Investor Statement Brief.",
+    ],
+  },
+  {
+    slug: "if-6-1-count-the-friction",
+    moduleId: "if-m06-friction",
+    order: 1,
+    shortTitle: "Count the Friction",
+    title: "Count the Friction",
+    subtitle:
+      "Break the cost of acting into spread, price impact, waiting, and tax; then work out the return your strategy must clear before it beats an index.",
+    description:
+      "A cost investigation that starts from the active manager's missing 1%, exposes why a 4% spread needs a 12.22% pre-cost return rather than 12%, and saves a personal Friction Budget with a hurdle rule to the Portfolio Dossier.",
+    type: "interactive",
+    lessonType: "Portfolio Mission",
+    estimatedMinutes: 35,
+    sourceRequired: true,
+    conceptRole: "security-pricing",
+    skills: [
+      "Trading-Cost Decomposition",
+      "Bid-Ask Spread Drivers",
+      "Cost-Adjusted Hurdle Arithmetic",
+      "Price-Impact and Liquidity Interaction",
+      "Turnover and Tax Drag",
+    ],
+    objectives: [
+      "Name the four components of trading cost and identify which is usually smallest.",
+      "Predict which stock carries the highest bid-ask spread as a percent of price, and say why.",
+      "Calculate the pre-cost return a strategy needs once the spread is paid on entry and exit.",
+      "Explain why compounding makes the true hurdle higher than spread divided by holding period.",
+      "Identify which investors and which strategies suffer most from price impact and from waiting.",
+      "Save a Friction Budget stating your expected annual drag and the hurdle it implies.",
+    ],
+  },
+  {
+    slug: "if-5-1-estimate-a-valuation-range",
+    moduleId: "if-m05-valuation-range",
+    order: 1,
+    shortTitle: "Valuation Range",
+    title: "Estimate a Valuation Range",
+    subtitle:
+      "Match the claim, cash flow, and required return; test whether growth creates value; then turn uncertainty into a price rule.",
+    description:
+      "A valuation-gravity investigation that corrects free-growth intuition, scans peer comparisons for missing controls, and saves a range-based buy/watch/avoid rule to the Portfolio Dossier.",
+    type: "interactive",
+    lessonType: "Portfolio Mission",
+    estimatedMinutes: 50,
+    sourceRequired: true,
+    conceptRole: "security-pricing",
+    skills: [
+      "Firm-versus-Equity Consistency",
+      "Perpetuity Valuation",
+      "Growth-Quality Analysis",
+      "Relative-Valuation Controls",
+      "Range-and-Buffer Decision Design",
+    ],
+    objectives: [
+      "Pair firm and equity cash flows with the matching required return.",
+      "Calculate a no-growth perpetuity and identify the reinvestment omitted by a naive growth model.",
+      "Explain with numbers why growth creates value only when return on capital exceeds cost of capital.",
+      "Evaluate a low-P/E claim after controlling for cash flow, growth, and risk.",
+      "Save a Valuation Range with a required return, decision buffer, and evidence triggers.",
+    ],
+  },
 ];
 
 const MODULE1_SOURCE: SourceSlot = {
@@ -1905,7 +2567,122 @@ const IF_MODULE1_SOURCE: SourceSlot = {
   note: "This lesson adapts Damodaran's distinction between investment philosophy and strategy, and his argument for beginning with a defensible view of how markets work. The examples, interactions, and instructional wording are original OPS implementations.",
 };
 
-const IF_MODULE1_SLUGS = new Set(["if-1-1-how-an-investor-builds-a-philosophy"]);
+const IF_MODULE1_SLUGS = new Set([
+  "if-1-1-how-an-investor-builds-a-philosophy",
+  "if-1-2-where-philosophy-enters-the-investment-process",
+  "if-1-3-comparing-investment-philosophy-families",
+  "if-1-4-when-a-philosophy-fits-the-investor",
+]);
+
+const IF_MODULE2_SOURCES: SourceSlot[] = [
+  {
+    id: "damodaran-ip-38-session-2-slides",
+    title:
+      "Aswath Damodaran, Investment Philosophies — Session 2 of 38: Understanding Risk I — The risk in bonds",
+    type: "course-note",
+    required: true,
+    url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphilslides/session2.pdf",
+    note: "Official NYU Stern slide deck. All 13 slides were visually audited and every numerical example used by OPS was independently verified.",
+  },
+  {
+    id: "damodaran-ip-38-session-2-test",
+    title: "Investment Philosophies — Session 2 test and solutions",
+    type: "external-link",
+    required: true,
+    url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphiltests/quiz2.pdf",
+    note: "Official assessment source for the one-year return, duration ranking, risky-bond price, and ratings-evidence checks.",
+  },
+  {
+    id: "damodaran-ip-38-session-2-video",
+    title: "Investment Philosophies — Session 2 of 38 video mirror",
+    type: "external-link",
+    required: true,
+    url: "https://www.youtube.com/watch?v=8E6b60eN2Mc",
+    note: "Exact 2014 Session 2 recording used for complete caption review. Third-party mirror; the official 38-webcast page currently mislinks this session video. Slides and independently checked calculations control where auto-captions conflict.",
+  },
+];
+
+const IF_MODULE3_SOURCES: SourceSlot[] = [
+  {
+    id: "damodaran-ip-38-session-3-slides",
+    title:
+      "Aswath Damodaran, Investment Philosophies — Session 3 of 38: Understanding Risk II — The risk in stocks",
+    type: "course-note",
+    required: true,
+    url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphilslides/session3.pdf",
+    note: "Official NYU Stern slide deck. All 18 slides were visually audited. OPS corrects the false Chinese-character etymology and uses the slide's weekly regression frequency where narration conflicts.",
+  },
+  {
+    id: "damodaran-ip-38-session-3-test",
+    title: "Investment Philosophies — Session 3 test and solutions",
+    type: "external-link",
+    required: true,
+    url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphiltests/quiz3.pdf",
+    note: "Official assessment source. OPS rewrites the duplicated beta answer choice and replaces the question whose official solution answers a different prompt.",
+  },
+  {
+    id: "damodaran-ip-38-session-3-video",
+    title: "Investment Philosophies — Session 3 of 38 video",
+    type: "external-link",
+    required: true,
+    url: "https://www.youtube.com/watch?v=Hqol9Fc0PLU",
+    note: "Official Aswath Damodaran recording used for complete caption review. Slides and independently checked finance terminology control where auto-captions conflict.",
+  },
+];
+
+const IF_MODULE4_SOURCES: SourceSlot[] = [
+  {
+    id: "damodaran-ip-38-session-4-slides",
+    title:
+      "Aswath Damodaran, Investment Philosophies — Session 4 of 38: Financial Statement Analysis",
+    type: "course-note",
+    required: true,
+    url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphilslides/session4.pdf",
+    note: "Official NYU Stern slide deck. All 18 slides were visually audited. OPS labels source-era lease and extraordinary-item treatments and reconciles them to current accounting.",
+  },
+  {
+    id: "damodaran-ip-38-session-4-test",
+    title: "Investment Philosophies — Session 4 test and solutions",
+    type: "external-link",
+    required: true,
+    url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphiltests/quiz4.pdf",
+    note: "Official assessment source. OPS independently verified all five answers and adds the qualifications a first-time learner needs.",
+  },
+  {
+    id: "damodaran-ip-38-session-4-video",
+    title: "Investment Philosophies — Session 4 of 38 video",
+    type: "external-link",
+    required: true,
+    url: "https://www.youtube.com/watch?v=qaDFkAh3J4k",
+    note: "Official Aswath Damodaran recording used for complete caption review. Slides and independently checked terminology control where auto-captions conflict.",
+  },
+];
+
+const IF_MODULE2_SLUGS = new Set([
+  "if-2-1-reading-a-bonds-promise",
+  "if-2-2-why-market-rates-change-bond-prices",
+  "if-2-3-duration-measuring-interest-rate-sensitivity",
+  "if-2-4-default-risk-can-the-issuer-deliver",
+  "if-2-5-from-credit-rating-to-bond-price",
+]);
+
+const IF_MODULE3_SLUGS = new Set([
+  "if-3-1-what-risk-means-for-a-shareholder",
+  "if-3-2-why-diversification-changes-the-question",
+  "if-3-3-what-beta-measures",
+  "if-3-4-what-makes-beta-rise-or-fall",
+  "if-3-5-choosing-a-risk-measure",
+  "if-3-6-build-an-equity-risk-policy",
+]);
+
+const IF_MODULE4_SLUGS = new Set([
+  "if-4-1-the-three-financial-statements",
+  "if-4-2-read-the-balance-sheet",
+  "if-4-3-recast-the-business",
+  "if-4-4-read-profit-and-leverage",
+  "if-4-5-repair-the-investor-view",
+  "if-4-6-trace-cash-to-the-investor",
+]);
 
 function sourceSlotsFor(slug: string): SourceSlot[] {
   if (MODULE1_SLUGS.has(slug))
@@ -1928,6 +2705,9 @@ function sourceSlotsFor(slug: string): SourceSlot[] {
     return [MODULE11_SOURCE, ...lessonSourceSlots(slug)];
   if (IF_MODULE1_SLUGS.has(slug))
     return [IF_MODULE1_SOURCE, ...lessonSourceSlots(slug)];
+  if (IF_MODULE2_SLUGS.has(slug)) return IF_MODULE2_SOURCES;
+  if (IF_MODULE3_SLUGS.has(slug)) return IF_MODULE3_SOURCES;
+  if (IF_MODULE4_SLUGS.has(slug)) return IF_MODULE4_SOURCES;
   return lessonSourceSlots(slug);
 }
 

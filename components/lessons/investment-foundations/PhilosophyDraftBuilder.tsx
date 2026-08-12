@@ -106,11 +106,11 @@ export default function PhilosophyDraftBuilder() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Investment Philosophy Draft 0.1
             </span>
           </div>
-          <span className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">
+          <span className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-2.5 py-1 font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
             Starting hypothesis — not a completed philosophy
           </span>
         </div>
@@ -122,7 +122,7 @@ export default function PhilosophyDraftBuilder() {
           browser and never sent anywhere.
         </p>
 
-        <div className="mt-3 font-sans text-[11px] text-slate-500">
+        <div className="mt-3 font-sans text-[12px] text-slate-500">
           {filledCount}/{totalFields} fields completed
         </div>
 
@@ -154,7 +154,7 @@ export default function PhilosophyDraftBuilder() {
                     aria-checked={isPicked}
                     onClick={() => update("advantageStage", opt)}
                     className={cn(
-                      "rounded-full border px-3.5 py-1.5 text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
+                      "rounded-full border px-3.5 py-1.5 text-[14px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
                       isPicked
                         ? "border-accent-amber bg-accent-amber/15 text-accent-amber"
                         : "border-white/20 text-slate-100 hover:border-accent-amber/60 hover:text-accent-amber",
@@ -182,7 +182,7 @@ export default function PhilosophyDraftBuilder() {
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {CONSTRAINT_FIELDS.map((f) => (
                 <label key={f.key} className="block">
-                  <span className="ops-caption text-[10px] text-slate-400">
+                  <span className="ops-caption text-[12px] text-slate-400">
                     {f.label}
                   </span>
                   <input
@@ -234,7 +234,7 @@ export default function PhilosophyDraftBuilder() {
 
         <div className="mt-7 rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
           <div className="flex items-center justify-between gap-3">
-            <div className="ops-caption text-[11px] text-accent-amber">
+            <div className="ops-caption text-[12px] text-accent-amber">
               Generated summary
             </div>
             <button
@@ -274,7 +274,7 @@ export default function PhilosophyDraftBuilder() {
             Clear draft
           </button>
           {local.updatedAt && (
-            <span className="ml-auto font-sans text-[11px] text-slate-500">
+            <span className="ml-auto font-sans text-[12px] text-slate-500">
               Last saved: {new Date(local.updatedAt).toLocaleString()}
             </span>
           )}
@@ -297,7 +297,7 @@ function Field({
     <div>
       <label className="ops-body-strong text-[15px] text-slate-50">{label}</label>
       {hint && (
-        <p className="ops-body mt-1 text-[13px] italic text-slate-400">{hint}</p>
+        <p className="ops-body mt-1 text-[14px] italic text-slate-400">{hint}</p>
       )}
       {children}
     </div>

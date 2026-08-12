@@ -1,0 +1,185 @@
+{
+  "purpose": "Primary sources for the six portfolio-construction subjects Damodaran's Investment Philosophies course does not teach to implementable depth. See docs/lesson-plans/portfolio-builder-mission-curriculum.md section 6.",
+  "policy": {
+    "primaryOnly": "Every source must be the issuer, regulator, standard-setter, or original author. No commentary, no aggregator, no course-notes mirror. A mirror may be recorded as a fallback but never as the citation.",
+    "verifyBeforeAdding": "Every URL must be fetch-tested before it enters this file. Search results are unreliable: two candidate URLs returned 404 and one returned 403 during the initial survey.",
+    "decay": {
+      "high": "Contains figures that change at least annually (tax thresholds, risk premiums, product costs). Re-fetch and re-verify every 12 months. Never hardcode these numbers into lesson copy — cite them with a date.",
+      "medium": "Framework or product landscape that drifts over years.",
+      "low": "Methodology or principles, stable across editions."
+    },
+    "jurisdiction": "US is the only locked jurisdiction. Sources marked \"any\" are jurisdiction-neutral. When OPS expands, add sibling entries keyed by jurisdiction and select on the learner's reported status; do not silently show US tax rules to a non-US learner."
+  },
+  "lockedJurisdictions": ["US"],
+  "sources": [
+    {
+      "id": "vanguard-principles",
+      "subject": "allocation-method",
+      "missions": [5, 10, 13],
+      "publisher": "The Vanguard Group",
+      "title": "Vanguard's Principles for Investing Success",
+      "url": "https://corporate.vanguard.com/content/dam/corp/research/pdf/vanguards_principles_for_investing_success.pdf",
+      "format": "pdf",
+      "jurisdiction": "any",
+      "decay": "medium",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Goals, balance, cost and discipline as an explicit construction framework. Supplies the step Damodaran omits: turning a risk view into an allocation."
+    },
+    {
+      "id": "vanguard-rebalancing-edge",
+      "subject": "rebalancing",
+      "missions": [13],
+      "publisher": "The Vanguard Group",
+      "title": "The Rebalancing Edge: optimizing rebalancing through threshold-based strategies",
+      "url": "https://corporate.vanguard.com/content/dam/corp/research/pdf/the_rebalancing_edge_optimizing_target_date_fund_rebalancing_through_threshold_based_strategies.pdf",
+      "format": "pdf",
+      "jurisdiction": "any",
+      "decay": "low",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Threshold versus calendar rebalancing, and the trade between tracking the target and paying cost/tax to get there. Pairs with mission 8's friction budget."
+    },
+    {
+      "id": "cfa-ips-individual",
+      "subject": "ips-benchmark",
+      "missions": [1, 13],
+      "publisher": "CFA Institute",
+      "title": "Elements of an Investment Policy Statement for Individual Investors",
+      "url": "https://rpc.cfainstitute.org/sites/default/files/-/media/documents/article/position-paper/investment-policy-statement-individual-investors.pdf",
+      "format": "pdf",
+      "jurisdiction": "any",
+      "decay": "low",
+      "verifiedOn": "2026-08-10",
+      "teaches": "The canonical section-by-section structure of an individual IPS. Sections verified present in the extracted text: Scope and Purpose, Governance, Investment/Return/Risk Objectives, Risk Management, Rebalancing, Benchmark. This is the target shape of the final dossier."
+    },
+    {
+      "id": "damodaran-erp",
+      "subject": "allocation-inputs",
+      "missions": [5, 7],
+      "publisher": "Aswath Damodaran, NYU Stern",
+      "title": "Equity Risk Premiums: Determinants, Estimation and Implications",
+      "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/ERPfull.pdf",
+      "format": "pdf",
+      "jurisdiction": "any",
+      "decay": "high",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Implied versus historical equity risk premium, and why the choice changes every expected return downstream. Same author as the core course, which keeps required-return work continuous with session 3."
+    },
+    {
+      "id": "damodaran-country-premiums",
+      "subject": "allocation-inputs",
+      "missions": [5],
+      "publisher": "Aswath Damodaran, NYU Stern",
+      "title": "Country Default Spreads and Risk Premiums",
+      "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ctryprem.html",
+      "format": "html",
+      "jurisdiction": "any",
+      "decay": "high",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Country risk premiums for allocating outside the home market. HTML, so the figures are extractable as text rather than trapped in a spreadsheet."
+    },
+    {
+      "id": "damodaran-historical-returns",
+      "subject": "allocation-inputs",
+      "missions": [5],
+      "publisher": "Aswath Damodaran, NYU Stern",
+      "title": "Historical Returns on Stocks, Bonds and Bills (US)",
+      "url": "https://pages.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xls",
+      "format": "binary",
+      "jurisdiction": "US",
+      "decay": "high",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Long-run asset-class return and risk inputs for the allocation.",
+      "limitation": "Legacy .xls. This environment has no spreadsheet reader, so provenance is recorded but text is NOT extracted. Read the figures manually, or prefer the HTML data pages where an equivalent exists."
+    },
+    {
+      "id": "sec-funds-and-etfs",
+      "subject": "fund-etf-diligence",
+      "missions": [12],
+      "publisher": "U.S. Securities and Exchange Commission",
+      "title": "Mutual Funds and Exchange-Traded Funds (investor.gov)",
+      "url": "https://www.investor.gov/introduction-investing/investing-basics/investment-products/mutual-funds-and-exchange-traded-1",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "medium",
+      "verifiedOn": "2026-08-10",
+      "teaches": "The regulator's own framing of fund structures, fees and risks — the vocabulary a prospectus assumes."
+    },
+    {
+      "id": "irs-pub550",
+      "subject": "tax-accounts",
+      "missions": [8, 13],
+      "publisher": "Internal Revenue Service",
+      "title": "Publication 550: Investment Income and Expenses",
+      "url": "https://www.irs.gov/pub/irs-pdf/p550.pdf",
+      "format": "pdf",
+      "jurisdiction": "US",
+      "decay": "high",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Dividends, interest, capital gain and loss treatment, holding periods, wash sales. The tax half of the friction budget."
+    },
+    {
+      "id": "irs-pub590a",
+      "subject": "tax-accounts",
+      "missions": [12, 13],
+      "publisher": "Internal Revenue Service",
+      "title": "Publication 590-A: Contributions to Individual Retirement Arrangements",
+      "url": "https://www.irs.gov/pub/irs-pdf/p590a.pdf",
+      "format": "pdf",
+      "jurisdiction": "US",
+      "decay": "high",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Account types and contribution rules — the container decision that precedes asset location."
+    },
+    {
+      "id": "irs-pub590b",
+      "subject": "tax-accounts",
+      "missions": [13],
+      "publisher": "Internal Revenue Service",
+      "title": "Publication 590-B: Distributions from Individual Retirement Arrangements",
+      "url": "https://www.irs.gov/pub/irs-pdf/p590b.pdf",
+      "format": "pdf",
+      "jurisdiction": "US",
+      "decay": "high",
+      "verifiedOn": "2026-08-10",
+      "teaches": "Withdrawal rules and timing, which constrain the horizon and liquidity claims made in mission 1."
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "sec-edgar",
+      "subject": "fund-etf-diligence",
+      "missions": [12],
+      "publisher": "U.S. Securities and Exchange Commission",
+      "title": "EDGAR company submissions API",
+      "url": "https://data.sec.gov/submissions/CIK0000036405.json",
+      "urlNote": "Liveness probe against Vanguard Index Funds (CIK 36405). The bare cgi-bin path returns 403 without query parameters; verified working endpoints are data.sec.gov/submissions/CIK{10-digit}.json, cgi-bin/browse-edgar with action+CIK+type, and efts.sec.gov/LATEST/search-index.",
+      "format": "api",
+      "jurisdiction": "US",
+      "decay": "none",
+      "verifiedOn": "2026-08-10",
+      "requiredHeader": "SEC policy requires a User-Agent identifying the requester with contact details. Requests without one are refused.",
+      "teaches": "Real prospectuses (485BPOS), portfolio holdings (N-PORT) and annual reports (N-CEN). The primary artifact for fund diligence, and it reuses OPS's existing filing-reader pattern."
+    }
+  ],
+  "inaccessible": [
+    {
+      "what": "S&P Dow Jones Indices — S&P U.S. Indices Methodology",
+      "url": "https://www.spglobal.com/spdji/en/documents/methodologies/methodology-sp-us-indices.pdf",
+      "status": "HTTP 403 on 2026-08-10; spglobal blocks automated fetch",
+      "workaround": "Teach index construction from a fund prospectus via EDGAR instead. The prospectus describes the index it tracks, is accessible, and is the document a real investor would actually read."
+    },
+    {
+      "what": "Financial Analysts Journal / Journal of Portfolio Management papers on allocation and sizing — Ibbotson & Kaplan on what allocation policy explains; Grinold and Clarke/de Silva/Thorley on the fundamental law of active management",
+      "status": "Almost certainly paywalled. NOT fetch-tested, so not claimed as available.",
+      "workaround": "If access is obtained, these are the strongest sources for mission 5's sizing half. Until then do not cite them."
+    }
+  ],
+  "openGaps": [
+    {
+      "subject": "sizing-concentration",
+      "missions": [5],
+      "status": "No primary source locked yet.",
+      "candidates": "US regulatory diversification tests that real funds must satisfy — Investment Company Act section 5(b)(1) and the RIC diversification requirements in the Internal Revenue Code — are primary, free and teach genuine institutional constraints. Both need locating on a canonical government domain (eCFR, uscode.house.gov, or sec.gov) and fetch-testing before use."
+    }
+  ]
+}

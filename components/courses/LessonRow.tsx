@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getLessonComponent } from "@/lib/lessonRegistry";
 import type { Lesson } from "@/data/courses/types";
+import type { CurriculumRequirement } from "@/data/courses/portfolioBuilder";
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,10 +26,12 @@ export default function LessonRow({
   lesson,
   index,
   accentColor = "#22d3ee",
+  requirement,
 }: {
   lesson: Lesson;
   index: number;
   accentColor?: string;
+  requirement?: CurriculumRequirement;
 }) {
   const hasComponent = Boolean(getLessonComponent(lesson.slug));
   const isComingSoon = lesson.status === "coming-soon";
@@ -75,6 +78,11 @@ export default function LessonRow({
               }}
             >
               {statusText}
+            </span>
+          )}
+          {requirement === "lab" && (
+            <span className="ml-1 inline-flex items-center rounded-full border border-amber-700/20 bg-amber-50 px-2.5 py-0.5 text-[13px] font-medium text-[#7A4D00]">
+              Optional depth
             </span>
           )}
         </div>

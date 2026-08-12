@@ -99,7 +99,7 @@ export default function BeliefToStrategyFlow() {
 
       <Reveal delay={0.05} className="mt-8">
         <InteractiveFrame>
-          <div className="ops-eyebrow text-[11px] text-slate-400">
+          <div className="ops-eyebrow text-[12px] text-slate-400">
             Worked example · post-earnings underreaction
           </div>
           <p className="ops-body-strong mt-2 text-[16px] text-slate-50">
@@ -122,7 +122,7 @@ export default function BeliefToStrategyFlow() {
                       <h3 className="ops-interactive-title text-[16px] text-white">
                         {layer.label}
                       </h3>
-                      <p className="ops-body mt-1 text-[13px] text-slate-400">
+                      <p className="ops-body mt-1 text-[14px] text-slate-400">
                         {layer.description}
                       </p>
                     </div>
@@ -144,7 +144,7 @@ export default function BeliefToStrategyFlow() {
 
       <Reveal delay={0.05} className="mt-6">
         <Panel className="border-accent-red/25 bg-accent-red/[0.04]">
-          <div className="ops-caption text-[10px] text-accent-red">
+          <div className="ops-caption text-[12px] text-accent-red">
             Why “buy undervalued companies” is not yet a philosophy
           </div>
           <p className="ops-body mt-3 text-[15px] text-slate-200">

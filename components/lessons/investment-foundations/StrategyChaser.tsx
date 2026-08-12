@@ -165,12 +165,12 @@ export default function StrategyChaser() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Strategy chaser · 3 periods
             </span>
           </div>
           {!done && (
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Period {periodIdx + 1} of {PERIODS.length}
             </span>
           )}
@@ -181,7 +181,7 @@ export default function StrategyChaser() {
           each period, the recently strongest strategy will be presented as the
           next obvious opportunity.
         </p>
-        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-sans text-[11px] text-slate-500">
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-sans text-[12px] text-slate-500">
           <span>Starting value: ${STARTING_VALUE.toLocaleString()}</span>
           <span>Initial allocation: Broad market</span>
           <span>Switch cost: {(SWITCH_COST_PCT * 100).toFixed(1)}% of value</span>
@@ -202,7 +202,7 @@ export default function StrategyChaser() {
                         : "border-white/10 bg-white/[0.02]",
                     )}
                   >
-                    <div className="ops-caption text-[10px] text-slate-400">
+                    <div className="ops-caption text-[12px] text-slate-400">
                       {r.strategy}
                     </div>
                     <div
@@ -215,7 +215,7 @@ export default function StrategyChaser() {
                       {r.r}%
                     </div>
                     {isWinner && (
-                      <div className="ops-caption mt-1 text-[9px] text-accent-amber">
+                      <div className="ops-caption mt-1 text-[12px] text-accent-amber">
                         Recent winner
                       </div>
                     )}
@@ -313,7 +313,7 @@ function Results({
 
   return (
     <div className="mt-5">
-      <div className="ops-caption text-[11px] text-accent-amber">
+      <div className="ops-caption text-[12px] text-accent-amber">
         Strategy chaser · your track record
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -342,7 +342,7 @@ function Results({
       <div className="mt-5 grid grid-cols-3 gap-2 text-center">
         {PERIODS.map((p, i) => (
           <div key={p.id} className="rounded-lg border border-white/10 bg-white/[0.02] p-2">
-            <div className="ops-caption text-[9px] text-slate-500">Period {p.id}</div>
+            <div className="ops-caption text-[12px] text-slate-500">Period {p.id}</div>
             <div className="mt-1 text-[12px] text-slate-200">
               {choices[i] === "switch"
                 ? "Switch → " + p.promptStrategy
@@ -358,13 +358,13 @@ function Results({
         The problem is not that an investor changed strategy. The problem is
         that the investor had no coherent reason for changing. Without a
         philosophy, the decision process becomes:
-        <span className="mt-2 block font-sans text-[13px] text-slate-300">
+        <span className="mt-2 block font-sans text-[14px] text-slate-300">
           recent winner → portfolio switch → disappointment → next recent winner
         </span>
       </DefinitionCard>
 
       <div className="ops-definition-card mt-4 p-5">
-        <div className="ops-caption text-[10px] text-accent-green">Final principle</div>
+        <div className="ops-caption text-[12px] text-accent-green">Final principle</div>
         <p className="ops-body mt-2 text-[16px] text-slate-100">
           A philosophy provides the reasoning needed to distinguish adaptation
           from performance chasing.
@@ -400,7 +400,7 @@ function Stat({
   };
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
-      <div className="ops-caption text-[10px] text-slate-500">{label}</div>
+      <div className="ops-caption text-[12px] text-slate-500">{label}</div>
       <div className={cn("mt-1 font-sans text-[16px] tabular-nums", toneText[tone])}>
         {value}
       </div>

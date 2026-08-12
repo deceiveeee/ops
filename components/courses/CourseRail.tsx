@@ -101,11 +101,17 @@ export default function CourseRail({
         {/* Continue / Start CTA */}
         <div className="border-t border-black/10 pt-5">
           <Link
-            href={`/courses/${course.slug}#module-1`}
+            href={
+              course.slug === "investment-foundations"
+                ? `/courses/${course.slug}#portfolio-path`
+                : `/courses/${course.slug}#module-1`
+            }
             className="inline-flex items-center gap-2 text-[15px] font-medium"
             style={{ color: accentColor }}
           >
-            Start course
+            {course.slug === "investment-foundations"
+              ? "Open mission path"
+              : "Start course"}
             <span aria-hidden>→</span>
           </Link>
         </div>

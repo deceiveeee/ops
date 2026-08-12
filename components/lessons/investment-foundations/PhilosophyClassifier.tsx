@@ -129,11 +129,11 @@ export default function PhilosophyClassifier() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Classify eight statements
             </span>
           </div>
-          <span className="ops-caption text-[11px] text-slate-400">
+          <span className="ops-caption text-[12px] text-slate-400">
             {finished ? "Complete" : `Case ${index + 1} of ${CASES.length}`} · {correctCount} correct
           </span>
         </div>
@@ -220,12 +220,12 @@ function FinalSummary({
 }) {
   return (
     <div className="mt-5">
-      <div className="ops-caption text-[11px] text-accent-amber">Final score</div>
+      <div className="ops-caption text-[12px] text-accent-amber">Final score</div>
       <div className="mt-2 font-sans text-4xl tabular-nums text-white">
         {correctCount}/{CASES.length}
       </div>
       <div className="ops-definition-card mt-5 p-5">
-        <div className="ops-caption text-[10px] text-accent-cyan">
+        <div className="ops-caption text-[12px] text-accent-cyan">
           The diagnostic question
         </div>
         <p className="ops-body mt-2 text-[16px] text-slate-100">

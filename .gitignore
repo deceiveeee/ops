@@ -9,3 +9,11 @@ dist
 docs/superpowers/qa/**/captures/
 test-results
 playwright-report
+
+# Damodaran course corpus fetched by scripts/source/fetch-session.mjs.
+# Deliberately untracked: it is copyrighted course material and must not be
+# redistributed by committing it. Only original OPS analysis belongs in docs/.
+.source-cache/
+# Same material, plus scratch downloads and dev logs: audio, captions and PDFs
+# land here (~1GB). Ignored for the same reason, not merely because it is large.
+tmp/

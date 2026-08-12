@@ -110,7 +110,7 @@ export default function SameBeliefDifferentInvestor() {
                 </h3>
                 <span
                   className={cn(
-                    "font-sans text-[11px] uppercase tracking-[0.14em]",
+                    "font-sans text-[12px] uppercase tracking-[0.14em]",
                     accentText[inv.accent],
                   )}
                 >
@@ -142,7 +142,7 @@ export default function SameBeliefDifferentInvestor() {
         <InteractiveFrame>
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Compare across five implementation dimensions
             </span>
           </div>
@@ -180,7 +180,7 @@ export default function SameBeliefDifferentInvestor() {
                   {isOpen && (
                     <div className="grid grid-cols-1 gap-3 px-4 pb-4 sm:grid-cols-2">
                       <div className="rounded-lg border border-accent-green/20 bg-accent-green/[0.04] p-3">
-                        <div className={cn("ops-caption text-[10px]", accentText.green)}>
+                        <div className={cn("ops-caption text-[12px]", accentText.green)}>
                           Investor A
                         </div>
                         <p className="ops-body mt-1 text-[14px] text-slate-100">
@@ -188,7 +188,7 @@ export default function SameBeliefDifferentInvestor() {
                         </p>
                       </div>
                       <div className="rounded-lg border border-accent-amber/20 bg-accent-amber/[0.04] p-3">
-                        <div className={cn("ops-caption text-[10px]", accentText.amber)}>
+                        <div className={cn("ops-caption text-[12px]", accentText.amber)}>
                           Investor B
                         </div>
                         <p className="ops-body mt-1 text-[14px] text-slate-100">

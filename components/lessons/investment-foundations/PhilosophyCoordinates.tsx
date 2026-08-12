@@ -118,7 +118,7 @@ export default function PhilosophyCoordinates() {
         <InteractiveFrame>
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Philosophy coordinates · 5 cases
             </span>
           </div>
@@ -148,7 +148,7 @@ export default function PhilosophyCoordinates() {
                     {allAnswered && (
                       <span
                         className={cn(
-                          "font-sans text-[11px] uppercase tracking-[0.14em]",
+                          "font-sans text-[12px] uppercase tracking-[0.14em]",
                           allOk ? "text-accent-green" : "text-accent-amber",
                         )}
                       >
@@ -186,8 +186,8 @@ export default function PhilosophyCoordinates() {
                   </div>
 
                   {allAnswered && (
-                    <p className="ops-body mt-3 border-t border-white/10 pt-3 text-[13px] text-slate-300">
-                      <span className="ops-caption mr-2 text-[10px] text-accent-amber">
+                    <p className="ops-body mt-3 border-t border-white/10 pt-3 text-[14px] text-slate-300">
+                      <span className="ops-caption mr-2 text-[12px] text-accent-amber">
                         Feedback
                       </span>
                       {s.feedback}
@@ -241,7 +241,7 @@ function CoordinateBlock({
 
   return (
     <div>
-      <div className="ops-caption text-[10px] text-slate-400">{label}</div>
+      <div className="ops-caption text-[12px] text-slate-400">{label}</div>
       <div className="mt-2 flex flex-wrap gap-1.5">
         {options.map((o) => {
           const isPicked = value === o.id;

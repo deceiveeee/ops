@@ -82,11 +82,11 @@ export default function AllocationVsSelection() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Where does the decision belong?
             </span>
           </div>
-          <span className="ops-caption text-[11px] text-slate-400">
+          <span className="ops-caption text-[12px] text-slate-400">
             {Object.keys(answers).length}/{CASES.length} answered · {correctCount} correct
           </span>
         </div>
@@ -101,7 +101,7 @@ export default function AllocationVsSelection() {
                 className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
               >
                 <div className="flex items-start gap-3">
-                  <span className="ops-caption mt-0.5 text-[11px] text-slate-500">
+                  <span className="ops-caption mt-0.5 text-[12px] text-slate-500">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -125,7 +125,7 @@ export default function AllocationVsSelection() {
                             disabled={picked !== undefined}
                             onClick={() => choose(c.id, cat.id)}
                             className={cn(
-                              "rounded-full border px-3.5 py-1.5 text-[13px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50 disabled:cursor-default",
+                              "rounded-full border px-3.5 py-1.5 text-[14px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50 disabled:cursor-default",
                               !picked &&
                                 "border-white/20 text-slate-100 hover:border-accent-amber/60 hover:text-accent-amber",
                               picked && isCorrect && "border-accent-green bg-accent-green/15 text-accent-green",
@@ -139,8 +139,8 @@ export default function AllocationVsSelection() {
                       })}
                     </div>
                     {showFeedback && (
-                      <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/40 p-2.5 text-[13px] text-slate-300">
-                        <span className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", picked === c.correct ? "text-accent-green" : "text-accent-amber")}>
+                      <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/40 p-2.5 text-[14px] text-slate-300">
+                        <span className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", picked === c.correct ? "text-accent-green" : "text-accent-amber")}>
                           {picked === c.correct ? "Correct" : "Review"}
                         </span>
                         <span className="ml-2">{c.feedback}</span>

@@ -87,18 +87,20 @@ export default function CoursesPage() {
               <CourseCard
                 slug={investmentFoundations.slug}
                 title={investmentFoundations.title}
-                subtitle="Evaluate investments, compare strategies and build a defensible portfolio."
-                shortDescription="Examine major investment philosophies, test the evidence behind each, and construct a portfolio you can defend."
+                subtitle="Twelve decisions. One portfolio you can defend."
+                shortDescription="Build a mandate, allocation, research process, holdings plan, and review policy in about eight core hours. Use Damodaran labs when you want additional depth."
                 outcomes={[
-                  "Research companies and industries",
-                  "Evaluate investment philosophies",
-                  "Construct and defend a portfolio",
+                  "Set an allocation and risk budget",
+                  "Choose a passive core or defend an active sleeve",
+                  "Implement, rebalance, and monitor the portfolio",
                 ]}
                 hours={investmentFoundations.estimatedHours}
-                modules={investmentFoundations.modules.length}
-                lessons={getLessonsCount(investmentFoundations.slug)}
+                modules={12}
+                lessons={11}
+                moduleLabel="Missions"
+                lessonLabel="Depth labs"
                 variant="amber"
-                ctaLabel="Explore Investment Foundations"
+                ctaLabel="Open Portfolio Builder"
               />
             )}
           </div>

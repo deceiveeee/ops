@@ -41,7 +41,7 @@ export default function PhilosophyNeed() {
 
       <Reveal delay={0.05} className="mt-7">
         <Panel className="border-accent-red/25 bg-accent-red/[0.04]">
-          <div className="ops-caption text-[10px] text-accent-red">
+          <div className="ops-caption text-[12px] text-accent-red">
             The performance-chasing loop
           </div>
           <p className="ops-body-strong mt-3 text-[17px] text-white">
@@ -82,7 +82,7 @@ export default function PhilosophyNeed() {
 
       <Reveal delay={0.05} className="mt-5">
         <Panel>
-          <div className="ops-caption text-[10px] text-accent-amber">
+          <div className="ops-caption text-[12px] text-accent-amber">
             Before changing strategy, ask:
           </div>
           <ol className="mt-3 space-y-2">

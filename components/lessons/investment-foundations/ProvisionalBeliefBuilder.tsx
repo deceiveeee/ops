@@ -49,11 +49,11 @@ export default function ProvisionalBeliefBuilder() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Provisional market hypothesis
             </span>
           </div>
-          <span className="rounded-full border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-1 text-[11px] text-accent-amber">
+          <span className="rounded-full border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-1 text-[12px] text-accent-amber">
             Hypothesis—not final philosophy
           </span>
         </div>
@@ -115,7 +115,7 @@ export default function ProvisionalBeliefBuilder() {
         </div>
 
         <div className="mt-6 rounded-xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="ops-caption text-[10px] text-accent-amber">
+          <div className="ops-caption text-[12px] text-accent-amber">
             Your working hypothesis
           </div>
           <p className="ops-body mt-2 text-[15px] leading-relaxed text-slate-100">
@@ -161,7 +161,7 @@ function Field({
   return (
     <label className="block">
       <span className="ops-body-strong text-[15px] text-slate-50">{label}</span>
-      <span className="ops-body mt-1 block text-[13px] text-slate-400">{hint}</span>
+      <span className="ops-body mt-1 block text-[14px] text-slate-400">{hint}</span>
       {children}
     </label>
   );

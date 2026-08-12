@@ -93,7 +93,7 @@ export default function InvestorFitPanels() {
                         stated tolerance and actual behavior may differ.
                       </p>
                       <div className="ops-definition-card mt-4 p-4">
-                        <div className="ops-caption text-[10px] text-accent-cyan">
+                        <div className="ops-caption text-[12px] text-accent-cyan">
                           Scenario
                         </div>
                         <p className="ops-body-strong mt-1.5 text-[16px] text-slate-100">
@@ -134,7 +134,7 @@ export default function InvestorFitPanels() {
                             {RISK_CHOICES.find((c) => c.id === riskPick)?.feedback}
                           </Feedback>
                         )}
-                        <p className="ops-body mt-3 text-[13px] text-slate-400">
+                        <p className="ops-body mt-3 text-[14px] text-slate-400">
                           This scenario does not produce a definitive
                           psychological score — it surfaces a tendency to
                           examine further.
@@ -181,7 +181,7 @@ export default function InvestorFitPanels() {
                         holdings differently.
                       </p>
                       <Panel className="mt-3 border-accent-amber/20 bg-accent-amber/[0.04]">
-                        <div className="ops-caption text-[10px] text-accent-amber">
+                        <div className="ops-caption text-[12px] text-accent-amber">
                           Important note
                         </div>
                         <p className="ops-body mt-1 text-[14px] text-slate-200">

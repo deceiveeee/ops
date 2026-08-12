@@ -22,6 +22,33 @@ Creativity should always support learning. Do not add animation only because it 
 
 ## Creative Interaction Principles
 
+### Learning logic is a release requirement
+
+Every lesson must be coherent for a learner encountering the topic for the first time. Before implementation and again during QA:
+
+- Map the knowledge, vocabulary, and skills assumed by every prompt.
+- Introduce and define a concept before asking the learner to use or identify it. An intentionally diagnostic opening must be labeled as such, must not penalize the learner, and must teach the missing concept immediately afterward.
+- Define abstractions with a direct positive statement. Do not rely on an “X is not Y” contrast to carry the definition.
+- Follow each new abstract finance term with a concrete cause-and-effect example. When useful, include numbers and explicitly identify the event, price effect, investor action, and condition expected to resolve the situation.
+- Follow the sequence: introduce → model → guided practice → independent application → assessment.
+- Give the learner enough information to answer from the lesson itself; never make unstated prior knowledge the hidden key to progression.
+- Check transitions so the learner always understands why the next activity follows and what they should do.
+- Review pedagogy separately from visual, functional, accessibility, and responsive QA. Passing tests does not prove that the teaching sequence is logical.
+- Test the complete lesson from a fresh learner state, recording for every assessed idea where it was introduced and practiced.
+
+### Source integrity is a release requirement
+
+OPS lessons may be used by high school students who are encountering finance for the first time. Accuracy, authenticity, and traceability are required before lesson design or implementation begins:
+
+- Lock the exact source edition, course sequence, session number, title, publication year, and canonical official URLs. Do not combine similarly named sessions from different editions unless the difference is explicitly documented and approved.
+- Review the complete official slideshow visually and read all slide text, charts, tables, examples, notes, and footnotes. A search result, course-page summary, or extracted snippet is not a substitute for reviewing the full deck.
+- Review the complete official video captions or transcript alongside the slideshow. Check how the instructor explains, qualifies, sequences, and connects every concept; do not infer the lesson scope from slide titles alone.
+- Create a source coverage matrix before outlining the OPS lesson. For every proposed definition, claim, example, interaction, and assessment, record the supporting slide or video-caption segment and the prerequisite concepts the learner needs.
+- Reconcile discrepancies among the course page, slideshow, captions, book edition, tests, and solutions before writing lesson content. Stop and resolve version ambiguity instead of choosing a sequence from memory.
+- Separate source-authentic material from original OPS pedagogy. Preserve the source's meaning and qualifications; label original examples, numbers, metaphors, and interactions as OPS adaptations.
+- Verify every equation, numerical example, answer, and feedback explanation independently. Assessment answers must be supported by the reviewed sources and by concepts already introduced and practiced in the lesson.
+- Run a source-integrity review as a distinct release gate. Do not present a lesson as source-authentic until the edition lock, complete source review, coverage matrix, numerical checks, and citation metadata all pass.
+
 ### 1. Use immersive full-screen sections when appropriate
 
 For landing pages, module introductions, and major lesson openers, prefer full-screen or near-full-screen sections when they create a stronger narrative experience.

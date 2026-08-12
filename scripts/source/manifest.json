@@ -1,0 +1,75 @@
+{
+  "course": {
+    "instructor": "Aswath Damodaran",
+    "title": "Investment Philosophies",
+    "edition": "38-webcast sequence, companion to the 2nd edition (Wiley, 2012)",
+    "index": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/webcastinvphil.htm",
+    "bookSupport": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/invphil3edbook.htm",
+    "slidesBase": "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphilslides",
+    "quizBase": "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphiltests",
+    "numberingNote": "The course index page shows 39 rows because row 1 is a video-only 'Overview of class' with no deck. Index row N+1 carries deck sessionN.pdf and quizN.pdf. The session numbers below are DECK numbers, matching docs/source-audits/*.",
+    "verifiedOn": "2026-08-10"
+  },
+  "anomalies": [
+    {
+      "sessions": [5, 6],
+      "kind": "content-swap",
+      "status": "verified 2026-08-10",
+      "detail": "The upload titled 'Session 5: Valuation - The Basics' (bUJUGsDQ16w, 27:33) contains Session 6 trading-costs narration. The upload titled 'Session 6: Trading Costs & Taxes' (FNF3ncQgABk, 27:18) contains the Session 5 valuation narration. Verified by keyword analysis of the bUJUGsDQ16w caption track: price impact x21, tax x38, bid-ask x12, trading cost x14, versus zero hits for valuation, cash flow, discount rate, and perpetuity. Corroborates docs/source-audits/damodaran-session-5-valuation-basics.md.",
+      "consequence": "videoId fields below are assigned by CONTENT, not by upload title."
+    },
+    {
+      "sessions": [2],
+      "kind": "wrong-link-on-index",
+      "status": "verified 2026-08-10",
+      "detail": "The course index links h37fJcDjjWg for the bond-risk row, but that video is 'Investment Philosophies: Overview of class' (4:47). The mirror 8E6b60eN2Mc ('Aswath Damodaran: Investment Philosophies (Session 2 of 38)', 16:05) carries the bond-risk narration and matches the 00:00:00-00:16:02 review recorded in docs/source-audits/damodaran-investment-philosophies-session-2.md."
+    },
+    {
+      "sessions": [5, 12, 24, 27, 32],
+      "kind": "no-caption-track",
+      "status": "verified 2026-08-10 across all 38 sessions",
+      "detail": "A full-corpus run returned narration for 33 of 38 sessions. Exactly these five have no caption track, which matches the corpus audit independently: it reported no caption track for 24, 27, and 32, and local machine transcription for 5 and 12. Those local transcripts were never committed, so they are unavailable. This environment has ffmpeg but no speech-to-text engine, so these five cannot be transcribed here.",
+      "consequence": "Sessions without a caption track cannot have narration reviewed by this pipeline. Do not claim narration review for them."
+    }
+  ],
+  "sessions": [
+    { "n": 1, "title": "Introduction", "videoId": "CKuAStbkjuA" },
+    { "n": 2, "title": "Understanding Risk I: The risk in bonds", "videoId": "8E6b60eN2Mc", "videoNote": "mirror; index link is wrong" },
+    { "n": 3, "title": "Understanding Risk II: The risk in stocks", "videoId": "Hqol9Fc0PLU" },
+    { "n": 4, "title": "Financial Statement Analysis", "videoId": "qaDFkAh3J4k" },
+    { "n": 5, "title": "Valuation: The Basics", "videoId": "FNF3ncQgABk", "videoNote": "content swap: upload is titled Session 6" },
+    { "n": 6, "title": "Trading Costs and Taxes", "videoId": "bUJUGsDQ16w", "videoNote": "content swap: upload is titled Session 5" },
+    { "n": 7, "title": "Market Efficiency I: Laying the Groundwork", "videoId": "P-iCZBjbiH4" },
+    { "n": 8, "title": "Market Efficiency II: Testing market beating schemes and strategies", "videoId": "I3v2yuvJ_Qs" },
+    { "n": 9, "title": "Random Walks and Momentum", "videoId": "T3WoIU8_ebQ" },
+    { "n": 10, "title": "Temporal Patterns", "videoId": "BUGhiSZuLYQ" },
+    { "n": 11, "title": "Technical Analysis", "videoId": "e0i3qH_8R_4" },
+    { "n": 12, "title": "Introduction to Value Investing", "videoId": "RhuhX2VvJqI" },
+    { "n": 13, "title": "Value Investing: The Passive Screeners", "videoId": "70k1gqx3sYU" },
+    { "n": 14, "title": "Value Investing: The Contrarians", "videoId": "dDXFCsJZP2I" },
+    { "n": 15, "title": "Value Investing: The Activists", "videoId": "rpItkmNa2YE" },
+    { "n": 16, "title": "Value Investing: Where is the beef?", "videoId": "0sn1fVNlcn8" },
+    { "n": 17, "title": "Investing on hope: Growth and Small Cap Investing", "videoId": "QxBzKn0wj7U" },
+    { "n": 18, "title": "Get in on the ground floor: The IPO story", "videoId": "dOtiJHnLQCA" },
+    { "n": 19, "title": "Growth Investing: Growth at a reasonable price (GARP)", "videoId": "gwAlE6q6UuA" },
+    { "n": 20, "title": "Activist Growth Investing: Be your own change agent", "videoId": "shOnY8QWnDk" },
+    { "n": 21, "title": "Growth Investing: Against the tide of history?", "videoId": "eTGOEWtntWI" },
+    { "n": 22, "title": "Information Trading: Trade on the news?", "videoId": "3nKBoTR74ug" },
+    { "n": 23, "title": "Information Trading: Following the Insiders", "videoId": "XEJockZRcMw" },
+    { "n": 24, "title": "Information Trading: Following the analysts", "videoId": "QDdrWXPDLmQ" },
+    { "n": 25, "title": "Information Trading: Public Information - Earnings Reports", "videoId": "4yjdmylrH68" },
+    { "n": 26, "title": "Information Trading: Public Information - Other than Earnings", "videoId": "zY82OrGCf5I" },
+    { "n": 27, "title": "Too good to be true? Pure Arbitrage", "videoId": "WKiQJryfKsk" },
+    { "n": 28, "title": "Close Enough? Near Arbitrage", "videoId": "ewblM3NG028" },
+    { "n": 29, "title": "Not riskless, not even close! Pseudo or Speculative Arbitrage", "videoId": "uHtcrQg2fEI" },
+    { "n": 30, "title": "Market Timing: Setting the table", "videoId": "2wYJJ_bw1QM" },
+    { "n": 31, "title": "Market Timing Approaches: Non-financing & Technical Indicators", "videoId": "lNptwXfmisQ" },
+    { "n": 32, "title": "Market Timing Approaches: Mean Reversion & Macro Fundamentals", "videoId": "zNrzqkNkaso" },
+    { "n": 33, "title": "Market Timing Approaches: Valuing the Market", "videoId": "3g1KmniI1Hs" },
+    { "n": 34, "title": "Market Timing: Does it work?", "videoId": "b0HNM_3jKvY" },
+    { "n": 35, "title": "The case for passive investing: Active investors' track record", "videoId": "s4oaIxJhrO8" },
+    { "n": 36, "title": "More on investor performance: Continuity & Consistency", "videoId": "45XCT1vVWEA" },
+    { "n": 37, "title": "Passive Investing Choices", "videoId": "eQbZlbmbIJs" },
+    { "n": 38, "title": "The Grand Finale", "videoId": "kEHvOptWiUs" }
+  ]
+}

@@ -223,11 +223,11 @@ export default function InvestmentProcessMap() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2.5">
               <TryItTag />
-              <span className="ops-caption text-[11px] text-slate-400">
+              <span className="ops-caption text-[12px] text-slate-400">
                 Investment process · 5 stages
               </span>
             </div>
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               {revealed.length}/{STAGES.length} revealed
             </span>
           </div>
@@ -287,7 +287,7 @@ export default function InvestmentProcessMap() {
                           aria-expanded={isActive}
                         >
                           <div className="flex items-center gap-2">
-                            <span className={cn("ops-caption text-[10px]", STAGE_TONES[s.id])}>
+                            <span className={cn("ops-caption text-[12px]", STAGE_TONES[s.id])}>
                               Stage {s.n}
                             </span>
                           </div>
@@ -312,7 +312,7 @@ export default function InvestmentProcessMap() {
 
                             {s.inputs && s.inputs.length > 0 && (
                               <div>
-                                <div className="ops-caption text-[10px] text-slate-400">
+                                <div className="ops-caption text-[12px] text-slate-400">
                                   {s.inputsTitle}
                                 </div>
                                 <ul className="mt-2 space-y-1.5">
@@ -331,7 +331,7 @@ export default function InvestmentProcessMap() {
 
                             {s.subBlocks?.map((sb) => (
                               <div key={sb.heading}>
-                                <div className="ops-caption text-[10px] text-slate-400">
+                                <div className="ops-caption text-[12px] text-slate-400">
                                   {sb.heading}
                                 </div>
                                 <ul className="mt-2 space-y-1.5">
@@ -350,7 +350,7 @@ export default function InvestmentProcessMap() {
 
                             {s.example && (
                               <div className="rounded-lg border border-white/10 bg-ink-950/40 p-3">
-                                <div className="ops-caption text-[10px] text-slate-500">
+                                <div className="ops-caption text-[12px] text-slate-500">
                                   Example
                                 </div>
                                 <p className="ops-body mt-1 text-[14px] text-slate-200">
@@ -361,7 +361,7 @@ export default function InvestmentProcessMap() {
 
                             {s.mistake && (
                               <div className="rounded-lg border border-accent-red/20 bg-accent-red/[0.04] p-3">
-                                <div className="ops-caption text-[10px] text-accent-red">
+                                <div className="ops-caption text-[12px] text-accent-red">
                                   Common mistake
                                 </div>
                                 <p className="ops-body mt-1 text-[14px] text-slate-200">
@@ -372,7 +372,7 @@ export default function InvestmentProcessMap() {
 
                             {s.futureCourse && (
                               <div className="rounded-lg border border-accent-cyan/20 bg-accent-cyan/[0.04] p-3">
-                                <div className="ops-caption text-[10px] text-accent-cyan">
+                                <div className="ops-caption text-[12px] text-accent-cyan">
                                   Later in the course
                                 </div>
                                 <p className="ops-body mt-1 text-[14px] text-slate-200">
@@ -385,7 +385,7 @@ export default function InvestmentProcessMap() {
                       </div>
                     ) : (
                       <div className="flex flex-1 items-center rounded-xl border border-dashed border-white/10 bg-white/[0.01] p-4 text-slate-600">
-                        <span className="ops-caption text-[11px]">
+                        <span className="ops-caption text-[12px]">
                           Stage {s.n} · locked
                         </span>
                       </div>
@@ -416,7 +416,7 @@ export default function InvestmentProcessMap() {
               </button>
             )}
             {allRevealed && (
-              <span className="ops-caption text-[11px] text-accent-green">
+              <span className="ops-caption text-[12px] text-accent-green">
                 All five stages revealed.
               </span>
             )}

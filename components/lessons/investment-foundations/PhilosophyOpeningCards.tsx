@@ -65,7 +65,7 @@ export default function PhilosophyOpeningCards() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {INVESTORS.map((investor) => (
             <Panel key={investor.id} className="flex flex-col">
-              <div className="ops-caption text-[10px] text-accent-amber">
+              <div className="ops-caption text-[12px] text-accent-amber">
                 Investor case
               </div>
               <h3 className="ops-interactive-title mt-2 text-xl text-white">
@@ -75,7 +75,7 @@ export default function PhilosophyOpeningCards() {
                 {investor.action}
               </p>
               <div className="mt-4 border-t border-white/10 pt-4">
-                <div className="ops-caption text-[10px] text-slate-400">
+                <div className="ops-caption text-[12px] text-slate-400">
                   Reasoning available before the outcome
                 </div>
                 <ul className="mt-3 space-y-2">
@@ -99,7 +99,7 @@ export default function PhilosophyOpeningCards() {
         <InteractiveFrame>
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Judge the process before the result is known
             </span>
           </div>

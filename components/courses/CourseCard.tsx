@@ -32,6 +32,8 @@ export type CourseCardProps = {
   hours: number;
   modules: number;
   lessons: number;
+  moduleLabel?: string;
+  lessonLabel?: string;
   variant: "cyan" | "amber";
   recommended?: boolean;
   ctaLabel?: string;
@@ -63,6 +65,8 @@ export default function CourseCard({
   hours,
   modules,
   lessons,
+  moduleLabel = "Modules",
+  lessonLabel = "Lessons",
   variant,
   recommended,
   ctaLabel = "Explore course",
@@ -130,8 +134,8 @@ export default function CourseCard({
         {/* Stats */}
         <div className="mt-8 flex items-baseline gap-8 border-t border-white/10 pt-6">
           <Stat label="Hours" value={String(hours)} />
-          <Stat label="Modules" value={String(modules)} />
-          <Stat label="Lessons" value={String(lessons)} />
+          <Stat label={moduleLabel} value={String(modules)} />
+          <Stat label={lessonLabel} value={String(lessons)} />
         </div>
 
         {/* CTA — clear, visible, not bottom-corner-hidden */}

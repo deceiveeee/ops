@@ -46,6 +46,28 @@ import Lesson9_2 from "@/components/lessons/efficient-markets/Lesson9_2";
 import Lesson9_3 from "@/components/lessons/efficient-markets/Lesson9_3";
 import Lesson9_4 from "@/components/lessons/efficient-markets/Lesson9_4";
 import LessonIF_1_1 from "@/components/lessons/investment-foundations/LessonIF_1_1";
+import LessonIF_1_2 from "@/components/lessons/investment-foundations/LessonIF_1_2";
+import LessonIF_1_3 from "@/components/lessons/investment-foundations/LessonIF_1_3";
+import LessonIF_1_4 from "@/components/lessons/investment-foundations/LessonIF_1_4";
+import LessonIF_2_1 from "@/components/lessons/investment-foundations/LessonIF_2_1";
+import LessonIF_2_2 from "@/components/lessons/investment-foundations/LessonIF_2_2";
+import LessonIF_2_3 from "@/components/lessons/investment-foundations/LessonIF_2_3";
+import LessonIF_2_4 from "@/components/lessons/investment-foundations/LessonIF_2_4";
+import LessonIF_2_5 from "@/components/lessons/investment-foundations/LessonIF_2_5";
+import LessonIF_3_1 from "@/components/lessons/investment-foundations/LessonIF_3_1";
+import LessonIF_3_2 from "@/components/lessons/investment-foundations/LessonIF_3_2";
+import LessonIF_3_3 from "@/components/lessons/investment-foundations/LessonIF_3_3";
+import LessonIF_3_4 from "@/components/lessons/investment-foundations/LessonIF_3_4";
+import LessonIF_3_5 from "@/components/lessons/investment-foundations/LessonIF_3_5";
+import LessonIF_3_6 from "@/components/lessons/investment-foundations/LessonIF_3_6";
+import LessonIF_4_1 from "@/components/lessons/investment-foundations/LessonIF_4_1";
+import LessonIF_4_2 from "@/components/lessons/investment-foundations/LessonIF_4_2";
+import LessonIF_4_3 from "@/components/lessons/investment-foundations/LessonIF_4_3";
+import LessonIF_4_4 from "@/components/lessons/investment-foundations/LessonIF_4_4";
+import LessonIF_4_5 from "@/components/lessons/investment-foundations/LessonIF_4_5";
+import LessonIF_4_6 from "@/components/lessons/investment-foundations/LessonIF_4_6";
+import LessonIF_5_1 from "@/components/lessons/investment-foundations/LessonIF_5_1";
+import LessonIF_6_1 from "@/components/lessons/investment-foundations/LessonIF_6_1";
 
 export type LessonComponentProps = Record<string, never>;
 
@@ -103,6 +125,28 @@ export const lessonRegistry: Record<
   "anomalies-and-limits-to-arbitrage": Lesson9_3,
   "building-investment-philosophy": Lesson9_4,
   "if-1-1-how-an-investor-builds-a-philosophy": LessonIF_1_1,
+  "if-1-2-where-philosophy-enters-the-investment-process": LessonIF_1_2,
+  "if-1-3-comparing-investment-philosophy-families": LessonIF_1_3,
+  "if-1-4-when-a-philosophy-fits-the-investor": LessonIF_1_4,
+  "if-2-1-reading-a-bonds-promise": LessonIF_2_1,
+  "if-2-2-why-market-rates-change-bond-prices": LessonIF_2_2,
+  "if-2-3-duration-measuring-interest-rate-sensitivity": LessonIF_2_3,
+  "if-2-4-default-risk-can-the-issuer-deliver": LessonIF_2_4,
+  "if-2-5-from-credit-rating-to-bond-price": LessonIF_2_5,
+  "if-3-1-what-risk-means-for-a-shareholder": LessonIF_3_1,
+  "if-3-2-why-diversification-changes-the-question": LessonIF_3_2,
+  "if-3-3-what-beta-measures": LessonIF_3_3,
+  "if-3-4-what-makes-beta-rise-or-fall": LessonIF_3_4,
+  "if-3-5-choosing-a-risk-measure": LessonIF_3_5,
+  "if-3-6-build-an-equity-risk-policy": LessonIF_3_6,
+  "if-4-1-the-three-financial-statements": LessonIF_4_1,
+  "if-4-2-read-the-balance-sheet": LessonIF_4_2,
+  "if-4-3-recast-the-business": LessonIF_4_3,
+  "if-4-4-read-profit-and-leverage": LessonIF_4_4,
+  "if-4-5-repair-the-investor-view": LessonIF_4_5,
+  "if-4-6-trace-cash-to-the-investor": LessonIF_4_6,
+  "if-5-1-estimate-a-valuation-range": LessonIF_5_1,
+  "if-6-1-count-the-friction": LessonIF_6_1,
 };
 
 export function getLessonComponent(

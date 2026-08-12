@@ -144,7 +144,7 @@ export default function PhilosophyLocationMap() {
         <div className="flex items-center justify-center gap-3 sm:gap-6">
           {["Asset allocation", "Security selection", "Execution"].map((s, i, arr) => (
             <div key={s} className="flex items-center gap-3 sm:gap-6">
-              <span className="rounded-lg border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-2 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">
+              <span className="rounded-lg border border-accent-amber/30 bg-accent-amber/[0.06] px-3 py-2 font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">
                 {s}
               </span>
               {i < arr.length - 1 && (
@@ -161,7 +161,7 @@ export default function PhilosophyLocationMap() {
         <InteractiveFrame>
           <div className="flex items-center gap-2.5">
             <TryItTag />
-            <span className="ops-caption text-[11px] text-slate-400">
+            <span className="ops-caption text-[12px] text-slate-400">
               Assign each philosophy to its primary stage
             </span>
           </div>
@@ -176,7 +176,7 @@ export default function PhilosophyLocationMap() {
                   key={p.id}
                   className="flex flex-col rounded-xl border border-white/10 bg-white/[0.02] p-5"
                 >
-                  <div className="ops-caption text-[10px] text-accent-amber">
+                  <div className="ops-caption text-[12px] text-accent-amber">
                     Philosophy
                   </div>
                   <h3 className="ops-interactive-title mt-1 text-lg text-white">
@@ -184,7 +184,7 @@ export default function PhilosophyLocationMap() {
                   </h3>
 
                   <div className="mt-3">
-                    <div className="ops-caption text-[10px] text-slate-400">
+                    <div className="ops-caption text-[12px] text-slate-400">
                       Claimed advantage
                     </div>
                     <p className="ops-body mt-1 text-[14px] text-slate-300">
@@ -193,14 +193,14 @@ export default function PhilosophyLocationMap() {
                   </div>
 
                   <div className="mt-3">
-                    <div className="ops-caption text-[10px] text-slate-400">
+                    <div className="ops-caption text-[12px] text-slate-400">
                       Examples
                     </div>
                     <ul className="mt-1 space-y-1">
                       {p.examples.map((e) => (
                         <li
                           key={e}
-                          className="ops-body flex items-start gap-2 text-[13px] text-slate-300"
+                          className="ops-body flex items-start gap-2 text-[14px] text-slate-300"
                         >
                           <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-accent-amber" />
                           {e}
@@ -210,16 +210,16 @@ export default function PhilosophyLocationMap() {
                   </div>
 
                   <div className="mt-3 rounded-lg border border-accent-red/15 bg-accent-red/[0.04] p-2.5">
-                    <div className="ops-caption text-[10px] text-accent-red">
+                    <div className="ops-caption text-[12px] text-accent-red">
                       Primary challenge
                     </div>
-                    <p className="ops-body mt-1 text-[13px] text-slate-200">
+                    <p className="ops-body mt-1 text-[14px] text-slate-200">
                       {p.challenge}
                     </p>
                   </div>
 
                   <div className="mt-4">
-                    <div className="ops-caption text-[10px] text-slate-400">
+                    <div className="ops-caption text-[12px] text-slate-400">
                       Where does this philosophy primarily operate?
                     </div>
                     <div
@@ -266,7 +266,7 @@ export default function PhilosophyLocationMap() {
           </div>
 
           <div className="mt-5 rounded-lg border border-accent-red/20 bg-accent-red/[0.04] p-4">
-            <div className="ops-caption text-[10px] text-accent-red">
+            <div className="ops-caption text-[12px] text-accent-red">
               Legal note
             </div>
             <p className="ops-body mt-1 text-[14px] text-slate-200">

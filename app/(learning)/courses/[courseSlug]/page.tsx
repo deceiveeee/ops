@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { courses, getCourse } from "@/data/courses";
+import { portfolioBuilderPath } from "@/data/courses/portfolioBuilder";
 import ModuleSection from "@/components/courses/ModuleSection";
 import CourseRail from "@/components/courses/CourseRail";
+import PortfolioBuilderPath from "@/components/courses/PortfolioBuilderPath";
 import Button from "@/components/ui/Button";
 
 export function generateStaticParams() {
@@ -14,10 +16,25 @@ export function generateMetadata({ params }: { params: { courseSlug: string } })
   return { title: c ? `${c.title} — Open Portfolio Studio` : "Course — Open Portfolio Studio" };
 }
 
-/** Course-specific accent color. */
+/** Course-specific accent color. Decorative: fills, bars, SVG. */
 const courseAccent: Record<string, string> = {
   "finance-foundations": "#22d3ee",
   "investment-foundations": "#fbbf24",
+};
+
+/**
+ * Text-safe variants. This page is light, and the bright accents measured just
+ * 1.53:1 against the hero's tinted background — below even the 3:1 large-text
+ * floor — so the "Course 02" eyebrow and the 64px hero numerals were effectively
+ * unreadable. Measured after the change: 4.61:1, which clears WCAG AA for the
+ * 15px eyebrow and comfortably clears the large-text threshold for the numerals.
+ * (Against pure white these compute to 5.02:1 and 5.36:1; the hero tint is why
+ * the real figure is lower.) Use them wherever the accent colors text; keep
+ * `courseAccent` for backgrounds, bars and SVG fills.
+ */
+const courseAccentInk: Record<string, string> = {
+  "finance-foundations": "#0e7490",
+  "investment-foundations": "#b45309",
 };
 
 const courseOutcomes: Record<string, { title: string; points: string[] }[]> = {
@@ -51,25 +68,25 @@ const courseOutcomes: Record<string, { title: string; points: string[] }[]> = {
     {
       title: "What you will learn",
       points: [
-        "Distinguish investment philosophy from strategy",
-        "Evaluate market beliefs and evidence",
-        "Match a philosophy to an investor profile",
+        "Set a mandate, allocation, and risk budget",
+        "Evaluate business evidence and expected return",
+        "Choose a passive core or defend an active sleeve",
       ],
     },
     {
       title: "How the course works",
       points: [
-        "Case-based lessons with investor-decision framing",
-        "Editable investment philosophy draft",
-        "Progressive curriculum that builds module by module",
+        `${portfolioBuilderPath.missions.length} decisions build one Portfolio Dossier`,
+        "Existing guided journeys earn mission credit",
+        "Damodaran depth remains available without blocking progress",
       ],
     },
     {
       title: "What you will build",
       points: [
-        "A defensible investment philosophy",
-        "A repeatable decision framework",
-        "A portfolio you can explain",
+        "A diversified holdings and weighting plan",
+        "Written execution, rebalancing, and sell rules",
+        "A portfolio you can explain and monitor",
       ],
     },
   ],
@@ -80,10 +97,12 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
   if (!course) notFound();
 
   const accent = courseAccent[course.slug] ?? "#22d3ee";
+  const accentInk = courseAccentInk[course.slug] ?? "#0e7490";
   const totalLessons = course.modules.reduce(
     (sum, m) => sum + m.lessonSlugs.length,
     0,
   );
+  const isPortfolioBuilder = course.slug === "investment-foundations";
   const outcomes = courseOutcomes[course.slug] ?? courseOutcomes["finance-foundations"];
 
   return (
@@ -114,7 +133,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
             <div>
               <div
                 className="text-[15px] font-semibold uppercase tracking-[0.06em]"
-                style={{ color: accent }}
+                style={{ color: accentInk }}
               >
                 Course {String(course.order).padStart(2, "0")}
               </div>
@@ -124,13 +143,13 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button href={`/lessons/${course.modules[0]?.lessonSlugs[0]}`} size="lg">
-                  Start course
+                  {isPortfolioBuilder ? "Start building" : "Start course"}
                 </Button>
                 <Link
-                  href="#curriculum"
+                  href={isPortfolioBuilder ? "#portfolio-path" : "#curriculum"}
                   className="text-[17px] font-medium text-slate-300 transition-colors hover:text-white"
                 >
-                  Browse curriculum →
+                  {isPortfolioBuilder ? "See the mission path" : "Browse curriculum"} →
                 </Link>
               </div>
             </div>
@@ -139,9 +158,27 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
             <div className="lg:border-l lg:border-white/10 lg:pl-16">
               {/* Stats — large readable numbers */}
               <div className="grid grid-cols-3 gap-6">
-                <HeroStat label="Hours" value={String(course.estimatedHours)} accent={accent} />
-                <HeroStat label="Modules" value={String(course.modules.length)} accent={accent} />
-                <HeroStat label="Lessons" value={String(totalLessons)} accent={accent} />
+                {isPortfolioBuilder ? (
+                  <>
+                    <HeroStat
+                      label="Core hours"
+                      value={String(Math.round(portfolioBuilderPath.targetMinutes / 60))}
+                      accent={accentInk}
+                    />
+                    <HeroStat
+                      label="Missions"
+                      value={String(portfolioBuilderPath.missions.length)}
+                      accent={accentInk}
+                    />
+                    <HeroStat label="Source sessions" value="38" accent={accentInk} />
+                  </>
+                ) : (
+                  <>
+                    <HeroStat label="Hours" value={String(course.estimatedHours)} accent={accentInk} />
+                    <HeroStat label="Modules" value={String(course.modules.length)} accent={accentInk} />
+                    <HeroStat label="Lessons" value={String(totalLessons)} accent={accentInk} />
+                  </>
+                )}
               </div>
 
               {/* Course flow — bespoke SVG, NOT a tiny technical diagram */}
@@ -149,8 +186,9 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
                 <div className="text-[14px] font-medium uppercase tracking-[0.06em] text-slate-500">
                   {course.slug === "finance-foundations"
                     ? "Price → Business → Cash flow → Value → Portfolio"
-                    : "Research → Thesis → Valuation → Selection → Portfolio"}
+                    : "Mandate → Allocation → Evidence → Value → Holdings → Policy"}
                 </div>
+                {/* Decorative SVG: keep the bright accent, it colors shapes not text. */}
                 <CourseFlowVisual slug={course.slug} accent={accent} />
               </div>
             </div>
@@ -191,10 +229,26 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
         </div>
       </section>
 
-      {/* ─── Curriculum — sticky rail + modules ─── */}
+      {isPortfolioBuilder && (
+        <section
+          id="portfolio-path"
+          className="curric-section scroll-mt-20"
+          style={{
+            paddingTop: "clamp(64px, 10vh, 110px)",
+            paddingBottom: "clamp(72px, 12vh, 140px)",
+          }}
+        >
+          <div className="hp-canvas">
+            <PortfolioBuilderPath path={portfolioBuilderPath} />
+          </div>
+        </section>
+      )}
+
+      {/* Portfolio Builder has one mission rail. Existing lesson routes remain linked from missions. */}
+      {!isPortfolioBuilder && (
       <section
         id="curriculum"
-        className="curric-section scroll-mt-20"
+        className={`${isPortfolioBuilder ? "curric-section-paper" : "curric-section"} scroll-mt-20`}
         style={{ paddingTop: "clamp(60px, 10vh, 100px)", paddingBottom: "clamp(80px, 12vh, 140px)" }}
       >
         <div className="hp-canvas">
@@ -202,15 +256,30 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
           <div className="mb-16 max-w-[900px]">
             <div
               className="text-[15px] font-semibold uppercase tracking-[0.06em]"
-              style={{ color: accent }}
+              style={{ color: accentInk }}
             >
-              Curriculum
+              {isPortfolioBuilder ? "Guided journeys" : "Curriculum"}
             </div>
             <h2 className="mt-4 text-[clamp(40px,4.5vw,64px)] font-semibold leading-[1.05] tracking-[-0.025em] text-[#1D1D1F]">
-              {course.modules.length} {course.modules.length === 1 ? "module" : "modules"}.
-              <br />
-              {totalLessons} {totalLessons === 1 ? "lesson" : "lessons"}.
+              {isPortfolioBuilder ? (
+                <>
+                  Required evidence.
+                  <br />
+                  Optional depth.
+                </>
+              ) : (
+                <>
+                  {course.modules.length} {course.modules.length === 1 ? "module" : "modules"}.
+                  <br />
+                  {totalLessons} {totalLessons === 1 ? "lesson" : "lessons"}.
+                </>
+              )}
             </h2>
+            {isPortfolioBuilder && (
+              <p className="mt-5 max-w-3xl text-[18px] leading-8 text-[#424245]">
+                The routes already built remain available. Required journeys contribute to the mission dossier; optional investigations preserve the source depth without extending core completion.
+              </p>
+            )}
           </div>
 
           {/* Mobile module selector — compact dropdown-like horizontal scroll */}
@@ -236,7 +305,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
 
           {/* Two-column curriculum: sticky rail + content */}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
-            <CourseRail course={course} modules={course.modules} accentColor={accent} />
+            <CourseRail course={course} modules={course.modules} accentColor={accentInk} />
 
             <div className="space-y-20">
               {course.modules.map((m, i) => (
@@ -244,13 +313,15 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
                   key={m.id}
                   module={m}
                   index={i}
-                  accentColor={accent}
+                  accentColor={accentInk}
+                  showCurriculumRequirements={isPortfolioBuilder}
                 />
               ))}
             </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* ─── Closing CTA — dark ─── */}
       <section
@@ -262,11 +333,13 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
             Ready to begin?
           </h2>
           <p className="course-lead mx-auto mt-8 text-balance">
-            Start with the first lesson, or jump straight into the studio.
+            {isPortfolioBuilder
+              ? "Start with the investor mandate, then let each decision update the dossier."
+              : "Start with the first lesson, or jump straight into the studio."}
           </p>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
             <Button href={`/lessons/${course.modules[0]?.lessonSlugs[0]}`} size="lg">
-              Start course
+              {isPortfolioBuilder ? "Start building" : "Start course"}
             </Button>
             <Button href="/studio" variant="outline" size="lg">
               Enter the studio
@@ -287,7 +360,7 @@ function HeroStat({ label, value, accent }: { label: string; value: string; acce
       >
         {value}
       </div>
-      <div className="mt-2 text-[14px] font-medium uppercase tracking-[0.06em] text-slate-500">
+      <div className="mt-2 text-[14px] font-medium tracking-[0.01em] text-slate-500">
         {label}
       </div>
     </div>
@@ -299,7 +372,7 @@ function CourseFlowVisual({ slug, accent }: { slug: string; accent: string }) {
   const steps =
     slug === "finance-foundations"
       ? ["Price", "Business", "Cash flow", "Value", "Portfolio"]
-      : ["Research", "Thesis", "Valuation", "Selection", "Portfolio"];
+      : ["Mandate", "Allocation", "Evidence", "Value", "Holdings", "Policy"];
 
   return (
     <svg
