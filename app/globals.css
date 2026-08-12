@@ -518,7 +518,10 @@ html {
     /* Light scope — Apple-premium text colors (spec §6.1) */
     --ops-text-primary: #1d1d1f;     /* was #111214 */
     --ops-text-secondary: #424245;   /* was #2E3137 */
-    --ops-text-tertiary: #6e6e73;    /* was #555A61 */
+    /* Tertiary is judged against --ops-surface-2 (#EFEFF2), not white: every
+       card, rail and inset panel in a lesson sits on that grey, and #6e6e73
+       measured 4.42:1 there — under AA, while looking safe at 5.1:1 on white. */
+    --ops-text-tertiary: #68686d;    /* 4.83:1 on #EFEFF2, 5.4:1 on white */
     --ops-accent-strong: #007A8A;
     --ops-accent-soft: rgba(34,211,238,0.10);
     --ops-accent-warm-strong: #8A5A00;
@@ -817,6 +820,20 @@ html {
 .ops-theme-light .group-hover\:text-slate-500:hover {
     color: var(--ops-text-tertiary);
 }
+/* Disabled and placeholder variants. Tailwind compiles every variant into its
+   own class, so mapping `.text-slate-500` above does nothing for
+   `disabled:text-slate-500` — and a disabled control kept the dark-theme grey
+   on a white panel. The disabled advance button ("Find the widest spread →")
+   measured 4.15:1 that way, and it is the text telling the learner what comes
+   next, so it is held to the same floor as any other copy. */
+.ops-theme-light .disabled\:text-slate-500:disabled,
+.ops-theme-light .disabled\:text-slate-600:disabled {
+    color: var(--ops-text-tertiary);
+}
+.ops-theme-light .placeholder\:text-slate-500::placeholder,
+.ops-theme-light .placeholder\:text-slate-600::placeholder {
+    color: var(--ops-text-tertiary);
+}
 .ops-theme-light .hover\:border-white\/10:hover,
 .ops-theme-light .hover\:border-white\/15:hover,
 .ops-theme-light .hover\:border-white\/20:hover,
@@ -849,7 +866,9 @@ html {
 .ops-theme-light .group-hover\:text-accent-cyan:hover,
 .ops-theme-light .accent-cyan,
 .ops-theme-light .concept-value {
-    color: #007A8A; /* teal, ~5.6:1 */
+    /* Was #007A8A: 5.6:1 on white but 4.41:1 on --ops-surface-2, the grey the
+       inset panels actually use. Measured against the harder surface. */
+    color: #00707E; /* teal, 5.1:1 on #EFEFF2, 5.8:1 on white */
 }
 .ops-theme-light .text-accent-amber,
 .ops-theme-light .hover\:text-accent-amber:hover,
@@ -861,9 +880,16 @@ html {
 .ops-theme-light .text-accent-green,
 .ops-theme-light .hover\:text-accent-green:hover,
 .ops-theme-light .group-hover\:text-accent-green:hover,
+/* `disabled:` marks a completed action in several lessons ("−22% revenue ·
+   tested"), where it carries the result rather than greying it out. Unmapped it
+   rendered raw #34d399 on white: 1.92:1, effectively invisible. */
+.ops-theme-light .disabled\:text-accent-green:disabled,
 .ops-theme-light .accent-green,
 .ops-theme-light .concept-cashflow {
-    color: #15803D; /* dark green, ~5.1:1 */
+    /* Was #15803D, quoted at 5.1:1 — true on white, but 4.37:1 on the grey
+       panel where every "stage complete" line actually sits. Measured against
+       --ops-surface-2, the harder of the two. */
+    color: #166534; /* dark green, 6.2:1 on #EFEFF2, 7.1:1 on white */
 }
 .ops-theme-light .text-accent-red,
 .ops-theme-light .hover\:text-accent-red:hover,

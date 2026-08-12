@@ -113,9 +113,9 @@ export default function MasteryCheck({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <TryItTag />
-          <span className="ops-caption text-[11px] text-slate-400">{title}</span>
+          <span className="ops-caption text-[12px] text-slate-400">{title}</span>
         </div>
-        <span className="ops-caption text-[11px] text-slate-400">
+        <span className="ops-caption text-[12px] text-slate-400">
           Pass with {passCount} of {questions.length} correct
         </span>
       </div>
@@ -129,7 +129,7 @@ export default function MasteryCheck({
           return (
             <li key={q.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
               <div className="flex items-start gap-3">
-                <span className="ops-caption mt-1 text-[11px] text-slate-500">
+                <span className="ops-caption mt-1 text-[12px] text-slate-500">
                   {String(qi + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -266,7 +266,7 @@ export default function MasteryCheck({
             animate={{ opacity: 1, y: 0 }}
             className="ops-definition-card mt-6 p-6"
           >
-            <div className="ops-caption text-[11px] text-accent-green">Lesson complete</div>
+            <div className="ops-caption text-[12px] text-accent-green">Lesson complete</div>
             <p className="ops-definition mt-2.5 text-[17px]">
               You passed the mastery check. {skills && skills.length > 0 ? `Mastery updated: ${skills.join(", ")}.` : ""}
             </p>
