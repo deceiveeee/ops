@@ -17,3 +17,13 @@ playwright-report
 # Same material, plus scratch downloads and dev logs: audio, captions and PDFs
 # land here (~1GB). Ignored for the same reason, not merely because it is large.
 tmp/
+
+# agent visual evidence (regenerated on demand)
+.agent-shots/
+
+# Agent scratch and process artifacts — not part of the product.
+.agents/
+.superpowers/
+
+# TypeScript incremental build cache.
+tsconfig.tsbuildinfo
