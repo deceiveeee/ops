@@ -1,6 +1,9 @@
 # Damodaran 38-session to Portfolio Builder mission map
 
-Status: **Validated against all 38 slide decks, tests, and solutions and 35 narrations; narration reconciliation remains for Sessions 24, 27, and 32**
+> **Superseded record.** Retained for provenance only. This ten-mission map is superseded
+> by `docs/lesson-plans/portfolio-builder-mission-curriculum.md`; do not implement from it.
+
+Status: **Superseded by the proposed 13-mission curriculum; retained for provenance**
 
 ## 1. Mapping rule
 

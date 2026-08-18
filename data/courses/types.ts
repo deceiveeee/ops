@@ -62,7 +62,7 @@ export type CourseModule = {
    * Learner-facing name for this unit, shown instead of "Module NN".
    * Investment Foundations is organised as portfolio missions rather than
    * modules, and the mapping is not one-to-one — its first unit covers two
-   * missions and mission 5 is not built yet — so the label is stated explicitly
+   * missions and Portfolio Builder missions use a separate learner-facing rail — so the label is stated explicitly
    * rather than derived from `order`. Finance Foundations omits it and keeps
    * "Module NN", which is correct for its MIT 15.401 backbone.
    */

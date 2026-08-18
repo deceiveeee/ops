@@ -10,10 +10,17 @@ import { useSession } from "@/lib/supabase/session";
 import { useProgressStore } from "@/lib/progress/store";
 import { syncStatusText } from "./sync-indicator";
 
+/**
+ * `preview: true` marks a surface that is still a concept mock rather than a
+ * working tool. Both were reachable as plain nav items while /dossier — the
+ * artifact every mission writes into — was reachable from nowhere in the
+ * global chrome. Label the mocks, promote the real thing.
+ */
 const nav = [
   { href: "/courses", label: "Courses" },
-  { href: "/filings", label: "Filings" },
-  { href: "/studio", label: "Studio" },
+  { href: "/dossier", label: "Your dossier" },
+  { href: "/filings", label: "Filings", preview: true },
+  { href: "/studio", label: "Studio", preview: true },
 ];
 
 export default function SiteHeader() {
@@ -59,7 +66,7 @@ export default function SiteHeader() {
           </span>
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           {nav.map((n) => (
             <Link
               key={n.href}
@@ -72,26 +79,33 @@ export default function SiteHeader() {
               )}
             >
               {n.label}
+              {n.preview && (
+                <span className="ml-1.5 text-[12px] font-normal text-slate-400">
+                  preview
+                </span>
+              )}
             </Link>
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           <SyncChip status={syncStatus} />
           {signedIn ? (
             <AccountMenu email={user!.email ?? ""} onSignOut={() => void client.auth.signOut()} />
           ) : (
             <Button href="/login" variant="outline" size="md">Sign in</Button>
           )}
-          <Button href="/studio" size="md">
-            Enter the studio
+          {/* Was "Enter the studio" → /studio, a page of six empty placeholder
+              panels. The most-repeated CTA on the site now opens the course. */}
+          <Button href="/courses/investment-foundations" size="md">
+            Start building
           </Button>
         </div>
 
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="rounded-md border border-white/10 p-2 text-slate-200 md:hidden"
+          className="flex min-h-11 min-w-11 items-center justify-center rounded-md border border-white/10 text-slate-200 lg:hidden"
           onClick={() => setOpen((v) => !v)}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -101,7 +115,7 @@ export default function SiteHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-ink-950/95 px-6 py-4 md:hidden">
+        <div className="border-t border-white/10 bg-ink-950/95 px-6 py-4 lg:hidden">
           <div className="flex flex-col gap-1">
             {nav.map((n) => (
               <Link
@@ -111,14 +125,19 @@ export default function SiteHeader() {
                 className="rounded-lg px-3 py-2.5 text-[15px] font-medium text-slate-300 hover:bg-white/5 hover:text-white"
               >
                 {n.label}
+                {n.preview && (
+                  <span className="ml-1.5 text-[12px] font-normal text-slate-400">
+                    preview
+                  </span>
+                )}
               </Link>
             ))}
             <div className="mt-2 flex gap-2">
               <Button href="/courses" variant="outline" size="sm" className="flex-1">
                 Courses
               </Button>
-              <Button href="/studio" size="sm" className="flex-1">
-                Studio
+              <Button href="/courses/investment-foundations" size="sm" className="flex-1">
+                Start building
               </Button>
             </div>
             <div className="mt-2">

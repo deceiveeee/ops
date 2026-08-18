@@ -80,11 +80,12 @@ const STAGES: readonly ValuationStage[] = [
   },
 ];
 
-/** Verified against the source's own worked example: 4% spread, 2 years, 10% required. */
+/** Exact bid/ask treatment for a 4% spread, 2 years, and a 10% required return. */
 function trueHurdle(required: number, spread: number, years: number) {
   const need = Math.pow(1 + required, years);
-  const buys = 1 - spread / 2;
-  const sellFor = need * (1 + spread / 2);
+  const halfSpread = spread / 2;
+  const buys = 1 - halfSpread;
+  const sellFor = need / (1 - halfSpread);
   return Math.pow(sellFor / buys, 1 / years) - 1;
 }
 
@@ -138,9 +139,9 @@ const TAX_CHOICES = [
 ] as const;
 
 /**
- * Illustrative OPS figures, not source claims. They exist so the learner leaves
- * with a number they chose rather than a number we asserted, and the interface
- * says so.
+ * Illustrative OPS scenario weights, not measured costs or source claims. They
+ * let the learner form a provisional estimate from explicit assumptions. Mission
+ * 10 must treat the saved sum as an estimate to validate, not as empirical proof.
  */
 const BUDGET_OPTIONS = {
   turnoverExpectation: [
@@ -215,7 +216,7 @@ export default function FrictionJourney() {
   const labelFor = (key: BudgetKey) =>
     BUDGET_OPTIONS[key].find((o) => o.id === budget[key])?.label ?? "";
 
-  const hurdleRule = `Before this plan beats a low-cost index fund it must out-earn the index by about ${pct(totalDrag, 1)} a year.`;
+  const hurdleRule = `My illustrative OPS scenario estimates about ${pct(totalDrag, 1)} of annual drag. An active claim must clear that provisional hurdle before it can beat a low-cost index fund.`;
 
   const saveBudget = (onComplete: () => void) => {
     saveFrictionBudget({
@@ -416,8 +417,9 @@ export default function FrictionJourney() {
                 {[
                   ["10", "10% — the spread comes out of the profit"],
                   ["104", "10.4%"],
-                  ["12", "12.0% — add the 4% spread spread over two years"],
-                  ["1222", "12.22%"],
+                  ["12", "12.0% — spread the 4% cost over two years"],
+                  ["1222", "12.22% — Damodaran's published approximation"],
+                  ["1224", "About 12.24% — exact bid/ask treatment"],
                 ].map(([id, label]) => (
                   <Choice
                     key={id}
@@ -437,7 +439,7 @@ export default function FrictionJourney() {
                   disabled={!hurdleChoice}
                   onClick={() => {
                     setHurdleChecked(true);
-                    if (hurdleChoice === "1222") onComplete();
+                    if (hurdleChoice === "1224") onComplete();
                   }}
                 >
                   Check the hurdle
@@ -445,17 +447,19 @@ export default function FrictionJourney() {
               </div>
               {hurdleChecked && (
                 <Feedback
-                  status={hurdleChoice === "1222" ? "correct" : "incorrect"}
+                  status={hurdleChoice === "1224" ? "correct" : "incorrect"}
                 >
-                  {hurdleChoice === "1222"
-                    ? "Correct, and the arithmetic is worth seeing. To earn 10% a year for two years on $100 you need $121. But paying 2% on the way in means $100 only buys $98 of shares, and to keep $121 after paying 2% on the way out you must sell for $123.42. That is a pre-cost return of 12.22% a year, not 12%."
-                    : hurdleChoice === "12"
-                      ? "This is the natural answer and it is the one most people give: 10% plus 4% spread over two years. It is close, but it quietly ignores compounding. $100 buys only $98 of shares, and you need to sell for $123.42 to keep $121. That works out to 12.22% a year."
-                      : "The spread does not simply reduce your profit, it raises the return you must earn. You need $121 after two years, you start with only $98 of shares, and you must sell for $123.42 to keep $121."}
+                  {hurdleChoice === "1224"
+                    ? "Correct. To earn 10% a year for two years on $100 you need $121. Paying 2% on entry means $100 buys $98 of shares. To keep $121 after a 2% exit haircut, divide $121 by 0.98: the shares must sell for about $123.47. Growing $98 to $123.47 over two years requires about 12.24% a year."
+                    : hurdleChoice === "1222"
+                      ? "12.22% is Damodaran's published approximation. It multiplies $121 by 1.02 to estimate the exit value. Exact bid/ask treatment reverses the 2% exit haircut by dividing $121 by 0.98, so the shares must sell for about $123.47 and the annual hurdle is about 12.24%."
+                      : hurdleChoice === "12"
+                        ? "This is the natural answer: 10% plus the 4% spread over two years. It ignores compounding and the exact exit haircut. $100 buys $98 of shares, and you must sell them for about $123.47 to keep $121 after the exit cost. That requires about 12.24% a year."
+                        : "The spread raises the return you must earn. You need $121 after two years, start with $98 of shares, and must sell them for about $123.47 to keep $121 after the 2% exit haircut."}
                 </Feedback>
               )}
 
-              {hurdleChecked && hurdleChoice === "1222" && (
+              {hurdleChecked && hurdleChoice === "1224" && (
                 <motion.div
                   initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -782,6 +786,12 @@ export default function FrictionJourney() {
                 </span>
               </div>
 
+              <p className="ops-body mt-4 text-[14px] leading-6 text-slate-400">
+                The percentage chips below are illustrative OPS scenario assumptions.
+                They help you form a provisional estimate; they are not measured costs
+                for your account or evidence that an active strategy will work.
+              </p>
+
               <div className="mt-6 space-y-6">
                 <BudgetQuestion
                   label="How often do you expect to trade?"
@@ -829,12 +839,12 @@ export default function FrictionJourney() {
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
                     <Metric
-                      label="Your estimated annual drag"
+                      label="OPS illustrative drag estimate"
                       value={pct(totalDrag, 1)}
                       tone="amber"
                     />
                     <Metric
-                      label="Compared with the average active manager"
+                      label="Historical Session 6 reference"
                       value={totalDrag > 0.01 ? "Higher than 1%" : "At or below 1%"}
                       tone={totalDrag > 0.01 ? "red" : "green"}
                     />
@@ -849,9 +859,9 @@ export default function FrictionJourney() {
                   </div>
                   <p className="ops-body mt-4 text-[14px] leading-6 text-slate-400">
                     These per-choice figures are OPS estimates for teaching, not
-                    measurements of your account. What matters is the habit: name the
-                    drag before you accept a strategy, and carry the number into the
-                    passive-or-active decision.
+                    measurements or forecasts. Mission 10 must treat their sum as your
+                    provisional scenario assumption, then demand evidence that an active
+                    claim can survive it.
                   </p>
                 </motion.div>
               )}

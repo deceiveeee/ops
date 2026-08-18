@@ -1,6 +1,14 @@
-# Release evidence: Portfolio Builder unified mission spine
+# Release evidence: Portfolio Builder unified mission spine (superseded)
 
-Status: **Ready for stakeholder review; three narration and six supplemental-source gates remain before new lesson authoring**
+Status: **Historical only. Superseded by the proposed 13-mission curriculum and guided
+Portfolio Workbench research completed 2026-08-12. Do not use the 10-mission counts or
+gates below for current implementation.**
+
+Current records:
+
+- `docs/lesson-plans/portfolio-builder-mission-curriculum.md`
+- `docs/lesson-plans/portfolio-builder-guided-workbench.md`
+- `docs/source-audits/portfolio-builder-practical-tools.md`
 
 Date: 2026-08-09
 

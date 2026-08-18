@@ -574,6 +574,29 @@ Avoid:
 
 ---
 
+## Screen Budget Rule
+
+**A lesson step is a screen, not a scroll.** The learner must never scroll a long
+strand to reach the end of a page. A course interface is an application, not a
+document.
+
+Hard limits, measured at 1440x900:
+
+- A single stage or step must fit within **1.5 viewports** of total page height.
+  Past that, cut content or put it behind an interaction.
+- **One hero per page.** A lesson hero followed by a component hero restating it
+  is two heroes. Delete one.
+- Preamble before the first interactive control must not exceed **half a
+  viewport**. The learner should be able to act without scrolling.
+- Context panels (route summaries, status, "what this means") belong beside the
+  work or behind a disclosure, never stacked underneath it where they add a full
+  screen of scroll.
+- Widening a column is not a fix for a tall page. Height is the budget.
+
+Measure before claiming compliance, and measure at several widths: 390, 768,
+1024, 1280, 1440, 1920. A change verified at one width is not verified. Report
+page height in screens, not pixels.
+
 ## Visual Design Rules
 
 Use a consistent premium finance aesthetic.

@@ -2,7 +2,22 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  calculateCandidateCeilingBps,
+  calculatePortfolioStressLossBps,
+  calculateStressContributionBps,
+  isLiquidityCovered,
+} from "@/lib/allocation-policy";
 import { useIFProgress } from "@/lib/if-progress";
+import {
+  type AllocationRecord,
+  type AssumptionOwner,
+  type CheckpointState,
+  type MandateRecord,
+  type ProvenancedValue,
+  type WorkbenchMode,
+} from "@/lib/portfolio-workbench";
+import { usePortfolioWorkbench } from "@/lib/use-portfolio-workbench";
 import { cn } from "@/lib/utils";
 
 /**
@@ -25,6 +40,8 @@ type Section = {
   willContain: string;
   updatedAt: string;
   groups: Group[];
+  statusLabel?: string;
+  needsReview?: boolean;
 };
 
 // Values arrive from floating-point arithmetic (999.9999999999999, 1333.3333…),
@@ -32,6 +49,92 @@ type Section = {
 const money = (v: number) =>
   `$${Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}m`;
 const percent = (v: number, digits = 1) => `${(Number(v) * 100).toFixed(digits)}%`;
+
+const dollars = (value: number) =>
+  `$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+const bpsPercent = (basisPoints: number) =>
+  `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(
+    basisPoints / 100,
+  )}%`;
+
+const approximateDollars = (referenceAmount: number | null, basisPoints: number) =>
+  referenceAmount === null
+    ? "Reference amount not recorded"
+    : `approximately ${dollars((referenceAmount * basisPoints) / 10_000)}`;
+
+const modeLabel = (mode: WorkbenchMode) =>
+  mode === "personal" ? "Personal planning case" : "Practice case";
+
+const ownerLabel = (owner: AssumptionOwner) => {
+  if (owner === "learner") return "Learner-defined";
+  if (owner === "ops") return "OPS practice adaptation";
+  return "Reviewed source";
+};
+
+const readinessRouteLabel = (route: MandateRecord["route"]) => {
+  if (route === "personal-available") return "Personal path available";
+  if (route === "personal-constrained") return "Personal path constrained";
+  if (route === "practice-only") return "Practice path only";
+  return "Not assessed";
+};
+
+const checkpointStatusLabel = (checkpoint: CheckpointState) => {
+  if (checkpoint.status === "saved-unverified") return "Saved, not independently verified";
+  if (checkpoint.status === "review-required") return "Review required";
+  if (checkpoint.status === "coherent") return "Coherence checks passed";
+  if (checkpoint.status === "blocked") return "Blocked pending review";
+  if (checkpoint.status === "draft") return "Draft";
+  return "Not started";
+};
+
+const assumptionDetail = <T extends string | number | boolean | null>(
+  assumption: ProvenancedValue<T>,
+) => {
+  const parts = [ownerLabel(assumption.owner)];
+  if (assumption.note.trim()) parts.push(assumption.note.trim());
+  if (assumption.asOf) parts.push(`As of ${formatWhen(assumption.asOf) || assumption.asOf}`);
+  return parts.join(". ");
+};
+
+const safeStressContribution = (weightBps: number, lossBps: number | null) => {
+  if (lossBps === null) return null;
+  try {
+    return calculateStressContributionBps(weightBps, lossBps);
+  } catch {
+    return null;
+  }
+};
+
+function selectedStressDetails(allocation: AllocationRecord) {
+  const scenario = allocation.stressScenarios.find(
+    (candidate) => candidate.id === allocation.selectedStressScenarioId,
+  );
+  if (!scenario) return null;
+
+  const losses = new Map(
+    scenario.losses.map((loss) => [loss.sleeveId, loss.lossBps] as const),
+  );
+  const completeInputs = allocation.sleeves.every(
+    (sleeve) => losses.get(sleeve.id)?.value !== null && losses.has(sleeve.id),
+  );
+
+  let totalStressLossBps: number | null = null;
+  if (completeInputs && allocation.sleeves.length > 0) {
+    try {
+      totalStressLossBps = calculatePortfolioStressLossBps(
+        allocation.sleeves.map((sleeve) => ({
+          targetBps: sleeve.targetBps,
+          assumedLossBps: losses.get(sleeve.id)?.value as number,
+        })),
+      );
+    } catch {
+      totalStressLossBps = null;
+    }
+  }
+
+  return { scenario, losses, totalStressLossBps };
+}
 
 /** Drop empty fields so a partially filled artifact shows only real answers. */
 function present(groups: Group[]): Group[] {
@@ -56,6 +159,321 @@ function formatWhen(iso: string) {
   });
 }
 
+function sentenceCase(value: string) {
+  const words = value.replaceAll("-", " ");
+  return words ? `${words.charAt(0).toUpperCase()}${words.slice(1)}` : "";
+}
+
+function workbenchStatusGroup(mode: WorkbenchMode, checkpoint: CheckpointState): Group {
+  return {
+    heading: "Record status",
+    fields: [
+      { label: "Selected mode", value: modeLabel(mode) },
+      { label: "Checkpoint", value: checkpointStatusLabel(checkpoint) },
+      { label: "Revision", value: checkpoint.revision ? String(checkpoint.revision) : "" },
+      { label: "Review trigger", value: checkpoint.review?.changedField ?? "" },
+      { label: "Review reason", value: checkpoint.review?.reason ?? "" },
+    ],
+  };
+}
+
+function mandateSection(
+  mode: WorkbenchMode,
+  mandate: MandateRecord,
+  checkpoint: CheckpointState,
+): Section {
+  const details = mandate.readinessDetails;
+  const hasExactDetails = details.profileOwner !== "unassessed";
+  return {
+    id: "mandate",
+    mission: "Mission 1 · readiness bridge updated in Mission 5",
+    title: "Mandate",
+    purpose:
+      "The planning constraints and readiness route that frame this case before allocation.",
+    lessonSlug: "if-pb-05-set-allocation-and-risk-limits",
+    lessonLabel: "Set allocation and risk limits",
+    willContain:
+      "the selected case mode, goal, horizon, liquidity constraints, readiness route, and any action required before a personal allocation is treated as coherent",
+    updatedAt: checkpoint.updatedAt,
+    statusLabel: checkpointStatusLabel(checkpoint),
+    needsReview:
+      checkpoint.status === "review-required" || checkpoint.status === "blocked",
+    groups: present([
+      workbenchStatusGroup(mode, checkpoint),
+      {
+        heading: "Objective and runway",
+        fields: [
+          { label: "Goal", value: mandate.goal },
+          { label: "Target date", value: mandate.targetDate },
+          { label: "Horizon", value: mandate.horizon },
+          { label: "Contribution plan", value: mandate.contributionPlan },
+          { label: "Planned withdrawals", value: mandate.plannedWithdrawals },
+          {
+            label: "Approximate planning amount",
+            value:
+              hasExactDetails && details.approximatePortfolioValue
+                ? dollars(Number(details.approximatePortfolioValue))
+                : "",
+          },
+        ],
+      },
+      {
+        heading: "Liquidity and capacity",
+        fields: [
+          { label: "Near-term cash need", value: mandate.nearTermCashNeeds },
+          { label: "Reserve target", value: mandate.emergencyReserve.target },
+          { label: "Reserve recorded", value: mandate.emergencyReserve.current },
+          {
+            label: "Reserve status",
+            value: sentenceCase(hasExactDetails ? details.reserveStatus : mandate.emergencyReserve.status),
+          },
+          { label: "Capacity for loss", value: sentenceCase(hasExactDetails ? details.capacityForLoss : mandate.capacityForLoss) },
+          {
+            label: "Willingness for loss",
+            value: sentenceCase(hasExactDetails ? details.willingnessForLoss : mandate.willingnessForLoss),
+          },
+        ],
+      },
+      {
+        heading: "Readiness checks",
+        fields: [
+          { label: "High-interest debt", value: sentenceCase(hasExactDetails ? details.highInterestDebt : mandate.highInterestDebt) },
+          { label: "Employer match", value: sentenceCase(hasExactDetails ? details.employerMatch : mandate.employerMatch) },
+          { label: "Account authority", value: sentenceCase(hasExactDetails ? details.accountAuthority : mandate.accountAuthority) },
+          { label: "Jurisdiction", value: sentenceCase(hasExactDetails ? details.jurisdiction : mandate.jurisdiction) },
+          { label: "Earned income", value: sentenceCase(hasExactDetails ? details.earnedIncomeStatus : mandate.earnedIncome) },
+          { label: "Existing exposure categories", value: mandate.existingExposureCategories },
+          { label: "Life-change diagnosis", value: hasExactDetails ? sentenceCase(details.lifeChangeDiagnosis) : "" },
+          { label: "Life-change response", value: hasExactDetails ? sentenceCase(details.lifeChangeAction) : "" },
+        ],
+      },
+      {
+        heading: "Route",
+        fields: [
+          { label: "Readiness route", value: readinessRouteLabel(mandate.route) },
+          { label: "Next actions", value: mandate.deploymentActions },
+          {
+            label: "Acknowledged",
+            value: formatWhen(mandate.acknowledgedAt),
+          },
+        ],
+      },
+    ]),
+  };
+}
+
+function allocationSection(
+  mode: WorkbenchMode,
+  allocation: AllocationRecord,
+  checkpoint: CheckpointState,
+): Section {
+  const referenceAmount = allocation.referencePortfolioAmount.value;
+  const stress = selectedStressDetails(allocation);
+  const budgetBps = allocation.portfolioStressLossBudgetBps.value;
+  const nearTermNeedBps = allocation.nearTermNeedBps.value;
+  const liquidityTargetBps = allocation.sleeves
+    .filter((sleeve) => sleeve.role === "liquidity")
+    .reduce((total, sleeve) => total + sleeve.targetBps, 0);
+
+  let liquidityCoverage = "Not calculated";
+  if (nearTermNeedBps !== null) {
+    try {
+      liquidityCoverage = isLiquidityCovered(liquidityTargetBps, nearTermNeedBps)
+        ? "Covered by the target liquidity weight in this draft"
+        : "Not covered by the target liquidity weight in this draft";
+    } catch {
+      liquidityCoverage = "Could not be calculated from the saved inputs";
+    }
+  }
+
+  const candidateContribution = allocation.maximumPortfolioLossContributionBps.value;
+  const candidateLoss = allocation.candidatePositionStressLossBps.value;
+  let candidateCeiling = "Omitted from this policy draft";
+  if ((candidateContribution === null) !== (candidateLoss === null)) {
+    candidateCeiling = "Incomplete: both candidate-risk inputs are needed";
+  } else if (candidateContribution !== null && candidateLoss !== null) {
+    try {
+      const ceilingBps = calculateCandidateCeilingBps(candidateContribution, candidateLoss);
+      candidateCeiling = `${bpsPercent(ceilingBps)} of the reference portfolio (${approximateDollars(
+        referenceAmount,
+        ceilingBps,
+      )})`;
+    } catch {
+      candidateCeiling = "Could not be calculated from the saved inputs";
+    }
+  }
+
+  const sleeveFields: Field[] = allocation.sleeves.map((sleeve) => {
+    const loss = stress?.losses.get(sleeve.id)?.value ?? null;
+    const contribution = safeStressContribution(sleeve.targetBps, loss);
+    const details = [
+      `${sentenceCase(sleeve.role)} role. Range ${bpsPercent(sleeve.minBps)} to ${bpsPercent(
+        sleeve.maxBps,
+      )}; target ${bpsPercent(sleeve.targetBps)}. ${ownerLabel(sleeve.owner)} policy.`,
+      `Target reference value: ${approximateDollars(referenceAmount, sleeve.targetBps)}.`,
+    ];
+    if (loss !== null && contribution !== null) {
+      details.push(
+        `${stress?.scenario.label ?? "Selected scenario"}: ${bpsPercent(
+          loss,
+        )} assumed loss, contributing ${bpsPercent(contribution)} to portfolio loss (${approximateDollars(
+          referenceAmount,
+          contribution,
+        )}).`,
+      );
+    }
+    return { label: sleeve.label, value: details };
+  });
+
+  const scenarioAssumptions: Field[] = stress
+    ? allocation.sleeves.map((sleeve) => {
+        const loss = stress.losses.get(sleeve.id);
+        return {
+          label: `${sleeve.label} assumption`,
+          value: loss ? assumptionDetail(loss) : "No assumption recorded",
+        };
+      })
+    : [];
+
+  const totalStress = stress?.totalStressLossBps ?? null;
+  const stressComparison =
+    totalStress === null
+      ? "Not calculated"
+      : budgetBps === null
+        ? `${bpsPercent(totalStress)} (${approximateDollars(referenceAmount, totalStress)}); no budget recorded`
+        : `${bpsPercent(totalStress)} (${approximateDollars(
+            referenceAmount,
+            totalStress,
+          )}) versus ${bpsPercent(budgetBps)} budget (${approximateDollars(
+            referenceAmount,
+            budgetBps,
+          )})`;
+
+  const candidateInputs =
+    candidateContribution === null && candidateLoss === null
+      ? "Not included"
+      : `Maximum portfolio-loss contribution ${
+          candidateContribution === null ? "not recorded" : bpsPercent(candidateContribution)
+        }; assumed candidate loss ${candidateLoss === null ? "not recorded" : bpsPercent(candidateLoss)}`;
+
+  return {
+    id: "allocation-policy",
+    mission: "Mission 5",
+    title: "Allocation & risk policy",
+    purpose:
+      "A saved policy draft linking sleeve roles, ranges, liquidity needs, and labeled stress assumptions.",
+    lessonSlug: "if-pb-05-set-allocation-and-risk-limits",
+    lessonLabel: "Set allocation and risk limits",
+    willContain:
+      "target ranges, reference values, scenario provenance, stress contributions, the recorded loss budget, liquidity coverage, and an optional candidate-position ceiling",
+    updatedAt: checkpoint.updatedAt || allocation.savedAt,
+    statusLabel: checkpointStatusLabel(checkpoint),
+    needsReview:
+      checkpoint.status === "review-required" || checkpoint.status === "blocked",
+    groups: present([
+      workbenchStatusGroup(mode, checkpoint),
+      {
+        heading: "Reference case",
+        fields: [
+          {
+            label: "Reference amount",
+            value:
+              referenceAmount === null
+                ? "Not recorded"
+                : `${dollars(referenceAmount)}. ${assumptionDetail(
+                    allocation.referencePortfolioAmount,
+                  )}`,
+          },
+          {
+            label: "Policy meaning",
+            value:
+              "These are planning targets for the selected case, not a statement of owned holdings or permission to trade.",
+          },
+          {
+            label: "Mandate rationale and accepted trade-off",
+            value: allocation.mandateRationale,
+          },
+        ],
+      },
+      { heading: "Sleeve policy", fields: sleeveFields },
+      {
+        heading: "Selected stress scenario",
+        fields: [
+          { label: "Scenario", value: stress?.scenario.label ?? "Not selected" },
+          ...scenarioAssumptions,
+          { label: "Total stress vs budget", value: stressComparison },
+          {
+            label: "Budget provenance",
+            value:
+              budgetBps === null
+                ? "Not recorded"
+                : assumptionDetail(allocation.portfolioStressLossBudgetBps),
+          },
+          {
+            label: "Interpretation",
+            value:
+              "This is arithmetic under saved assumptions, not a forecast, guarantee, or live-market estimate.",
+          },
+        ],
+      },
+      {
+        heading: "Liquidity check",
+        fields: [
+          {
+            label: "Near-term need",
+            value:
+              nearTermNeedBps === null
+                ? "Not recorded"
+                : `${bpsPercent(nearTermNeedBps)} (${approximateDollars(
+                    referenceAmount,
+                    nearTermNeedBps,
+                  )}). ${assumptionDetail(allocation.nearTermNeedBps)}`,
+          },
+          {
+            label: "Liquidity target",
+            value: `${bpsPercent(liquidityTargetBps)} (${approximateDollars(
+              referenceAmount,
+              liquidityTargetBps,
+            )})`,
+          },
+          { label: "Coverage", value: liquidityCoverage },
+          {
+            label: "Limits",
+            value:
+              "Coverage compares entered percentages only; it does not guarantee access, price stability, or suitability.",
+          },
+        ],
+      },
+      {
+        heading: "Optional candidate ceiling",
+        fields: [
+          { label: "Inputs", value: candidateInputs },
+          {
+            label: "Contribution provenance",
+            value:
+              candidateContribution === null
+                ? ""
+                : assumptionDetail(allocation.maximumPortfolioLossContributionBps),
+          },
+          {
+            label: "Loss provenance",
+            value:
+              candidateLoss === null
+                ? ""
+                : assumptionDetail(allocation.candidatePositionStressLossBps),
+          },
+          { label: "Calculated ceiling", value: candidateCeiling },
+          {
+            label: "Use",
+            value:
+              "A planning constraint under an assumed candidate loss, not a recommendation or trading authorization.",
+          },
+        ],
+      },
+    ]),
+  };
+}
+
 export default function PortfolioDossier() {
   const {
     draft,
@@ -64,7 +482,14 @@ export default function PortfolioDossier() {
     statementBrief,
     valuationRange,
     frictionBudget,
+    evidenceChecklist,
+    architectureDecision,
   } = useIFProgress();
+  const {
+    ready: workbenchReady,
+    activeMode,
+    activeCase,
+  } = usePortfolioWorkbench();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -74,6 +499,12 @@ export default function PortfolioDossier() {
 
   const sections = useMemo<Section[]>(
     () => [
+      mandateSection(activeMode, activeCase.mandate, activeCase.checkpoints.mandate),
+      allocationSection(
+        activeMode,
+        activeCase.allocation,
+        activeCase.checkpoints.allocation,
+      ),
       {
         id: "philosophy",
         mission: "Missions 1–2",
@@ -297,14 +728,120 @@ export default function PortfolioDossier() {
             ])
           : [],
       },
+      {
+        id: "evidence",
+        mission: "Mission 9",
+        title: "Evidence test checklist",
+        purpose: "How you will decide whether a claim about beating the market is real.",
+        lessonSlug: "if-7-1-test-the-claim",
+        lessonLabel: "Test the claim",
+        willContain:
+          "the measure you judge a claim by, the test your claim calls for, what you hold back, how you build the sample, the return the claim must clear, and what would make you drop it",
+        updatedAt: evidenceChecklist.updatedAt,
+        groups: evidenceChecklist.updatedAt
+          ? present([
+              {
+                fields: [
+                  { label: "Benchmark", value: evidenceChecklist.benchmark },
+                  { label: "Test design", value: evidenceChecklist.testDesign },
+                  { label: "Holdout", value: evidenceChecklist.holdoutRule },
+                  { label: "Sampling", value: evidenceChecklist.samplingRule },
+                ],
+              },
+              {
+                heading: "The bar",
+                fields: [
+                  { label: "Hurdle", value: evidenceChecklist.hurdleRule },
+                  { label: "Abandon if", value: evidenceChecklist.abandonRule },
+                ],
+              },
+            ])
+          : [],
+      },
+      {
+        id: "architecture",
+        mission: "Mission 10",
+        title: "Architecture and edge decision",
+        purpose: "Whether you will run a passive core, and what it took to justify anything else.",
+        lessonSlug: "if-8-1-choose-passive-or-prove-an-edge",
+        lessonLabel: "Choose passive, or prove an edge",
+        willContain:
+          "the exposure your core holds, the benchmark it is judged against, the base rate you decided under with its date, and — only if every condition was met — the sleeve you licensed, what would close it, and when you will review",
+        updatedAt: architectureDecision.updatedAt,
+        groups: architectureDecision.updatedAt
+          ? present([
+              {
+                fields: [
+                  {
+                    label: "Architecture",
+                    value:
+                      architectureDecision.mode === "active-sleeve"
+                        ? "Passive core plus a licensed active sleeve"
+                        : "Passive core only",
+                  },
+                  { label: "Core exposure", value: architectureDecision.coreExposure },
+                  { label: "Benchmark", value: architectureDecision.coreBenchmark },
+                  { label: "Review on", value: architectureDecision.reviewDate },
+                ],
+              },
+              {
+                heading: "The base rate you decided under",
+                fields: [
+                  { label: "Base rate", value: architectureDecision.baseRate },
+                  { label: "As of", value: architectureDecision.baseRateDate },
+                  { label: "Scope", value: architectureDecision.baseRateScope },
+                ],
+              },
+              // Sleeve detail is omitted entirely for a passive-only decision —
+              // that outcome is complete, not a record with gaps in it.
+              ...(architectureDecision.mode === "active-sleeve"
+                ? [
+                    {
+                      heading: "The licensed sleeve",
+                      fields: [
+                        { label: "Mispricing", value: architectureDecision.pocket },
+                        { label: "Who is wrong", value: architectureDecision.whoIsWrong },
+                        {
+                          label: "What corrects it",
+                          value: architectureDecision.correctionMechanism,
+                        },
+                        { label: "Claim", value: architectureDecision.falsifiableClaim },
+                        { label: "Refuted by", value: architectureDecision.disconfirming },
+                        { label: "Evidence design", value: architectureDecision.evidenceDesign },
+                      ],
+                    },
+                    {
+                      heading: "What it survives on",
+                      fields: [
+                        {
+                          label: "Net edge",
+                          value: `${architectureDecision.netEdgePct}% after ${architectureDecision.frictionPct}% friction`,
+                        },
+                        {
+                          label: "Size",
+                          value: `${architectureDecision.maxAllocationPct}% of the portfolio, contributing ${architectureDecision.lossContributionPct} points of stressed loss`,
+                        },
+                        { label: "Durability", value: architectureDecision.durabilityRisk },
+                        { label: "Close it if", value: architectureDecision.thesisBreak },
+                      ],
+                    },
+                  ]
+                : []),
+            ])
+          : [],
+      },
     ],
     [
+      activeMode,
+      activeCase,
       draft,
       bondBrief,
       equityRiskPolicy,
       statementBrief,
       valuationRange,
       frictionBudget,
+      evidenceChecklist,
+      architectureDecision,
     ],
   );
 
@@ -336,7 +873,7 @@ export default function PortfolioDossier() {
     }
   };
 
-  if (!mounted) {
+  if (!mounted || !workbenchReady) {
     return (
       <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8">
         <div className="h-8 w-64 animate-pulse rounded-lg bg-white/10" />
@@ -362,11 +899,14 @@ export default function PortfolioDossier() {
           Your portfolio dossier
         </h1>
         <p className="ops-body mt-5 text-lg leading-8 text-slate-200">
-          Everything you have decided so far, in one place. Each mission adds one
-          artifact. When the dossier is complete you can defend every holding in it.
+          Your saved lesson artifacts and selected Workbench case, in one place. Each
+          mission adds a decision you can inspect, revise, and eventually defend.
         </p>
 
         <div className="mt-7 flex flex-wrap items-center gap-3">
+          <span className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300">
+            Showing {modeLabel(activeMode)}
+          </span>
           <span
             className={cn(
               "rounded-full border px-4 py-2 text-sm tabular-nums",
@@ -423,9 +963,13 @@ export default function PortfolioDossier() {
           This dossier is your own work, stored in this browser only. It is educational
           material, not investment advice.
         </p>
+        <p className="mt-2 text-[13px] leading-6 text-slate-400">
+          Workbench cases use a separate local record. This dossier can display and copy
+          the selected case, but it does not clear or delete Workbench data.
+        </p>
         <Link
           href="/courses/investment-foundations"
-          className="ops-caption mt-4 inline-block text-[12px] text-slate-400 hover:text-accent-amber"
+          className="ops-caption mt-4 inline-flex min-h-[44px] items-center text-[12px] text-slate-400 hover:text-accent-amber"
         >
           ← Back to Investment Foundations
         </Link>
@@ -464,14 +1008,16 @@ function ArtifactCard({ section }: { section: Section }) {
         <span
           className={cn(
             "ops-caption flex-shrink-0 rounded-full border px-3 py-1 text-[12px]",
-            recorded
+            section.needsReview
+              ? "border-accent-amber/40 bg-accent-amber/10 text-accent-amber"
+              : recorded
               ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
               // The dossier is a dark page: slate-500 measured 4.23:1 here, and
               // this pill is the artifact's status, not decoration.
               : "border-white/15 text-slate-400",
           )}
         >
-          {recorded ? "Recorded" : "Not yet"}
+          {recorded ? section.statusLabel ?? "Recorded" : "Not yet"}
         </span>
       </div>
 

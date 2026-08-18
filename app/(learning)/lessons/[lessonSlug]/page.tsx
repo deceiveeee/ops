@@ -17,6 +17,10 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
   const found = findLesson(params.lessonSlug);
   if (!found) notFound();
   const { course, module, lesson } = found;
+  const courseReturnHref =
+    course.slug === "investment-foundations"
+      ? `/courses/${course.slug}#portfolio-missions`
+      : `/courses/${course.slug}#module-${module.order}`;
 
   const Custom = getLessonComponent(lesson.slug);
   if (Custom) {
@@ -25,8 +29,8 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
         <div className="pointer-events-none absolute inset-0 terminal-grid opacity-20" />
         <div className="relative mx-auto max-w-7xl px-5 pt-6 sm:px-8">
           <Link
-            href={`/courses/${course.slug}#module-${module.order}`}
-            className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan"
+            href={courseReturnHref}
+            className="inline-flex min-h-11 items-center font-sans text-[12px] font-medium tracking-[0.02em] text-slate-400 hover:text-accent-cyan"
           >
             ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
           </Link>
@@ -51,7 +55,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
     <div className="relative w-full">
       <div className="pointer-events-none absolute inset-0 terminal-grid opacity-30" />
       <div className="relative mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-28">
-        <Link href={`/courses/${course.slug}#module-${module.order}`} className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan">
+        <Link href={courseReturnHref} className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan">
           ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
         </Link>
 
@@ -107,7 +111,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
 
         <div className="mt-10">
           <Link
-            href={`/courses/${course.slug}#module-${module.order}`}
+            href={courseReturnHref}
             className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan"
           >
             ← Back to {course.title}

@@ -26,6 +26,9 @@ export default function ValuationJourneyShell({
   finishHref = "/courses/investment-foundations",
   finishLabel = "Return to Investment Foundations",
   labLabel = "Guided valuation lab",
+  savedArtifactLabel = "lesson artifact",
+  initialCompleted,
+  initialStage,
 }: {
   lessonSlug: string;
   ariaLabel: string;
@@ -35,13 +38,21 @@ export default function ValuationJourneyShell({
   finishLabel?: string;
   /** Only string that is lab-specific; everything else here is generic. */
   labLabel?: string;
+  /** Human-readable artifact named in the final guide confirmation. */
+  savedArtifactLabel?: string;
+  /** Durable checkpoints restored before this shell mounts. */
+  initialCompleted?: readonly boolean[];
+  /** First scene to show when durable progress is restored. */
+  initialStage?: number;
 }) {
   const reduceMotion = useReducedMotion();
   const journeyRef = useRef<HTMLElement>(null);
   const { markComplete } = useIFProgress();
-  const [activeStage, setActiveStage] = useState(0);
+  const [activeStage, setActiveStage] = useState(() =>
+    Math.max(0, Math.min(stages.length - 1, initialStage ?? 0)),
+  );
   const [completed, setCompleted] = useState<boolean[]>(() =>
-    stages.map(() => false),
+    stages.map((_, index) => Boolean(initialCompleted?.[index])),
   );
 
   const completeStage = useCallback((index: number) => {
@@ -80,8 +91,20 @@ export default function ValuationJourneyShell({
       className="scroll-mt-24"
       aria-label={ariaLabel}
     >
-      <div className="ops-interactive-frame overflow-hidden p-0">
-        <div className="border-b border-white/10 px-5 py-4 sm:px-7">
+      {/* Screen Budget Rule: a stage is a screen, not a scroll.
+       *
+       * That rule is now a *content* target, not something this frame enforces
+       * by clipping. It used to lock the frame to the viewport and scroll the
+       * scene inside it, which did keep the page short — by hiding the stage's
+       * own answer options. Measured: a 251px window over 2245px of content at
+       * 390px, and 442px over 1263px at 1440px, on five of the built missions.
+       * The learner saw a definition and a disabled Continue, and left.
+       *
+       * The frame keeps its column structure so the footer still sits directly
+       * under the scene. Stages that overrun a screen are fixed by splitting
+       * the stage, never by sealing it. */}
+      <div className="ops-interactive-frame p-0 flex flex-col">
+        <div className="border-b border-white/10 px-5 py-4 sm:px-7 shrink-0">
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="ops-caption text-[12px] text-slate-400">
@@ -96,15 +119,16 @@ export default function ValuationJourneyShell({
             </div>
           </div>
 
-          <div
-            className="mt-4 grid gap-1.5"
-            style={{
-              gridTemplateColumns: `repeat(${stages.length}, minmax(0, 1fr))`,
-            }}
-            role="navigation"
-            aria-label="Lesson stages"
-          >
-            {stages.map((stage, index) => {
+          <div className="mt-4 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div
+              className="grid min-w-max gap-1.5 sm:min-w-0"
+              style={{
+                gridTemplateColumns: `repeat(${stages.length}, minmax(44px, 1fr))`,
+              }}
+              role="navigation"
+              aria-label="Lesson stages"
+            >
+              {stages.map((stage, index) => {
               const available = index === 0 || completed[index - 1];
               const active = activeStage === index;
               const done = completed[index];
@@ -116,7 +140,7 @@ export default function ValuationJourneyShell({
                   onClick={() => moveTo(index)}
                   aria-label={`${stage.label}${done ? ", complete" : active ? ", current" : ""}`}
                   aria-current={active ? "step" : undefined}
-                  className="group min-w-0 text-left disabled:cursor-not-allowed"
+                  className="group min-h-11 min-w-0 text-left disabled:cursor-not-allowed"
                 >
                   <span
                     className={cn(
@@ -144,15 +168,17 @@ export default function ValuationJourneyShell({
                   </span>
                 </button>
               );
-            })}
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="border-b border-white/10 bg-[radial-gradient(circle_at_5%_0%,rgba(251,191,36,0.10),transparent_44%)] px-5 py-5 sm:px-7">
+        <div className="border-b border-white/10 bg-[radial-gradient(circle_at_5%_0%,rgba(251,191,36,0.10),transparent_44%)] px-5 py-5 sm:px-7 shrink-0">
           <GuideMessage
             current={current}
             done={currentComplete}
             isLast={activeStage === stages.length - 1}
+            savedArtifactLabel={savedArtifactLabel}
           />
         </div>
 
@@ -181,13 +207,13 @@ export default function ValuationJourneyShell({
           </motion.div>
         </div>
 
-        <div className="border-t border-white/10 bg-white/[0.02] px-5 py-4 sm:px-7">
+        <div className="border-t border-white/10 bg-white/[0.02] px-5 py-4 sm:px-7 shrink-0">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={() => moveTo(Math.max(0, activeStage - 1))}
               disabled={activeStage === 0}
-              className="order-2 rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-white/30 disabled:cursor-default disabled:opacity-0 sm:order-1"
+              className="order-2 min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-white/30 disabled:cursor-default disabled:opacity-0 sm:order-1"
             >
               ← Previous stage
             </button>
@@ -210,14 +236,14 @@ export default function ValuationJourneyShell({
                 type="button"
                 onClick={() => moveTo(activeStage + 1)}
                 disabled={!currentComplete}
-                className="order-3 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-transparent disabled:text-slate-500"
+                className="order-3 min-h-11 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-transparent disabled:text-slate-500"
               >
                 {current.next} →
               </button>
             ) : currentComplete ? (
               <Link
                 href={finishHref}
-                className="order-3 rounded-full border border-accent-green/40 bg-accent-green/10 px-5 py-2 text-center text-sm font-semibold text-accent-green transition-colors hover:bg-accent-green/20"
+                className="order-3 min-h-11 rounded-full border border-accent-green/40 bg-accent-green/10 px-5 py-2 text-center text-sm font-semibold text-accent-green transition-colors hover:bg-accent-green/20"
               >
                 {finishLabel} →
               </Link>
@@ -225,7 +251,7 @@ export default function ValuationJourneyShell({
               <button
                 type="button"
                 disabled
-                className="order-3 rounded-full border border-white/10 px-5 py-2 text-sm text-slate-500"
+                className="order-3 min-h-11 rounded-full border border-white/10 px-5 py-2 text-sm text-slate-500"
               >
                 Complete this stage to finish
               </button>
@@ -241,15 +267,18 @@ function GuideMessage({
   current,
   done,
   isLast,
+  savedArtifactLabel,
 }: {
   current: ValuationStage;
   done: boolean;
   isLast: boolean;
+  savedArtifactLabel: string;
 }) {
   const reduceMotion = useReducedMotion();
   return (
     <div className="flex items-start gap-3">
       <motion.div
+        data-testid="stage-guide-mark"
         animate={
           reduceMotion || done
             ? undefined
@@ -277,7 +306,7 @@ function GuideMessage({
         <p className="ops-body mt-1 text-[15px] text-slate-200">
           {done
             ? isLast
-              ? `${current.label} complete. You have finished the lesson, and your valuation range is saved to the dossier.`
+              ? `${current.label} complete. You have finished the lesson, and your ${savedArtifactLabel} is saved to the dossier.`
               : `${current.label} complete. The next stage builds directly on this result.`
             : current.guide}
         </p>

@@ -27,9 +27,9 @@
     {
       "sessions": [5, 12, 24, 27, 32],
       "kind": "no-caption-track",
-      "status": "verified 2026-08-10 across all 38 sessions",
-      "detail": "A full-corpus run returned narration for 33 of 38 sessions. Exactly these five have no caption track, which matches the corpus audit independently: it reported no caption track for 24, 27, and 32, and local machine transcription for 5 and 12. Those local transcripts were never committed, so they are unavailable. This environment has ffmpeg but no speech-to-text engine, so these five cannot be transcribed here.",
-      "consequence": "Sessions without a caption track cannot have narration reviewed by this pipeline. Do not claim narration review for them."
+      "status": "verified 2026-08-12 across all 38 sessions",
+      "detail": "Verified narration-source ledger: Tier 1 is the hashed .source-cache slide and quiz corpus; Tier 2 is the .source-cache official caption corpus, which covers 33 of 38 sessions and excludes exactly 5, 12, 24, 27, and 32. The separate tmp/damodaran-corpus/transcripts staging directory contains 37 files, but 33 were normalized from official captions; only Sessions 12, 24, 27, and 32 are currently self-labelled local ASR. The session05 staging file contains the content-swapped Session 6 trading-cost narration, not Session 5 valuation. A historical audit records local-ASR review for source-topic Sessions 5 and 12, but the Session 5 ASR artifact is no longer present. No staging file has canonical provenance or a hash.",
+      "consequence": "State narration coverage by tier. Tier 1 may support claims and figures; Tier 2 may support timestamped narration claims; Tier 3 may support navigation and topic-scope review only and cannot support quotations or figures without Tier 1 corroboration. Do not describe local ASR as canonical or lesson-citable narration."
     }
   ],
   "sessions": [

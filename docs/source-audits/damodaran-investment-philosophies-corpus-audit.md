@@ -1,6 +1,13 @@
 # Damodaran Investment Philosophies: complete 38-session corpus audit
 
-Status: **Complete for curriculum architecture; narration gate pending for Sessions 24, 27, and 32.** All 38 official slide decks and tests have been reviewed, and 35 of 38 source-topic narrations have been reviewed. The remaining three official videos have no caption track and local transcription is pending. This record authorizes the architecture and provisional mission-to-session provenance; it does not mark those three sessions source-authentic or authorize copying every historical claim or quiz item into OPS.
+Status: **Complete for the approved curriculum architecture at the slide/test layer;
+claim-level narration gate pending for Sessions 5, 12, 24, 27, and 32.** All 38 official
+slide decks and tests have been reviewed. The canonical cache contains 33 official caption
+tracks. Historical architecture work also consulted local ASR for source-topic Sessions 5
+and 12, but local ASR is not citation-grade and the Session 5 source artifact is no longer
+present. The 13-mission architecture was approved on 2026-08-12. This record does not
+authorize copying every historical claim or quiz item into OPS or bypass a mission-level
+release gate.
 
 ## 1. Controlling source and edition lock
 
@@ -20,11 +27,11 @@ The 38-webcast course index is the controlling sequence. The companion support p
 | Official course and companion pages | Edition, chapter placement, all 38 titles, descriptions, and download rows reconciled |
 | Official slide decks | 38 of 38 decks; 503 pages; all pages rendered, read, and visually inspected, including charts, tables, equations, footnotes, and image-only pages |
 | Official tests and solutions | 38 of 38 files; 143 pages; every question, answer choice, solution, and numerical explanation read |
-| Official videos | 38 of 38 videos matched to source topic; narration reviewed for 35 source topics; Sessions 24, 27, and 32 await local transcription because their official uploads have no caption track |
-| Caption coverage | 33 official caption tracks; local timestamped transcription completed for source-topic Sessions 5 and 12; local transcription pending for Sessions 24, 27, and 32 |
+| Official videos | 38 of 38 videos matched to source topic; 33 official caption tracks are canonical and citation-grade |
+| Caption and ASR coverage | No official caption track exists for source-topic Sessions 5, 12, 24, 27, and 32. Noncanonical local ASR currently exists for 12, 24, 27, and 32; a prior Session 5 ASR review is documented but its artifact is absent. New claim-level narration citations remain gated for all five. |
 | Existing detailed OPS audits | Sessions 2, 3, 4, and 5 retained as the more granular records for those sessions |
 
-Total PDF review: **76 official files and 646 rendered pages**. The local working corpus, text extraction, page renders, contact sheets, caption files, and timestamped transcripts are stored under `tmp/damodaran-corpus/`.
+Total PDF review: **76 official files and 646 rendered pages**. Hashed citation sources and provenance live in `.source-cache/`. Text extraction, page renders, contact sheets, and noncanonical ASR working files under `tmp/damodaran-corpus/` are staging evidence, not a second citable corpus.
 
 Detailed audits already present:
 
@@ -132,10 +139,16 @@ The corpus does **not** provide a complete beginner method for:
 - coordinating taxable and tax-advantaged accounts under current law;
 - writing a complete investment policy statement and benchmark policy.
 
-Those are not minor omissions. They are the supplemental-source agenda for the Portfolio Builder. Damodaran supplies the philosophy, evidence, valuation, and implementation guardrails; OPS must add primary portfolio-construction sources before authoring the affected missions.
+Those are not minor omissions. They are the supplemental-source and explicit OPS-design agenda for Portfolio Builder. Damodaran supplies the philosophy, evidence, valuation, and implementation guardrails; OPS must add current primary sources where they exist and label original policy choices where no universal source rule exists. The practical-tools research and boundary record is `docs/source-audits/portfolio-builder-practical-tools.md`.
 
 ## 6. Curriculum-level release decision
 
-The source corpus is sufficiently audited to replace the provisional “38 sessions become source families” sketch with a single evidence-backed mission spine. Sessions remain provenance, not learner navigation. No session is discarded: core excerpts support mission decisions, strategy mechanics become optional labs, and the complete source sequence remains reference material. The Session 24, 27, and 32 mission contributions remain provisional until their narration is reconciled.
+The source corpus is sufficiently audited to support replacing the provisional “38 sessions become source families” sketch with one proposed evidence-backed mission spine. Stakeholder approval is still required before that spine becomes authoritative. Sessions remain provenance, not learner navigation. No session is discarded: core excerpts support mission decisions, strategy mechanics become optional labs, and the complete source sequence remains reference material. New claim-level narration use from Sessions 5, 12, 24, 27, and 32 remains provisional until canonical evidence is reconciled.
 
-New mission implementation remains **blocked — source** where it requires strategic allocation, position sizing, fund/ETF selection, rebalancing, current tax/legal rules, or current active/passive performance evidence. Sessions 24, 27, and 32 also remain **blocked — narration**. Before each mission is outlined, its claims and assessments still need a claim-level coverage matrix that cites exact slide pages or caption intervals and the approved supplemental source.
+New mission implementation remains **blocked — source/design** where it requires investment-readiness screening, strategic allocation, a validated OPS loss-budget sizing policy, current fund/ETF selection, rebalancing, current tax/legal rules, or current manager-performance persistence evidence. There is no universal regulator-supplied personal position cap; fund diversification tests must not be used as one. Sessions 5, 12, 24, 27, and 32 also remain **blocked — narration** for new claim-level citation. Before each mission is outlined, its claims and assessments still need a claim-level coverage matrix that cites exact slide pages or canonical caption intervals and the approved supplemental source.
+
+Subsequent authority note (2026-08-12): the stakeholder approved the 13-mission curriculum,
+and Mission 5 later passed its own bounded claim-level Gate A in
+`docs/source-audits/mission-05-allocation.md`. That pass covers the Readiness Runway and
+Allocation Studio using visible OPS/learner stress assumptions; it does not authorize live
+return/covariance inputs, an optimizer, regulator-branded personal caps, or any other mission.

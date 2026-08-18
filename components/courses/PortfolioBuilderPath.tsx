@@ -73,15 +73,25 @@ export default function PortfolioBuilderPath({
           className="relative isolate overflow-hidden border-y border-black/10 bg-[#F7F5EF] px-4 py-6 sm:px-7"
           aria-label="Portfolio dossier artifacts"
         >
-          {!reduceMotion && (
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 -z-0 w-1/3 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent"
-              initial={{ x: "-100%" }}
-              animate={{ x: "300%" }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "linear" }}
-            />
-          )}
+          {/*
+            Rendered unconditionally, reduced by CSS and by the transition.
+            Branching the DOM on `useReducedMotion()` broke hydration: the hook
+            returns null on the server, so SSR always emitted this div while a
+            client with `prefers-reduced-motion: reduce` did not expect it, and
+            React discarded the server markup for the whole route. Same bug and
+            same fix as components/layout/SiteShell.tsx.
+          */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 -z-0 w-1/3 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent motion-reduce:hidden"
+            initial={{ x: "-100%" }}
+            animate={reduceMotion ? { x: "-100%" } : { x: "300%" }}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : { duration: 5.5, repeat: Infinity, ease: "linear" }
+            }
+          />
           <div className="relative z-10 grid grid-cols-2 gap-3 sm:grid-cols-5">
             {path.artifacts.map((artifact) => {
               const state = ready

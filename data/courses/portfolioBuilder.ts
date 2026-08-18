@@ -3,7 +3,9 @@ export type CurriculumRequirement = "core" | "lab" | "reference";
 export type PortfolioMissionStatus = "available" | "planned";
 
 /**
- * One artifact per mission. Ids are internal; `label` is what the learner sees.
+ * One checkpoint per mission. All checkpoints compile into the persistent
+ * Portfolio Workbench and final Dossier. Ids are internal; `label` is what the
+ * learner sees.
  * Source of truth for this spine:
  * docs/lesson-plans/portfolio-builder-mission-curriculum.md
  */
@@ -41,8 +43,21 @@ export type PortfolioMission = {
   legacyCompletionSlugs: string[];
   optionalLabSlugs: string[];
   sourceSessions: number[];
-  /** Named when a mission needs a primary source Damodaran does not provide. */
+  /**
+   * Named when a mission needs a primary source Damodaran does not provide and
+   * that source has not been obtained. An open gap blocks the mission, so a
+   * mission carrying one must stay `planned`.
+   */
   sourceGap?: string;
+  /**
+   * A source limit that was resolved by narrowing the mission's scope rather
+   * than by obtaining the source. The mission is buildable and shippable; the
+   * note records what it therefore does not claim.
+   *
+   * Deliberately separate from `sourceGap`: collapsing the two would either
+   * hide the limit or make an unresolved blocker look shippable.
+   */
+  sourceBoundary?: string;
 };
 
 export type PortfolioArtifact = {
@@ -89,6 +104,8 @@ const EQUITY_RISK_CORE = [
   "if-3-6-build-an-equity-risk-policy",
 ];
 
+const ALLOCATION_CORE = ["if-pb-05-set-allocation-and-risk-limits"];
+
 const STATEMENT_CORE = [
   "if-4-1-the-three-financial-statements",
   "if-4-2-read-the-balance-sheet",
@@ -100,13 +117,16 @@ const VALUATION_CORE = ["if-5-1-estimate-a-valuation-range"];
 
 const FRICTION_CORE = ["if-6-1-count-the-friction"];
 
+const EVIDENCE_TEST_CORE = ["if-7-1-test-the-claim"];
+const ARCHITECTURE_CORE = ["if-8-1-choose-passive-or-prove-an-edge"];
+
 export const portfolioBuilderPath: PortfolioBuilderPath = {
   id: "portfolio-builder",
   title: "Portfolio Builder",
   promise:
-    "Build a portfolio you can defend, holding by holding, and leave with written rules for what you own, what it costs, when you change it, and when you admit you were wrong.",
+    "Build, explain, and operate a diversified long-term portfolio for a stated goal—or prove the same decisions in a realistic practice case—with written rules for readiness, allocation, security selection, costs, evidence, rebalancing, and mistakes.",
   // Built missions use the real summed lesson time; planned missions carry
-  // estimates. 357 built + 265 planned.
+  // estimates. The total stays stable as missions move from planned to built.
   targetMinutes: 622,
   artifacts: [
     { id: "mandate", label: "Mandate", missionIds: ["pb-01"] },
@@ -130,7 +150,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Define your investor mandate",
       decision: "Who is this money for, and what could derail the plan?",
       outcome:
-        "State the goal, horizon, cash needs, job security, tax status, loss capacity and behavioural limits you actually face.",
+        "Choose a personal or practice path, then state the goal, horizon, cash needs, readiness, loss capacity and behavioural limits the portfolio must respect.",
       artifactId: "mandate",
       artifactLabel: "Investor Mandate",
       targetMinutes: 40,
@@ -198,16 +218,15 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Set allocation and risk limits",
       decision: "How much goes where, and what loss is unacceptable?",
       outcome:
-        "Turn the frontier you already know into a real allocation for your horizon, with a risk budget and concentration limits.",
+        "Use a short portfolio-theory preflight, then set strategic weights, a liquidity bucket and a transparent stress-loss budget without treating a model as a personal answer.",
       artifactId: "allocation",
       artifactLabel: "Allocation and Risk Policy",
       targetMinutes: 45,
-      status: "planned",
-      legacyCompletionSlugs: [],
+      status: "available",
+      startLessonSlug: ALLOCATION_CORE[0],
+      legacyCompletionSlugs: ALLOCATION_CORE,
       optionalLabSlugs: [],
       sourceSessions: [1, 2, 3, 30],
-      sourceGap:
-        "Allocation theory is already taught in Finance Foundations. The implementation step and position-sizing policy need primary sources; sizing has none locked yet.",
     },
     {
       id: "pb-06",
@@ -215,7 +234,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Read the business evidence",
       decision: "What economic reality sits behind the ticker or the fund?",
       outcome:
-        "Connect the three statements, then read profitability, leverage and the cash that actually reaches investors.",
+        "Connect the three statements, then read profitability, leverage and investor cash flow while keeping the candidate on a research-only watchlist.",
       artifactId: "evidence",
       artifactLabel: "Business Evidence Brief",
       targetMinutes: 100,
@@ -234,7 +253,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Estimate value and a decision range",
       decision: "What is it worth, and at what price would you act?",
       outcome:
-        "Build an internally consistent value range, cross-check it against peers, and convert uncertainty into a buy-below rule.",
+        "Build an internally consistent value range, cross-check it against peers, and save action and thesis-break rules without treating research as ownership.",
       artifactId: "valuation",
       artifactLabel: "Valuation and Return Range",
       targetMinutes: 50,
@@ -270,8 +289,9 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       artifactId: "evidence-test",
       artifactLabel: "Evidence Test Checklist",
       targetMinutes: 35,
-      status: "planned",
-      legacyCompletionSlugs: [],
+      status: "available",
+      startLessonSlug: EVIDENCE_TEST_CORE[0],
+      legacyCompletionSlugs: EVIDENCE_TEST_CORE,
       optionalLabSlugs: [],
       sourceSessions: [8],
     },
@@ -281,14 +301,17 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Choose passive, or prove an edge",
       decision: "Is active risk justified for this investor?",
       outcome:
-        "Default to passive unless a falsifiable edge survives friction, taxes, capacity, behaviour and the manager-performance record.",
+        "Default to passive unless a falsifiable edge survives the current base rate, evidence, friction, capacity, durability, size and thesis-break tests.",
       artifactId: "architecture",
       artifactLabel: "Architecture and Edge Decision",
       targetMinutes: 40,
-      status: "planned",
-      legacyCompletionSlugs: [],
+      status: "available",
+      startLessonSlug: ARCHITECTURE_CORE[0],
+      legacyCompletionSlugs: ARCHITECTURE_CORE,
       optionalLabSlugs: [],
       sourceSessions: [6, 7, 8, 35, 36],
+      sourceBoundary:
+        "Built under an approved narrowing on 2026-08-14: the June 2026 active/passive base rate is locked and cited, but the canonical S&P DJI persistence artifact could not be cached, so this mission makes no claim about current manager persistence and teaches the 25% no-continuity null as a test instead.",
     },
     {
       id: "pb-11",
@@ -300,10 +323,13 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       artifactId: "timing",
       artifactLabel: "Timing Policy",
       targetMinutes: 30,
-      status: "planned",
-      legacyCompletionSlugs: [],
+      status: "available",
+      startLessonSlug: "if-pb-11-set-a-market-timing-policy",
+      legacyCompletionSlugs: ["if-pb-11-set-a-market-timing-policy"],
       optionalLabSlugs: [],
       sourceSessions: [30, 32, 33, 34],
+      sourceBoundary:
+        "Resolved by narrowing on 2026-08-16: Session 32 has no official caption track, so its narration was never reviewed and every Session 32 claim in this mission rests on canonical slides alone. The consequence is stated rather than papered over — the two macro tables give year counts (83 and 82) but no start or end date, and are presented as 'period not stated on the source slide'. Session 34's tactical-fund comparison carries Damodaran's own caveat that it covers one period. The 5-10% speculative sleeve that appears only in Session 34 narration is not offered at any size. Full reconciliation: docs/source-audits/mission-11-timing.md.",
     },
     {
       id: "pb-12",
@@ -311,16 +337,17 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Choose the actual holdings",
       decision: "What do you actually buy?",
       outcome:
-        "Compare index funds, ETFs and enhanced index funds on cost, tracking, liquidity and tax, and record why each was kept or rejected.",
+        "Verify each product's exact identity, exposure, structure, fees, tracking, liquidity, source date and overlap, then rehearse an order without submitting it.",
       artifactId: "holdings",
       artifactLabel: "Holdings Slate",
       targetMinutes: 40,
-      status: "planned",
-      legacyCompletionSlugs: [],
+      status: "available",
+      startLessonSlug: "if-pb-12-choose-the-actual-holdings",
+      legacyCompletionSlugs: ["if-pb-12-choose-the-actual-holdings"],
       optionalLabSlugs: [],
       sourceSessions: [37],
-      sourceGap:
-        "Session 37's product landscape predates the modern ETF market. Current fund disclosures come from SEC EDGAR; index methodology is not machine-accessible and is read from a prospectus instead.",
+      sourceBoundary:
+        "Resolved by verification on 2026-08-16, not by narrowing. Session 37 supplies the passive-product taxonomy only and is labelled a source-era framework: its data ends in 2010, and its claim that ETFs cost slightly more than index funds is falsified by the filings this mission uses, so it is not repeated. Every product figure comes from that product's own current EDGAR filing, named on the page with its accession and as-of date. Three limits stay visible to the learner rather than being resolved: no filing in the slate publishes a bid-ask spread or premium/discount figure, so those fields remain qualitative; material changes are recorded only where a filing states one, which in this slate is SGOV alone; and the two sponsors file on different fiscal calendars, so no cross-sponsor overlap figure comes from a single snapshot.",
     },
     {
       id: "pb-13",
@@ -328,7 +355,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Write the rules and defend the portfolio",
       decision: "How is this maintained, and why is it coherent for you?",
       outcome:
-        "Specify contribution, rebalance, tax, sell and thesis-break rules, choose a benchmark, then defend the whole policy against the misfit test.",
+        "Specify contribution, withdrawal, rebalance, tax-warning, sell and thesis-break rules, then pass a portfolio flight test and defend the whole policy.",
       artifactId: "policy",
       artifactLabel: "Operating Plan and IPS",
       targetMinutes: 40,
@@ -337,7 +364,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       optionalLabSlugs: [],
       sourceSessions: [6, 36, 38],
       sourceGap:
-        "Rebalancing method, current US tax and account rules, and IPS structure come from supplemental primary sources (Vanguard, IRS, CFA Institute), all locked in scripts/source/supplemental-manifest.json.",
+        "Rebalancing, current US tax/account, order-rehearsal and IPS sources are locked, but Mission 13 still needs a claim-level source matrix and a validated transfer-case assessment before implementation.",
     },
   ],
   depthLabs: [
@@ -395,6 +422,7 @@ const lessonRequirements: Record<string, CurriculumRequirement> = {
   ...Object.fromEntries(BOND_CORE.map((slug) => [slug, "core" as const])),
   "if-2-3-duration-measuring-interest-rate-sensitivity": "lab",
   ...Object.fromEntries(EQUITY_RISK_CORE.map((slug) => [slug, "core" as const])),
+  ...Object.fromEntries(ALLOCATION_CORE.map((slug) => [slug, "core" as const])),
   "if-3-3-what-beta-measures": "lab",
   "if-3-4-what-makes-beta-rise-or-fall": "lab",
   "if-3-5-choosing-a-risk-measure": "lab",
@@ -403,6 +431,8 @@ const lessonRequirements: Record<string, CurriculumRequirement> = {
   "if-4-5-repair-the-investor-view": "lab",
   ...Object.fromEntries(VALUATION_CORE.map((slug) => [slug, "core" as const])),
   ...Object.fromEntries(FRICTION_CORE.map((slug) => [slug, "core" as const])),
+  ...Object.fromEntries(EVIDENCE_TEST_CORE.map((slug) => [slug, "core" as const])),
+  ...Object.fromEntries(ARCHITECTURE_CORE.map((slug) => [slug, "core" as const])),
 };
 
 export function getPortfolioLessonRequirement(

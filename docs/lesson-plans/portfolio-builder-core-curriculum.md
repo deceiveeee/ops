@@ -1,5 +1,12 @@
 # Portfolio Builder: one evidence-backed mission spine
 
+> [!WARNING]
+> **Historical record — superseded.** This ten-mission proposal is retained only for
+> provenance. The approved implementation authority is
+> [`portfolio-builder-mission-curriculum.md`](portfolio-builder-mission-curriculum.md),
+> which defines the current 13-mission curriculum. Do not plan, implement, or report
+> current curriculum status from this file.
+
 Status: **Curriculum architecture validated against all 38 slide/test packages and 35 narrations; Sessions 24, 27, and 32 still require narration reconciliation; implementation not started**
 
 ## 1. The single product direction

@@ -131,6 +131,14 @@ export const IF_3_6_SOURCE_BASIS = {
   note: IF_MODULE_3_SOURCE_NOTE,
 } as const;
 
+export const IF_PB_05_SOURCE_BASIS = {
+  course: "Portfolio Builder",
+  lecture: "Mission 5 · Set Allocation and Risk Limits",
+  instructor:
+    "Damodaran Sessions 1, 2, 3, and 30; SEC/Investor.gov and CFPB guidance; Vanguard provider framework",
+  note: "Gate A reviewed every locked deck, caption track, quiz, regulator page, and the complete 32-page Vanguard principles artifact. Source-authentic relationships stop at investor-first planning, capacity versus willingness, broad asset roles, diversification limits, and strategic allocation. Ready / Steady / Grow, all cases, stress losses, target ranges, loss budgets, and candidate ceilings are visibly labelled OPS or learner policy. They are not forecasts, recommendations, guarantees, or regulator limits. No live market data or optimizer output.",
+} as const;
+
 const IF_MODULE_4_SOURCE_NOTE =
   "Source-authentic claims follow Damodaran's 38-webcast Investment Philosophies course, Session 4 of 38: Financial Statement Analysis. All 18 slides, the complete official caption track, and the test and solutions were audited. OPS updates the source-era treatment of leases and extraordinary items, distinguishes US GAAP from IFRS R&D treatment, and labels every financial-statement recast as analyst work rather than reported accounting. The Cedar Works filing and all interactions are original OPS pedagogy; no live market data.";
 
@@ -187,7 +195,22 @@ export const IF_6_1_SOURCE_BASIS = {
   course: "Investment Foundations",
   lecture: "Mission 8 · Count the Friction",
   instructor: "Aswath Damodaran, Investment Philosophies (Session 6 of 38)",
-  note: "Source-authentic claims follow the official Session 6 slide deck (23 pages), the complete trading-costs narration, and the test/solutions. The official Session 5 and Session 6 uploads are swapped: OPS audited the trading-costs narration in video bUJUGsDQ16w. OPS repairs two test-versus-solution mismatches — item 1's option (f) reads \"lots of analysts\" in the test but \"few\" in the solution, and item 4's options (c) and (d) differ between the two. The 12.22% hurdle is recomputed independently from the source's own worked example. Turnover and holding-period figures are illustrative; current US tax rules are handled in mission 13. No live market data.",
+  note: "Source-authentic claims follow the official Session 6 slide deck (22 pages), the complete trading-costs narration, and the test/solutions. The official Session 5 and Session 6 uploads are swapped: OPS audited the trading-costs narration in video bUJUGsDQ16w. OPS repairs two test-versus-solution mismatches — item 1's option (f) reads \"lots of analysts\" in the test but \"few\" in the solution, and item 4's options (c) and (d) differ between the two. Damodaran publishes a 12.22% hurdle approximation; OPS independently recalculates the exact bid/ask treatment as about 12.24% and labels the difference. Friction Budget percentages are illustrative OPS scenario assumptions, not measured account costs or forecasts; current US tax rules are handled in mission 13. No live market data.",
+} as const;
+
+export const IF_7_1_SOURCE_BASIS = {
+  course: "Investment Foundations",
+  lecture: "Mission 9 · Lesson 7.1 — Test the Claim",
+  instructor: "Aswath Damodaran, Investment Philosophies (Session 8 of 38)",
+  note: "Source-authentic claims and verified calculations follow Damodaran's 38-webcast Investment Philosophies course, Session 8 of 38: Market Efficiency II — testing market-beating schemes and strategies. William F. Sharpe's official Stanford article, The Sharpe Ratio (1994), controls the modern methodology: OPS uses (return minus risk-free rate) divided by standard deviation, with a clearly labelled 3% illustrative risk-free rate, rather than reproducing the session quiz's omission. The checklist, interactions, and guide dialogue are original OPS pedagogy. The option-listing and low-PE studies are dated historical evidence and are labelled as such; no live market data.",
+} as const;
+
+export const IF_8_1_SOURCE_BASIS = {
+  course: "Investment Foundations",
+  lecture: "Mission 10 · Lesson 8.1 — Choose Passive, or Prove an Edge",
+  instructor:
+    "Aswath Damodaran, Investment Philosophies (Sessions 35, 36, 7, 8 and 6 of 38)",
+  note: "Source-authentic mechanisms follow Damodaran Sessions 35 and 36 (the active-investor record, the persistence question, and the named channels through which active management leaks return), Session 7 (market efficiency and what an edge requires), Session 8 (fair test design) and Session 6 (trading friction). The current active/passive base rate is Morningstar Manager Research, US Active/Passive Barometer, June 2026, with data through 30 June 2026: figures are dated, carry their denominator and survivorship handling, and describe success only against the average investable passive peer. Damodaran's own historical performance percentages are not reused as current evidence. Fee-quintile differences are reported as association, not causation. Current manager-persistence evidence is deliberately out of scope by approved narrowing on 2026-08-14 — the canonical S&P Dow Jones Indices Persistence Scorecard could not be cached, so this lesson teaches persistence as a test against a 25% no-continuity null rather than citing any current persistence result. The Edge Licence, switchboard and all interactions are original OPS pedagogy and are not attributed to any source. Nothing here is investment advice, and no live market data is used.",
 } as const;
 
 export const IF_SOURCE_BASIS = IF_1_1_SOURCE_BASIS;
@@ -299,6 +322,15 @@ export const IF_MODULE_3_LESSONS = [
   },
 ] as const;
 
+export const IF_MODULE_PB5_LESSONS = [
+  {
+    slug: "if-pb-05-set-allocation-and-risk-limits",
+    title: "Set Allocation and Risk Limits",
+    shortTitle: "Allocation Policy",
+    n: "5",
+  },
+] as const;
+
 export const IF_MODULE_4_LESSONS = [
   {
     slug: "if-4-1-the-three-financial-statements",
@@ -356,6 +388,33 @@ export const IF_MODULE_6_LESSONS = [
   },
 ] as const;
 
+export const IF_MODULE_7_LESSONS = [
+  {
+    slug: "if-7-1-test-the-claim",
+    title: "Test the Claim",
+    shortTitle: "Test the Claim",
+    n: "7.1",
+  },
+] as const;
+
+export const IF_MODULE_8_LESSONS = [
+  {
+    slug: "if-8-1-choose-passive-or-prove-an-edge",
+    title: "Choose Passive, or Prove an Edge",
+    shortTitle: "Passive or Edge",
+    n: "8.1",
+  },
+] as const;
+
+export const IF_MODULE_11_LESSONS = [
+  {
+    slug: "if-pb-11-set-a-market-timing-policy",
+    title: "Set a Market-Timing Policy",
+    shortTitle: "Timing Policy",
+    n: "11.1",
+  },
+] as const;
+
 export const IF_LEARNING_OBJECTIVES = [
   "Distinguish a market belief, an investment philosophy, a strategy, and an individual trade.",
   "Connect evidence to a market belief and then to a strategy that logically follows from it.",
@@ -363,5 +422,31 @@ export const IF_LEARNING_OBJECTIVES = [
   "Write one provisional market hypothesis that later lessons can test.",
 ] as const;
 
+export const IF_PB_11_SOURCE_BASIS = {
+  course: "Investment Foundations",
+  lecture: "Mission 11 · Lesson 11.1 — Set a Market-Timing Policy",
+  instructor:
+    "Aswath Damodaran, Investment Philosophies (Sessions 30, 32, 33 and 34 of 38)",
+  note: "Source-authentic claims follow Damodaran Sessions 30 (the payoff and the cost of market timing), 32 (mean reversion and macro fundamentals), 33 (valuing the market) and 34 (whether timing works). The break-even bar is Sharpe's 1975 seven-in-ten and the Chua, Woodward and To 70–80% figure, both from Session 30. The newsletter evidence is Campbell and Harvey (1996), 237 newsletters over 1980–1992. Session 32 has no official caption track, so its narration was not reviewed and every Session 32 claim here rests on canonical slides alone; the two macro tables state year counts but no start or end date, and are labelled accordingly. Damodaran's caveat on his own tactical-fund comparison — that it covers one period — is carried. The 5–10% speculative sleeve mentioned only in Session 34 narration is deliberately not offered, at any size, because it is conditional on a hit rate the same course shows is very hard to reach. The Missing-Time Timeline path is illustrative and original OPS pedagogy: it is not historical data, not any real index, and not a forecast. Nothing here is investment advice, no live market data is used, and no personal tax liability is calculated. Full audit: docs/source-audits/mission-11-timing.md.",
+} as const;
+
+export const IF_MODULE_12_LESSONS = [
+  {
+    slug: "if-pb-12-choose-the-actual-holdings",
+    title: "Choose the Actual Holdings",
+    shortTitle: "Holdings Slate",
+    n: "12.1",
+  },
+] as const;
+
+export const IF_PB_12_SOURCE_BASIS = {
+  course: "Investment Foundations",
+  lecture: "Mission 12 · Lesson 12.1 — Choose the Actual Holdings",
+  instructor:
+    "Aswath Damodaran, Investment Philosophies (Session 37 of 38); SEC EDGAR filings; SEC Form N-1A",
+  note: "Damodaran Session 37 supplies the passive-product taxonomy only — classic index funds, enhanced index funds and exchange-traded funds — and is treated as a source-era framework rather than a current product guide: its data ends in 2010, its examples are SPDRs and the Wilshire 5000, and its claim that ETFs cost slightly more than index funds is falsified by the current filings this mission uses, so it is not repeated. Session 37 quiz item 1 is numbered a–d in the test and a–e in the solution; the answer text is unambiguous and OPS cites the text, not the letter. Session 37's own quiz supplies the standard applied to tracking: a good index fund is one that tracks its index, not one that beats it. Every product figure comes from that product's own current SEC filing, retrieved 2026-08-16 and named on the page — Vanguard Total Stock Market Index Fund ETF Shares (VTI) and Vanguard 500 Index Fund ETF Shares (VOO) from 497K accessions 0000036405-26-000197 and 0000036405-26-000183; iShares Core U.S. Aggregate Bond ETF (AGG) and iShares 0-3 Month Treasury Bond ETF (SGOV) from 497K accessions 0001193125-26-287958 and 0001193125-26-287938; holdings from N-PORT accessions 0000036405-26-000323, 0000036405-26-000325, 0001410368-26-075254 and 0002071691-26-016719. The share-class table is read from the SGML header of 485BPOS accession 0000036405-26-000181. The portfolio-turnover exclusion is Form N-1A Item 3 instruction (d)(ii). Quarterly N-PORT data is not live holdings: every as-of date and its age at retrieval is shown, and because the two sponsors file on different fiscal calendars, no cross-sponsor overlap figure comes from a single snapshot. Reported position weights sum to 100.25%, 100.14%, 101.88% and 108.82% and are never normalised. Overlap is keyed on legal-entity identifier with a CUSIP fallback, and the share of each fund that could not be keyed is disclosed; one CUSIP in the slate is filed under three names and two LEIs, so the limits of both keys are shown rather than hidden. No filing in this slate publishes a bid-ask spread or premium/discount figure, so those fields stay qualitative. The four products are worked examples of a category, chosen for verification and overlap teaching value and deliberately spread across two sponsors. Nothing here ranks, scores or recommends a fund; no order is ever transmitted; no brokerage is contacted; no credential is requested; and no personal tax liability is calculated. Full audit: docs/source-audits/mission-12-holdings.md.",
+} as const;
+
 /** Course-accent color used across IF components (amber = research lens). */
+
 export const IF_ACCENT = "amber" as const;

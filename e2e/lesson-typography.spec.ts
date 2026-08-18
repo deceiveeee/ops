@@ -33,6 +33,7 @@ const IF_LESSON_ROUTES = [
   "if-3-4-what-makes-beta-rise-or-fall",
   "if-3-5-choosing-a-risk-measure",
   "if-3-6-build-an-equity-risk-policy",
+  "if-pb-05-set-allocation-and-risk-limits",
   "if-4-1-the-three-financial-statements",
   "if-4-2-read-the-balance-sheet",
   "if-4-3-recast-the-business",
@@ -41,6 +42,10 @@ const IF_LESSON_ROUTES = [
   "if-4-6-trace-cash-to-the-investor",
   "if-5-1-estimate-a-valuation-range",
   "if-6-1-count-the-friction",
+  "if-7-1-test-the-claim",
+  "if-8-1-choose-passive-or-prove-an-edge",
+  "if-pb-11-set-a-market-timing-policy",
+  "if-pb-12-choose-the-actual-holdings",
 ];
 
 /**
@@ -122,6 +127,63 @@ const JOURNEY_SELECTOR = "#lesson-journey, #statement-investigation";
  * the failure trace rather than passing quietly.
  */
 const ANSWER_KEYS: Record<string, string[]> = {
+  "if-pb-05-set-allocation-and-risk-limits#0": [
+    "Continue to Goal",
+    "Continue to Runway",
+    "Continue to Loss",
+    "Continue to Access",
+    "Continue to Change",
+    "choose:Capacity and liquidity changed; willingness may be unchanged",
+    "choose:Record the $12,000 as near-term cash",
+    "Save readiness route",
+  ],
+  "if-pb-05-set-allocation-and-risk-limits#1": [
+    "choose:Their weights, each asset's volatility",
+    "choose:Reduce some asset-specific risk",
+    "choose:An estimate-based opportunity set",
+    "choose:As estimates that depend on inputs",
+    "Check the four relationships",
+  ],
+  "if-pb-05-set-allocation-and-risk-limits#2": [
+    "Reveal next contribution",
+    "Reveal next contribution",
+    "Reveal next contribution",
+    "Reveal next contribution",
+    "Use the model",
+  ],
+  "if-pb-05-set-allocation-and-risk-limits#3": [
+    "type-label:Ready weight=15",
+    "type-label:Steady weight=30",
+    "type-label:Grow weight=55",
+    "Lock the weight repair",
+    "type-label:Ready weight=30",
+    "type-label:Steady weight=30",
+    "type-label:Grow weight=40",
+    "Lock the liquidity repair",
+    "type-label:Ready weight=20",
+    "type-label:Steady weight=35",
+    "type-label:Grow weight=45",
+    "Lock the stress repair",
+  ],
+  "if-pb-05-set-allocation-and-risk-limits#4": [
+    "choose:I understand that the weights and budget",
+    "Lock this draft for transfer",
+  ],
+  "if-pb-05-set-allocation-and-risk-limits#5": [
+    "type-label:Ready weight=25",
+    "type-label:Steady weight=35",
+    "type-label:Grow weight=40",
+    "Lock the independent repair",
+    "choose:Capacity and liquidity changed; willingness may be unchanged",
+    "choose:Allocation and every dependent architecture",
+    "Check the unfamiliar case",
+  ],
+  "if-pb-05-set-allocation-and-risk-limits#6": [
+    "choose:A · 15% Ready / 35% Steady / 50% Grow",
+    "type:candidate-ceiling-answer=3",
+    "choose:A learner/OPS policy from a hypothetical loss",
+    "Save Allocation and Risk Policy",
+  ],
   "if-4-6-trace-cash-to-the-investor#3": [
     "Accounts receivable and inventory",
     "Next source concept",
@@ -134,6 +196,32 @@ const ANSWER_KEYS: Record<string, string[]> = {
     "An increase in accounts payable",
     "Complete mastery file",
     "Save Investor Statement Brief",
+  ],
+  // Stage 4 asks for the spread between the extreme PE portfolios as a number:
+  // 2.61% − (−1.95%). Typed, not chosen.
+  "if-7-1-test-the-claim#3": ["type:pe-spread=4.56", "Check the spread"],
+  /**
+   * Mission 10's final stage needs a review date, and `fillFields` only fills
+   * text fields — a date input left empty keeps the save button disabled. The
+   * prose fields on this stage are filled generically, so this is the mission's
+   * one keyed stage, within the budget of one.
+   */
+  "if-8-1-choose-passive-or-prove-an-edge#5": [
+    "Passive core only — I have not proved an edge, and that is my answer",
+    "type:passive-review=2027-08-14",
+    "Save the architecture decision",
+  ],
+  /**
+   * Mission 11's policy stage cannot be completed by `fillFields` alone: the
+   * bounded branch needs a number and two date inputs, which it does not fill.
+   * The no-timing branch needs only a typed reason, which it does — so the one
+   * keyed step is the mode itself. No timing is a complete outcome of this
+   * mission, not a shortcut around it.
+   */
+  "if-pb-11-set-a-market-timing-policy#3": [
+    "No timing",
+    "type:timing-reason=My horizon is long and no signal has passed my evidence test.",
+    "Lock this policy draft",
   ],
   "if-5-1-estimate-a-valuation-range#6": [
     "FCFF with the cost of capital",
@@ -394,8 +482,15 @@ async function stagePosition(page: Page) {
 async function solveStage(page: Page, key: string[] = []) {
   return page.evaluate(
     async ({ selector, budget, key }) => {
-      const journey = document.querySelector(selector);
-      if (!journey) return { completed: true, clicks: 0, trace: ["no journey on this page"] };
+      /**
+       * Looked up on every use, never captured. Switching a lesson's case
+       * ("Build mine" / "Practice case") remounts the journey, and a captured
+       * reference then points at a DETACHED tree: every later click lands on an
+       * element no longer in the document, so the walker reported eight
+       * successful interactions and zero progress.
+       */
+      const findJourney = () => document.querySelector(selector);
+      if (!findJourney()) return { completed: true, clicks: 0, trace: ["no journey on this page"] };
 
       // Two frames plus a margin. At 8ms the walker read the DOM before React
       // had committed under load, and which lessons failed changed from run to
@@ -406,8 +501,9 @@ async function solveStage(page: Page, key: string[] = []) {
             requestAnimationFrame(() => setTimeout(() => resolve(), 40)),
           ),
         );
-      const label = (el: Element) => (el.textContent ?? "").replace(/\s+/g, " ").trim();
-      const buttons = () => [...journey.querySelectorAll("button")];
+      const label = (el: Element) =>
+        (el.getAttribute("aria-label") ?? el.textContent ?? "").replace(/\s+/g, " ").trim();
+      const buttons = () => [...(findJourney()?.querySelectorAll("button") ?? [])];
 
       /**
        * Complete, as the shell itself reports it:
@@ -423,9 +519,9 @@ async function solveStage(page: Page, key: string[] = []) {
        * SCENE's own "Next finding →" out of the walker's reach on any stage
        * where the footer had no arrow, which is every lesson's final stage.
        */
-      const frame = journey.querySelector(".ops-interactive-frame") ?? journey;
-      const footer = frame.lastElementChild;
-      const inFooter = (el: Element) => Boolean(footer && footer.contains(el));
+      const frame = () => findJourney()?.querySelector(".ops-interactive-frame") ?? findJourney();
+      const footer = () => frame()?.lastElementChild ?? null;
+      const inFooter = (el: Element) => Boolean(footer()?.contains(el));
       const advanceControl = () => {
         const arrows = buttons().filter((b) => inFooter(b) && /→$/.test(label(b)));
         return arrows[arrows.length - 1] ?? null;
@@ -443,7 +539,7 @@ async function solveStage(page: Page, key: string[] = []) {
        * solved without anything being clicked.
        */
       const counter = () => {
-        for (const el of journey.querySelectorAll("*")) {
+        for (const el of findJourney()?.querySelectorAll("*") ?? []) {
           if (el.children.length) continue;
           const m = label(el).match(
             /^(\d+)\s*(?:of|\/)\s*(\d+)\s*(?:stages?|steps?|missions?|decisions?|files?)?\s*(?:complete|verified)$/i,
@@ -453,16 +549,26 @@ async function solveStage(page: Page, key: string[] = []) {
         return null;
       };
       const stageIndex = () => {
-        for (const el of journey.querySelectorAll("*")) {
+        for (const el of findJourney()?.querySelectorAll("*") ?? []) {
           if (el.children.length) continue;
           const m = label(el).match(/^(?:Stage|Step|Mission|Evidence file) (\d+) of (\d+)\b/i);
           if (m) return Number(m[1]) - 1;
         }
         return 0;
       };
+      /**
+       * The stage this call set out to solve, fixed at entry.
+       *
+       * Re-reading the position each time looked equivalent and was not: a
+       * lesson may advance ITSELF once its stage is saved. Mission 5 does, and
+       * the walker then compared a counter of 1 against the stage it had already
+       * been moved to, concluded `1 >= 2` was false, and declared a stage it had
+       * just completed unanswerable.
+       */
+      const startIndex = stageIndex();
       const complete = () => {
         const done = counter();
-        if (done !== null) return done >= stageIndex() + 1;
+        if (done !== null) return done >= startIndex + 1;
         // No counter (a page with no journey shell): fall back to the button.
         const advance = advanceControl();
         return advance ? !advance.disabled : true;
@@ -490,7 +596,12 @@ async function solveStage(page: Page, key: string[] = []) {
             // only control left, so excluding it stranded the walker. Only
             // controls that throw the whole stage away stay out.
             !/^(reset|clear|start over|restart|back)\b/i.test(t) &&
-            b.getClientRects().length > 0
+            // Size, not merely presence. A responsive layout can mount the same
+            // control twice and collapse one copy to 0×0; `getClientRects()`
+            // still returns a rect for it, so the walker was clicking phantom
+            // buttons that looked right and did nothing.
+            b.getBoundingClientRect().width > 0 &&
+            b.getBoundingClientRect().height > 0
           );
         });
       };
@@ -513,9 +624,9 @@ async function solveStage(page: Page, key: string[] = []) {
        */
       const fillFields = () => {
         let filled = 0;
-        for (const field of journey.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+        for (const field of findJourney()?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
           "textarea, input[type='text'], input:not([type])",
-        )) {
+        ) ?? []) {
           if (field.value.trim() || field.disabled) continue;
           const proto =
             field instanceof HTMLTextAreaElement
@@ -577,7 +688,7 @@ async function solveStage(page: Page, key: string[] = []) {
          * four lines into a five-line reveal.
          */
         const sceneState = () =>
-          `${counter()}|${(journey.textContent ?? "").length}|${controls().length}`;
+          `${counter()}|${(findJourney()?.textContent ?? "").length}|${controls().length}`;
         const note = (b: HTMLButtonElement, before: string) => {
           const key = label(b);
           if (sceneState() === before) {
@@ -657,8 +768,9 @@ async function solveStage(page: Page, key: string[] = []) {
         const map = new Map<Element, HTMLButtonElement[]>();
         for (const b of list) {
           let node: Element | null = b.parentElement;
-          let key: Element = b.parentElement ?? journey;
-          while (node && node !== journey) {
+          const root = findJourney();
+          let key: Element = b.parentElement ?? root!;
+          while (node && node !== root) {
             if (list.filter((c) => node!.contains(c)).length >= 2) {
               key = node;
               break;
@@ -752,6 +864,89 @@ async function solveStage(page: Page, key: string[] = []) {
       if (key.length) {
         for (const wanted of key) {
           if (clicks >= budget) break;
+
+          // "type:<field id>=<value>" writes an exact answer. A stage that asks
+          // the learner to work out a number and type it cannot be answered by
+          // clicking, and lowering it to multiple choice to suit the walker
+          // would be letting the test rewrite the lesson.
+          if (wanted.startsWith("type:")) {
+            const [id, ...rest] = wanted.slice(5).split("=");
+            const value = rest.join("=");
+            const field = findJourney()?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+              `#${CSS.escape(id)}`,
+            );
+            if (!field) {
+              trace.push(`key miss: field #${id}`);
+              continue;
+            }
+            const proto =
+              field instanceof HTMLTextAreaElement
+                ? HTMLTextAreaElement.prototype
+                : HTMLInputElement.prototype;
+            Object.getOwnPropertyDescriptor(proto, "value")?.set?.call(field, value);
+            field.dispatchEvent(new Event("input", { bubbles: true }));
+            trace.push(`key: #${id} = ${value}`);
+            await settle();
+            if (complete()) return { completed: true, clicks, trace };
+            continue;
+          }
+
+          // Select a native radio or checkbox by the visible label that a
+          // learner sees. Mission 5 deliberately keeps semantic form controls
+          // rather than turning every answer into a button for the test.
+          if (wanted.startsWith("choose:")) {
+            const visible = wanted.slice(7);
+            // Only a label that is actually rendered: this lesson mounts some
+            // controls twice for responsive layouts and collapses one copy to
+            // 0×0, and clicking the collapsed twin does nothing at all.
+            const optionLabel = [...(findJourney()?.querySelectorAll("label") ?? [])].find((candidate) => {
+              const box = candidate.getBoundingClientRect();
+              return box.width > 0 && box.height > 0 && label(candidate).includes(visible);
+            });
+            const field = optionLabel?.querySelector<HTMLInputElement>(
+              "input[type='radio'], input[type='checkbox']",
+            );
+            if (!field) {
+              trace.push(`key miss: choice ${visible.slice(0, 40)}`);
+              continue;
+            }
+            field.click();
+            clicks++;
+            trace.push(`key: choice ${visible.slice(0, 40)}`);
+            await settle();
+            if (fillFields()) await settle();
+            if (complete()) return { completed: true, clicks, trace };
+            continue;
+          }
+
+          if (wanted.startsWith("type-label:")) {
+            const [visible, ...rest] = wanted.slice(11).split("=");
+            const value = rest.join("=");
+            const fieldLabel = [...(findJourney()?.querySelectorAll<HTMLLabelElement>("label[for]") ?? [])].find(
+              (candidate) => label(candidate).includes(visible),
+            );
+            const field = fieldLabel?.htmlFor
+              ? findJourney()?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+                  `#${CSS.escape(fieldLabel.htmlFor)}`,
+                )
+              : null;
+            if (!field) {
+              trace.push(`key miss: labelled field ${visible.slice(0, 40)}`);
+              continue;
+            }
+            const proto =
+              field instanceof HTMLTextAreaElement
+                ? HTMLTextAreaElement.prototype
+                : HTMLInputElement.prototype;
+            Object.getOwnPropertyDescriptor(proto, "value")?.set?.call(field, value);
+            field.dispatchEvent(new Event("input", { bubbles: true }));
+            trace.push(`key: ${visible} = ${value}`);
+            await settle();
+            if (fillFields()) await settle();
+            if (complete()) return { completed: true, clicks, trace };
+            continue;
+          }
+
           const target = controls().find((b) => label(b).includes(wanted));
           if (!target) {
             trace.push(`key miss: ${wanted.slice(0, 40)}`);
@@ -764,6 +959,29 @@ async function solveStage(page: Page, key: string[] = []) {
           if (fillFields()) await settle();
           if (complete()) return { completed: true, clicks, trace };
         }
+
+        /**
+         * A written key is the declared solution for this stage, so the searches
+         * below must not run after it. Two reasons, both learned the hard way:
+         *
+         * 1. Saving can be asynchronous. The last key entry completed the stage
+         *    but `complete()` was read before the save landed, so give it a
+         *    proper wait before judging.
+         * 2. The sweep clicks whatever it finds, and on a lesson with isolated
+         *    cases that includes the case switcher. It pressed "Build mine"
+         *    after the key had finished the practice case, moving to an empty
+         *    case where nothing was complete — destroying the answer and then
+         *    reporting the stage unanswerable.
+         *
+         * If a key exists and does not finish the stage, that is a real failure
+         * and belongs in the trace, not something to paper over by brute force.
+         */
+        await new Promise<void>((resolve) => setTimeout(() => resolve(), 500));
+        if (complete()) return { completed: true, clicks, trace };
+        trace.push(
+          `key finished without completing: counter=${counter()} stageIndex=${stageIndex()} journey=${findJourney()?.id ?? "none"}`,
+        );
+        return { completed: false, clicks, trace };
       }
 
       const signature = () => `${counter()}|${controls().map(label).join("|")}`;
@@ -830,7 +1048,19 @@ for (const slug of IF_LESSON_ROUTES) {
     test.setTimeout(180_000);
     await page.goto(`/lessons/${slug}`);
     await page.waitForLoadState("domcontentloaded");
-    await expect(page.locator("main")).toBeVisible();
+    // A cold dev server compiles a route on first request, which regularly
+    // takes longer than the 5s default and produced failures that vanished on
+    // a warm re-run. The page is not slow; the compiler is.
+    await expect(page.locator("main")).toBeVisible({ timeout: 45_000 });
+
+    if (slug === "if-pb-05-set-allocation-and-risk-limits") {
+      const practiceMode = page
+        .locator("button:visible")
+        .filter({ hasText: "Practice case" })
+        .first();
+      await practiceMode.click();
+      await expect(practiceMode).toHaveAttribute("aria-pressed", "true");
+    }
 
     const findings: Finding[] = [];
     const warnings = new Set<string>();
@@ -869,7 +1099,13 @@ for (const slug of IF_LESSON_ROUTES) {
       );
 
       if (stage < total - 1) {
-        await advanceStage(page);
+        // Some lessons advance themselves once a stage is saved. Clicking the
+        // shell's advance button as well would skip the stage that auto-arrived
+        // and leave it unaudited, so only press it if the lesson has not
+        // already moved.
+        if ((await stagePosition(page)).index === stage) {
+          await advanceStage(page);
+        }
         await expect
           .poll(async () => (await stagePosition(page)).index, {
             message: `${slug}: advancing from ${label} never moved the lesson on, so the stages after it were not audited`,
@@ -901,7 +1137,10 @@ for (const slug of IF_LESSON_ROUTES) {
  */
 test("the gate still fails on the defects it was built to catch", async ({ page }) => {
   await page.goto(`/lessons/${IF_LESSON_ROUTES[0]}`);
-  await expect(page.locator("main")).toBeVisible();
+  // A cold dev server compiles a route on first request, which regularly
+    // takes longer than the 5s default and produced failures that vanished on
+    // a warm re-run. The page is not slow; the compiler is.
+    await expect(page.locator("main")).toBeVisible({ timeout: 45_000 });
 
   await page.evaluate(() => {
     const probe = document.createElement("section");
@@ -940,7 +1179,10 @@ for (const route of [
   test(`page renders a readable hierarchy: ${route}`, async ({ page }) => {
     await page.goto(route);
     await page.waitForLoadState("domcontentloaded");
-    await expect(page.locator("main")).toBeVisible();
+    // A cold dev server compiles a route on first request, which regularly
+    // takes longer than the 5s default and produced failures that vanished on
+    // a warm re-run. The page is not slow; the compiler is.
+    await expect(page.locator("main")).toBeVisible({ timeout: 45_000 });
 
     const { findings } = await auditRenderedText(
       page,

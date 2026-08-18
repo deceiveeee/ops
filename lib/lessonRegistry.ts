@@ -60,6 +60,7 @@ import LessonIF_3_3 from "@/components/lessons/investment-foundations/LessonIF_3
 import LessonIF_3_4 from "@/components/lessons/investment-foundations/LessonIF_3_4";
 import LessonIF_3_5 from "@/components/lessons/investment-foundations/LessonIF_3_5";
 import LessonIF_3_6 from "@/components/lessons/investment-foundations/LessonIF_3_6";
+import LessonIF_PB_05 from "@/components/lessons/investment-foundations/LessonIF_PB_05";
 import LessonIF_4_1 from "@/components/lessons/investment-foundations/LessonIF_4_1";
 import LessonIF_4_2 from "@/components/lessons/investment-foundations/LessonIF_4_2";
 import LessonIF_4_3 from "@/components/lessons/investment-foundations/LessonIF_4_3";
@@ -67,7 +68,11 @@ import LessonIF_4_4 from "@/components/lessons/investment-foundations/LessonIF_4
 import LessonIF_4_5 from "@/components/lessons/investment-foundations/LessonIF_4_5";
 import LessonIF_4_6 from "@/components/lessons/investment-foundations/LessonIF_4_6";
 import LessonIF_5_1 from "@/components/lessons/investment-foundations/LessonIF_5_1";
+import LessonIF_7_1 from "@/components/lessons/investment-foundations/LessonIF_7_1";
+import LessonIF_8_1 from "@/components/lessons/investment-foundations/LessonIF_8_1";
 import LessonIF_6_1 from "@/components/lessons/investment-foundations/LessonIF_6_1";
+import LessonIF_PB_11 from "@/components/lessons/investment-foundations/LessonIF_PB_11";
+import LessonIF_PB_12 from "@/components/lessons/investment-foundations/LessonIF_PB_12";
 
 export type LessonComponentProps = Record<string, never>;
 
@@ -139,6 +144,7 @@ export const lessonRegistry: Record<
   "if-3-4-what-makes-beta-rise-or-fall": LessonIF_3_4,
   "if-3-5-choosing-a-risk-measure": LessonIF_3_5,
   "if-3-6-build-an-equity-risk-policy": LessonIF_3_6,
+  "if-pb-05-set-allocation-and-risk-limits": LessonIF_PB_05,
   "if-4-1-the-three-financial-statements": LessonIF_4_1,
   "if-4-2-read-the-balance-sheet": LessonIF_4_2,
   "if-4-3-recast-the-business": LessonIF_4_3,
@@ -147,6 +153,10 @@ export const lessonRegistry: Record<
   "if-4-6-trace-cash-to-the-investor": LessonIF_4_6,
   "if-5-1-estimate-a-valuation-range": LessonIF_5_1,
   "if-6-1-count-the-friction": LessonIF_6_1,
+  "if-7-1-test-the-claim": LessonIF_7_1,
+  "if-8-1-choose-passive-or-prove-an-edge": LessonIF_8_1,
+  "if-pb-11-set-a-market-timing-policy": LessonIF_PB_11,
+  "if-pb-12-choose-the-actual-holdings": LessonIF_PB_12,
 };
 
 export function getLessonComponent(

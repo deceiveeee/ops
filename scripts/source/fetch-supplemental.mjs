@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Supplemental source pipeline: the six portfolio-construction subjects the
- * Damodaran corpus does not cover to implementable depth.
+ * Supplemental source pipeline: portfolio-construction subjects the Damodaran
+ * corpus does not cover to implementable depth or that require current evidence.
  *
  *   node scripts/source/fetch-supplemental.mjs                 all sources
  *   node scripts/source/fetch-supplemental.mjs tax-accounts    one subject
@@ -117,6 +117,27 @@ function corruptionCheck(text) {
   return hits.length;
 }
 
+function extractPdfText(pdf, txt) {
+  try {
+    sh("pdftotext", ["-layout", pdf, txt]);
+    return "pdftotext-layout";
+  } catch (err) {
+    const python = process.env.OPS_SOURCE_PYTHON;
+    if (err?.code !== "ENOENT" || !python) throw err;
+    sh(python, [join(HERE, "extract-pdf-text.py"), pdf, txt]);
+    return "pdfplumber-layout-fallback";
+  }
+}
+
+function countPdfPages(body) {
+  if (body.length === 0) return 0;
+  const pageTexts = body.split("\f");
+  // pdftotext commonly leaves a terminal form feed. Its empty split item is
+  // only a delimiter, not an additional PDF page.
+  if (pageTexts.length > 1 && pageTexts.at(-1)?.trim() === "") pageTexts.pop();
+  return pageTexts.length;
+}
+
 function fetchOne(src, checkOnly) {
   const isSec = src.url.includes("sec.gov") || src.url.includes("investor.gov");
   const ext = src.format === "pdf" ? "pdf" : src.format === "html" ? "html" : "bin";
@@ -193,9 +214,9 @@ function fetchOne(src, checkOnly) {
 
   const txt = join(DIRS.text, `${src.id}.txt`);
   if (src.format === "pdf") {
-    sh("pdftotext", ["-layout", raw, txt]);
+    record.extractor = extractPdfText(raw, txt);
     const body = readFileSync(txt, "utf8");
-    record.pages = (body.match(/\f/g) ?? []).length + 1;
+    record.pages = countPdfPages(body);
     writeFileSync(txt, normalise(body));
   } else {
     writeFileSync(txt, htmlToText(readFileSync(raw, "utf8")));

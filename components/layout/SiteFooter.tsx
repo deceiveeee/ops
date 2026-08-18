@@ -29,11 +29,14 @@ export default function SiteFooter() {
                 { href: "/courses/investment-foundations", label: "Investment Foundations" },
               ]}
             />
+            {/* Four of these six links used to point at /studio and /filings,
+                both concept mocks, while /dossier had no route in from the
+                global chrome at all. */}
             <FooterCol
-              title="Investigate"
+              title="Build"
               links={[
-                { href: "/filings", label: "Filing reader" },
-                { href: "/studio", label: "Portfolio Studio" },
+                { href: "/dossier", label: "Your dossier" },
+                { href: "/start", label: "Find your starting point" },
                 { href: "/lessons/portfolio-risk-covariance-correlation", label: "Portfolio risk" },
               ]}
             />
@@ -42,7 +45,8 @@ export default function SiteFooter() {
               links={[
                 { href: "/", label: "Homepage" },
                 { href: "/courses", label: "Course map" },
-                { href: "/studio", label: "Enter the studio" },
+                { href: "/filings", label: "Filing reader (preview)" },
+                { href: "/studio", label: "Portfolio Studio (preview)" },
               ]}
             />
           </nav>

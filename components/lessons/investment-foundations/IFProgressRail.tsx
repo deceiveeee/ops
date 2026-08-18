@@ -9,9 +9,78 @@ import {
   IF_MODULE_4_LESSONS,
   IF_MODULE_5_LESSONS,
   IF_MODULE_6_LESSONS,
+  IF_MODULE_7_LESSONS,
+  IF_MODULE_8_LESSONS,
+  IF_MODULE_11_LESSONS,
+  IF_MODULE_12_LESSONS,
+  IF_MODULE_PB5_LESSONS,
 } from "./shared";
 import { useIFProgress } from "@/lib/if-progress";
 import { cn } from "@/lib/utils";
+
+/**
+ * Exported so a test can assert every Investment Foundations lesson resolves to
+ * a group. Mission 10 shipped showing "Missions 1-2" in the rail because its
+ * module was never added here and the lookup below falls back to the first
+ * group — a miss that looks like a working page rather than a broken one.
+ */
+export const JOURNEY_GROUPS = [
+  {
+    lessons: IF_MODULE_1_LESSONS,
+    missionLabel: "Missions 1-2",
+    title: "Building an Investment Philosophy",
+  },
+  {
+    lessons: IF_MODULE_2_LESSONS,
+    missionLabel: "Mission 3",
+    title: "The Risk in Bonds",
+  },
+  {
+    lessons: IF_MODULE_3_LESSONS,
+    missionLabel: "Mission 4",
+    title: "The Risk in Stocks",
+  },
+  {
+    lessons: IF_MODULE_PB5_LESSONS,
+    missionLabel: "Mission 5",
+    title: "Allocation and Risk Policy",
+  },
+  {
+    lessons: IF_MODULE_4_LESSONS,
+    missionLabel: "Mission 6",
+    title: "Financial Statement Analysis",
+  },
+  {
+    lessons: IF_MODULE_5_LESSONS,
+    missionLabel: "Mission 7",
+    title: "Valuation Range",
+  },
+  {
+    lessons: IF_MODULE_6_LESSONS,
+    missionLabel: "Mission 8",
+    title: "Trading Costs and Taxes",
+  },
+  {
+    lessons: IF_MODULE_7_LESSONS,
+    missionLabel: "Mission 9",
+    title: "Testing a Claim",
+  },
+  {
+    lessons: IF_MODULE_8_LESSONS,
+    missionLabel: "Mission 10",
+    title: "Passive or Edge",
+  },
+  {
+    lessons: IF_MODULE_11_LESSONS,
+    missionLabel: "Mission 11",
+    title: "Timing Policy",
+  },
+  {
+    lessons: IF_MODULE_12_LESSONS,
+    missionLabel: "Mission 12",
+    title: "Holdings Slate",
+  },
+] as const;
 
 export default function IFProgressRail() {
   const pathname = usePathname();
@@ -25,6 +94,8 @@ export default function IFProgressRail() {
     statementBrief,
     valuationRange,
     frictionBudget,
+    evidenceChecklist,
+    architectureDecision,
   } = useIFProgress();
   // Every artifact is stamped with updatedAt on save, so that is the recorded flag.
   const artifactCount = [
@@ -34,58 +105,16 @@ export default function IFProgressRail() {
     statementBrief,
     valuationRange,
     frictionBudget,
+    evidenceChecklist,
+    architectureDecision,
   ].filter((a) => Boolean(a.updatedAt)).length;
-  const inModuleTwo = IF_MODULE_2_LESSONS.some(
-    (lesson) => lesson.slug === activeSlug,
-  );
-  const inModuleThree = IF_MODULE_3_LESSONS.some(
-    (lesson) => lesson.slug === activeSlug,
-  );
-  const inModuleFour = IF_MODULE_4_LESSONS.some(
-    (lesson) => lesson.slug === activeSlug,
-  );
-  const inModuleFive = IF_MODULE_5_LESSONS.some(
-    (lesson) => lesson.slug === activeSlug,
-  );
-  const inModuleSix = IF_MODULE_6_LESSONS.some(
-    (lesson) => lesson.slug === activeSlug,
-  );
-  const lessons = inModuleSix
-    ? IF_MODULE_6_LESSONS
-    : inModuleFive
-    ? IF_MODULE_5_LESSONS
-    : inModuleFour
-      ? IF_MODULE_4_LESSONS
-      : inModuleThree
-        ? IF_MODULE_3_LESSONS
-        : inModuleTwo
-          ? IF_MODULE_2_LESSONS
-          : IF_MODULE_1_LESSONS;
-  // Mission labels, not module numbers: the mapping is not one-to-one. The first
-  // unit carries missions 1-2 and mission 5 (allocation) is not built yet, so
-  // these are stated explicitly. Source: the mission curriculum, section 7.
-  const missionLabel = inModuleSix
-    ? "Mission 8"
-    : inModuleFive
-    ? "Mission 7"
-    : inModuleFour
-      ? "Mission 6"
-      : inModuleThree
-        ? "Mission 4"
-        : inModuleTwo
-          ? "Mission 3"
-          : "Missions 1-2";
-  const moduleTitle = inModuleSix
-    ? "Trading Costs and Taxes"
-    : inModuleFive
-    ? "Valuation Range"
-    : inModuleFour
-      ? "Financial Statement Analysis"
-      : inModuleThree
-        ? "The Risk in Stocks"
-        : inModuleTwo
-          ? "The Risk in Bonds"
-          : "Building an Investment Philosophy";
+  const group =
+    JOURNEY_GROUPS.find((candidate) =>
+      candidate.lessons.some((lesson) => lesson.slug === activeSlug),
+    ) ?? JOURNEY_GROUPS[0];
+  const lessons = group.lessons;
+  const missionLabel = group.missionLabel;
+  const moduleTitle = group.title;
 
   return (
     <nav
@@ -97,7 +126,7 @@ export default function IFProgressRail() {
           Investment Foundations · {missionLabel}
         </span>
         <span className="ops-caption text-[12px] text-accent-amber">
-          {lessons.length} lessons
+          {lessons.length} {lessons.length === 1 ? "lesson" : "lessons"}
         </span>
       </div>
       <div className="ops-body-strong mt-1.5 text-[15px] text-white">
@@ -158,7 +187,7 @@ export default function IFProgressRail() {
               Your dossier
             </span>
             <span className="mt-0.5 block text-sm text-slate-300 group-hover:text-white">
-              {artifactCount} of 6 artifacts
+              {artifactCount} saved lesson artifacts
             </span>
           </span>
           <span
@@ -170,7 +199,7 @@ export default function IFProgressRail() {
         </Link>
         <Link
           href="/courses/investment-foundations"
-          className="ops-caption block text-[12px] text-slate-400 hover:text-accent-amber"
+          className="ops-caption flex min-h-[44px] items-center text-[12px] text-slate-400 hover:text-accent-amber"
         >
           ← Back to Investment Foundations
         </Link>

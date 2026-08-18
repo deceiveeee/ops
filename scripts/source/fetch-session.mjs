@@ -13,7 +13,8 @@
  * is Damodaran's copyrighted course material and must not be redistributed by
  * committing it. Only original OPS analysis belongs in docs/.
  *
- * Requires: curl, pdftotext (xpdf/poppler), yt-dlp.
+ * Requires: curl and yt-dlp for new fetches. PDF extraction prefers
+ * pdftotext; set OPS_SOURCE_PYTHON to use the checked-in pdfplumber fallback.
  */
 
 import { execFileSync } from "node:child_process";
@@ -89,10 +90,31 @@ function download(url, dest, reuse = false) {
   return { url, bytes: size, sha256: sha256(dest) };
 }
 
+function extractPdfText(pdf, txt) {
+  try {
+    sh("pdftotext", ["-layout", pdf, txt]);
+    return "pdftotext-layout";
+  } catch (err) {
+    const python = process.env.OPS_SOURCE_PYTHON;
+    if (err?.code !== "ENOENT" || !python) throw err;
+    sh(python, [join(HERE, "extract-pdf-text.py"), pdf, txt]);
+    return "pdfplumber-layout-fallback";
+  }
+}
+
+function countPdfPages(body) {
+  if (body.length === 0) return 0;
+  const pageTexts = body.split("\f");
+  // pdftotext terminates many PDFs with a form feed. That delimiter creates an
+  // empty final split item; counting it as another page is an off-by-one.
+  if (pageTexts.length > 1 && pageTexts.at(-1)?.trim() === "") pageTexts.pop();
+  return pageTexts.length;
+}
+
 function pdfToText(pdf, txt) {
-  sh("pdftotext", ["-layout", pdf, txt]);
+  const extractor = extractPdfText(pdf, txt);
   const body = readFileSync(txt, "utf8");
-  const pages = (body.match(/\f/g) ?? []).length + 1;
+  const pages = countPdfPages(body);
   const { text: repaired, map } = repairDeckText(body);
   writeFileSync(txt, repaired);
   // Honest residual metric: any character still sitting between two lowercase
@@ -101,6 +123,7 @@ function pdfToText(pdf, txt) {
   const residual = (repaired.match(/[a-z][^a-z\s'-]{1}[a-z]/g) ?? []).length;
   return {
     pages,
+    extractor,
     chars: repaired.length,
     ligatureMap: map,
     residualSuspicious: residual,
@@ -525,8 +548,8 @@ function fetchSession(n, reextract = false) {
     record.warnings.push(`quiz unavailable: ${err.message}`);
   }
 
-  // Narration
-  if (!YTDLP) {
+  // Narration. Offline re-extraction can reuse a cached VTT without yt-dlp.
+  if (!YTDLP && !reextract) {
     record.warnings.push("yt-dlp not found; narration not fetched");
     record.video.captionStatus = "skipped-no-yt-dlp";
   } else {
@@ -546,7 +569,14 @@ function fetchSession(n, reextract = false) {
     record.video.captionStatus = cap.status;
     if (cap.status === "ok") {
       const txt = join(DIRS.text, `session${n}-transcript.txt`);
-      record.video = { ...record.video, ...cleanVtt(cap.file, txt), transcript: txt };
+      record.video = {
+        ...record.video,
+        captionFile: cap.file,
+        captionBytes: statSync(cap.file).size,
+        captionSha256: sha256(cap.file),
+        ...cleanVtt(cap.file, txt),
+        transcript: txt,
+      };
     } else {
       record.warnings.push(
         `no usable caption track (${cap.status}); narration NOT reviewed for this session`,
@@ -582,7 +612,13 @@ for (const dir of Object.values(DIRS)) mkdirSync(dir, { recursive: true });
 const args = process.argv.slice(2);
 const reextract = args.includes("--reextract");
 const targets = parseTargets(args.find((a) => !a.startsWith("--")));
-if (!YTDLP) console.warn("! yt-dlp not found — slides and quizzes only\n");
+if (!YTDLP) {
+  console.warn(
+    reextract
+      ? "! yt-dlp not found — reusing cached caption tracks\n"
+      : "! yt-dlp not found — slides and quizzes only\n",
+  );
+}
 
 const summary = [];
 for (const n of targets) {

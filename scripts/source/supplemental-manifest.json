@@ -1,5 +1,5 @@
 {
-  "purpose": "Primary sources for the six portfolio-construction subjects Damodaran's Investment Philosophies course does not teach to implementable depth. See docs/lesson-plans/portfolio-builder-mission-curriculum.md section 6.",
+  "purpose": "Primary sources for portfolio-construction subjects Damodaran's Investment Philosophies course does not teach to implementable depth, plus current evidence needed to apply the course. See docs/lesson-plans/portfolio-builder-mission-curriculum.md section 6.",
   "policy": {
     "primaryOnly": "Every source must be the issuer, regulator, standard-setter, or original author. No commentary, no aggregator, no course-notes mirror. A mirror may be recorded as a fallback but never as the citation.",
     "verifyBeforeAdding": "Every URL must be fetch-tested before it enters this file. Search results are unreliable: two candidate URLs returned 404 and one returned 403 during the initial survey.",
@@ -36,7 +36,64 @@
       "jurisdiction": "any",
       "decay": "low",
       "verifiedOn": "2026-08-10",
-      "teaches": "Threshold versus calendar rebalancing, and the trade between tracking the target and paying cost/tax to get there. Pairs with mission 8's friction budget."
+      "teaches": "Provider-scale evidence about threshold versus calendar rebalancing and the trade between tracking target weights and paying implementation costs. Pairs with mission 8's friction budget as mechanism evidence.",
+      "limitation": "This is a target-date-fund provider study using daily monitoring and a 200/175-basis-point policy. It is not a DIY personal rebalancing rule and cannot justify prescribing those thresholds to an individual learner."
+    },
+    {
+      "id": "investor-preparedness",
+      "subject": "investment-readiness",
+      "missions": [1, 13],
+      "publisher": "U.S. Securities and Exchange Commission, Office of Investor Education and Advocacy",
+      "title": "Investor Preparedness Checklist",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/investor-preparedness-checklist",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "low",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Goal setting, a savings and investment plan, paying high-interest debt first, employer match, risk tolerance, fees, research, diversification, and fraud awareness.",
+      "limitation": "A checklist is not an individualized readiness determination. OPS must offer a complete practice path rather than block learning when deployment is inappropriate."
+    },
+    {
+      "id": "cfpb-emergency-fund",
+      "subject": "investment-readiness",
+      "missions": [1, 5, 13],
+      "publisher": "Consumer Financial Protection Bureau",
+      "title": "An essential guide to building an emergency fund",
+      "url": "https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "low",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Emergency savings as a cash reserve for unplanned expenses, why financial shocks can create lasting debt, and how an appropriate reserve target depends on the person's situation.",
+      "limitation": "The source deliberately gives no universal reserve amount. OPS must not invent a mandatory number or use it as a scored investing-eligibility threshold."
+    },
+    {
+      "id": "investor-risk-tolerance",
+      "subject": "allocation-method",
+      "missions": [1, 5],
+      "publisher": "U.S. Securities and Exchange Commission, Office of Investor Education and Advocacy",
+      "title": "Gauge Your Risk Tolerance",
+      "url": "https://www.investor.gov/introduction-investing/investing-basics/save-and-invest/gauge-your-risk-tolerance",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "low",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Connects investment risk to goal, time horizon, loss of principal, and the investor's ability to tolerate volatility.",
+      "limitation": "It does not supply a mechanical stock-allocation formula. OPS must keep ability to bear loss separate from willingness and must not turn a questionnaire result into a recommendation."
+    },
+    {
+      "id": "investor-allocation-rebalancing",
+      "subject": "allocation-method",
+      "missions": [5, 13],
+      "publisher": "U.S. Securities and Exchange Commission, Office of Investor Education and Advocacy",
+      "title": "Beginners' Guide to Asset Allocation, Diversification, and Rebalancing",
+      "url": "https://www.investor.gov/additional-resources/general-resources/publications-research/info-sheets/beginners-guide-asset",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "low",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Time horizon, risk tolerance, strategic asset allocation, diversification, and three ways to restore target weights: trade, add to underweights, or redirect contributions.",
+      "limitation": "Examples explain mechanisms, not a universal allocation or drift threshold. OPS policies must expose their assumptions and costs."
     },
     {
       "id": "cfa-ips-individual",
@@ -89,7 +146,39 @@
       "decay": "high",
       "verifiedOn": "2026-08-10",
       "teaches": "Long-run asset-class return and risk inputs for the allocation.",
-      "limitation": "Legacy .xls. This environment has no spreadsheet reader, so provenance is recorded but text is NOT extracted. Read the figures manually, or prefer the HTML data pages where an equivalent exists."
+      "limitation": "Legacy .xls. The source pipeline downloads and hashes it but does not extract spreadsheet cells. It was inspected during the 2026-08-12 practical-tools research with a temporary spreadsheet reader; any learner-facing use still needs a canonical cell-level extraction/provenance method or an equivalent official HTML source."
+    },
+    {
+      "id": "morningstar-active-passive-2026-06",
+      "subject": "active-passive-base-rates",
+      "missions": [10],
+      "publisher": "Morningstar Manager Research",
+      "title": "US Active/Passive Barometer: June 2026",
+      "url": "https://www.morningstar.com/content/cs-assets/v3/assets/blt9415ea4cc4157833/bltae9a96dd886be51f/APB_US_MidYear_2026.pdf",
+      "landingPage": "https://www.morningstar.com/business/insights/research/active-passive-barometer",
+      "format": "pdf",
+      "jurisdiction": "US",
+      "decay": "high",
+      "publishedOn": "2026-08-06",
+      "dataThrough": "2026-06-30",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Current category-specific, net-of-fees active-fund success rates against investable passive peers, with survivorship and fee-quintile evidence for Mission 10's evidence hurdle.",
+      "limitation": "Semiannual empirical scorecard. Re-fetch on each release, date every figure, preserve category and horizon, and do not turn an aggregate base rate into a claim that every active strategy fails."
+    },
+    {
+      "id": "sharpe-ratio-1994",
+      "subject": "risk-adjusted-evidence",
+      "missions": [9, 10],
+      "publisher": "William F. Sharpe, Stanford University",
+      "title": "The Sharpe Ratio",
+      "url": "https://web.stanford.edu/~wfsharpe/art/sr/SR.htm",
+      "urlNote": "Official author-hosted HTML reprint from The Journal of Portfolio Management, Fall 1994.",
+      "format": "html",
+      "jurisdiction": "any",
+      "decay": "low",
+      "verifiedOn": "2026-08-12",
+      "teaches": "The original author's definitions of ex ante and ex post Sharpe ratios, benchmark-relative differential return, time-period dependence, and the correlation limits of a one-number risk-adjusted comparison.",
+      "limitation": "Foundational methodology, not current evidence of manager persistence. Use it to define and qualify a risk-adjusted evidence test, not as a contemporary scorecard."
     },
     {
       "id": "sec-funds-and-etfs",
@@ -103,6 +192,34 @@
       "decay": "medium",
       "verifiedOn": "2026-08-10",
       "teaches": "The regulator's own framing of fund structures, fees and risks — the vocabulary a prospectus assumes."
+    },
+    {
+      "id": "sec-order-types",
+      "subject": "order-rehearsal",
+      "missions": [12],
+      "publisher": "U.S. Securities and Exchange Commission, Office of Investor Education and Advocacy",
+      "title": "Investor Bulletin: Understanding Order Types",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-14",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "low",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Market, limit, and stop-order mechanics and the trade-offs between execution certainty and price control.",
+      "limitation": "OPS uses this for an order rehearsal only. It must never transmit an order or imply that one order type is universally best."
+    },
+    {
+      "id": "sec-brokerage-accounts",
+      "subject": "order-rehearsal",
+      "missions": [1, 12],
+      "publisher": "U.S. Securities and Exchange Commission, Office of Investor Education and Advocacy",
+      "title": "Investor Bulletin: How to Open a Brokerage Account",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-43",
+      "format": "html",
+      "jurisdiction": "US",
+      "decay": "medium",
+      "verifiedOn": "2026-08-12",
+      "teaches": "Cash-versus-margin account differences, account-opening information, objectives, risk tolerance, fees, and confirmation responsibilities.",
+      "limitation": "The course must default its rehearsal to cash and treat margin as a warning, not a beginner feature. Account eligibility and authority can vary with the learner."
     },
     {
       "id": "irs-pub550",
@@ -163,10 +280,34 @@
   ],
   "inaccessible": [
     {
+      "what": "FINRA — Concentrate on Concentration Risk",
+      "url": "https://www.finra.org/investors/insights/concentration-risk",
+      "status": "Complete official page reviewed in the browser on 2026-08-12, but direct local fetch returned HTTP 403, so no canonical cache or provenance record exists.",
+      "workaround": "Use the reviewed categories only for curriculum design. Mission 5 or 12 may not cite the page until canonical local provenance succeeds; never invent a universal percentage cap."
+    },
+    {
+      "what": "U.S. Securities and Exchange Commission — Form N-1A",
+      "url": "https://www.sec.gov/files/form-n-1a.pdf",
+      "status": "Official 86-page PDF reviewed in the browser on 2026-08-12, but direct local fetch returned HTTP 403, so no canonical cache or provenance record exists.",
+      "workaround": "Use the already locked EDGAR endpoint and exact current fund filings for Mission 12. Retry this canonical form only through the source pipeline before citing its requirements."
+    },
+    {
+      "what": "U.S. Securities and Exchange Commission — Form N-PORT Data Sets",
+      "url": "https://www.sec.gov/data-research/sec-markets-data/form-n-port-data-sets",
+      "status": "Complete official page reviewed in the browser on 2026-08-12, but direct local fetch returned HTTP 403, so no canonical cache or provenance record exists.",
+      "workaround": "Use the already locked EDGAR endpoint for a mission prototype. Any holdings-overlap claim must disclose the reporting period and obtain canonical provenance before release."
+    },
+    {
       "what": "S&P Dow Jones Indices — S&P U.S. Indices Methodology",
       "url": "https://www.spglobal.com/spdji/en/documents/methodologies/methodology-sp-us-indices.pdf",
       "status": "HTTP 403 on 2026-08-10; spglobal blocks automated fetch",
       "workaround": "Teach index construction from a fund prospectus via EDGAR instead. The prospectus describes the index it tracks, is accessible, and is the document a real investor would actually read."
+    },
+    {
+      "what": "S&P Dow Jones Indices — U.S. Persistence Scorecard Year-End 2025",
+      "url": "https://www.spglobal.com/spdji/en/documents/spiva/persistence-scorecard-year-end-2025.pdf",
+      "status": "HTTP 403 on direct local fetch on 2026-08-12; the canonical PDF could not be cached, hashed, or given a provenance record.",
+      "workaround": "Keep manager-persistence evidence open for Mission 10. This report cannot be lesson-cited until the canonical artifact is successfully cached and provenance succeeds; do not substitute a secondary summary."
     },
     {
       "what": "Financial Analysts Journal / Journal of Portfolio Management papers on allocation and sizing — Ibbotson & Kaplan on what allocation policy explains; Grinold and Clarke/de Silva/Thorley on the fundamental law of active management",
@@ -176,10 +317,18 @@
   ],
   "openGaps": [
     {
-      "subject": "sizing-concentration",
-      "missions": [5],
-      "status": "No primary source locked yet.",
-      "candidates": "US regulatory diversification tests that real funds must satisfy — Investment Company Act section 5(b)(1) and the RIC diversification requirements in the Internal Revenue Code — are primary, free and teach genuine institutional constraints. Both need locating on a canonical government domain (eCFR, uscode.house.gov, or sec.gov) and fetch-testing before use."
+      "subject": "manager-persistence",
+      "missions": [10],
+      "status": "Open: the canonical S&P DJI U.S. Persistence Scorecard Year-End 2025 PDF returned HTTP 403 on direct local fetch on 2026-08-12, so no canonical cache or provenance record exists.",
+      "candidates": "Retry the official S&P DJI versioned PDF only through the source pipeline. It remains non-citable until the exact artifact is cached, hashed, extracted, and recorded in provenance; reject secondary summaries as substitutes."
+    }
+  ],
+  "designBoundaries": [
+    {
+      "subject": "personal-position-sizing",
+      "missions": [5, 10, 12],
+      "status": "No universal SEC or FINRA personal position-size cap exists. Investment-company and RIC diversification tests govern fund classification or tax status and must not be presented as personal suitability rules.",
+      "method": "Use FINRA's concentration-risk categories for look-through, then derive a candidate ceiling transparently from position weight × assumed position loss = contribution to portfolio loss. Label every numerical threshold as an OPS/learner policy and validate it through the Mission 5 stress test."
     }
   ]
 }

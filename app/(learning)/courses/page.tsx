@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { courses } from "@/data/courses";
+import { portfolioBuilderPath } from "@/data/courses/portfolioBuilder";
 import Button from "@/components/ui/Button";
 import CourseCard from "@/components/courses/CourseCard";
 
@@ -17,6 +18,20 @@ export const metadata = { title: "Courses — Open Portfolio Studio" };
  * Uses the full desktop canvas (1400px max). No monospace, no tiny
  * uppercase metadata, no small outlined dashboard panels.
  */
+
+/**
+ * Every count on this card is derived, never typed in. The hardcoded pair that
+ * used to live here said "12 missions / 11 depth labs / about eight core hours"
+ * while the course page one click away derived 13 missions and 10 hours.
+ */
+const MISSION_COUNT_WORDS = [
+  "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+  "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+] as const;
+
+const MISSION_COUNT_WORD =
+  MISSION_COUNT_WORDS[portfolioBuilderPath.missions.length] ??
+  String(portfolioBuilderPath.missions.length);
 
 function getLessonsCount(courseSlug: string): number {
   const course = courses.find((c) => c.slug === courseSlug);
@@ -87,16 +102,16 @@ export default function CoursesPage() {
               <CourseCard
                 slug={investmentFoundations.slug}
                 title={investmentFoundations.title}
-                subtitle="Twelve decisions. One portfolio you can defend."
-                shortDescription="Build a mandate, allocation, research process, holdings plan, and review policy in about eight core hours. Use Damodaran labs when you want additional depth."
+                subtitle={`${MISSION_COUNT_WORD} decisions. One portfolio you can defend.`}
+                shortDescription={`Build a mandate, allocation, research process, holdings plan, and review policy in about ${investmentFoundations.estimatedHours} core hours. Use Damodaran labs when you want additional depth.`}
                 outcomes={[
                   "Set an allocation and risk budget",
                   "Choose a passive core or defend an active sleeve",
                   "Implement, rebalance, and monitor the portfolio",
                 ]}
                 hours={investmentFoundations.estimatedHours}
-                modules={12}
-                lessons={11}
+                modules={portfolioBuilderPath.missions.length}
+                lessons={portfolioBuilderPath.depthLabs.length}
                 moduleLabel="Missions"
                 lessonLabel="Depth labs"
                 variant="amber"

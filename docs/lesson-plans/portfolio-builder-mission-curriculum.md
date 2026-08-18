@@ -1,7 +1,9 @@
 # Portfolio Builder: the mission curriculum
 
-**Status:** proposed for approval. Designed from the verified slide content of all 38
-Damodaran *Investment Philosophies* sessions, not from session titles.
+**Status:** **approved curriculum authority** on 2026-08-12. Designed from the verified
+slide content of all 38 Damodaran *Investment Philosophies* sessions, not from session
+titles. Approval fixes the 13-mission build-as-you-learn direction; it does not clear an
+unbuilt or source-gated mission for release.
 
 **Supersedes** `portfolio-builder-core-curriculum.md`, which assumed a 10-mission spine
 before the corpus was readable. That document's mission order was derived from the
@@ -9,19 +11,47 @@ session index; this one is derived from what the decks actually teach. Keep the 
 for provenance; do not implement from it.
 
 **Source basis:** `.source-cache/` (gitignored), built by `scripts/source/fetch-session.mjs`.
-38/38 slide decks, 38/38 quiz + solution files, 33/38 narration transcripts. Sessions 5,
-12, 24, 27 and 32 have no caption track and their narration is **not** reviewed.
+Tier 1 contains 38/38 hashed slide decks and 38/38 hashed quiz + solution files. Tier 2
+contains 33/38 official caption tracks and is citation-grade. Source-topic Sessions 5, 12,
+24, 27, and 32 have no official caption track. Noncanonical local ASR currently exists in
+`tmp/damodaran-corpus/` for Sessions 12, 24, 27, and 32 and may be used only for navigation
+or topic scope; a prior Session 5 ASR review is documented, but its source artifact is no
+longer present. New claim-level narration citations therefore remain gated for all five.
+
+**Practical workflow:** the Damodaran project/tool review and current-primary-source layer
+are recorded in `docs/source-audits/portfolio-builder-practical-tools.md`. The proposed
+persistent interaction, data, accessibility, and graduation contract is
+`docs/lesson-plans/portfolio-builder-guided-workbench.md`.
 
 ---
 
 ## 1. The one thing this course does
 
-> Build a portfolio you can defend, holding by holding, and leave with written rules for
-> what you own, what it costs, when you change it, and when you admit you were wrong.
+> Build, explain, and operate a diversified long-term portfolio for a stated goal—or prove
+> the same decisions in a realistic practice case—with written rules for readiness,
+> allocation, security selection, costs, evidence, rebalancing, and mistakes.
 
-Every mission is **one portfolio decision** that produces **one artifact**. A learner who
-finishes owns a complete, implementable Portfolio Dossier. Nothing else counts as progress
-— not sessions watched, not philosophies surveyed.
+Every mission is **one portfolio decision** saved into **one persistent Portfolio
+Workbench**. The final Portfolio Dossier and Investment Policy Statement are compiled from
+that work; they are not separate end-of-course worksheets. Nothing else counts as mastery—
+not sessions watched, philosophies surveyed, or fields filled without independent proof.
+
+The course offers two equal modes from Mission 1: **Build mine** and **Practice case**. A
+minor, a learner without account authority or earned income, or anyone with unresolved debt,
+emergency-reserve, jurisdiction, or readiness constraints still completes all 13 missions
+with a paper portfolio and deployment action plan. “Execute-ready” is conditional and is
+not the definition of graduation.
+
+The portfolio advances through controlled states:
+
+```text
+mandate → strategic weights → research-only watchlist → architecture license
+        → timing policy → product slate → order rehearsal → operating plan
+```
+
+No researched company becomes a holding before Missions 8–10 test friction, evidence, and
+the passive default. Exact products enter only in Mission 12, and the course never submits a
+real order.
 
 ## 2. Why this order is not Damodaran's order
 
@@ -53,24 +83,25 @@ status, "signs of a misfit" — is the natural opening frame *and* the closing t
 Status key: **built** = lessons exist; **ready** = sources verified, not yet built;
 **gated** = needs a primary source Damodaran does not provide (see §6).
 
-| # | Portfolio decision | Learner outcome | Artifact | Damodaran sources | Status |
+| # | Portfolio decision | Learner outcome | Workbench checkpoint | Damodaran sources | Status |
 |---:|---|---|---|---|---|
-| 1 | Who am I building this for? | State goal, horizon, cash needs, job security, tax status, loss capacity and behavioural constraints | Investor Mandate | 1, 38 | built (1.4) |
+| 1 | Who am I building this for? | State goal, horizon, cash needs, readiness, loss capacity and behavioural constraints; choose personal or practice mode | Mandate & Readiness Runway | 1, 38 | built (1.4 + Readiness Runway Workbench retrofit implemented with Mission 5; stakeholder review pending) |
 | 2 | What do I believe about markets? | Commit to a testable market belief and name what would falsify it | Market Belief Statement | 7, 1 | built (1.1, 1.3) |
 | 3 | What can a bond do to me? | Separate interest-rate risk from default risk; use duration and spreads | Bond Risk Assessment | 2 | built (2.1–2.5) |
 | 4 | What can a stock do to me, and what return should I demand? | Distinguish risk measures, use and criticise CAPM, set a required return | Required Return Lens | 3 | built (3.1–3.6) |
-| 5 | How much goes where, and what loss is unacceptable? | Build a strategic allocation, risk budget and concentration limits | Allocation & Risk Policy | 1, 2, 3, 30 + Finance Foundations portfolio theory + supplemental | **part-gated** |
-| 6 | What is the business behind the security? | Connect the statements; read profitability, leverage and cash flow | Business Evidence Brief | 4 | built (4.1–4.6) |
-| 7 | What is it worth, and at what price would I act? | Build an internally consistent value range and a decision rule | Valuation & Return Range | 5, 3, 4 | built (5.1) |
-| 8 | What will acting actually cost me? | Quantify spread, price impact, cost of waiting, turnover and tax drag | Friction Budget | 6 | **ready** |
-| 9 | How would I know if a strategy really works? | Apply event/portfolio/regression tests; name the cardinal sins | Evidence Test Checklist | 8 | **ready** |
-| 10 | Passive core, or do I have a defensible edge? | Default to passive unless a falsifiable edge survives friction and evidence | Architecture & Edge Decision | 35, 36, 7, 8, 6 | **ready** |
-| 11 | Will I try to time the market? | Price the cost of being wrong; write a no-timing or bounded-timing rule | Timing Policy | 30, 32, 33, 34 | **ready** |
-| 12 | What do I actually buy? | Compare index funds, ETFs and enhanced index funds on cost, tracking, tax and liquidity | Holdings Slate | 37 + supplemental | **gated** |
-| 13 | How is this maintained, and why is it coherent? | Write contribution, rebalance, tax, sell and thesis-break rules; defend the whole policy against the misfit test | Operating Plan & IPS | 36, 6, 38 + supplemental | **gated** |
+| 5 | How much goes where, and what loss is unacceptable? | Build a strategic allocation, liquidity bucket and stress-loss budget; derive any position ceiling transparently | Allocation and Risk Policy | 1, 2, 3, 30 + Finance Foundations portfolio theory + supplemental | built (Mission 5 Workbench; exact implementation pending stakeholder review) |
+| 6 | What is the business behind the security? | Connect the statements; read profitability, leverage and cash flow without treating research as permission to buy | Business Evidence Brief & Research-Only Watchlist | 4 | built (4.1–4.6; Workbench retrofit required) |
+| 7 | What is it worth, and at what price would I act? | Build an internally consistent value range, decision rule and thesis-break variables | Valuation Range & Watchlist Gate | 5, 3, 4 | built (5.1; Workbench retrofit required) |
+| 8 | What will acting actually cost me? | Quantify spread, price impact, cost of waiting, turnover and tax drag | Friction Budget | 6 | built (6.1) |
+| 9 | How would I know if a strategy really works? | Apply event/portfolio/regression tests; name the cardinal sins | Evidence Test Checklist | 8 | built (7.1) |
+| 10 | Passive core, or do I have a defensible edge? | Default to passive unless a falsifiable edge survives base rate, evidence, friction, capacity, durability and size limits | Architecture & Edge License | 35, 36, 7, 8, 6 | built (8.1; Gate A closed 2026-08-14 by approved narrowing — no current manager-persistence claim is made) |
+| 11 | Will I try to time the market? | Price the cost of being wrong; write a no-timing or bounded-timing rule | Timing Policy | 30, 32, 33, 34 | **gated — Session 32 narration** |
+| 12 | What do I actually buy? | Verify exact product identity, exposure, structure, fees, tracking, liquidity, source dates and overlap; rehearse but do not place an order | Fund Passports, Holdings Slate & Order Draft | 37 + supplemental | **gated** |
+| 13 | How is this maintained, and why is it coherent? | Write contribution, withdrawal, rebalance, tax-warning, sell and thesis-break rules; pass a portfolio flight test and defend the policy | Operating Plan, IPS & Capstone | 36, 6, 38 + supplemental | **gated** |
 
-Six missions are already built, four are ready to build from verified sources, and three
-are blocked on sources outside this corpus.
+Ten missions are already built. Three remain gated by supplemental sources, narration,
+learning design, or implementation evidence. Curriculum approval removes the architecture
+gate only; each remaining mission must still pass its own ordered OPS release gates.
 
 ## 4. Dependency logic
 
@@ -135,66 +166,86 @@ and behaviour.
 
 ## 6. What Damodaran does not give us
 
-Six subjects are required for an implementable portfolio and are not taught to sufficient
-depth in this corpus. Missions 5, 12 and 13 are gated on them and **must not be authored**
-until primary, current sources are locked:
+Seven implementation areas are required for a safe beginner portfolio and are not taught to
+sufficient depth in this corpus. Every affected mission still needs its own primary-source
+coverage matrix; an OPS adaptation must be labelled rather than attributed to Damodaran:
 
-1. **Strategic asset allocation — implementation only.** The *theory* is already built, in
+1. **Investment readiness.** The corpus discusses fit, cash needs, horizon, job security and
+   tax status, but it does not screen emergency savings, high-interest debt, account
+   authority, or whether a learner should remain in a paper-portfolio path.
+2. **Strategic asset allocation — implementation only.** The *theory* is already built, in
    Finance Foundations: `portfolio-risk-covariance-correlation`,
    `portfolio-diversification-many-assets`, `portfolio-efficient-frontier`,
    `portfolio-risk-free-tangency-sharpe`, `capm-tangency-becomes-market-portfolio` and
    `required-return-to-discount-rate`. Mission 5 should **reference** those rather than
    re-teach them. What is genuinely missing is the step from a frontier to a real
-   allocation for a person with a horizon, a tax status and a behavioural limit — plus
-   current return/risk inputs. Session 1 covers risk preference, horizon and tax status
-   but produces no allocation.
-2. **Position sizing and concentration policy.** Absent from the corpus.
-3. **Current fund and ETF due diligence.** Session 37's product landscape predates the
+   allocation for a person with a horizon, a tax status and a behavioural limit. The
+   bounded Mission 5 implementation deliberately uses visible OPS/learner stress
+   assumptions rather than current return/covariance estimates or optimizer output.
+   Adding an optimizer or live expected-return/risk inputs would reopen Mission 5 Gate A.
+   Session 1 covers risk preference, horizon and tax status but produces no allocation.
+3. **Position sizing and concentration policy.** Absent from the corpus. No SEC or FINRA
+   source supplies a universal personal percentage cap. Mission 5 must derive a candidate
+   ceiling from an explicit loss budget and label it as an OPS/learner policy; fund
+   diversification statutes must not be misrepresented as personal suitability rules.
+4. **Current fund and ETF due diligence.** Session 37's product landscape predates the
    modern ETF market; expense ratios, structures and tracking practice have all moved.
-4. **Rebalancing method and cadence.** Session 36 explains why turnover hurts but gives no
+5. **Rebalancing method and cadence.** Session 36 explains why turnover hurts but gives no
    rebalancing rule.
-5. **Current tax and account rules.** Session 6's tax treatment is dated and US-specific.
-6. **IPS and benchmark design.** Session 38 assesses fit but produces no policy document.
+6. **Current tax and account rules.** Session 6's tax treatment is dated and US-specific.
+7. **IPS and benchmark design.** Session 38 assesses fit but produces no policy document.
 
 Additionally, historical performance and product-cost claims throughout sessions 35–37
 need current evidence rather than reuse.
 
-### Status of the supplemental sources (verified 2026-08-10)
+### Status of the supplemental sources (verified 2026-08-12)
 
 Locked jurisdiction: **US**. Manifest: `scripts/source/supplemental-manifest.json`;
-fetcher: `scripts/source/fetch-supplemental.mjs`. Every URL was fetch-tested — during the
-survey two candidates returned 404 and one returned 403, so nothing here is taken on trust.
+fetcher: `scripts/source/fetch-supplemental.mjs`. Every manifest URL was fetch-tested. A
+source that works in a browser but cannot be cached and hashed is recorded under
+`inaccessible`, not presented as citation-grade.
 
 | Subject | Source | Status |
 | --- | --- | --- |
-| 1. Allocation — inputs | Damodaran, *Equity Risk Premiums* (78 pp); Country Default Spreads (167 country rows) | **locked** |
-| 1. Allocation — method | Vanguard, *Principles for Investing Success* (33 pp) | **locked** |
-| 2. Sizing and concentration | none | **open** — see manifest `openGaps` |
-| 3. Fund and ETF diligence | SEC EDGAR submissions API; SEC investor.gov fund basics | **locked** |
-| 4. Rebalancing | Vanguard, *The Rebalancing Edge* (15 pp) | **locked** |
-| 5. Tax and accounts (US) | IRS Publications 550, 590-A, 590-B (270 pp combined) | **locked** |
-| 6. IPS and benchmark | CFA Institute, *Elements of an IPS for Individual Investors* (27 pp) | **locked** |
+| 1. Investment readiness | Investor.gov, *Investor Preparedness Checklist*; CFPB emergency-fund guide | **locked**; no universal reserve amount |
+| 2. Allocation — inputs | Learner mandate facts plus visibly labelled OPS/learner stress assumptions | **closed for bounded Mission 5**. Current return/covariance inputs and optimizer output are quarantined and would require a new Gate A review. |
+| 2. Allocation — method | Investor.gov asset-allocation/rebalancing guide; Vanguard, *Principles for Investing Success* | **locked** |
+| 3. Sizing and concentration | FINRA concentration-risk page | Browser-reviewed; local fetch **403**. Numerical cap is an OPS loss-budget policy, not a source fact. |
+| 4. Fund and ETF diligence | SEC EDGAR submissions API; SEC investor.gov fund basics | **locked**. Form N-1A and N-PORT overview pages remain locally inaccessible; exact EDGAR filings control. |
+| 5. Rebalancing | Investor.gov beginner's guide; Vanguard, *The Rebalancing Edge* | **locked**. The Vanguard paper is provider evidence, not a personal 200/175-basis-point rule. |
+| 6. Tax and accounts (US) | IRS Publications 550, 590-A, 590-B (270 pp combined) | **locked** |
+| 7. IPS and benchmark | CFA Institute, *Elements of an IPS for Individual Investors* (27 pp) | **locked** |
+| Order rehearsal | SEC order-types and brokerage-account bulletins | **locked**; rehearsal only, no order transmission |
+| Current active/passive base rate | Morningstar Manager Research, *US Active/Passive Barometer: June 2026* | **locked for source audit** |
+| Current fund-performance persistence | S&P DJI, *U.S. Persistence Scorecard Year-End 2025* | **open — canonical local fetch blocked** |
 
-Two things remain genuinely unresolved:
+Three course-level boundaries remain before the later gated missions can ship:
 
-- **Position sizing and concentration policy** has no primary source yet. The best
-  candidates are US regulatory diversification tests real funds must satisfy — Investment
-  Company Act §5(b)(1) and the RIC diversification requirements — which need locating on a
-  canonical government domain and fetch-testing.
-- **Index methodology is not machine-accessible.** S&P's methodology PDF returns 403 to
-  automated fetch. Teach index construction from a fund prospectus via EDGAR instead: it
-  describes the index it tracks, it is accessible, and it is the document a real investor
-  would read.
+- **Position sizing is an OPS design boundary, not a missing universal rule.** The search
+  for a regulator-approved personal percentage cap is closed because no such standard was
+  found and institutional fund tests answer a different legal question. Mission 5 closes
+  its bounded sizing design by deriving an optional candidate ceiling from a learner-owned
+  loss-contribution budget and a visibly hypothetical loss assumption. FINRA employer-stock
+  and fund-overlap claims remain quarantined until canonical provenance is available.
+- **Exact product evidence must come from current EDGAR filings.** S&P index methodology,
+  SEC Form N-1A and the N-PORT overview page were browser-reviewed but local fetches are
+  blocked. This does not justify secondary summaries; Mission 12 should inspect the exact
+  prospectus and holdings record available through the locked EDGAR path and timestamp it.
+- **Current fund-performance persistence is not yet canonical.** S&P DJI's versioned
+  Year-End 2025 Persistence Scorecard is public and has been reviewed, but its server
+  returns HTTP 403 to the checked-in fetch pipeline. Do not cite its figures in a lesson
+  until the PDF is cached with provenance and a hash. Morningstar's June 2026 report closes
+  the current active/passive base-rate need, not this narrower winner-persistence question.
 
-Five sources are marked `decay: high` because their figures change at least annually
-(risk premiums, tax thresholds). Lesson copy must cite them with a date and must never
-hardcode the numbers.
+Sources marked `decay: high` contain figures that change at least annually. Lesson copy
+must cite them with a date and must never hardcode the numbers.
 
 ## 7. What happens to the lessons already built
 
-22 lessons exist across sessions 1–5 — four, five, six, six and one. (The superseded plan
-said 21; that was an undercount, verified against `lib/lessonRegistry.ts` and the 22 lesson
-components on disk.) **No slug changes and no content rebuilds.** Slugs
+24 lessons exist across lesson groups 1–7 — four, five, six, six, one, one, and one.
+(The superseded plan said 21; that was an undercount, verified against
+`lib/lessonRegistry.ts` and the lesson components on disk.) **No slug changes and no
+content rebuilds.** Slugs
 are the keys in `ops-if-completion-v1` and in `legacyCompletionSlugs`, so renaming them
 would silently erase saved learner progress. Only learner-facing labels change: the module
 eyebrows, sidebar and headings are restated as missions.
@@ -214,15 +265,37 @@ The one structural change: **1.3 moves out of the required opening.** Surveying 
 philosophy families before the learner can test any of them is the same mistake as the
 original session order, one module down.
 
-## 8. Release gates
+## 8. Competence and graduation
+
+Completion is not competence. A learner graduates only after both of these pass:
+
+1. the learner's personal or practice Portfolio Dossier, including source dates,
+   assumptions, rejected ideas, loss response, product identity and operating rules; and
+2. an unfamiliar transfer case in which the learner diagnoses, repairs and operates a new
+   portfolio without copying saved answers.
+
+Weights that do not total 100%, a liquidity mismatch, hidden leverage, the wrong security,
+unsupported concentration or active edge, missing provenance, or no response to loss,
+drift or a broken thesis are critical failures regardless of the numerical score. The
+proposed rubric and 80-point pilot threshold are defined in the guided Workbench
+specification; the threshold must be calibrated in learner testing before it is represented
+as a competence standard.
+
+Graduation demonstrates a beginner's ability to build, explain and operate a diversified
+long-term portfolio for a stated case. It does not certify advisory competence, market
+prediction, personal tax calculation, or safe use of leverage, derivatives, short selling
+or concentrated speculation.
+
+## 9. Release gates
 
 Before any gated mission is authored:
 
-- lock primary current sources for the six subjects in §6;
+- close or explicitly quarantine the affected implementation boundaries in §6;
 - build a claim-level coverage matrix per mission, citing slide and narration timestamps
   from `.source-cache/`;
-- for sessions 5, 12, 24, 27 and 32, record narration as **not reviewed** — no caption
-  track exists and this environment has no speech-to-text.
+- for Sessions 5, 12, 24, 27, and 32, record that no official caption track exists. Local
+  ASR is noncanonical navigation evidence only; it does not close a claim-level citation
+  gate without reconciliation and recorded provenance.
 
 Before any mission ships:
 
