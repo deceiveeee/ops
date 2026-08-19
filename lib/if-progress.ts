@@ -14,6 +14,7 @@ const EVIDENCE_CHECKLIST_KEY = "ops-if-evidence-checklist-v1";
 const ARCHITECTURE_DECISION_KEY = "ops-if-architecture-decision-v1";
 const TIMING_POLICY_KEY = "ops-if-timing-policy-v1";
 const HOLDINGS_SLATE_KEY = "ops-if-holdings-slate-v1";
+const OPERATING_PLAN_KEY = "ops-if-operating-plan-v1";
 const PROGRESS_EVENT = "ops-if-progress";
 
 export const IF_LESSON_SLUGS = [
@@ -521,7 +522,128 @@ export function holdingsSlateBlockers(
   return blockers;
 }
 
+/**
+ * Mission 13 — the Operating Plan and IPS.
+ *
+ * Only two of the CFA's sixteen IPS elements are new work here: the review
+ * process (2b) and the rebalancing process (4c). The other fourteen are read
+ * from Missions 1-12, which is why this type carries rules and responses
+ * rather than a copy of the portfolio.
+ */
+export type ScenarioResponse = {
+  /** What changed, in the learner's words. */
+  whatChanged: string;
+  /** Which saved policy or checkpoint controls the response. */
+  controllingPolicy: string;
+  /** Act, do not act, or review. */
+  response: "" | "act" | "no-action" | "review";
+  /** What downstream work this affects. */
+  downstream: string;
+  /** The evidence that would change the answer. */
+  wouldChangeIf: string;
+  /**
+   * True where the learner's saved policy is silent on this scenario. Not a
+   * failure — it is the most useful thing the flight test can surface, and it
+   * sends them back to the rule writer with a specific gap.
+   */
+  policySilent: boolean;
+};
+
+export const EMPTY_SCENARIO_RESPONSE: ScenarioResponse = {
+  whatChanged: "",
+  controllingPolicy: "",
+  response: "",
+  downstream: "",
+  wouldChangeIf: "",
+  policySilent: false,
+};
+
+export type RebalanceRule = {
+  /** Investor.gov gives two trigger types; the number is the learner's own. */
+  trigger: "" | "calendar" | "threshold";
+  /** Months between reviews, when the trigger is calendar-based. */
+  cadenceMonths: number;
+  /** The band in basis points, when the trigger is threshold-based. */
+  bandBps: number;
+  /** Which of the three Investor.gov methods the plan uses by default. */
+  method: "" | "sell-and-buy" | "new-money" | "redirect-flows";
+};
+
+export const EMPTY_REBALANCE_RULE: RebalanceRule = {
+  trigger: "",
+  cadenceMonths: 0,
+  bandBps: 0,
+  method: "",
+};
+
+export type OperatingPlan = {
+  mode: "" | "personal" | "practice";
+  /** CFA element 2b — the one governance element with real force for a solo investor. */
+  reviewProcess: string;
+  /** CFA element 4c. */
+  rebalanceRule: RebalanceRule;
+  contributionRule: string;
+  withdrawalRule: string;
+  sellReplaceRule: string;
+  thesisBreakRule: string;
+  /** Keyed by scenario id; the flight test has nine. */
+  scenarioResponses: Record<string, ScenarioResponse>;
+  transferCaseId: string;
+  transferCasePassed: boolean;
+  /** Any one of these fails the case outright. Never a score. */
+  criticalFailures: string[];
+  updatedAt: string;
+};
+
+export const EMPTY_OPERATING_PLAN: OperatingPlan = {
+  mode: "",
+  reviewProcess: "",
+  rebalanceRule: EMPTY_REBALANCE_RULE,
+  contributionRule: "",
+  withdrawalRule: "",
+  sellReplaceRule: "",
+  thesisBreakRule: "",
+  scenarioResponses: {},
+  transferCaseId: "",
+  transferCasePassed: false,
+  criticalFailures: [],
+  updatedAt: "",
+};
+
+/** A rebalance rule is complete only if its chosen trigger carries its number. */
+export function isRebalanceRuleComplete(rule: RebalanceRule): boolean {
+  if (!rule.method) return false;
+  if (rule.trigger === "calendar") return rule.cadenceMonths > 0;
+  if (rule.trigger === "threshold") return rule.bandBps > 0;
+  return false;
+}
+
+/**
+ * Complete on its own terms. Whether it reaches Practice-complete or
+ * Execute-ready is a separate question answered by `completionState` in
+ * lib/operating-plan.ts, because that depends on all twelve prior checkpoints.
+ */
+export function isOperatingPlanComplete(plan: OperatingPlan): boolean {
+  if (!plan.updatedAt || !plan.mode) return false;
+  if (!plan.reviewProcess.trim()) return false;
+  if (!isRebalanceRuleComplete(plan.rebalanceRule)) return false;
+  if (!plan.contributionRule.trim()) return false;
+  if (!plan.withdrawalRule.trim()) return false;
+  if (!plan.sellReplaceRule.trim()) return false;
+  if (!plan.thesisBreakRule.trim()) return false;
+
+  // Every scenario answered, and a silent policy counts as answered only when
+  // the learner has said what would control instead.
+  const answered = Object.values(plan.scenarioResponses).filter(
+    (r) => r.response !== "" && r.controllingPolicy.trim().length > 0,
+  );
+  if (answered.length < 9) return false;
+
+  return plan.transferCasePassed && plan.criticalFailures.length === 0;
+}
+
 function readDraft(): PhilosophyDraft {
+
   if (typeof window === "undefined") return EMPTY_DRAFT;
   try {
     const raw = window.localStorage.getItem(DRAFT_KEY);
@@ -755,6 +877,41 @@ function writeHoldingsSlate(slate: HoldingsSlate) {
   }
 }
 
+function readOperatingPlan(): OperatingPlan {
+  if (typeof window === "undefined") return EMPTY_OPERATING_PLAN;
+  try {
+    const raw = window.localStorage.getItem(OPERATING_PLAN_KEY);
+    if (!raw) return EMPTY_OPERATING_PLAN;
+    const parsed = JSON.parse(raw) as Partial<OperatingPlan>;
+    return {
+      ...EMPTY_OPERATING_PLAN,
+      ...parsed,
+      // Nested shapes need their own defaults, or a plan saved by an older
+      // build arrives with an undefined rule and every consumer guards it.
+      rebalanceRule: {
+        ...EMPTY_REBALANCE_RULE,
+        ...(parsed.rebalanceRule ?? {}),
+      },
+      scenarioResponses: parsed.scenarioResponses ?? {},
+      criticalFailures: Array.isArray(parsed.criticalFailures)
+        ? parsed.criticalFailures
+        : [],
+    };
+  } catch {
+    return EMPTY_OPERATING_PLAN;
+  }
+}
+
+function writeOperatingPlan(plan: OperatingPlan) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(OPERATING_PLAN_KEY, JSON.stringify(plan));
+    window.dispatchEvent(new Event(PROGRESS_EVENT));
+  } catch {
+    /* ignore */
+  }
+}
+
 function writeFrictionBudget(budget: FrictionBudget) {
   if (typeof window === "undefined") return;
   try {
@@ -790,6 +947,8 @@ export function useIFProgress() {
     useState<TimingPolicy>(EMPTY_TIMING_POLICY);
   const [holdingsSlate, setHoldingsSlateState] =
     useState<HoldingsSlate>(EMPTY_HOLDINGS_SLATE);
+  const [operatingPlan, setOperatingPlanState] =
+    useState<OperatingPlan>(EMPTY_OPERATING_PLAN);
 
   useEffect(() => {
     setDraftState(readDraft());
@@ -802,6 +961,7 @@ export function useIFProgress() {
     setArchitectureDecisionState(readArchitectureDecision());
     setTimingPolicyState(readTimingPolicy());
     setHoldingsSlateState(readHoldingsSlate());
+    setOperatingPlanState(readOperatingPlan());
     const onChange = () => {
       setDraftState(readDraft());
       setBondBriefState(readBondBrief());
@@ -813,6 +973,7 @@ export function useIFProgress() {
       setArchitectureDecisionState(readArchitectureDecision());
       setTimingPolicyState(readTimingPolicy());
       setHoldingsSlateState(readHoldingsSlate());
+      setOperatingPlanState(readOperatingPlan());
     };
     window.addEventListener(PROGRESS_EVENT, onChange);
     window.addEventListener("storage", onChange);
@@ -942,6 +1103,17 @@ export function useIFProgress() {
     setHoldingsSlateState(EMPTY_HOLDINGS_SLATE);
   }, []);
 
+  const saveOperatingPlan = useCallback((plan: OperatingPlan) => {
+    const stamped = { ...plan, updatedAt: new Date().toISOString() };
+    writeOperatingPlan(stamped);
+    setOperatingPlanState(stamped);
+  }, []);
+
+  const clearOperatingPlan = useCallback(() => {
+    writeOperatingPlan(EMPTY_OPERATING_PLAN);
+    setOperatingPlanState(EMPTY_OPERATING_PLAN);
+  }, []);
+
   return {
     ready: store.ready,
     completion,
@@ -955,6 +1127,7 @@ export function useIFProgress() {
     architectureDecision,
     timingPolicy,
     holdingsSlate,
+    operatingPlan,
     isComplete,
     markComplete,
     saveDraft,
@@ -977,5 +1150,7 @@ export function useIFProgress() {
     clearTimingPolicy,
     saveHoldingsSlate,
     clearHoldingsSlate,
+    saveOperatingPlan,
+    clearOperatingPlan,
   };
 }
