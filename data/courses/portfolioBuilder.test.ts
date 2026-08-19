@@ -99,7 +99,7 @@ describe("portfolio builder curriculum", () => {
     // resolving its limit through narrowing, not by acquiring the missing
     // artifact. The rule under test is unchanged — an *open* gap still blocks
     // release — and the mission it no longer covers is asserted below instead.
-    expect(gapped.map((m) => m.order)).toEqual([13]);
+    expect(gapped.map((m) => m.order)).toEqual([]);
     for (const mission of gapped) expect(mission.status).toBe("planned");
   });
 

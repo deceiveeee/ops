@@ -651,6 +651,16 @@ export const investmentFoundations: Course = {
       ["if-pb-12-choose-the-actual-holdings"],
       "Mission 12",
     ),
+    module(
+      "if-m13-operating-plan",
+      13,
+      "Operating Plan",
+      "Decide what happens when the market falls, your income stops, or the reason you bought something turns out to be wrong — then compile every decision into one document and defend a portfolio you did not build.",
+      "Produce an Operating Plan and Investment Policy Statement: rebalancing, contribution, withdrawal, replacement, thesis-break and review rules, nine answered scenarios, and a diagnosed transfer case.",
+      "security-pricing",
+      ["if-pb-13-write-the-rules-and-defend-the-portfolio"],
+      "Mission 13",
+    ),
   ],
 };
 

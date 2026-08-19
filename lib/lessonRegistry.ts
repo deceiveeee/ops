@@ -73,6 +73,7 @@ import LessonIF_8_1 from "@/components/lessons/investment-foundations/LessonIF_8
 import LessonIF_6_1 from "@/components/lessons/investment-foundations/LessonIF_6_1";
 import LessonIF_PB_11 from "@/components/lessons/investment-foundations/LessonIF_PB_11";
 import LessonIF_PB_12 from "@/components/lessons/investment-foundations/LessonIF_PB_12";
+import LessonIF_PB_13 from "@/components/lessons/investment-foundations/LessonIF_PB_13";
 
 export type LessonComponentProps = Record<string, never>;
 
@@ -157,6 +158,7 @@ export const lessonRegistry: Record<
   "if-8-1-choose-passive-or-prove-an-edge": LessonIF_8_1,
   "if-pb-11-set-a-market-timing-policy": LessonIF_PB_11,
   "if-pb-12-choose-the-actual-holdings": LessonIF_PB_12,
+  "if-pb-13-write-the-rules-and-defend-the-portfolio": LessonIF_PB_13,
 };
 
 export function getLessonComponent(

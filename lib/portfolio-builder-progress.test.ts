@@ -25,13 +25,22 @@ const firstAvailableWithSeveralLessons = () => {
   return mission;
 };
 
-const firstPlanned = () => {
-  const mission = portfolioBuilderPath.missions.find(
-    (m) => m.status === "planned",
-  );
-  if (!mission) throw new Error("no planned mission");
-  return mission;
-};
+/**
+ * A synthetic planned mission, not one taken from the live course data.
+ *
+ * These assertions used to select the first mission whose status was "planned".
+ * That worked until Mission 13 shipped on 2026-08-17 and the last planned
+ * mission disappeared, at which point the helper threw and two real behaviours
+ * went untested for a reason unrelated to either of them. The behaviour is
+ * still worth asserting, so the fixture is built here and no longer depends on
+ * something remaining unreleased.
+ */
+const plannedMission = () => ({
+  ...missionById("pb-13"),
+  id: "pb-planned-fixture",
+  status: "planned" as const,
+  legacyCompletionSlugs: ["fixture-lesson-a", "fixture-lesson-b"],
+});
 
 const completionFor = (slugs: string[]) =>
   Object.fromEntries(slugs.map((slug) => [slug, true]));
@@ -60,7 +69,7 @@ describe("portfolio builder progress", () => {
 
   it("keeps planned missions planned regardless of unrelated completion", () => {
     expect(
-      getPortfolioMissionProgress(firstPlanned(), { unrelated: true }),
+      getPortfolioMissionProgress(plannedMission(), { unrelated: true }),
     ).toBe("planned");
   });
 
@@ -81,15 +90,18 @@ describe("portfolio builder progress", () => {
   });
 
   it("reports a planned mission's artifact as planned", () => {
-    const planned = firstPlanned();
-    const artifact = portfolioBuilderPath.artifacts.find(
-      (a) => a.id === planned.artifactId,
-    );
+    const planned = plannedMission();
+    const artifact = {
+      // A real artifact id, because the type is a closed union; the mission
+      // list passed alongside it is what makes this a fixture.
+      id: "policy" as const,
+      label: "Fixture",
+      missionIds: [planned.id],
+    };
 
-    expect(artifact).toBeDefined();
-    expect(
-      getPortfolioArtifactProgress(artifact!, portfolioBuilderPath.missions, {}),
-    ).toBe("planned");
+    expect(getPortfolioArtifactProgress(artifact, [planned], {})).toBe(
+      "planned",
+    );
   });
 
   it("counts only completed missions", () => {

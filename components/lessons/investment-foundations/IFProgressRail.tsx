@@ -13,6 +13,7 @@ import {
   IF_MODULE_8_LESSONS,
   IF_MODULE_11_LESSONS,
   IF_MODULE_12_LESSONS,
+  IF_MODULE_13_LESSONS,
   IF_MODULE_PB5_LESSONS,
 } from "./shared";
 import { useIFProgress } from "@/lib/if-progress";
@@ -79,6 +80,11 @@ export const JOURNEY_GROUPS = [
     lessons: IF_MODULE_12_LESSONS,
     missionLabel: "Mission 12",
     title: "Holdings Slate",
+  },
+  {
+    lessons: IF_MODULE_13_LESSONS,
+    missionLabel: "Mission 13",
+    title: "Operating Plan",
   },
 ] as const;
 

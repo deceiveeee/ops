@@ -359,12 +359,13 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       artifactId: "policy",
       artifactLabel: "Operating Plan and IPS",
       targetMinutes: 40,
-      status: "planned",
-      legacyCompletionSlugs: [],
+      status: "available",
+      startLessonSlug: "if-pb-13-write-the-rules-and-defend-the-portfolio",
+      legacyCompletionSlugs: ["if-pb-13-write-the-rules-and-defend-the-portfolio"],
       optionalLabSlugs: [],
-      sourceSessions: [6, 36, 38],
-      sourceGap:
-        "Rebalancing, current US tax/account, order-rehearsal and IPS sources are locked, but Mission 13 still needs a claim-level source matrix and a validated transfer-case assessment before implementation.",
+      sourceSessions: [1, 6, 36, 38],
+      sourceBoundary:
+        "Closed by claim-level review on 2026-08-17. All four Damodaran sessions carry official caption tracks; the IPS skeleton is CFA Institute’s 2010 elements document, cited for structure only. Four limits stay visible rather than resolved: Session 36’s performance percentages are dated and appear as labelled history under Mission 10’s quarantine; Session 6’s dividend-versus-capital-gains rate premise is source-era and is not reproduced; Vanguard’s rebalancing research studies target-date funds, frames its benefit as return and omits tax from its cost model, so it is not cited for the rebalancing rule; and the cached IRS publications extract with interleaved columns, so they are cited by edition as the pointer of record and never quoted. Rebalancing method and trigger types come from the SEC, which leaves the number to the investor.",
     },
   ],
   depthLabs: [

@@ -46,6 +46,7 @@ const IF_LESSON_ROUTES = [
   "if-8-1-choose-passive-or-prove-an-edge",
   "if-pb-11-set-a-market-timing-policy",
   "if-pb-12-choose-the-actual-holdings",
+  "if-pb-13-write-the-rules-and-defend-the-portfolio",
 ];
 
 /**
@@ -218,6 +219,19 @@ const ANSWER_KEYS: Record<string, string[]> = {
    * keyed step is the mode itself. No timing is a complete outcome of this
    * mission, not a shortcut around it.
    */
+  /**
+   * Mission 13's transfer case is an assessment: it passes only when all four
+   * planted defects are found and the decoy is left alone, so no arbitrary set
+   * of choices satisfies it. This is the mission's one keyed stage.
+   */
+  "if-pb-13-write-the-rules-and-defend-the-portfolio#10": [
+    "Problem — The sleeve weights total 104%",
+    "Problem — Next year's tuition sits in the growth sleeve",
+    "Problem — The plan names a ticker but no share class",
+    "Problem — The overlap figure carries no as-of date",
+    "Not a problem — One fund charges 0.03% rather than 0.02%",
+    "Save the Operating Plan",
+  ],
   "if-pb-11-set-a-market-timing-policy#3": [
     "No timing",
     "type:timing-reason=My horizon is long and no signal has passed my evidence test.",
@@ -1052,6 +1066,37 @@ for (const slug of IF_LESSON_ROUTES) {
     // takes longer than the 5s default and produced failures that vanished on
     // a warm re-run. The page is not slow; the compiler is.
     await expect(page.locator("main")).toBeVisible({ timeout: 45_000 });
+
+    /**
+     * Visible is not the same as listening.
+     *
+     * The walk opens by clicking, and a dev server compiling a route for the
+     * first time serves the server-rendered HTML well before React attaches its
+     * handlers. A press inside that window is dropped in silence — the button is
+     * present, visible and enabled, and nothing happens. Mission 13 failed here
+     * on a cold server and walked to its last stage on a warm one: four clicks
+     * on stage 1, no state change, reported as a stage that could not be
+     * answered. The lesson was never at fault, and the walker had no way to see
+     * the difference.
+     *
+     * React sets `__reactProps$…` on a host node when it commits that node's
+     * handlers, so its presence on a real control is the signal that a click
+     * will now be heard.
+     */
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll("main button")].some((control) =>
+              Object.keys(control).some((k) => k.startsWith("__reactProps$")),
+            ),
+          ),
+        {
+          message: `${slug}: React never attached its handlers, so every click in the walk would land on a page that cannot hear it`,
+          timeout: 45_000,
+        },
+      )
+      .toBe(true);
 
     if (slug === "if-pb-05-set-allocation-and-risk-limits") {
       const practiceMode = page
