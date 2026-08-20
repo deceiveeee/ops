@@ -1726,6 +1726,65 @@ export function saveCheckpointStatus(
   return commitCheckpoint(workbench, mode, checkpoint, status, changedField, reason, now);
 }
 
+/**
+ * Record that the lesson owning a checkpoint has committed its artifact.
+ *
+ * Every `write*` helper in `lib/if-progress.ts` is a commit moment: the lessons
+ * call them from an explicit save their stage has already validated, never on a
+ * keystroke. That is what makes them the honest place to move a checkpoint, and
+ * it is why this is not derived at load time from whether an artifact happens to
+ * exist on disk. A draft is not a decision, and only the owning lesson knows the
+ * difference.
+ *
+ * Without this, eleven of the thirteen checkpoints were never written by
+ * anything. `saveCheckpointStatus` had no caller outside its own tests, the
+ * legacy migration recorded artifacts as `migrated-unconfirmed` and nothing ever
+ * promoted them, and a learner who finished all twelve prior missions still met
+ * Mission 13's readiness map reporting ten of twelve checkpoints outstanding.
+ * `Execute-ready` requires no gaps, so it could not be reached at all.
+ *
+ * Coherence is asserted only where the graph allows it. `architecture` cannot be
+ * coherent until allocation, evidence, valuation, friction and the evidence test
+ * are, so an artifact saved ahead of its prerequisites records
+ * `saved-unverified` rather than throwing or overstating. The learner's work is
+ * kept either way; what changes is whether it counts towards Execute-ready.
+ *
+ * Personal case only. These artifacts predate modes and are stored once per
+ * browser, the practice case is a separate sandbox, and Execute-ready is a
+ * personal-mode outcome by definition.
+ */
+export function recordArtifactCheckpoint(
+  storage: WorkbenchStorage | null | undefined,
+  checkpoint: Exclude<WorkbenchCheckpointId, "mandate" | "allocation">,
+  changedField: string,
+  reason: string,
+  now = new Date().toISOString(),
+): boolean {
+  if (!storage) return false;
+
+  const load = loadPortfolioWorkbench(storage, now);
+  // A corrupt or future-version Workbench is preserved untouched everywhere
+  // else in this module, and a checkpoint write is not the place to break that.
+  if (load.kind !== "ok") return false;
+
+  const personal = load.workbench.cases.personal;
+  const coherent = (COHERENCE_PREREQUISITES[checkpoint] ?? []).every(
+    (dependency) => personal.checkpoints[dependency].status === "coherent",
+  );
+
+  const next = saveCheckpointStatus(
+    load.workbench,
+    "personal",
+    checkpoint,
+    coherent ? "coherent" : "saved-unverified",
+    changedField,
+    reason,
+    now,
+  );
+
+  return persistPortfolioWorkbench(storage, next).ok;
+}
+
 export type WorkbenchLifecycle =
   | "draft"
   | "mandate-drafted"

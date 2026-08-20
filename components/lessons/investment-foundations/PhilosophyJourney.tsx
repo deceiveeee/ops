@@ -1013,7 +1013,7 @@ type HypothesisAnswers = {
 };
 
 function HypothesisScene({ onComplete }: SceneProps) {
-  const { draft, saveDraft } = useIFProgress();
+  const { beliefStatement, saveBeliefStatement } = useIFProgress();
   const [answers, setAnswers] = useState<HypothesisAnswers>({
     belief: "",
     persistence: "",
@@ -1026,12 +1026,12 @@ function HypothesisScene({ onComplete }: SceneProps) {
 
   useEffect(() => {
     setAnswers({
-      belief: draft.marketBelief,
-      persistence: draft.persistenceReason,
-      rejection: draft.evidenceGap,
+      belief: beliefStatement.marketBelief,
+      persistence: beliefStatement.persistenceReason,
+      rejection: beliefStatement.evidenceGap,
     });
     setLoaded(true);
-  }, [draft]);
+  }, [beliefStatement]);
 
   const current = HYPOTHESIS_PROMPTS[promptIndex];
   const value = answers[current.key];
@@ -1055,8 +1055,8 @@ function HypothesisScene({ onComplete }: SceneProps) {
   };
 
   const save = () => {
-    saveDraft({
-      ...draft,
+    saveBeliefStatement({
+      ...beliefStatement,
       marketBelief: answers.belief.trim(),
       persistenceReason: answers.persistence.trim(),
       evidenceGap: answers.rejection.trim(),

@@ -3,11 +3,14 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it } from "vitest";
 import { ProgressProvider } from "@/lib/progress/store";
+import { loadPortfolioWorkbench } from "@/lib/portfolio-workbench";
 import { SessionProvider } from "@/lib/supabase/session";
 import {
+  EMPTY_BELIEF_STATEMENT,
   EMPTY_BOND_BRIEF,
   EMPTY_DRAFT,
   EMPTY_EQUITY_RISK_POLICY,
+  EMPTY_ARCHITECTURE_DECISION,
   EMPTY_EVIDENCE_CHECKLIST,
   EMPTY_FRICTION_BUDGET,
   EMPTY_STATEMENT_BRIEF,
@@ -177,5 +180,135 @@ describe("Investment Foundations artifact persistence", () => {
         hurdleRule: "External update",
       }),
     );
+  });
+});
+
+describe("artifacts reach the Portfolio Workbench", () => {
+  /**
+   * This is the assertion whose absence let the spine ship disconnected.
+   *
+   * Eleven of the thirteen Workbench checkpoints had no writer anywhere in the
+   * application. Every artifact test above passed - the artifacts really were
+   * saved and really did round-trip - while the checkpoints they were supposed
+   * to move stayed "empty" forever, so Mission 13's readiness map reported ten
+   * of twelve outstanding for a learner who had completed everything, and
+   * Execute-ready could not be reached at all.
+   *
+   * Testing the artifact and the checkpoint separately is what hid it. This
+   * asserts the connection.
+   */
+  it("moves the owning checkpoint when a lesson saves its artifact", async () => {
+    const { result } = await mountProgress();
+
+    expect(
+      loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints["bond-risk"].status,
+    ).toBe("empty");
+
+    act(() => {
+      result.current.saveBondBrief({
+        ...EMPTY_BOND_BRIEF,
+        paymentPromise: "Coupon twice a year, principal at maturity.",
+      });
+    });
+
+    expect(
+      loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints["bond-risk"].status,
+    ).toBe("coherent");
+  });
+
+  it("keeps Mission 1's record out of Mission 2's checkpoint", async () => {
+    const { result } = await mountProgress();
+
+    // 1.4 stores the learner's constraints in the same shared record Mission 2
+    // uses for its belief. Only the belief is Mission 2's decision.
+    act(() => {
+      result.current.saveDraft({
+        ...EMPTY_DRAFT,
+        constraints: { ...EMPTY_DRAFT.constraints, horizon: "Twelve years", riskPreference: "Hold" },
+      });
+    });
+
+    expect(
+      loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints.beliefs.status,
+    ).toBe("empty");
+
+    act(() => {
+      result.current.saveBeliefStatement({
+        ...EMPTY_BELIEF_STATEMENT,
+        marketBelief: "Prices can diverge from value.",
+        persistenceReason: "Few investors hold long enough to close the gap.",
+        evidenceGap: "A decade where patient holding stopped paying.",
+      });
+    });
+
+    expect(
+      loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints.beliefs.status,
+    ).toBe("coherent");
+  });
+
+  it("adopts a belief stated before the record was split out", async () => {
+    // A learner who answered Mission 2 while the belief still lived inside the
+    // philosophy draft must not lose it, in the lesson or in the dossier.
+    window.localStorage.setItem(
+      "ops-if-philosophy-draft-v1",
+      JSON.stringify({
+        ...EMPTY_DRAFT,
+        marketBelief: "Prices can diverge from value.",
+        persistenceReason: "Few investors hold long enough.",
+        evidenceGap: "A decade where patience stopped paying.",
+        generatedSummary: "I currently believe prices can diverge from value.",
+        updatedAt: "2026-08-01T00:00:00.000Z",
+      }),
+    );
+
+    const { result } = await mountProgress();
+
+    expect(result.current.beliefStatement.marketBelief).toBe("Prices can diverge from value.");
+    expect(result.current.beliefStatement.evidenceGap).toBe("A decade where patience stopped paying.");
+  });
+
+  it("does not reopen downstream work when a save changes nothing", async () => {
+    const { result } = await mountProgress();
+
+    const brief = { ...EMPTY_BOND_BRIEF, paymentPromise: "Coupon twice a year." };
+    act(() => result.current.saveBondBrief(brief));
+    const first = loadPortfolioWorkbench(window.localStorage)
+      .workbench.cases.personal.checkpoints["bond-risk"].revision;
+
+    // Pressing save again on an unchanged mission is not an economic change,
+    // and must not send every dependent mission back for review.
+    act(() => result.current.saveBondBrief(brief));
+    const second = loadPortfolioWorkbench(window.localStorage)
+      .workbench.cases.personal.checkpoints["bond-risk"].revision;
+
+    expect(second).toBe(first);
+  });
+
+  it("reopens downstream work, with a reason a learner can read", async () => {
+    const { result } = await mountProgress();
+
+    // Architecture depends on beliefs. It is saved first and cannot be coherent
+    // yet - its own prerequisites are missing - but it is recorded, which is
+    // what makes it eligible for review when an input beneath it moves.
+    act(() => {
+      result.current.saveArchitectureDecision({
+        ...EMPTY_ARCHITECTURE_DECISION,
+        coreBenchmark: "Total market index",
+      });
+    });
+    act(() => {
+      result.current.saveBeliefStatement({
+        ...EMPTY_BELIEF_STATEMENT,
+        marketBelief: "Prices can diverge from value.",
+        persistenceReason: "Few investors hold long enough to close the gap.",
+        evidenceGap: "A decade where patient holding stopped paying.",
+      });
+    });
+
+    const architecture = loadPortfolioWorkbench(window.localStorage)
+      .workbench.cases.personal.checkpoints.architecture;
+    expect(architecture.status).toBe("review-required");
+    expect(architecture.review?.sourceCheckpoint).toBe("beliefs");
+    expect(architecture.review?.reason).toMatch(/Market beliefs changed/);
   });
 });

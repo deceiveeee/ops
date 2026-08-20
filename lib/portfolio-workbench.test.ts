@@ -15,6 +15,7 @@ import {
   persistPortfolioWorkbench,
   saveAllocationRecord,
   saveCheckpointStatus,
+  recordArtifactCheckpoint,
   saveMandateRecord,
   switchWorkbenchMode,
   type AllocationRecord,
@@ -881,5 +882,75 @@ describe("usePortfolioWorkbench event contract", () => {
     });
 
     await waitFor(() => expect(result.current.activeMode).toBe("practice"));
+  });
+});
+
+describe("artifact checkpoints", () => {
+  /**
+   * The regression this suite exists for.
+   *
+   * Eleven of the thirteen checkpoints had no writer in the application at all:
+   * `saveCheckpointStatus` was called only from this file, so a learner could
+   * finish every mission and still be told the work was outstanding. These
+   * assertions fail against that state - the first one returns "empty".
+   */
+  it("commits a checkpoint the owning lesson has no prerequisites for", () => {
+    const storage = new MemoryStorage();
+    expect(recordArtifactCheckpoint(storage, "beliefs", "market belief", "Beliefs changed.", NOW)).toBe(true);
+
+    const load = loadPortfolioWorkbench(storage, LATER);
+    expect(load.workbench.cases.personal.checkpoints.beliefs.status).toBe("coherent");
+  });
+
+  it("records saved-unverified rather than overstating when prerequisites are missing", () => {
+    const storage = new MemoryStorage();
+    // architecture requires allocation, evidence, valuation, friction and the
+    // evidence test. None of them exist here, so coherence would be a lie.
+    recordArtifactCheckpoint(storage, "architecture", "architecture decision", "Architecture changed.", NOW);
+
+    const load = loadPortfolioWorkbench(storage, LATER);
+    expect(load.workbench.cases.personal.checkpoints.architecture.status).toBe("saved-unverified");
+  });
+
+  it("leaves the practice case untouched", () => {
+    const storage = new MemoryStorage();
+    recordArtifactCheckpoint(storage, "beliefs", "market belief", "Beliefs changed.", NOW);
+
+    const load = loadPortfolioWorkbench(storage, LATER);
+    expect(load.workbench.cases.practice.checkpoints.beliefs.status).toBe("empty");
+  });
+
+  it("still invalidates downstream work, so a later belief change reopens the architecture", () => {
+    const storage = new MemoryStorage();
+    recordArtifactCheckpoint(storage, "evidence", "business evidence", "Evidence changed.", NOW);
+    recordArtifactCheckpoint(storage, "architecture", "architecture decision", "Architecture changed.", NOW);
+    recordArtifactCheckpoint(storage, "beliefs", "market belief", "Beliefs changed.", LATER);
+
+    const load = loadPortfolioWorkbench(storage, LATER);
+    expect(load.workbench.cases.personal.checkpoints.architecture.status).toBe("review-required");
+    expect(load.workbench.cases.personal.checkpoints.architecture.review?.sourceCheckpoint).toBe("beliefs");
+  });
+
+  it("lets a learner who redoes the mission clear its review", () => {
+    const storage = new MemoryStorage();
+    recordArtifactCheckpoint(storage, "evidence", "business evidence", "Evidence changed.", NOW);
+    recordArtifactCheckpoint(storage, "beliefs", "market belief", "Beliefs changed.", LATER);
+    expect(
+      loadPortfolioWorkbench(storage, LATER).workbench.cases.personal.checkpoints.evidence.status,
+    ).toBe("coherent");
+
+    recordArtifactCheckpoint(storage, "evidence", "business evidence", "Evidence re-saved.", LATER);
+    expect(
+      loadPortfolioWorkbench(storage, LATER).workbench.cases.personal.checkpoints.evidence.status,
+    ).toBe("coherent");
+  });
+
+  it("does not touch a Workbench it cannot safely read", () => {
+    const storage = new MemoryStorage();
+    storage.setItem(PORTFOLIO_WORKBENCH_STORAGE_KEY, "{ not json");
+    const writesBefore = storage.writes.length;
+
+    expect(recordArtifactCheckpoint(storage, "beliefs", "market belief", "Beliefs changed.", NOW)).toBe(false);
+    expect(storage.writes.length).toBe(writesBefore);
   });
 });

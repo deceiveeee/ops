@@ -484,6 +484,7 @@ export default function PortfolioDossier() {
     frictionBudget,
     evidenceChecklist,
     architectureDecision,
+    beliefStatement,
   } = useIFProgress();
   const {
     ready: workbenchReady,
@@ -507,23 +508,18 @@ export default function PortfolioDossier() {
       ),
       {
         id: "philosophy",
-        mission: "Missions 1–2",
+        mission: "Mission 1",
         title: "Investment philosophy draft",
-        purpose: "Who you are building for, and what you believe about markets.",
+        purpose: "Who you are building this for, and what you can actually run.",
         lessonSlug: "if-1-4-when-a-philosophy-fits-the-investor",
         lessonLabel: "Investor–philosophy fit",
         willContain:
-          "your market belief, the constraints you actually face, a candidate strategy, and the rules that would make you change your mind",
+          "the constraints you actually face, a candidate strategy, and the rules you would follow to run it",
         updatedAt: draft.updatedAt,
         groups: present([
-          { fields: [{ label: "Summary", value: draft.generatedSummary }] },
           {
-            heading: "Market belief",
-            fields: [
-              { label: "What you believe", value: draft.marketBelief },
-              { label: "Where the advantage arises", value: draft.advantageStage },
-              { label: "Why it should persist", value: draft.persistenceReason },
-            ],
+            heading: "Where the advantage arises",
+            fields: [{ label: "Stage of the process", value: draft.advantageStage }],
           },
           {
             heading: "Investor constraints",
@@ -567,7 +563,28 @@ export default function PortfolioDossier() {
               { label: "Capacity to run it", value: draft.fitCapacitySummary },
               { label: "Review rule", value: draft.fitReviewRule },
               { label: "Open question", value: draft.fitOpenQuestion },
-              { label: "Evidence gap", value: draft.evidenceGap },
+            ],
+          },
+        ]),
+      },
+      {
+        id: "beliefs",
+        mission: "Mission 2",
+        title: "Market belief statement",
+        purpose: "What you believe about markets, and what would prove you wrong.",
+        lessonSlug: "if-1-1-how-an-investor-builds-a-philosophy",
+        lessonLabel: "How an investor builds a philosophy",
+        willContain:
+          "a testable market belief, the reason it should persist, and the evidence that would make you drop it",
+        updatedAt: beliefStatement.updatedAt,
+        groups: present([
+          { fields: [{ label: "Summary", value: beliefStatement.generatedSummary }] },
+          {
+            heading: "The belief",
+            fields: [
+              { label: "What you believe", value: beliefStatement.marketBelief },
+              { label: "Why it should persist", value: beliefStatement.persistenceReason },
+              { label: "What would change your mind", value: beliefStatement.evidenceGap },
             ],
           },
         ]),
@@ -835,6 +852,7 @@ export default function PortfolioDossier() {
       activeMode,
       activeCase,
       draft,
+      beliefStatement,
       bondBrief,
       equityRiskPolicy,
       statementBrief,

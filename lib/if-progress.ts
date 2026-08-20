@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProgressStore } from "@/lib/progress/store";
+import { recordArtifactCheckpoint } from "@/lib/portfolio-workbench";
 
 const MODULE_KEY = "ops-if-completion-v1";
 const DRAFT_KEY = "ops-if-philosophy-draft-v1";
+const BELIEF_STATEMENT_KEY = "ops-if-belief-statement-v1";
 const BOND_BRIEF_KEY = "ops-if-bond-risk-brief-v1";
 const EQUITY_RISK_POLICY_KEY = "ops-if-equity-risk-policy-v1";
 const STATEMENT_BRIEF_KEY = "ops-if-statement-brief-v1";
@@ -15,6 +17,7 @@ const ARCHITECTURE_DECISION_KEY = "ops-if-architecture-decision-v1";
 const TIMING_POLICY_KEY = "ops-if-timing-policy-v1";
 const HOLDINGS_SLATE_KEY = "ops-if-holdings-slate-v1";
 const OPERATING_PLAN_KEY = "ops-if-operating-plan-v1";
+
 const PROGRESS_EVENT = "ops-if-progress";
 
 export const IF_LESSON_SLUGS = [
@@ -76,6 +79,36 @@ export type PhilosophyDraft = {
   evidenceGap: string;
   generatedSummary: string;
   updatedAt: string;
+};
+
+/**
+ * Mission 2's decision, kept in its own record.
+ *
+ * It used to live inside `PhilosophyDraft`, which six components across three
+ * missions wrote to: 1.4 stored the learner's constraints there, 1.2 the process
+ * placement, 1.3 the candidate families. One record for three missions meant the
+ * Workbench could not tell whose work had arrived, and the curriculum is explicit
+ * that every mission is one decision saved into one checkpoint.
+ *
+ * Mission 1's material stays in the draft for now. Whether Mission 1 should own a
+ * Mandate record of its own, rather than Mission 5's Readiness Runway writing the
+ * mandate, is the stakeholder review the mission curriculum still has pending —
+ * so this splits out what is already settled and leaves that question open.
+ */
+export type BeliefStatement = {
+  marketBelief: string;
+  persistenceReason: string;
+  evidenceGap: string;
+  generatedSummary: string;
+  updatedAt: string;
+};
+
+export const EMPTY_BELIEF_STATEMENT: BeliefStatement = {
+  marketBelief: "",
+  persistenceReason: "",
+  evidenceGap: "",
+  generatedSummary: "",
+  updatedAt: "",
 };
 
 export const EMPTY_DRAFT: PhilosophyDraft = {
@@ -653,10 +686,95 @@ function readDraft(): PhilosophyDraft {
   }
 }
 
+/**
+ * The economic content of an artifact, with the save timestamp removed.
+ *
+ * Every saver stamps `updatedAt`, so comparing stored JSON directly would call
+ * each re-save a change. `commitCheckpoint` reopens dependent work whenever a
+ * checkpoint moves, which would mean pressing save twice on one mission sent
+ * every downstream mission back for review. `saveMandateRecord` already refuses
+ * that trade in the Workbench; this refuses it on the way in.
+ */
+function economicContent(value: unknown): string {
+  if (!value || typeof value !== "object") return JSON.stringify(value);
+  const { updatedAt: _updatedAt, ...rest } = value as Record<string, unknown>;
+  return JSON.stringify(rest);
+}
+
+function storedArtifact(key: string): unknown {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw === null ? null : (JSON.parse(raw) as unknown);
+  } catch {
+    return null;
+  }
+}
+
+function artifactChanged(key: string, next: unknown): boolean {
+  const previous = storedArtifact(key);
+  if (previous === null) return true;
+  return economicContent(previous) !== economicContent(next);
+}
+
+/**
+ * The draft carries Mission 1's constraints and the optional lab's candidate
+ * families. It owns no checkpoint: Mission 2's belief moved to its own record,
+ * and Mission 1's mandate is written by Mission 5's Readiness Runway.
+ */
 function writeDraft(d: PhilosophyDraft) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    window.dispatchEvent(new Event(PROGRESS_EVENT));
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * Reads the belief statement, adopting a pre-split draft where one exists.
+ *
+ * Migration is by derivation rather than by rewriting storage on read: a learner
+ * who stated a belief before the split keeps seeing it, in the dossier and in
+ * the lesson, and the old fields are superseded the first time they save.
+ */
+function readBeliefStatement(): BeliefStatement {
+  if (typeof window === "undefined") return EMPTY_BELIEF_STATEMENT;
+  try {
+    const raw = window.localStorage.getItem(BELIEF_STATEMENT_KEY);
+    if (raw) {
+      return { ...EMPTY_BELIEF_STATEMENT, ...(JSON.parse(raw) as Partial<BeliefStatement>) };
+    }
+    const legacy = readDraft();
+    if (!legacy.marketBelief.trim() && !legacy.persistenceReason.trim() && !legacy.evidenceGap.trim()) {
+      return EMPTY_BELIEF_STATEMENT;
+    }
+    return {
+      marketBelief: legacy.marketBelief,
+      persistenceReason: legacy.persistenceReason,
+      evidenceGap: legacy.evidenceGap,
+      generatedSummary: legacy.generatedSummary,
+      updatedAt: legacy.updatedAt,
+    };
+  } catch {
+    return EMPTY_BELIEF_STATEMENT;
+  }
+}
+
+function writeBeliefStatement(statement: BeliefStatement) {
+  if (typeof window === "undefined") return;
+  try {
+    const changed = artifactChanged(BELIEF_STATEMENT_KEY, statement);
+    window.localStorage.setItem(BELIEF_STATEMENT_KEY, JSON.stringify(statement));
+    // A belief is Mission 2's decision only once it is stated, defended and
+    // falsifiable. A half-filled record is work in progress, not a checkpoint.
+    const stated =
+      statement.marketBelief.trim().length > 0 &&
+      statement.persistenceReason.trim().length > 0 &&
+      statement.evidenceGap.trim().length > 0;
+    if (changed && stated) {
+      recordArtifactCheckpoint(window.localStorage, "beliefs", "market belief", "Market beliefs changed; the architecture and operating plan that rest on them need review.");
+    }
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -678,7 +796,9 @@ function readBondBrief(): BondRiskBrief {
 function writeBondBrief(brief: BondRiskBrief) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(BOND_BRIEF_KEY, brief);
     window.localStorage.setItem(BOND_BRIEF_KEY, JSON.stringify(brief));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "bond-risk", "bond risk policy", "Bond risk policy changed; allocation, architecture and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -703,7 +823,9 @@ function readEquityRiskPolicy(): EquityRiskPolicy {
 function writeEquityRiskPolicy(policy: EquityRiskPolicy) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(EQUITY_RISK_POLICY_KEY, policy);
     window.localStorage.setItem(EQUITY_RISK_POLICY_KEY, JSON.stringify(policy));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "required-return", "required return", "Required return changed; allocation, architecture and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -728,7 +850,9 @@ function readStatementBrief(): InvestorStatementBrief {
 function writeStatementBrief(brief: InvestorStatementBrief) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(STATEMENT_BRIEF_KEY, brief);
     window.localStorage.setItem(STATEMENT_BRIEF_KEY, JSON.stringify(brief));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "evidence", "business evidence", "Business evidence changed; architecture, holdings and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -753,7 +877,9 @@ function readValuationRange(): ValuationRangeArtifact {
 function writeValuationRange(artifact: ValuationRangeArtifact) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(VALUATION_RANGE_KEY, artifact);
     window.localStorage.setItem(VALUATION_RANGE_KEY, JSON.stringify(artifact));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "valuation", "valuation range", "Valuation changed; architecture, holdings and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -793,7 +919,9 @@ function readEvidenceChecklist(): EvidenceChecklist {
 function writeEvidenceChecklist(checklist: EvidenceChecklist) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(EVIDENCE_CHECKLIST_KEY, checklist);
     window.localStorage.setItem(EVIDENCE_CHECKLIST_KEY, JSON.stringify(checklist));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "evidence-test", "evidence test", "Evidence test changed; architecture, timing and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -815,7 +943,9 @@ function readTimingPolicy(): TimingPolicy {
 function writeTimingPolicy(policy: TimingPolicy) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(TIMING_POLICY_KEY, policy);
     window.localStorage.setItem(TIMING_POLICY_KEY, JSON.stringify(policy));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "timing", "timing policy", "Timing policy changed; holdings and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -840,7 +970,9 @@ function readArchitectureDecision(): ArchitectureDecision {
 function writeArchitectureDecision(decision: ArchitectureDecision) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(ARCHITECTURE_DECISION_KEY, decision);
     window.localStorage.setItem(ARCHITECTURE_DECISION_KEY, JSON.stringify(decision));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "architecture", "architecture decision", "Architecture changed; timing, holdings and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -870,7 +1002,9 @@ function readHoldingsSlate(): HoldingsSlate {
 function writeHoldingsSlate(slate: HoldingsSlate) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(HOLDINGS_SLATE_KEY, slate);
     window.localStorage.setItem(HOLDINGS_SLATE_KEY, JSON.stringify(slate));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "holdings", "holdings slate", "Holdings changed; the operating plan needs review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -905,7 +1039,9 @@ function readOperatingPlan(): OperatingPlan {
 function writeOperatingPlan(plan: OperatingPlan) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(OPERATING_PLAN_KEY, plan);
     window.localStorage.setItem(OPERATING_PLAN_KEY, JSON.stringify(plan));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "policy", "operating plan", "Operating plan changed.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -915,7 +1051,9 @@ function writeOperatingPlan(plan: OperatingPlan) {
 function writeFrictionBudget(budget: FrictionBudget) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(FRICTION_BUDGET_KEY, budget);
     window.localStorage.setItem(FRICTION_BUDGET_KEY, JSON.stringify(budget));
+    if (changed) recordArtifactCheckpoint(window.localStorage, "friction", "friction budget", "Friction budget changed; architecture, timing and the operating plan need review.");
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -929,6 +1067,8 @@ export function useIFProgress() {
     [store],
   );
   const [draft, setDraftState] = useState<PhilosophyDraft>(EMPTY_DRAFT);
+  const [beliefStatement, setBeliefStatementState] =
+    useState<BeliefStatement>(EMPTY_BELIEF_STATEMENT);
   const [bondBrief, setBondBriefState] =
     useState<BondRiskBrief>(EMPTY_BOND_BRIEF);
   const [equityRiskPolicy, setEquityRiskPolicyState] =
@@ -952,6 +1092,7 @@ export function useIFProgress() {
 
   useEffect(() => {
     setDraftState(readDraft());
+    setBeliefStatementState(readBeliefStatement());
     setBondBriefState(readBondBrief());
     setEquityRiskPolicyState(readEquityRiskPolicy());
     setStatementBriefState(readStatementBrief());
@@ -964,6 +1105,7 @@ export function useIFProgress() {
     setOperatingPlanState(readOperatingPlan());
     const onChange = () => {
       setDraftState(readDraft());
+      setBeliefStatementState(readBeliefStatement());
       setBondBriefState(readBondBrief());
       setEquityRiskPolicyState(readEquityRiskPolicy());
       setStatementBriefState(readStatementBrief());
@@ -992,6 +1134,12 @@ export function useIFProgress() {
     (slug: string) => Boolean(completion[slug]),
     [completion],
   );
+
+  const saveBeliefStatement = useCallback((statement: BeliefStatement) => {
+    const stamped = { ...statement, updatedAt: new Date().toISOString() };
+    writeBeliefStatement(stamped);
+    setBeliefStatementState(stamped);
+  }, []);
 
   const saveDraft = useCallback((d: PhilosophyDraft) => {
     const stamped = { ...d, updatedAt: new Date().toISOString() };
@@ -1118,6 +1266,7 @@ export function useIFProgress() {
     ready: store.ready,
     completion,
     draft,
+    beliefStatement,
     bondBrief,
     equityRiskPolicy,
     statementBrief,
@@ -1131,6 +1280,7 @@ export function useIFProgress() {
     isComplete,
     markComplete,
     saveDraft,
+    saveBeliefStatement,
     clearDraft,
     saveBondBrief,
     clearBondBrief,
