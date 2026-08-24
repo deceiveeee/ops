@@ -566,7 +566,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-pb05-allocation-policy",
-      8,
+      4,
       "Allocation and Risk Policy",
       "Translate a goal, near-term cash need, capacity for loss, and willingness for volatility into broad portfolio roles, strategic weights, and an inspectable stress-loss budget.",
       "Produce an Allocation and Risk Policy whose assumptions, loss contributions, and review triggers can be explained without an optimizer.",
@@ -576,7 +576,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m04-financial-statement-analysis",
-      4,
+      5,
       "Financial Statement Analysis",
       "Read the balance sheet, income statement, and statement of cash flows as connected evidence; recast reported accounting into an investor view; and distinguish current reporting from analytical lease and R&D adjustments.",
       "Produce an Investor Statement Brief connecting reported line items, measurement choices, profitability, leverage, analytical adjustments, and cash available to investors.",
@@ -593,7 +593,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m05-valuation-range",
-      5,
+      6,
       "Valuation Range",
       "Turn company cash flow, growth quality, risk, peer evidence, and uncertainty into a defensible value range and price rule.",
       "Produce a Valuation Range with a consistent claim, required return, growth-quality cases, peer controls, and decision buffer.",
@@ -603,7 +603,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m06-friction",
-      6,
+      7,
       "Trading Costs and Taxes",
       "Break the cost of acting into its four parts, work out the return a strategy must clear before it beats an index, and write down the annual drag your own plan carries.",
       "Produce a Friction Budget that turns spread, price impact, waiting cost, turnover, and tax drag into one hurdle figure.",
@@ -613,7 +613,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m07-evidence",
-      7,
+      8,
       "Testing a Claim",
       "Take a strategy that says it beats the market and put it through the three tests that can settle it, the faults that sink most evidence, and the return it must clear after risk and your own trading costs.",
       "Produce an Evidence Test Checklist stating the benchmark, the test design, the holdout, the sampling rule, the hurdle, and what would make you drop the claim.",
@@ -623,7 +623,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m08-architecture",
-      8,
+      9,
       "Passive or Edge",
       "Start from the architecture the evidence supports, then find out what it would actually take to justify leaving it — a specific mispricing, a mechanism, and a margin that survives your own costs.",
       "Produce an Architecture and Edge Decision recording the passive core, its benchmark, a dated base rate, and — only if every condition was met — a licensed active sleeve with its thesis-break condition and review date.",
@@ -633,7 +633,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m11-timing",
-      11,
+      10,
       "Timing Policy",
       "Decide whether you will ever move away from your strategic weights on purpose — and if so, how far, for how long, and what brings you back.",
       "Produce a Timing Policy: either no timing with a stated reason, or a tilt bounded by a maximum deviation, an expiry, a falsifier and a review date.",
@@ -643,7 +643,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m12-holdings",
-      12,
+      11,
       "Holdings Slate",
       "Turn licensed policy sleeves into exact legal products — verified against their own filings, X-rayed for the exposure you hold twice, and rehearsed as an order that is never sent.",
       "Produce a Holdings Slate: verified products mapped to licensed sleeves, an overlap result carrying its key, coverage and as-of dates, and a non-executing order draft that names the share class.",
@@ -653,7 +653,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m13-operating-plan",
-      13,
+      12,
       "Operating Plan",
       "Decide what happens when the market falls, your income stops, or the reason you bought something turns out to be wrong — then compile every decision into one document and defend a portfolio you did not build.",
       "Produce an Operating Plan and Investment Policy Statement: rebalancing, contribution, withdrawal, replacement, thesis-break and review rules, nine answered scenarios, and a diagnosed transfer case.",
