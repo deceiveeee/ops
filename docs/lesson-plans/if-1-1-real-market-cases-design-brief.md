@@ -36,7 +36,35 @@ Two corrections from the verification:
   so the membership line is specifically streaming. Use the source's wording.
 - NVIDIA's release states revenue as **$7.19 billion**. The brief's $7.192 billion is
   more precise than the cited source; either cite the financial statements for the extra
-  digit or match the release.
+  digit or match the release. **Resolved 2026-08-24:** the as-filed 10-Q carries the
+  third digit, so cite the financial statements. See the XBRL check below.
+
+### Independent check against as-filed XBRL, 2026-08-24
+
+The verification above rests on the shareholder letter and the results release, both hosted
+on `www.sec.gov`, which refuses this workspace's User-Agent as an "Undeclared Automated
+Tool". Those documents could not be re-read here, so the rows above are recorded as
+received rather than independently confirmed.
+
+`data.sec.gov` does accept the repository's declared User-Agent, and it serves the
+as-filed XBRL — the financial statements themselves, which is a stronger source than either
+press document. Four claims were re-derived from it directly:
+
+| Claim | As-filed value | Concept and period |
+| --- | --- | --- |
+| Netflix Q1 2022 revenue | $7,867,767,000 → **$7.868B, confirmed** | `us-gaap:Revenues`, 2022-01-01 → 2022-03-31, form 10-Q |
+| Netflix Q1 revenue +9.8% Y/Y | Q1 2021 $7.163B → **+9.8%, confirmed** | same concept, 2021-01-01 → 2021-03-31 |
+| NVIDIA Q1 FY2024 revenue | **$7.192B, confirmed to three digits** | `us-gaap:Revenues`, 2023-01-30 → 2023-04-30, form 10-Q |
+| NVIDIA Q1 revenue −13% Y/Y | Q1 FY2023 $8.288B → **−13.2%**, which NVIDIA rounds to 13% | same concept, 2022-01-31 → 2022-05-01 |
+
+What XBRL cannot settle, because guidance and subscriber counts are not tagged financial
+facts: Netflix's memberships, net adds, Q2 forecast and management quote; NVIDIA's Data
+Center revenue, Q2 outlook and quarter-over-quarter figure. Those remain as received from
+the press documents, unconfirmed here.
+
+The expectation half of both cases is therefore the unconfirmed half — and it is the half
+each case teaches. Neither earnings case is about revenue; both are about the gap between
+reported results and revised expectations.
 
 ### Price reactions are stated as bands
 
