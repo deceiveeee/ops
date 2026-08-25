@@ -311,6 +311,8 @@ export default function OperatingPlanJourney() {
 
   const set = (patch: Partial<OperatingPlan>) => setPlan({ ...plan, ...patch });
 
+  const practiceCase = activeMode !== "personal";
+
   const gaps = useMemo(() => {
     const states = Object.fromEntries(
       PREREQUISITE_CHECKPOINTS.map((id) => [
@@ -445,15 +447,26 @@ export default function OperatingPlanJourney() {
       return (
         <div className="space-y-4">
           <div className="ops-definition-card p-5">
+            {/*
+             * The practice case is a separate sandbox and the checkpoints are
+             * written by the learner's own missions, so a practice run shows all
+             * twelve outstanding however much work has been done. Reporting that
+             * as "12 of 12 need attention" reads as a failure the learner cannot
+             * clear, when nothing here is required of them: Practice-complete
+             * does not consider the gaps at all. The table still shows the real
+             * state, because hiding it would be the opposite mistake.
+             */}
             <h3 className="ops-body-strong text-[16px] text-white">
-              {gaps.length === 0
-                ? "All twelve checkpoints are current"
-                : `${gaps.length} of 12 checkpoints need attention`}
+              {practiceCase
+                ? "No checkpoints are required in the practice case"
+                : gaps.length === 0
+                  ? "All twelve checkpoints are current"
+                  : `${gaps.length} of 12 checkpoints need attention`}
             </h3>
             <p className="mt-2 text-[15px] leading-7 text-slate-300">
-              You can work through this mission either way. What changes is the
-              state you finish in: a practice plan needs nothing from the list, a
-              plan you could actually operate needs all of it.
+              {practiceCase
+                ? "You are working a practice case, which finishes at Practice-complete and asks nothing of the list below. The table shows where your own portfolio stands, so you can see what an operable plan would need."
+                : "You can work through this mission either way. What changes is the state you finish in: a practice plan needs nothing from the list, a plan you could actually operate needs all of it."}
             </p>
             <TableScroll>
               <table className="mt-3 w-full min-w-[30rem] text-left text-[14px]">
