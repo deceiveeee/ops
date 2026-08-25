@@ -18,8 +18,46 @@ Workbench spine. Four changes, recorded here rather than silently applied:
 4. **The screen-budget claim is demoted to a measurement task.** No lesson in the
    course currently meets that limit; asserting it here would be a claim, not a fact.
 
-**Nothing in this brief has been verified against its sources.** Every figure, date and
-percentage below is proposed, not checked. Gate A applies before implementation.
+## Verification status, 2026-08-24
+
+Gate A is partly closed. What was checked, against what, and what remains open:
+
+| Claim group | Status | Checked against |
+| --- | --- | --- |
+| Netflix: revenue $7,868M, +9.8% Y/Y, memberships 221.64M, net adds −0.20M, Q2 forecast −2.00M, "revenue growth has slowed considerably" | **Verified** | Netflix Q1 2022 shareholder letter, dated April 19, 2022, page 1 summary table and opening paragraph |
+| NVIDIA: revenue $7.19B, −13% Y/Y, +19% Q/Q, record Data Center $4.28B, Q2 outlook $11.00B ±2% | **Verified** | NVIDIA's own Q1 FY2024 results release |
+| Netflix −35.1% on April 20; NVIDIA +24% on May 25 | **Not verified** | No primary market-data source obtained |
+| GameStop: all prices, dates and the causal-restraint reading | **Not verified** | SEC staff report not retrievable — see below |
+
+Two corrections from the verification:
+
+- Netflix's own label is **"Global Streaming Paid Memberships"**, not "global paid
+  memberships". The letter's table note reads "Figures are consolidated, including DVD",
+  so the membership line is specifically streaming. Use the source's wording.
+- NVIDIA's release states revenue as **$7.19 billion**. The brief's $7.192 billion is
+  more precise than the cited source; either cite the financial statements for the extra
+  digit or match the release.
+
+### Blocked — source access
+
+The SEC refuses automated requests that do not declare a contact address, and the
+repository's configured User-Agent carries none:
+
+    "Open Portfolio Studio educational research (contact via repository owner)"
+
+Every sec.gov fetch returns *"Your Request Originates from an Undeclared Automated Tool"*.
+The Netflix and NVIDIA figures were therefore verified against the companies' own
+publications of the same results rather than the SEC exhibits the brief cites, which is
+adequate for the figures but does not verify the filing index or the exhibit itself.
+
+The GameStop case cannot be verified at all this way: its evidence packet comes from the
+SEC staff report, which has no company-published equivalent.
+
+**To unblock:** supply a contact address for the SEC User-Agent, per their fair-access
+policy. That is a decision for the repository owner; an agent should not invent one, and
+should not substitute an unofficial mirror for a regulator's primary document.
+
+Everything else below is proposed, not checked.
 
 ## Decision
 
