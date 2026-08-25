@@ -1,5 +1,20 @@
 # Portfolio Builder: the mission curriculum
 
+**Amendment 1, 2026-08-24 — Missions 2 and 9.** Mission 2 no longer asks a learner to
+originate a market belief. Review found that Lesson 1.1 requests the belief before anything
+has given a novice grounds for one: four stages teach the shape of a belief through other
+people's reasoning, then a blank field appears whose placeholder is a named anomaly in
+expert language. Mission 2 now produces a **Market Observation Note** from dated real
+events, and the **Market Belief Statement moves to Mission 9**, where the evidence method
+that makes a belief defensible is taught. The `beliefs` checkpoint is satisfied by the
+observation note; the belief statement rides on Mission 9's `evidence-test` checkpoint,
+because Mission 9 owns the evidence method and the learner's own belief is the first claim
+that method is applied to. Rationale and the case set:
+`docs/lesson-plans/if-1-1-real-market-cases-design-brief.md`.
+
+Unchanged by this amendment: the dependency graph, every other mission, and the open
+question of whether Lesson 1.3 belongs to Mission 2 or to the optional catalogue.
+
 **Status:** **approved curriculum authority** on 2026-08-12. Designed from the verified
 slide content of all 38 Damodaran *Investment Philosophies* sessions, not from session
 titles. Approval fixes the 13-mission build-as-you-learn direction; it does not clear an
@@ -86,14 +101,14 @@ Status key: **built** = lessons exist; **ready** = sources verified, not yet bui
 | # | Portfolio decision | Learner outcome | Workbench checkpoint | Damodaran sources | Status |
 |---:|---|---|---|---|---|
 | 1 | Who am I building this for? | State goal, horizon, cash needs, readiness, loss capacity and behavioural constraints; choose personal or practice mode | Mandate & Readiness Runway | 1, 38 | built (1.4 + Readiness Runway Workbench retrofit implemented with Mission 5; stakeholder review pending) |
-| 2 | What do I believe about markets? | Commit to a testable market belief and name what would falsify it | Market Belief Statement | 7, 1 | built (1.1, 1.3) |
+| 2 | What can I actually observe about markets? | Read a dated disclosure, observe the price response, and separate what the evidence supports from what it does not | Market Observation Note | 7, 1, 8, 38 | **redesign approved 2026-08-24, not built** (1.1; see amendment 1) |
 | 3 | What can a bond do to me? | Separate interest-rate risk from default risk; use duration and spreads | Bond Risk Assessment | 2 | built (2.1–2.5) |
 | 4 | What can a stock do to me, and what return should I demand? | Distinguish risk measures, use and criticise CAPM, set a required return | Required Return Lens | 3 | built (3.1–3.6) |
 | 5 | How much goes where, and what loss is unacceptable? | Build a strategic allocation, liquidity bucket and stress-loss budget; derive any position ceiling transparently | Allocation and Risk Policy | 1, 2, 3, 30 + Finance Foundations portfolio theory + supplemental | built (Mission 5 Workbench; exact implementation pending stakeholder review) |
 | 6 | What is the business behind the security? | Connect the statements; read profitability, leverage and cash flow without treating research as permission to buy | Business Evidence Brief & Research-Only Watchlist | 4 | built (4.1–4.6; Workbench retrofit required) |
 | 7 | What is it worth, and at what price would I act? | Build an internally consistent value range, decision rule and thesis-break variables | Valuation Range & Watchlist Gate | 5, 3, 4 | built (5.1; Workbench retrofit required) |
 | 8 | What will acting actually cost me? | Quantify spread, price impact, cost of waiting, turnover and tax drag | Friction Budget | 6 | built (6.1) |
-| 9 | How would I know if a strategy really works? | Apply event/portfolio/regression tests; name the cardinal sins | Evidence Test Checklist | 8 | built (7.1) |
+| 9 | How would I know if a strategy really works? | Apply event/portfolio/regression tests; name the cardinal sins; then state a market belief and what would falsify it | Evidence Test Checklist **and Market Belief Statement** | 8, 7, 1 | built (7.1); belief statement pending amendment 1 |
 | 10 | Passive core, or do I have a defensible edge? | Default to passive unless a falsifiable edge survives base rate, evidence, friction, capacity, durability and size limits | Architecture & Edge License | 35, 36, 7, 8, 6 | built (8.1; Gate A closed 2026-08-14 by approved narrowing — no current manager-persistence claim is made) |
 | 11 | Will I try to time the market? | Price the cost of being wrong; write a no-timing or bounded-timing rule | Timing Policy | 30, 32, 33, 34 | **gated — Session 32 narration** |
 | 12 | What do I actually buy? | Verify exact product identity, exposure, structure, fees, tracking, liquidity, source dates and overlap; rehearse but do not place an order | Fund Passports, Holdings Slate & Order Draft | 37 + supplemental | **gated** |
@@ -108,7 +123,7 @@ gate only; each remaining mission must still pass its own ordered OPS release ga
 Each mission may only assume what an earlier one established.
 
 ```
-1 mandate ──► 2 beliefs ──► 3 bond risk ──┐
+1 mandate ──► 2 observations ──► 3 bond risk ──┐
                                           ├──► 5 allocation ──┐
                             4 equity risk ─┘                  │
                                                               │
