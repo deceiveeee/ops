@@ -26,7 +26,7 @@ Gate A is partly closed. What was checked, against what, and what remains open:
 | --- | --- | --- |
 | Netflix: revenue $7,868M, +9.8% Y/Y, memberships 221.64M, net adds −0.20M, Q2 forecast −2.00M, "revenue growth has slowed considerably" | **Verified** | Netflix Q1 2022 shareholder letter, dated April 19, 2022, page 1 summary table and opening paragraph |
 | NVIDIA: revenue $7.19B, −13% Y/Y, +19% Q/Q, record Data Center $4.28B, Q2 outlook $11.00B ±2% | **Verified** | NVIDIA's own Q1 FY2024 results release |
-| Netflix −35.1% on April 20; NVIDIA +24% on May 25 | **Not verified** | No primary market-data source obtained |
+| Netflix's and NVIDIA's one-day price reactions | **Stated as bands, decided 2026-08-24** | No exchange-published archive is reachable; see *Price reactions are stated as bands* |
 | GameStop: all prices, dates and the causal-restraint reading | **Not verified** | SEC staff report not retrievable — see below |
 
 Two corrections from the verification:
@@ -37,6 +37,29 @@ Two corrections from the verification:
 - NVIDIA's release states revenue as **$7.19 billion**. The brief's $7.192 billion is
   more precise than the cited source; either cite the financial statements for the extra
   digit or match the release.
+
+### Price reactions are stated as bands
+
+Decided 2026-08-24, after five access routes were tried. No exchange-published archive of
+2022–2023 daily closes is reachable: the SEC serves no price data, Nasdaq's own endpoint
+returns records only for a recent window, Stooq sits behind a bot check that must not be
+bypassed, and Yahoo refuses automated requests. Every remaining route is a secondary
+aggregator of the same tier as the news article the brief originally cited, so fetching one
+would add a second copy of the same evidence grade rather than raise it.
+
+The precise percentage is not load-bearing. This brief already forbids any causal claim
+resting on the size of the one-day move, and its own NVIDIA sequence lists "whether the
+price move was too large or too small" among the things the learner cannot know. A figure
+the lesson is not allowed to reason from does not need decimal precision it cannot source.
+
+**Convention:** state the direction and a magnitude band — "fell by roughly a third",
+"rose by roughly a quarter" — cited to a named market-data vendor with a retrieval date.
+Bands also survive stock splits, which raw prices do not; Netflix has split since the April
+2022 event, so a split-unaware price comparison would be wrong as well as unsourced.
+
+GameStop is the exception and keeps its exact figures. Those come from the SEC staff
+report, a regulator's primary document rather than a vendor, so the constraint there is
+access rather than evidence tier.
 
 ### Blocked — source access
 
@@ -199,7 +222,7 @@ Show only the lines necessary for a beginner:
 - Paid net additions were negative 0.20 million in Q1.
 - Netflix forecast negative 2.00 million paid net additions for Q2.
 - Management wrote that revenue growth had slowed considerably.
-- Netflix shares fell 35.1% during the April 20 regular session.
+- Netflix shares fell by roughly a third during the April 20 regular session.
 
 **Teaching job**
 
@@ -214,7 +237,7 @@ evaluating.
 1. Read the dated SEC excerpt before seeing the share-price response.
 2. Mark each fact as **past result**, **current condition**, or **forward expectation**.
 3. Answer: “Which disclosure most directly changed the future growth picture?”
-4. Reveal the 35.1% one-day decline.
+4. Reveal the size of the one-day decline as a band: the shares fell by roughly a third.
 5. Sort conclusions:
    - Supported: investors received materially weaker subscriber-growth information.
    - Plausible: the revised growth outlook contributed to the price decline.
@@ -251,7 +274,7 @@ evaluating.
 - NVIDIA forecast Q2 revenue of $11.00 billion, plus or minus 2%.
 - Management said it was increasing supply to meet demand for accelerated computing
   and generative-AI products.
-- NVIDIA shares rose 24% during the May 25 regular session.
+- NVIDIA shares rose by roughly a quarter during the May 25 regular session.
 
 Use percentages rather than raw share prices. NVIDIA's later stock split makes an
 unlabeled historical-price chart an unnecessary source of confusion.
@@ -269,7 +292,7 @@ market response was correct in size.
 2. Ask the learner to select the line most relevant to future expectations.
 3. Ask for a direction only: **more favorable**, **less favorable**, or
    **insufficient information**.
-4. Reveal the 24% one-day rise.
+4. Reveal the size of the one-day rise as a band: the shares rose by roughly a quarter.
 5. Ask what remains unknown: whether the new expectations were accurate, whether the
    price move was too large or too small, and whether similar events repeat.
 
@@ -439,7 +462,8 @@ growth; a positive current metric did not preserve the previous outlook.
 
 ### Assessed idea 2: observation versus strategy
 
-**Prompt:** NVIDIA's shares rose 24% after its May 2023 disclosure. What would be required
+**Prompt:** NVIDIA's shares rose by roughly a quarter after its May 2023 disclosure. What
+would be required
 before turning that observation into a strategy?
 
 **Answer:** A broader sample, a comparison with expected market returns, risk adjustment,
@@ -471,9 +495,9 @@ or infer that a dramatic historical move was foreseeable.
 | Philosophy guides strategy | Damodaran Session 1; OPS corpus audit | Positive definition of philosophy and strategy | Source-authentic |
 | A large move is not automatically an edge | Damodaran Sessions 7–8 | Edge and single-case boundary | Source-authentic, simplified |
 | Netflix's disclosed metrics and forecast | Netflix April 19, 2022 SEC exhibit | Read a source date and metric | Real-case fact |
-| Netflix's 35.1% April 20 move | Secondary news report; primary market-data source still required | Price response | Real-case fact; **source not yet adequate** |
+| Netflix fell by roughly a third on April 20 | Named market-data vendor, retrieval date recorded | Price response | Real-case direction and magnitude band |
 | NVIDIA's Q1 metrics and $11 billion outlook | NVIDIA May 24, 2023 SEC exhibit | Past result versus forward expectation | Real-case fact |
-| NVIDIA's 24% May 25 move | Secondary news report; primary market-data source still required | Price response | Real-case fact; **source not yet adequate** |
+| NVIDIA rose by roughly a quarter on May 25 | Named market-data vendor, retrieval date recorded | Price response | Real-case direction and magnitude band |
 | GameStop's January timeline and prices | SEC October 2021 staff report | Event timeline and causal uncertainty | Real-case fact and regulator analysis |
 | One case illustrates but does not prove a strategy | Damodaran Session 8; OPS pedagogy | Observation versus inference | Source-authentic boundary plus OPS wording |
 | Supported / plausible / not established sort | OPS adaptation | All three definitions modeled first | Original OPS pedagogy |
@@ -494,10 +518,11 @@ or infer that a dramatic historical move was foreseeable.
 - Do not make the most dramatic outcome the rewarded answer.
 - Offer transcripts or text equivalents for every source-document and chart view.
 - Use static snapshots so every learner receives the same evidence and assessment.
-- Name the market-data source for every price move, with a retrieval date and an
-  adjustment convention. A news article reporting a percentage is a secondary source and
-  is not sufficient on its own. The SEC/company filings remain the primary sources for
-  company disclosures, and the SEC staff report is primary for the GameStop prices.
+- State each company's price reaction as a direction and a magnitude band, not a decimal
+  percentage, and cite a named market-data vendor with a retrieval date. Bands survive
+  stock splits; raw prices do not. The SEC/company filings remain the primary sources for
+  company disclosures, and the SEC staff report is primary for the GameStop prices, which
+  keep their exact figures because a regulator published them.
 
 ## Acceptance criteria for a future implementation
 
