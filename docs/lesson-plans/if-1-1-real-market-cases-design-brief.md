@@ -20,7 +20,40 @@ Workbench spine. Four changes, recorded here rather than silently applied:
 
 ## Verification status, 2026-08-24
 
-Gate A is partly closed. What was checked, against what, and what remains open:
+**Gate A is closed. All three cases are verified against primary sources.**
+
+`www.sec.gov` refuses a User-Agent without contact details; the stakeholder supplied an
+address on 2026-08-24 and every source below was then retrieved and read directly. The
+address is used at request time only and is deliberately not written into any tracked file.
+
+### Retrieved and quoted, 2026-08-24
+
+| Claim | Source text |
+| --- | --- |
+| NVIDIA revenue and quarter-over-quarter | "revenue of $7.19 billion, up 19% from previous quarter" |
+| NVIDIA Data Center | "Record Data Center revenue of $4.28 billion" |
+| NVIDIA Q2 outlook | "Revenue is expected to be $11.00 billion, plus or minus 2%." |
+| Netflix memberships | Table line "Global Streaming Paid Memberships ... 221.64" for Q1'22 |
+| Netflix Q1 net adds | Table line "Global Streaming Paid Net Additions ... (0.20)"; narrative "Paid net additions were -0.2m compared against our guidance forecast of 2.5m" |
+| Netflix Q2 forecast | "For Q2'22, we forecast paid net additions of -2.0m vs. +1.5m in the year ago quarter." |
+| Netflix management quote | "revenue growth has slowed considerably as our results and forecast below show" |
+| GameStop January 13 | "the closing price rose to $31.40 from $19.95 the prior day, and the share volume rose to approximately 144 million shares, compared with approximately 7 million shares the day before" |
+| GameStop January 27-28 | "By January 27, GME closed at a high of $347.51 per share, representing a more than 1,600% increase from its closing price on January 11. The following day, share prices jumped further to an intraday high of $483.00." |
+| GameStop causal restraint | "it was the positive sentiment, not the buying-to-cover, that sustained the weeks-long price appreciation of GameStop stock" |
+
+The GameStop case's teaching job is confirmed by the regulator's own wording: the report
+explicitly declines to attribute the episode to short covering. Case 3 may quote this.
+
+### One improvement the sources revealed
+
+Netflix guided **+2.5m** paid net additions for Q1 and delivered **−0.2m**. That is a sharper
+teaching fact than "results were positive while expectations deteriorated", because the miss
+is against the company's own published expectation rather than against a reader's intuition.
+Case 1 should use the guidance-versus-actual gap as its central contrast.
+
+### Superseded — the earlier partial record
+
+Gate A was partly closed. What was checked, against what, and what remained open:
 
 | Claim group | Status | Checked against |
 | --- | --- | --- |
