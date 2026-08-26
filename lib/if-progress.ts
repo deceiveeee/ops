@@ -6,6 +6,7 @@ import { recordArtifactCheckpoint } from "@/lib/portfolio-workbench";
 
 const MODULE_KEY = "ops-if-completion-v1";
 const DRAFT_KEY = "ops-if-philosophy-draft-v1";
+const OBSERVATION_NOTE_KEY = "ops-if-market-observation-note-v1";
 const BELIEF_STATEMENT_KEY = "ops-if-belief-statement-v1";
 const BOND_BRIEF_KEY = "ops-if-bond-risk-brief-v1";
 const EQUITY_RISK_POLICY_KEY = "ops-if-equity-risk-policy-v1";
@@ -80,6 +81,66 @@ export type PhilosophyDraft = {
   generatedSummary: string;
   updatedAt: string;
 };
+
+/**
+ * Mission 2's artifact, as of curriculum amendment 1.
+ *
+ * The mission used to ask a new learner to originate a market belief before
+ * anything had given them grounds for one. It now asks what they can actually
+ * observe: read a dated disclosure, watch what the price did, and separate what
+ * the evidence supports from what it does not. The belief itself moves to
+ * Mission 9, where the evidence method that makes one defensible is taught.
+ *
+ * `declinedToGeneralise` is a completion state, not a failure. Three cases cannot
+ * establish a repeatable pattern, and a learner who says so has given the most
+ * evidence-literate answer available to them.
+ */
+export type MarketObservationNote = {
+  /** Which case the note was built from. */
+  caseId: "" | "netflix" | "nvidia" | "gamestop";
+  /** What the company disclosed. */
+  disclosure: string;
+  /** What the price did after the disclosure became public. */
+  priceResponse: string;
+  /** The narrowest explanation the case supports. */
+  interpretation: string;
+  /** What this case does not establish. */
+  uncertainty: string;
+  /** What would be needed before generalising from it. */
+  nextEvidence: string;
+  /** The learner has said three cases are not enough for a market belief. */
+  declinedToGeneralise: boolean;
+  updatedAt: string;
+};
+
+export const EMPTY_OBSERVATION_NOTE: MarketObservationNote = {
+  caseId: "",
+  disclosure: "",
+  priceResponse: "",
+  interpretation: "",
+  uncertainty: "",
+  nextEvidence: "",
+  declinedToGeneralise: false,
+  updatedAt: "",
+};
+
+/**
+ * Complete when the learner has recorded an observation they can defend.
+ *
+ * Declining to generalise satisfies this on purpose: the mission asks what the
+ * evidence shows, and "not enough to support a belief" is an answer to that
+ * question rather than an evasion of it.
+ */
+export function isObservationNoteComplete(note: MarketObservationNote): boolean {
+  return Boolean(
+    note.caseId &&
+      note.disclosure.trim() &&
+      note.priceResponse.trim() &&
+      note.interpretation.trim() &&
+      note.uncertainty.trim() &&
+      note.nextEvidence.trim(),
+  );
+}
 
 /**
  * Mission 2's decision, kept in its own record.
@@ -731,6 +792,34 @@ function writeDraft(d: PhilosophyDraft) {
   }
 }
 
+function readObservationNote(): MarketObservationNote {
+  if (typeof window === "undefined") return EMPTY_OBSERVATION_NOTE;
+  try {
+    const raw = window.localStorage.getItem(OBSERVATION_NOTE_KEY);
+    return raw
+      ? { ...EMPTY_OBSERVATION_NOTE, ...(JSON.parse(raw) as Partial<MarketObservationNote>) }
+      : EMPTY_OBSERVATION_NOTE;
+  } catch {
+    return EMPTY_OBSERVATION_NOTE;
+  }
+}
+
+function writeObservationNote(note: MarketObservationNote) {
+  if (typeof window === "undefined") return;
+  try {
+    const changed = artifactChanged(OBSERVATION_NOTE_KEY, note);
+    window.localStorage.setItem(OBSERVATION_NOTE_KEY, JSON.stringify(note));
+    // Mission 2's checkpoint. It moves only on a note the learner could defend,
+    // which is what isObservationNoteComplete tests.
+    if (changed && isObservationNoteComplete(note)) {
+      recordArtifactCheckpoint(window.localStorage, "beliefs", "market observation", "Market observations changed; the architecture and operating plan that rest on them need review.");
+    }
+    window.dispatchEvent(new Event(PROGRESS_EVENT));
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
  * Reads the belief statement, adopting a pre-split draft where one exists.
  *
@@ -764,17 +853,12 @@ function readBeliefStatement(): BeliefStatement {
 function writeBeliefStatement(statement: BeliefStatement) {
   if (typeof window === "undefined") return;
   try {
-    const changed = artifactChanged(BELIEF_STATEMENT_KEY, statement);
     window.localStorage.setItem(BELIEF_STATEMENT_KEY, JSON.stringify(statement));
-    // A belief is Mission 2's decision only once it is stated, defended and
-    // falsifiable. A half-filled record is work in progress, not a checkpoint.
-    const stated =
-      statement.marketBelief.trim().length > 0 &&
-      statement.persistenceReason.trim().length > 0 &&
-      statement.evidenceGap.trim().length > 0;
-    if (changed && stated) {
-      recordArtifactCheckpoint(window.localStorage, "beliefs", "market belief", "Market beliefs changed; the architecture and operating plan that rest on them need review.");
-    }
+    // No checkpoint. Curriculum amendment 1 moved the belief statement to
+    // Mission 9, where the evidence method that makes one defensible is taught,
+    // and gave Mission 2's beliefs checkpoint to the observation note. The
+    // record is still written so a learner who stated a belief under the old
+    // design keeps it.
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
@@ -1069,6 +1153,8 @@ export function useIFProgress() {
   const [draft, setDraftState] = useState<PhilosophyDraft>(EMPTY_DRAFT);
   const [beliefStatement, setBeliefStatementState] =
     useState<BeliefStatement>(EMPTY_BELIEF_STATEMENT);
+  const [observationNote, setObservationNoteState] =
+    useState<MarketObservationNote>(EMPTY_OBSERVATION_NOTE);
   const [bondBrief, setBondBriefState] =
     useState<BondRiskBrief>(EMPTY_BOND_BRIEF);
   const [equityRiskPolicy, setEquityRiskPolicyState] =
@@ -1093,6 +1179,7 @@ export function useIFProgress() {
   useEffect(() => {
     setDraftState(readDraft());
     setBeliefStatementState(readBeliefStatement());
+    setObservationNoteState(readObservationNote());
     setBondBriefState(readBondBrief());
     setEquityRiskPolicyState(readEquityRiskPolicy());
     setStatementBriefState(readStatementBrief());
@@ -1106,6 +1193,7 @@ export function useIFProgress() {
     const onChange = () => {
       setDraftState(readDraft());
       setBeliefStatementState(readBeliefStatement());
+      setObservationNoteState(readObservationNote());
       setBondBriefState(readBondBrief());
       setEquityRiskPolicyState(readEquityRiskPolicy());
       setStatementBriefState(readStatementBrief());
@@ -1134,6 +1222,12 @@ export function useIFProgress() {
     (slug: string) => Boolean(completion[slug]),
     [completion],
   );
+
+  const saveObservationNote = useCallback((note: MarketObservationNote) => {
+    const stamped = { ...note, updatedAt: new Date().toISOString() };
+    writeObservationNote(stamped);
+    setObservationNoteState(stamped);
+  }, []);
 
   const saveBeliefStatement = useCallback((statement: BeliefStatement) => {
     const stamped = { ...statement, updatedAt: new Date().toISOString() };
@@ -1267,6 +1361,7 @@ export function useIFProgress() {
     completion,
     draft,
     beliefStatement,
+    observationNote,
     bondBrief,
     equityRiskPolicy,
     statementBrief,
@@ -1281,6 +1376,7 @@ export function useIFProgress() {
     markComplete,
     saveDraft,
     saveBeliefStatement,
+    saveObservationNote,
     clearDraft,
     saveBondBrief,
     clearBondBrief,

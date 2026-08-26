@@ -7,6 +7,7 @@ import { loadPortfolioWorkbench } from "@/lib/portfolio-workbench";
 import { SessionProvider } from "@/lib/supabase/session";
 import {
   EMPTY_BELIEF_STATEMENT,
+  EMPTY_OBSERVATION_NOTE,
   EMPTY_BOND_BRIEF,
   EMPTY_DRAFT,
   EMPTY_EQUITY_RISK_POLICY,
@@ -216,22 +217,20 @@ describe("artifacts reach the Portfolio Workbench", () => {
     ).toBe("coherent");
   });
 
-  it("keeps Mission 1's record out of Mission 2's checkpoint", async () => {
+  it("gives Mission 2's checkpoint to the observation note, not to a belief", async () => {
     const { result } = await mountProgress();
+    const beliefs = () =>
+      loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints.beliefs.status;
 
-    // 1.4 stores the learner's constraints in the same shared record Mission 2
-    // uses for its belief. Only the belief is Mission 2's decision.
+    // Mission 1's constraints and a belief written under the old design are both
+    // stored, and neither is Mission 2's decision any more. Curriculum amendment
+    // 1 moved the belief statement to Mission 9.
     act(() => {
       result.current.saveDraft({
         ...EMPTY_DRAFT,
         constraints: { ...EMPTY_DRAFT.constraints, horizon: "Twelve years", riskPreference: "Hold" },
       });
     });
-
-    expect(
-      loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints.beliefs.status,
-    ).toBe("empty");
-
     act(() => {
       result.current.saveBeliefStatement({
         ...EMPTY_BELIEF_STATEMENT,
@@ -240,10 +239,37 @@ describe("artifacts reach the Portfolio Workbench", () => {
         evidenceGap: "A decade where patient holding stopped paying.",
       });
     });
+    expect(beliefs()).toBe("empty");
+
+    act(() => {
+      result.current.saveObservationNote({
+        ...EMPTY_OBSERVATION_NOTE,
+        caseId: "netflix",
+        disclosure: "Revenue grew while paid net additions came in below guidance.",
+        priceResponse: "The shares fell by roughly a third in the next session.",
+        interpretation: "What investors expected changed, and the price moved with it.",
+        uncertainty: "It does not show the pattern repeats.",
+        nextEvidence: "More events, not just memorable ones.",
+        declinedToGeneralise: true,
+      });
+    });
+    expect(beliefs()).toBe("coherent");
+  });
+
+  it("does not move Mission 2's checkpoint on a half-finished note", async () => {
+    const { result } = await mountProgress();
+
+    act(() => {
+      result.current.saveObservationNote({
+        ...EMPTY_OBSERVATION_NOTE,
+        caseId: "nvidia",
+        disclosure: "Revenue fell on the year while the outlook rose.",
+      });
+    });
 
     expect(
       loadPortfolioWorkbench(window.localStorage).workbench.cases.personal.checkpoints.beliefs.status,
-    ).toBe("coherent");
+    ).toBe("empty");
   });
 
   it("adopts a belief stated before the record was split out", async () => {
@@ -297,11 +323,15 @@ describe("artifacts reach the Portfolio Workbench", () => {
       });
     });
     act(() => {
-      result.current.saveBeliefStatement({
-        ...EMPTY_BELIEF_STATEMENT,
-        marketBelief: "Prices can diverge from value.",
-        persistenceReason: "Few investors hold long enough to close the gap.",
-        evidenceGap: "A decade where patient holding stopped paying.",
+      result.current.saveObservationNote({
+        ...EMPTY_OBSERVATION_NOTE,
+        caseId: "netflix",
+        disclosure: "Revenue grew while paid net additions came in below guidance.",
+        priceResponse: "The shares fell by roughly a third in the next session.",
+        interpretation: "What investors expected changed, and the price moved with it.",
+        uncertainty: "It does not show the pattern repeats.",
+        nextEvidence: "More events, not just memorable ones.",
+        declinedToGeneralise: true,
       });
     });
 
@@ -309,6 +339,6 @@ describe("artifacts reach the Portfolio Workbench", () => {
       .workbench.cases.personal.checkpoints.architecture;
     expect(architecture.status).toBe("review-required");
     expect(architecture.review?.sourceCheckpoint).toBe("beliefs");
-    expect(architecture.review?.reason).toMatch(/Market beliefs changed/);
+    expect(architecture.review?.reason).toMatch(/Market observations changed/);
   });
 });

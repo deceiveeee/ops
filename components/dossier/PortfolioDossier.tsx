@@ -485,6 +485,7 @@ export default function PortfolioDossier() {
     evidenceChecklist,
     architectureDecision,
     beliefStatement,
+    observationNote,
   } = useIFProgress();
   const {
     ready: workbenchReady,
@@ -570,19 +571,41 @@ export default function PortfolioDossier() {
       {
         id: "beliefs",
         mission: "Mission 2",
-        title: "Market belief statement",
-        purpose: "What you believe about markets, and what would prove you wrong.",
+        title: "Market observation note",
+        purpose: "What you can actually observe about markets, and what it does not settle.",
         lessonSlug: "if-1-1-how-an-investor-builds-a-philosophy",
-        lessonLabel: "How an investor builds a philosophy",
+        lessonLabel: "Observe the market first",
         willContain:
-          "a testable market belief, the reason it should persist, and the evidence that would make you drop it",
-        updatedAt: beliefStatement.updatedAt,
+          "one dated disclosure, what the price did afterwards, the narrowest explanation it supports, and what it cannot show",
+        updatedAt: observationNote.updatedAt,
         groups: present([
-          { fields: [{ label: "Summary", value: beliefStatement.generatedSummary }] },
           {
-            heading: "The belief",
+            heading: "The case",
             fields: [
-              { label: "What you believe", value: beliefStatement.marketBelief },
+              { label: "What was disclosed", value: observationNote.disclosure },
+              { label: "What the price did", value: observationNote.priceResponse },
+            ],
+          },
+          {
+            heading: "What it shows, and what it does not",
+            fields: [
+              { label: "Narrowest explanation", value: observationNote.interpretation },
+              { label: "Not established by this case", value: observationNote.uncertainty },
+              { label: "Needed before generalising", value: observationNote.nextEvidence },
+              {
+                label: "Enough for a market belief?",
+                // The mission's most literate outcome, so the dossier records it
+                // as a finding rather than leaving the field blank.
+                value: observationNote.declinedToGeneralise
+                  ? "Not yet — three cases cannot support a belief. The belief is written in Mission 9."
+                  : "",
+              },
+            ],
+          },
+          {
+            heading: "Belief statement, written under the earlier design",
+            fields: [
+              { label: "What you believed", value: beliefStatement.marketBelief },
               { label: "Why it should persist", value: beliefStatement.persistenceReason },
               { label: "What would change your mind", value: beliefStatement.evidenceGap },
             ],
@@ -853,6 +876,7 @@ export default function PortfolioDossier() {
       activeCase,
       draft,
       beliefStatement,
+      observationNote,
       bondBrief,
       equityRiskPolicy,
       statementBrief,
