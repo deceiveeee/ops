@@ -114,12 +114,30 @@ test("Mission 9 checklist survives a hard refresh and reaches the dossier", asyn
   await page.goto(MISSION_9);
   await walkToChecklist(page);
   await saveChecklist(page);
-  await expect(page.getByText("7 of 7 stages complete", { exact: false })).toBeVisible();
+
+  // Eight stages since curriculum amendment 1 added the belief. Saving the
+  // checklist finishes seven of them and returns the learner to the eighth.
+  await expect(page.getByText("7 of 8 stages complete", { exact: false })).toBeVisible();
 
   // The gate mission 9 could not close: a real browser reload on a normal
   // origin, not the in-app LAN preview whose result was not trustworthy.
   await page.reload();
-  await expect(page.getByText("7 of 7 stages complete", { exact: false })).toBeVisible();
+  await expect(page.getByText("7 of 8 stages complete", { exact: false })).toBeVisible();
+
+  // The belief the amendment moved here from Mission 2, written now that the
+  // learner can test a claim. The save lands on the checklist stage, so the
+  // shell's own advance is what opens the belief.
+  await page.getByRole("button", { name: /State your belief/ }).click();
+  await page
+    .getByRole("radio", { name: /Prices are hard enough to beat after costs/ })
+    .click();
+  await page.getByRole("radio", { name: /Competition removes most of it/ }).click();
+  await page.getByRole("radio", { name: /It fails once returns are adjusted for risk/ }).click();
+  await page.getByRole("button", { name: "Save the belief statement" }).click();
+  await expect(page.getByText("8 of 8 stages complete", { exact: false })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByText("8 of 8 stages complete", { exact: false })).toBeVisible();
 
   await page.goto("/dossier");
   for (const label of ["Benchmark", "Test design", "Holdout", "Sampling", "Hurdle", "Abandon if"]) {
@@ -127,6 +145,12 @@ test("Mission 9 checklist survives a hard refresh and reaches the dossier", asyn
   }
   await expect(page.getByText("Sharpe ratio — excess return per unit of total risk")).toBeVisible();
   await expect(page.getByText(ABANDON_RULE)).toBeVisible();
+
+  // The belief reaches the dossier under Mission 9, not Mission 2.
+  await expect(page.getByText("Market belief", { exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByText(/My position: Prices are hard enough to beat after costs/),
+  ).toBeVisible();
 });
 
 test("Mission 9 stage 1 is answerable with the keyboard alone", async ({ page }) => {

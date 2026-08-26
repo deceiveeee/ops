@@ -602,14 +602,6 @@ export default function PortfolioDossier() {
               },
             ],
           },
-          {
-            heading: "Belief statement, written under the earlier design",
-            fields: [
-              { label: "What you believed", value: beliefStatement.marketBelief },
-              { label: "Why it should persist", value: beliefStatement.persistenceReason },
-              { label: "What would change your mind", value: beliefStatement.evidenceGap },
-            ],
-          },
         ]),
       },
       {
@@ -771,8 +763,9 @@ export default function PortfolioDossier() {
       {
         id: "evidence",
         mission: "Mission 9",
-        title: "Evidence test checklist",
-        purpose: "How you will decide whether a claim about beating the market is real.",
+        title: "Evidence test checklist and market belief",
+        purpose:
+          "How you will decide whether a claim about beating the market is real, and what you believe once you can test one.",
         lessonSlug: "if-7-1-test-the-claim",
         lessonLabel: "Test the claim",
         willContain:
@@ -793,6 +786,17 @@ export default function PortfolioDossier() {
                 fields: [
                   { label: "Hurdle", value: evidenceChecklist.hurdleRule },
                   { label: "Abandon if", value: evidenceChecklist.abandonRule },
+                ],
+              },
+              {
+                // Curriculum amendment 1 moved the belief here from Mission 2,
+                // so it is written once the learner can test a claim.
+                heading: "Market belief",
+                fields: [
+                  { label: "Summary", value: beliefStatement.generatedSummary },
+                  { label: "Position", value: beliefStatement.marketBelief },
+                  { label: "Why it might persist", value: beliefStatement.persistenceReason },
+                  { label: "What would change your mind", value: beliefStatement.evidenceGap },
                 ],
               },
             ])

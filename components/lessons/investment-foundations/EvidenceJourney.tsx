@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useIFProgress, type EvidenceChecklist } from "@/lib/if-progress";
 import Button from "@/components/ui/Button";
+import ChoiceGroup from "./ChoiceGroup";
 import ValuationJourneyShell, {
   type ValuationStage,
 } from "./ValuationJourneyShell";
@@ -74,11 +75,71 @@ const STAGES: readonly ValuationStage[] = [
     guide:
       "A claim has to clear the return its risk demands, and then it has to clear what trading it costs you. Most claims die on the second charge.",
     instruction: "Set the test, then save the checklist to your dossier.",
+    next: "State your belief",
+  },
+  {
+    /*
+     * Added by curriculum amendment 1. Mission 2 used to ask a new learner to
+     * originate a market belief before anything had given them grounds for one;
+     * it now records what they observed, and the belief is written here, once
+     * the learner can actually test a claim. The checklist above is the first
+     * thing applied to it.
+     */
+    label: "Belief",
+    title: "Now say what you believe, and what would change it.",
+    guide:
+      "In Mission 2 you recorded what you could observe. Seven missions later you can test a claim, so this is the point where a belief is worth stating - and where naming its falsifier costs you something.",
+    instruction: "Choose a position, a reason it might persist, and a falsifier.",
     next: "Finish the mission",
   },
 ];
 
+/* ── Stage 8: the belief, and the test that would break it ────────────
+   Positions follow Session 7's treatment of efficiency as investor- and
+   market-specific rather than a blanket binary. Declining to hold one is a
+   complete outcome, the way Mission 10 treats a fully passive decision. */
+
+const POSITIONS = [
+  {
+    id: "passive",
+    label: "Prices are hard enough to beat after costs that I will default to a passive core",
+    hint: "The base rate, and the course's default.",
+  },
+  {
+    id: "not-exploitable",
+    label: "Mispricings exist, but I cannot reliably exploit them after friction",
+    hint: "A mispricing is not an edge.",
+  },
+  {
+    id: "pocket",
+    label: "There is a specific pocket where an investor like me has an advantage",
+    hint: "This one has to survive Mission 10.",
+  },
+  {
+    id: "none",
+    label: "I do not hold a defensible position yet",
+    hint: "A finding, not indecision.",
+  },
+];
+
+const PERSISTENCE = [
+  { id: "competition", label: "Competition removes most of it, so little is left to take" },
+  { id: "uncertainty", label: "The signal is uncertain enough that few investors can hold it" },
+  { id: "costs", label: "Costs and taxes consume what the signal produces" },
+  { id: "limits", label: "Institutional limits stop large investors from acting on it" },
+];
+
+const FALSIFIERS = [
+  { id: "sample", label: "It disappears out of sample" },
+  { id: "risk", label: "It fails once returns are adjusted for risk" },
+  { id: "friction", label: "It does not survive my own friction budget" },
+  { id: "mechanism", label: "No correction mechanism can be named for it" },
+];
+
 const pct = (v: number, digits = 1) => `${v.toFixed(digits)}%`;
+
+/** Lower only the first character, so a label's own "I" survives. */
+const uncap = (t: string) => (t ? t.charAt(0).toLowerCase() + t.slice(1) : t);
 
 /* ── Stage 2: the same strategy, judged two ways ──────────────────────
    Source quiz question 2 supplies the return and volatility inputs, but omits
@@ -165,7 +226,19 @@ const SAMPLINGS = [
 ] as const;
 
 export default function EvidenceJourney() {
-  const { ready, frictionBudget, evidenceChecklist, saveEvidenceChecklist } = useIFProgress();
+  const {
+    ready,
+    frictionBudget,
+    evidenceChecklist,
+    saveEvidenceChecklist,
+    observationNote,
+    beliefStatement,
+    saveBeliefStatement,
+  } = useIFProgress();
+  const [position, setPosition] = useState("");
+  const [persistence, setPersistence] = useState("");
+  const [falsifier, setFalsifier] = useState("");
+  const [beliefSaved, setBeliefSaved] = useState(false);
 
   // Stage 1
   const [jointChoice, setJointChoice] = useState<string | null>(null);
@@ -917,6 +990,104 @@ export default function EvidenceJourney() {
           </div>
         );
 
+      case 7: {
+        const chosen = POSITIONS.find((o) => o.id === position);
+        const why = PERSISTENCE.find((o) => o.id === persistence);
+        const drop = FALSIFIERS.find((o) => o.id === falsifier);
+        const beliefReady = Boolean(chosen && why && drop);
+
+        return (
+          <div className="space-y-4">
+            {observationNote.updatedAt ? (
+              <Panel>
+                <h3 className="ops-body-strong text-[15px] text-white">
+                  What you recorded in Mission 2
+                </h3>
+                <p className="ops-body mt-2 text-[14px] leading-6 text-slate-300">
+                  {observationNote.disclosure} {observationNote.priceResponse}
+                </p>
+                <p className="ops-body mt-2 text-[14px] leading-6 text-slate-400">
+                  You said then that it did not establish a pattern. It still
+                  does not — but you can now say what evidence would.
+                </p>
+              </Panel>
+            ) : null}
+
+            <Panel>
+              {/* Folded once answered: three four-option groups open at once
+                  overran the stage budget in Mission 2 for the same reason. */}
+              {chosen ? (
+                <Row label="Your position" value={chosen.label} />
+              ) : (
+                <ChoiceGroup
+                  label="Which position do you hold?"
+                  className="space-y-2"
+                  value={position}
+                  onChange={setPosition}
+                  options={POSITIONS}
+                />
+              )}
+
+              {chosen ? (
+                why ? (
+                  <Row label="Why it might persist" value={why.label} />
+                ) : (
+                  <ChoiceGroup
+                    label="Why might it persist, or why is there nothing to take?"
+                    className="mt-3 space-y-2"
+                    value={persistence}
+                    onChange={setPersistence}
+                    options={PERSISTENCE}
+                  />
+                )
+              ) : null}
+
+              {why ? (
+                drop ? (
+                  <Row label="What would change your mind" value={drop.label} />
+                ) : (
+                  <ChoiceGroup
+                    label="What result would make you drop it?"
+                    className="mt-3 space-y-2"
+                    value={falsifier}
+                    onChange={setFalsifier}
+                    options={FALSIFIERS}
+                  />
+                )
+              ) : null}
+            </Panel>
+
+            <button
+              type="button"
+              disabled={!beliefReady || beliefSaved}
+              className="min-h-11 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20 disabled:cursor-default disabled:opacity-60"
+              onClick={() => {
+                saveBeliefStatement({
+                  marketBelief: chosen!.label,
+                  persistenceReason: why!.label,
+                  evidenceGap: drop!.label,
+                  // Only the leading character is lowered. Lowercasing a whole
+                  // label turned "I will default to a passive core" into "i will".
+                  generatedSummary: `My position: ${chosen!.label}. It may persist because ${uncap(why!.label)}. I would drop it if ${uncap(drop!.label)}.`,
+                  updatedAt: "",
+                });
+                setBeliefSaved(true);
+                onComplete();
+              }}
+            >
+              {beliefSaved ? "Belief statement saved ✓" : "Save the belief statement"}
+            </button>
+
+            {beliefSaved ? (
+              <Feedback status="correct">
+                Saved to your dossier. Mission 10 tests this against the base
+                rate, your friction budget and the checklist you just wrote.
+              </Feedback>
+            ) : null}
+          </div>
+        );
+      }
+
       default:
         return null;
     }
@@ -928,11 +1099,16 @@ export default function EvidenceJourney() {
   // in an effect, so the shell's state initialisers see nothing on first paint;
   // the key remounts it once the store is ready, the way mission 5 does.
   const checklistRestored = ready && Boolean(evidenceChecklist.updatedAt);
-  const restoredStages = STAGES.map(() => checklistRestored);
+  // The belief is now this lesson's terminal artifact, so a learner who saved
+  // one comes back to the end rather than to the checklist stage.
+  const beliefRestored = ready && Boolean(beliefStatement.updatedAt);
+  const restoredStages = STAGES.map((_, i) =>
+    beliefRestored ? true : checklistRestored && i < STAGES.length - 1,
+  );
 
   return (
     <ValuationJourneyShell
-      key={checklistRestored ? evidenceChecklist.updatedAt : "fresh"}
+      key={beliefRestored ? beliefStatement.updatedAt : checklistRestored ? evidenceChecklist.updatedAt : "fresh"}
       lessonSlug={LESSON_SLUG}
       ariaLabel="Guided Lesson 7.1 evidence journey"
       stages={STAGES}
@@ -940,9 +1116,14 @@ export default function EvidenceJourney() {
       labLabel="Guided evidence lab"
       finishHref="/dossier"
       finishLabel="See your dossier"
-      savedArtifactLabel="Evidence Test Checklist"
+      savedArtifactLabel="Evidence Test Checklist and Market Belief Statement"
       initialCompleted={restoredStages}
-      initialStage={checklistRestored ? STAGES.length - 1 : 0}
+      // A saved checklist returns to the checklist stage, not past it: the save
+      // remounts the shell, and landing on the belief stage would have skipped
+      // the confirmation the learner just earned. Only a saved belief lands last.
+      initialStage={
+        beliefRestored ? STAGES.length - 1 : checklistRestored ? STAGES.length - 2 : 0
+      }
     />
   );
 }

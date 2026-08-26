@@ -853,12 +853,21 @@ function readBeliefStatement(): BeliefStatement {
 function writeBeliefStatement(statement: BeliefStatement) {
   if (typeof window === "undefined") return;
   try {
+    const changed = artifactChanged(BELIEF_STATEMENT_KEY, statement);
     window.localStorage.setItem(BELIEF_STATEMENT_KEY, JSON.stringify(statement));
-    // No checkpoint. Curriculum amendment 1 moved the belief statement to
-    // Mission 9, where the evidence method that makes one defensible is taught,
-    // and gave Mission 2's beliefs checkpoint to the observation note. The
-    // record is still written so a learner who stated a belief under the old
-    // design keeps it.
+    // Curriculum amendment 1 moved the belief statement to Mission 9 and gave
+    // Mission 2's beliefs checkpoint to the observation note. The belief rides
+    // on Mission 9's own checkpoint instead: the mission owns the evidence
+    // method, and the learner's belief is the first claim that method is
+    // applied to. Declining to hold a position counts - Mission 10 treats a
+    // fully passive decision as a complete outcome for the same reason.
+    const stated =
+      statement.marketBelief.trim().length > 0 &&
+      statement.persistenceReason.trim().length > 0 &&
+      statement.evidenceGap.trim().length > 0;
+    if (changed && stated) {
+      recordArtifactCheckpoint(window.localStorage, "evidence-test", "market belief", "The market belief changed; the architecture, timing policy and operating plan that rest on it need review.");
+    }
     window.dispatchEvent(new Event(PROGRESS_EVENT));
   } catch {
     /* ignore */
