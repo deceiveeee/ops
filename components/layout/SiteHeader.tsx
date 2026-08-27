@@ -15,11 +15,15 @@ import { syncStatusText } from "./sync-indicator";
  * working tool. Both were reachable as plain nav items while /dossier — the
  * artifact every mission writes into — was reachable from nowhere in the
  * global chrome. Label the mocks, promote the real thing.
+ *
+ * Filings lost the badge on 2026-08-26: it reads real documents from EDGAR and
+ * sections them, so calling it a concept mock stopped being true. Studio keeps
+ * it, because it still is one.
  */
 const nav = [
   { href: "/courses", label: "Courses" },
   { href: "/dossier", label: "Your dossier" },
-  { href: "/filings", label: "Filings", preview: true },
+  { href: "/filings", label: "Filings" },
   { href: "/studio", label: "Studio", preview: true },
 ];
 

@@ -45,7 +45,7 @@ export default function SiteFooter() {
               links={[
                 { href: "/", label: "Homepage" },
                 { href: "/courses", label: "Course map" },
-                { href: "/filings", label: "Filing reader (preview)" },
+                { href: "/filings", label: "Filing reader" },
                 { href: "/studio", label: "Portfolio Studio (preview)" },
               ]}
             />
