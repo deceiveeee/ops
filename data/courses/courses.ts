@@ -516,24 +516,36 @@ export const investmentFoundations: Course = {
   estimatedHours: 10,
   order: 2,
   modules: [
+    // Missions 1 and 2 were one module labelled "Missions 1-2", so both led to
+    // the same four-lesson list and neither could be entered on its own. They
+    // are separate portfolio decisions and the course data always treated them
+    // that way; only this listing had them merged.
     module(
-      "if-m01-introduction-to-investment-philosophies",
+      "if-mission-1-mandate",
       1,
-      "Building an Investment Philosophy",
-      "Begin with a defensible market belief, map where it affects the investment process, compare major philosophy families, and determine which approaches fit the investor who must carry them out.",
-      "Build and test a provisional investment philosophy before committing capital.",
+      "Define Your Investor Mandate",
+      "Map where a philosophy actually changes a decision, then work out which approaches fit the investor who has to carry them out — the goal, the horizon, the cash needs and the tolerance behind every later choice.",
+      "State who the portfolio is being built for, and what that rules in and out.",
       "investment-philosophy",
       [
-        "if-1-1-how-an-investor-builds-a-philosophy",
         "if-1-2-where-philosophy-enters-the-investment-process",
-        "if-1-3-comparing-investment-philosophy-families",
         "if-1-4-when-a-philosophy-fits-the-investor",
       ],
-      "Missions 1-2",
+      "Mission 1",
+    ),
+    module(
+      "if-mission-2-observation",
+      2,
+      "Observe the Market",
+      "Read three dated disclosures before seeing what the market did, separate a past result from a forward expectation, and learn to say only what the evidence in front of you supports.",
+      "Record one market observation you could defend, and what it does not establish.",
+      "investment-philosophy",
+      ["if-1-1-how-an-investor-builds-a-philosophy"],
+      "Mission 2",
     ),
     module(
       "if-m02-risk-in-bonds",
-      2,
+      3,
       "The Risk in Bonds",
       "Decode a conventional fixed-rate bond, connect market yields to price, measure interest-rate sensitivity with duration, assess an issuer’s payment capacity, and translate credit risk into required yield and price.",
       "Produce a Bond Risk Brief that connects promised payments, interest-rate exposure, default evidence, required yield, and price.",
@@ -549,7 +561,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m03-risk-in-stocks",
-      3,
+      4,
       "The Risk in Stocks",
       "Define equity risk through three independent lenses, separate company risk from market risk, interpret beta with its assumptions and estimation error, compare alternative risk measures, and turn the evidence into an explicit decision policy.",
       "Produce an Equity Risk Policy connecting risk definitions, portfolio context, beta, business fundamentals, alternative measures, and a price rule.",
@@ -566,7 +578,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-pb05-allocation-policy",
-      4,
+      5,
       "Allocation and Risk Policy",
       "Translate a goal, near-term cash need, capacity for loss, and willingness for volatility into broad portfolio roles, strategic weights, and an inspectable stress-loss budget.",
       "Produce an Allocation and Risk Policy whose assumptions, loss contributions, and review triggers can be explained without an optimizer.",
@@ -576,7 +588,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m04-financial-statement-analysis",
-      5,
+      6,
       "Financial Statement Analysis",
       "Read the balance sheet, income statement, and statement of cash flows as connected evidence; recast reported accounting into an investor view; and distinguish current reporting from analytical lease and R&D adjustments.",
       "Produce an Investor Statement Brief connecting reported line items, measurement choices, profitability, leverage, analytical adjustments, and cash available to investors.",
@@ -593,7 +605,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m05-valuation-range",
-      6,
+      7,
       "Valuation Range",
       "Turn company cash flow, growth quality, risk, peer evidence, and uncertainty into a defensible value range and price rule.",
       "Produce a Valuation Range with a consistent claim, required return, growth-quality cases, peer controls, and decision buffer.",
@@ -603,7 +615,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m06-friction",
-      7,
+      8,
       "Trading Costs and Taxes",
       "Break the cost of acting into its four parts, work out the return a strategy must clear before it beats an index, and write down the annual drag your own plan carries.",
       "Produce a Friction Budget that turns spread, price impact, waiting cost, turnover, and tax drag into one hurdle figure.",
@@ -613,7 +625,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m07-evidence",
-      8,
+      9,
       "Testing a Claim",
       "Take a strategy that says it beats the market and put it through the three tests that can settle it, the faults that sink most evidence, and the return it must clear after risk and your own trading costs.",
       "Produce an Evidence Test Checklist stating the benchmark, the test design, the holdout, the sampling rule, the hurdle, and what would make you drop the claim.",
@@ -623,7 +635,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m08-architecture",
-      9,
+      10,
       "Passive or Edge",
       "Start from the architecture the evidence supports, then find out what it would actually take to justify leaving it — a specific mispricing, a mechanism, and a margin that survives your own costs.",
       "Produce an Architecture and Edge Decision recording the passive core, its benchmark, a dated base rate, and — only if every condition was met — a licensed active sleeve with its thesis-break condition and review date.",
@@ -632,8 +644,18 @@ export const investmentFoundations: Course = {
       "Mission 10",
     ),
     module(
+      "if-lab-edge-families",
+      11,
+      "Six Ways Investors Claim an Edge",
+      "A survey of the philosophy families investors use to claim an advantage, and the market belief each one rests on.",
+      "Preview the catalogue of edge claims you can now test.",
+      "investment-philosophy",
+      ["if-1-3-comparing-investment-philosophy-families"],
+      "Optional lab",
+    ),
+    module(
       "if-m11-timing",
-      10,
+      12,
       "Timing Policy",
       "Decide whether you will ever move away from your strategic weights on purpose — and if so, how far, for how long, and what brings you back.",
       "Produce a Timing Policy: either no timing with a stated reason, or a tilt bounded by a maximum deviation, an expiry, a falsifier and a review date.",
@@ -643,7 +665,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m12-holdings",
-      11,
+      13,
       "Holdings Slate",
       "Turn licensed policy sleeves into exact legal products — verified against their own filings, X-rayed for the exposure you hold twice, and rehearsed as an order that is never sent.",
       "Produce a Holdings Slate: verified products mapped to licensed sleeves, an overlap result carrying its key, coverage and as-of dates, and a non-executing order draft that names the share class.",
@@ -653,7 +675,7 @@ export const investmentFoundations: Course = {
     ),
     module(
       "if-m13-operating-plan",
-      12,
+      14,
       "Operating Plan",
       "Decide what happens when the market falls, your income stops, or the reason you bought something turns out to be wrong — then compile every decision into one document and defend a portfolio you did not build.",
       "Produce an Operating Plan and Investment Policy Statement: rebalancing, contribution, withdrawal, replacement, thesis-break and review rules, nine answered scenarios, and a diagnosed transfer case.",

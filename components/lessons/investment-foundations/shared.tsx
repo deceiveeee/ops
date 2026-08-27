@@ -22,28 +22,28 @@ export {
 
 export const IF_1_1_SOURCE_BASIS = {
   course: "Investment Foundations",
-  lecture: "Missions 1-2 · Lesson 1.1 — Philosophy Before Strategy",
+  lecture: "Mission 2 · Lesson 1.1 — Observe the Market First",
   instructor: "Adapted from Aswath Damodaran, Investment Philosophies (Session 1)",
   note: "Adapted from Damodaran's distinction between investment philosophy and strategy, and his argument for beginning with a defensible view of how markets work. Examples, interactions, and wording are original OPS implementations. No live market data.",
 } as const;
 
 export const IF_1_2_SOURCE_BASIS = {
   course: "Investment Foundations",
-  lecture: "Missions 1-2 · Lesson 1.2 — Where Philosophy Enters the Process",
+  lecture: "Mission 1 · Lesson 1.2 — Where Philosophy Enters the Process",
   instructor: "Adapted from Aswath Damodaran, Investment Philosophies (Session 1)",
   note: "Adapted from Damodaran's framing of the investment process and the stages where different philosophies seek an advantage. Examples, interactions, and wording are original OPS implementations. No live market data.",
 } as const;
 
 export const IF_1_3_SOURCE_BASIS = {
   course: "Investment Foundations",
-  lecture: "Missions 1-2 · Lesson 1.3 — Six Ways Investors Claim an Edge",
+  lecture: "Optional lab · Lesson 1.3 — Six Ways Investors Claim an Edge",
   instructor: "Adapted from Aswath Damodaran, Investment Philosophies (Session 1)",
   note: "Adapted from Damodaran's overview of investment-philosophy families and the market beliefs, decision stages, and implementation challenges associated with them. Examples, interactions, and wording are original OPS implementations. No live market data.",
 } as const;
 
 export const IF_1_4_SOURCE_BASIS = {
   course: "Investment Foundations",
-  lecture: "Missions 1-2 · Lesson 1.4 — When a Philosophy Fits the Investor",
+  lecture: "Mission 1 · Lesson 1.4 — When a Philosophy Fits the Investor",
   instructor: "Adapted from Aswath Damodaran, Investment Philosophies (Session 1)",
   note: "Adapted from Damodaran's discussion of investor risk preference, time horizon, tax status, wealth, liquidity, and resources as constraints on investment-philosophy choice. Examples, interactions, and wording are original OPS implementations. No live market data.",
 } as const;
@@ -221,34 +221,52 @@ export type IFSourceBasis = {
   note: string;
 };
 
-export const IF_MODULE_1_LESSONS = [
-  {
-    slug: "if-1-1-how-an-investor-builds-a-philosophy",
-    title: "Philosophy Before Strategy",
-    shortTitle: "Philosophy Before Strategy",
-    n: 1,
-  },
+/**
+ * Missions 1 and 2, kept apart.
+ *
+ * These four lessons were one group labelled "Missions 1-2", so the rail sent
+ * both missions to the same place and clicking either one landed the learner in
+ * the same four-lesson list. They are separate decisions: Mission 1 asks who the
+ * portfolio is for, Mission 2 asks what can be observed about markets. The
+ * course data has always split them - MANDATE_CORE is 1.2 and 1.4, BELIEF_CORE
+ * is 1.1 - and only the presentation had them merged.
+ *
+ * 1.3 is neither. The retrofit plan moved it out of the required opening to the
+ * optional catalogue beside Mission 10, and `portfolioBuilder.ts` lists it as a
+ * depth lab; the page was the last place still claiming it as mission work.
+ */
+export const IF_MISSION_1_LESSONS = [
   {
     slug: "if-1-2-where-philosophy-enters-the-investment-process",
     title: "Where Philosophy Enters the Process",
     shortTitle: "Where Philosophy Enters",
-    n: 2,
-  },
-  {
-    slug: "if-1-3-comparing-investment-philosophy-families",
-    title: "Six Ways Investors Claim an Edge",
-    shortTitle: "Six Ways Investors Claim an Edge",
-    n: 3,
+    n: 1,
   },
   {
     slug: "if-1-4-when-a-philosophy-fits-the-investor",
     title: "When a Philosophy Fits the Investor",
     shortTitle: "Investor–Philosophy Fit",
-    n: 4,
+    n: 2,
   },
 ] as const;
 
-export const IF_MODULE_LESSONS = IF_MODULE_1_LESSONS;
+export const IF_MISSION_2_LESSONS = [
+  {
+    slug: "if-1-1-how-an-investor-builds-a-philosophy",
+    title: "Observe the Market First",
+    shortTitle: "Observe the Market First",
+    n: 1,
+  },
+] as const;
+
+export const IF_EDGE_FAMILIES_LESSONS = [
+  {
+    slug: "if-1-3-comparing-investment-philosophy-families",
+    title: "Six Ways Investors Claim an Edge",
+    shortTitle: "Six Ways Investors Claim an Edge",
+    n: 1,
+  },
+] as const;
 
 export const IF_MODULE_2_LESSONS = [
   {

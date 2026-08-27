@@ -13,7 +13,7 @@ export default function LessonIF_1_3() {
           <div className="ops-eyebrow flex items-center gap-3 text-xs">
             <span className="tabular-nums text-accent-amber">1.3</span>
             <span className="h-px w-8 bg-white/30" />
-            <span>Investment Foundations · Missions 1-2</span>
+            <span>Investment Foundations · Optional lab</span>
           </div>
           <h1 className="ops-display mt-5 text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
             Six Ways Investors Claim an Edge

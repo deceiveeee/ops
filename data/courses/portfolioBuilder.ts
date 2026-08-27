@@ -127,7 +127,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
     "Build, explain, and operate a diversified long-term portfolio for a stated goal—or prove the same decisions in a realistic practice case—with written rules for readiness, allocation, security selection, costs, evidence, rebalancing, and mistakes.",
   // Built missions use the real summed lesson time; planned missions carry
   // estimates. The total stays stable as missions move from planned to built.
-  targetMinutes: 622,
+  targetMinutes: 629,
   artifacts: [
     { id: "mandate", label: "Mandate", missionIds: ["pb-01"] },
     { id: "beliefs", label: "Beliefs", missionIds: ["pb-02"] },
@@ -163,13 +163,17 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
     {
       id: "pb-02",
       order: 2,
-      title: "Commit to a market belief",
-      decision: "What do you believe about markets, and what would prove it wrong?",
+      // Curriculum amendment 1. The mission asked a new learner to originate a
+      // market belief before anything had given them grounds for one; it now
+      // records what they can observe, and the belief moves to Mission 9 where
+      // the evidence method that makes one defensible is taught.
+      title: "Observe what markets actually do",
+      decision: "What can you observe about markets, and what does it not prove?",
       outcome:
-        "Write a testable belief about how prices behave, and name the evidence that would make you abandon it.",
+        "Read three dated disclosures before seeing the price, and record one observation you could defend alongside what it does not establish.",
       artifactId: "beliefs",
-      artifactLabel: "Market Belief Statement",
-      targetMinutes: 15,
+      artifactLabel: "Market Observation Note",
+      targetMinutes: 17,
       status: "available",
       startLessonSlug: BELIEF_CORE[0],
       legacyCompletionSlugs: BELIEF_CORE,
@@ -283,17 +287,19 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       id: "pb-09",
       order: 9,
       title: "Judge a market-beating claim",
-      decision: "How would you know if a strategy really works?",
+      decision: "How would you know if a strategy really works — including your own?",
       outcome:
-        "Apply event, portfolio and regression tests, and name the cardinal sins that make backtests lie.",
+        "Apply event, portfolio and regression tests, name the cardinal sins that make backtests lie, then state the market belief those tests would have to survive.",
       artifactId: "evidence-test",
-      artifactLabel: "Evidence Test Checklist",
-      targetMinutes: 35,
+      // Two artifacts since curriculum amendment 1: the belief arrives here,
+      // where the learner can finally test one.
+      artifactLabel: "Evidence Test Checklist and Market Belief Statement",
+      targetMinutes: 40,
       status: "available",
       startLessonSlug: EVIDENCE_TEST_CORE[0],
       legacyCompletionSlugs: EVIDENCE_TEST_CORE,
       optionalLabSlugs: [],
-      sourceSessions: [8],
+      sourceSessions: [8, 7, 1],
     },
     {
       id: "pb-10",

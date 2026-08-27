@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  IF_MODULE_1_LESSONS,
+  IF_EDGE_FAMILIES_LESSONS,
+  IF_MISSION_1_LESSONS,
+  IF_MISSION_2_LESSONS,
   IF_MODULE_2_LESSONS,
   IF_MODULE_3_LESSONS,
   IF_MODULE_4_LESSONS,
@@ -27,9 +29,19 @@ import { cn } from "@/lib/utils";
  */
 export const JOURNEY_GROUPS = [
   {
-    lessons: IF_MODULE_1_LESSONS,
-    missionLabel: "Missions 1-2",
-    title: "Building an Investment Philosophy",
+    lessons: IF_MISSION_1_LESSONS,
+    missionLabel: "Mission 1",
+    title: "Define Your Investor Mandate",
+  },
+  {
+    lessons: IF_MISSION_2_LESSONS,
+    missionLabel: "Mission 2",
+    title: "Observe the Market",
+  },
+  {
+    lessons: IF_EDGE_FAMILIES_LESSONS,
+    missionLabel: "Optional lab",
+    title: "Six Ways Investors Claim an Edge",
   },
   {
     lessons: IF_MODULE_2_LESSONS,

@@ -1717,7 +1717,7 @@ const specs: LessonSpec[] = [
   },
   {
     slug: "if-1-1-how-an-investor-builds-a-philosophy",
-    moduleId: "if-m01-introduction-to-investment-philosophies",
+    moduleId: "if-mission-2-observation",
     order: 1,
     shortTitle: "Observe the Market First",
     title: "Observe the Market First",
@@ -1748,8 +1748,8 @@ const specs: LessonSpec[] = [
   },
   {
     slug: "if-1-2-where-philosophy-enters-the-investment-process",
-    moduleId: "if-m01-introduction-to-investment-philosophies",
-    order: 2,
+    moduleId: "if-mission-1-mandate",
+    order: 1,
     shortTitle: "Where Philosophy Enters",
     title: "Where Philosophy Enters the Process",
     subtitle:
@@ -1778,8 +1778,8 @@ const specs: LessonSpec[] = [
   },
   {
     slug: "if-1-3-comparing-investment-philosophy-families",
-    moduleId: "if-m01-introduction-to-investment-philosophies",
-    order: 3,
+    moduleId: "if-lab-edge-families",
+    order: 1,
     shortTitle: "Six Ways Investors Claim an Edge",
     title: "Six Ways Investors Claim an Edge",
     subtitle:
@@ -1809,8 +1809,8 @@ const specs: LessonSpec[] = [
   },
   {
     slug: "if-1-4-when-a-philosophy-fits-the-investor",
-    moduleId: "if-m01-introduction-to-investment-philosophies",
-    order: 4,
+    moduleId: "if-mission-1-mandate",
+    order: 2,
     shortTitle: "Investor–Philosophy Fit",
     title: "When a Philosophy Fits the Investor",
     subtitle:

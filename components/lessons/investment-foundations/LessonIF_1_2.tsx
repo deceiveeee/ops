@@ -13,7 +13,7 @@ export default function LessonIF_1_2() {
           <div className="ops-eyebrow flex items-center gap-3 text-xs">
             <span className="tabular-nums text-accent-amber">1.2</span>
             <span className="h-px w-8 bg-white/30" />
-            <span>Investment Foundations · Missions 1-2</span>
+            <span>Investment Foundations · Mission 1</span>
           </div>
           <h1 className="ops-display mt-5 text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
             Where Philosophy Enters the Process
