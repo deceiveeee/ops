@@ -29,7 +29,31 @@ export default function IFSourcePanel({
           {sourceBasis.instructor}
         </div>
       </div>
-      <p className="ops-muted mt-3 text-[12px]">{sourceBasis.note}</p>
+      {/*
+       * Attribution stays visible; the reconciliation note does not.
+       *
+       * The note is where a mission records which sessions it drew on, what it
+       * deliberately narrowed, and which claims it declined to make. That is
+       * required traceability, but it is reference, not the task: the longest
+       * run to about 2,500 characters, and rendering that as a wall under the
+       * instructor's name reads as required reading before the lesson starts.
+       * A learner who does not open it loses nothing they were meant to act on,
+       * and the Screen Budget Rule puts context panels beside the work or behind
+       * a disclosure. Nothing is removed — it is one click away and still in the
+       * accessibility tree.
+       */}
+      <details className="group mt-3 border-t border-white/10 pt-1">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-[12px] font-semibold text-slate-300 hover:text-white">
+          <span>How this lesson uses them</span>
+          <span className="text-[12px] font-normal text-slate-400 group-open:hidden">
+            Show
+          </span>
+          <span className="hidden text-[12px] font-normal text-slate-400 group-open:inline">
+            Hide
+          </span>
+        </summary>
+        <p className="ops-muted pb-1 text-[12px]">{sourceBasis.note}</p>
+      </details>
     </aside>
   );
 }
