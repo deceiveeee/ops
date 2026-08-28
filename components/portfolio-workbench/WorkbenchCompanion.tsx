@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo } from "react";
 import { deriveWorkbenchLifecycle } from "@/lib/portfolio-workbench";
 import { usePortfolioWorkbench } from "@/lib/use-portfolio-workbench";
 import { cn } from "@/lib/utils";
@@ -32,12 +32,9 @@ export default function WorkbenchCompanion({ compact = false }: { compact?: bool
   const {
     ready,
     loadState,
-    workbench,
     activeCase,
     activeMode,
-    setActiveMode,
   } = usePortfolioWorkbench();
-  const [modeError, setModeError] = useState("");
   const lifecycle = deriveWorkbenchLifecycle(activeCase);
   const reached = REACHED[lifecycle];
   const reviewCount = useMemo(
@@ -78,31 +75,17 @@ export default function WorkbenchCompanion({ compact = false }: { compact?: bool
           </span>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 rounded-xl bg-white/[0.04] p-1" role="group" aria-label="Portfolio mode">
-          {(["personal", "practice"] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => {
-                const result = setActiveMode(mode);
-                setModeError(result.ok ? "" : result.message);
-              }}
-              aria-pressed={activeMode === mode}
-              className={cn(
-                "min-h-11 rounded-lg px-3 py-2 text-[13px] font-semibold capitalize transition-colors motion-reduce:transition-none",
-                activeMode === mode
-                  ? "bg-white/10 text-white shadow-sm"
-                  : "text-slate-400 hover:text-white",
-              )}
-            >
-              {mode === "personal" ? "Build mine" : "Practice case"}
-            </button>
-          ))}
-        </div>
-        {modeError && (
-          <p role="alert" className="mt-3 text-[12px] leading-5 text-accent-amber">
-            {modeError}
-          </p>
+        {/* The mode toggle that sat here is gone. It flipped a global setting
+            from every lesson page while nothing on that page changed to confirm
+            it, so it read as inert. The choice itself is not lost: Mission 5's
+            readiness runway asks it once, in context, with the consequence of
+            each route spelled out. What remains is a label reporting which case
+            the checkpoints below belong to, shown only when that is not the
+            default. */}
+        {activeMode === "practice" && (
+          <div className="mt-3 text-[12px] font-medium text-slate-400">
+            Practice case
+          </div>
         )}
       </div>
 
