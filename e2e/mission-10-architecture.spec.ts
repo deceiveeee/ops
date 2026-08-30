@@ -215,6 +215,7 @@ test("a fully passive decision is a complete outcome that reaches the dossier", 
   await expect(page.getByText("6 of 6 stages complete", { exact: false })).toBeVisible();
 
   await page.goto("/dossier");
+  await page.getByRole("button", { name: "Expand all" }).click();
   await expect(page.getByText("Passive core only", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("A single total world equity index fund.")).toBeVisible();
   await expect(page.getByText("30 June 2026", { exact: true }).first()).toBeVisible();

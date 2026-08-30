@@ -140,6 +140,7 @@ test("Mission 9 checklist survives a hard refresh and reaches the dossier", asyn
   await expect(page.getByText("8 of 8 stages complete", { exact: false })).toBeVisible();
 
   await page.goto("/dossier");
+  await page.getByRole("button", { name: "Expand all" }).click();
   for (const label of ["Benchmark", "Test design", "Holdout", "Sampling", "Hurdle", "Abandon if"]) {
     await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
   }

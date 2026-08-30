@@ -146,6 +146,7 @@ test("Mission 5 persists a practice policy, restores completion, and keeps modes
     page.getByRole("link", { name: /Open the Portfolio Dossier/ }).last().click(),
   ]);
   await expect(page.getByRole("heading", { name: "Allocation & risk policy" })).toBeVisible();
+  await page.getByRole("button", { name: "Expand all" }).click();
   await expect(page.getByText("Mina protects the dated tuition need", { exact: false })).toBeVisible();
   await expect(page.getByText("Range 15% to 25%; target 20%", { exact: false })).toBeVisible();
 

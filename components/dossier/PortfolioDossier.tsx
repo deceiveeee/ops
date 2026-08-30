@@ -8,7 +8,14 @@ import {
   calculateStressContributionBps,
   isLiquidityCovered,
 } from "@/lib/allocation-policy";
-import { useIFProgress } from "@/lib/if-progress";
+import {
+  useIFProgress,
+  type HoldingsSlate,
+  type RebalanceRule,
+  type ScenarioResponse,
+  type TimingPolicy,
+} from "@/lib/if-progress";
+import { ALL_FLIGHT_SCENARIOS } from "@/lib/operating-plan";
 import {
   type AllocationRecord,
   type AssumptionOwner,
@@ -77,6 +84,71 @@ const readinessRouteLabel = (route: MandateRecord["route"]) => {
   if (route === "personal-constrained") return "Personal path constrained";
   if (route === "practice-only") return "Practice path only";
   return "Not assessed";
+};
+
+/**
+ * Already in percentage points, unlike `percent` above, which takes a decimal
+ * fraction and multiplies. Mission 11 stores a deviation limit and a friction
+ * cost in points, and running either through `percent` would report them a
+ * hundred times too large.
+ */
+const pointsPercent = (value: number) =>
+  `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(
+    Number(value),
+  )}%`;
+
+const timingModeLabel = (mode: TimingPolicy["mode"]) => {
+  if (mode === "no-timing") return "No timing — the strategic weights stand";
+  if (mode === "bounded") return "Bounded timing, inside a written limit";
+  return "";
+};
+
+const issuerKeyLabel = (mode: HoldingsSlate["issuerKeyMode"]) => {
+  if (mode === "instrument") return "Instrument identity — one security at a time";
+  if (mode === "issuer") return "Issuer identity — everything one issuer stands behind";
+  return "";
+};
+
+const rebalanceTriggerLabel = (rule: RebalanceRule) => {
+  if (rule.trigger === "calendar") {
+    return rule.cadenceMonths > 0 ? `Calendar — every ${rule.cadenceMonths} months` : "";
+  }
+  if (rule.trigger === "threshold") {
+    return rule.bandBps > 0
+      ? `Threshold — when a sleeve drifts ${bpsPercent(rule.bandBps)} from target`
+      : "";
+  }
+  return "";
+};
+
+const rebalanceMethodLabel = (method: RebalanceRule["method"]) => {
+  if (method === "sell-and-buy") return "Sell what is over, buy what is under";
+  if (method === "new-money") return "Direct new money to what is under";
+  if (method === "redirect-flows") return "Redirect income and distributions";
+  return "";
+};
+
+/**
+ * One flight-test answer, read back as a sentence.
+ *
+ * `policySilent` is carried rather than hidden. A gap the learner found is the
+ * most useful thing the flight test produces, and a dossier that quietly dropped
+ * it would report a plan as more complete than it is.
+ */
+const scenarioSummary = (response: ScenarioResponse) => {
+  const verdict =
+    response.response === "act"
+      ? "Act"
+      : response.response === "no-action"
+        ? "No action"
+        : response.response === "review"
+          ? "Review"
+          : "";
+  if (!verdict) return "";
+  const parts = [verdict];
+  if (response.controllingPolicy.trim()) parts.push(`under ${response.controllingPolicy.trim()}`);
+  if (response.policySilent) parts.push("policy silent — returned to the rule writer");
+  return parts.join(" · ");
 };
 
 const checkpointStatusLabel = (checkpoint: CheckpointState) => {
@@ -486,6 +558,9 @@ export default function PortfolioDossier() {
     architectureDecision,
     beliefStatement,
     observationNote,
+    timingPolicy,
+    holdingsSlate,
+    operatingPlan,
   } = useIFProgress();
   const {
     ready: workbenchReady,
@@ -494,6 +569,16 @@ export default function PortfolioDossier() {
   } = usePortfolioWorkbench();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
+  /**
+   * Which artifacts are open. Absent means "use the default for this section",
+   * which is closed unless the record is asking to be looked at.
+   *
+   * Thirteen artifacts fully expanded ran to 8.4 screens at 1440 and 12.5 on a
+   * phone, so the compiled document could not be scanned without scrolling past
+   * the thing you came for. Collapsed, the page is a list of thirteen decisions
+   * you open one at a time.
+   */
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   // Artifacts load in an effect, so the first paint has none. Gate on mount to
   // avoid rendering an "empty dossier" that immediately replaces itself.
@@ -874,6 +959,243 @@ export default function PortfolioDossier() {
             ])
           : [],
       },
+      {
+        id: "timing",
+        mission: "Mission 11",
+        title: "Timing policy",
+        purpose:
+          "Whether you will ever move away from your policy weights on purpose, and what brings you back if you do.",
+        lessonSlug: "if-pb-11-set-a-market-timing-policy",
+        lessonLabel: "Set a market-timing policy",
+        willContain:
+          "the policy you chose and why — and, only if you wrote a bounded tilt, the signal, the limit, what ends it, and the friction it has to clear first",
+        updatedAt: timingPolicy.updatedAt,
+        groups: timingPolicy.updatedAt
+          ? present([
+              {
+                fields: [
+                  { label: "Policy", value: timingModeLabel(timingPolicy.mode) },
+                  { label: "Reason", value: timingPolicy.reason },
+                ],
+              },
+              // No timing is a finished answer, not a record with holes in it,
+              // so the bound is omitted entirely rather than shown empty. This
+              // matches how Mission 10 treats a passive-only architecture.
+              ...(timingPolicy.mode === "bounded"
+                ? [
+                    {
+                      heading: "The bound",
+                      fields: [
+                        { label: "Signal", value: timingPolicy.signal },
+                        { label: "Benchmark", value: timingPolicy.benchmark },
+                        {
+                          label: "Most it may deviate",
+                          value: timingPolicy.maxDeviationPct
+                            ? pointsPercent(timingPolicy.maxDeviationPct)
+                            : "",
+                        },
+                        { label: "Eligible sleeve", value: timingPolicy.eligibleSleeve },
+                      ],
+                    },
+                    {
+                      heading: "What ends it",
+                      fields: [
+                        { label: "Expires", value: timingPolicy.expiryDate },
+                        { label: "Falsified by", value: timingPolicy.falsifier },
+                        { label: "Review on", value: timingPolicy.reviewDate },
+                        {
+                          label: "Round-trip friction it must clear",
+                          value: timingPolicy.frictionCostPct
+                            ? pointsPercent(timingPolicy.frictionCostPct)
+                            : "",
+                        },
+                      ],
+                    },
+                  ]
+                : []),
+            ])
+          : [],
+      },
+      {
+        id: "holdings",
+        mission: "Mission 12",
+        title: "Holdings slate and order draft",
+        purpose:
+          "The exact products you would hold, identified by more than a ticker, and the order you rehearsed without sending.",
+        lessonSlug: "if-pb-12-choose-the-actual-holdings",
+        lessonLabel: "Choose the actual holdings",
+        willContain:
+          "each line's series and class identity with its sleeve and target weight, the key you ran the look-through on, what you acknowledged about overlap and the holdings date, and an order draft that is never transmitted",
+        updatedAt: holdingsSlate.updatedAt,
+        statusLabel: holdingsSlate.reviewRequired ? "Review required" : undefined,
+        needsReview: holdingsSlate.reviewRequired,
+        groups: holdingsSlate.updatedAt
+          ? present([
+              {
+                heading: "The slate",
+                fields: [
+                  ...holdingsSlate.lines.map((line) => ({
+                    label: `${line.ticker} · ${sentenceCase(line.sleeve)}`,
+                    value: `${pointsPercent(line.targetWeightPct)} — series ${line.seriesId}, class ${line.classId}`,
+                  })),
+                  // A slate that does not total 100% is one of Mission 13's
+                  // critical failures, so the sum is stated rather than left for
+                  // the reader to do in their head.
+                  {
+                    label: "Total weight",
+                    value: holdingsSlate.lines.length
+                      ? pointsPercent(
+                          holdingsSlate.lines.reduce(
+                            (sum, line) => sum + Number(line.targetWeightPct || 0),
+                            0,
+                          ),
+                        )
+                      : "",
+                  },
+                ],
+              },
+              {
+                heading: "What you checked",
+                fields: [
+                  { label: "Look-through key", value: issuerKeyLabel(holdingsSlate.issuerKeyMode) },
+                  {
+                    label: "Overlap",
+                    value: holdingsSlate.overlapAcknowledged
+                      ? "Seen, and repaired or annotated"
+                      : "",
+                  },
+                  {
+                    label: "Holdings date",
+                    value: holdingsSlate.staleDataAcknowledged
+                      ? "Stated what the date does and does not support"
+                      : "",
+                  },
+                ],
+              },
+              // Only shown once a draft exists, so the standing "not transmitted"
+              // line cannot appear on its own and imply an order was written.
+              ...(holdingsSlate.orderDraft.ticker
+                ? [
+                    {
+                      heading: "Order draft",
+                      fields: [
+                        {
+                          label: "Instrument",
+                          value: `${holdingsSlate.orderDraft.ticker}${
+                            holdingsSlate.orderDraft.classId
+                              ? ` · class ${holdingsSlate.orderDraft.classId}`
+                              : ""
+                          }`,
+                        },
+                        {
+                          label: "Direction",
+                          value: sentenceCase(holdingsSlate.orderDraft.direction),
+                        },
+                        {
+                          label: "Approximate amount",
+                          value: holdingsSlate.orderDraft.approxAmountUsd
+                            ? dollars(holdingsSlate.orderDraft.approxAmountUsd)
+                            : "",
+                        },
+                        {
+                          label: "Order type",
+                          value: sentenceCase(holdingsSlate.orderDraft.orderType),
+                        },
+                        {
+                          label: "Estimated friction",
+                          value: holdingsSlate.orderDraft.estimatedFrictionPct
+                            ? pointsPercent(holdingsSlate.orderDraft.estimatedFrictionPct)
+                            : "",
+                        },
+                        {
+                          label: "Transmitted",
+                          value: "No. This product has no submission endpoint.",
+                        },
+                      ],
+                    },
+                  ]
+                : []),
+            ])
+          : [],
+      },
+      {
+        id: "policy",
+        mission: "Mission 13",
+        title: "Operating plan and investment policy statement",
+        purpose:
+          "How the portfolio is maintained once it exists, and what your own rules did when nine things went wrong.",
+        lessonSlug: "if-pb-13-write-the-rules-and-defend-the-portfolio",
+        lessonLabel: "Write the rules and defend the portfolio",
+        willContain:
+          "your review process, the rebalance trigger and the method it uses, your rules for new money, withdrawals, selling and a broken thesis, your nine flight-test answers, and any critical failure that blocks the transfer case",
+        updatedAt: operatingPlan.updatedAt,
+        groups: operatingPlan.updatedAt
+          ? present([
+              {
+                fields: [
+                  { label: "Review process", value: operatingPlan.reviewProcess },
+                ],
+              },
+              {
+                heading: "Rebalancing",
+                fields: [
+                  { label: "Trigger", value: rebalanceTriggerLabel(operatingPlan.rebalanceRule) },
+                  {
+                    label: "Method",
+                    value: rebalanceMethodLabel(operatingPlan.rebalanceRule.method),
+                  },
+                ],
+              },
+              {
+                heading: "Standing rules",
+                fields: [
+                  { label: "New money", value: operatingPlan.contributionRule },
+                  { label: "Withdrawals", value: operatingPlan.withdrawalRule },
+                  { label: "Selling and replacing", value: operatingPlan.sellReplaceRule },
+                  { label: "A broken thesis", value: operatingPlan.thesisBreakRule },
+                ],
+              },
+              {
+                // Driven by the shared scenario list rather than by whatever
+                // keys happen to be in the saved record, so a scenario the
+                // learner never answered is visibly absent instead of silently
+                // dropped from the compiled document.
+                heading: "Flight test",
+                fields: ALL_FLIGHT_SCENARIOS.map((scenario) => ({
+                  label: scenario.title,
+                  value: scenarioSummary(
+                    operatingPlan.scenarioResponses[scenario.id] ?? {
+                      whatChanged: "",
+                      controllingPolicy: "",
+                      response: "",
+                      downstream: "",
+                      wouldChangeIf: "",
+                      policySilent: false,
+                    },
+                  ),
+                })),
+              },
+              {
+                heading: "Transfer case",
+                fields: [
+                  { label: "Case", value: operatingPlan.transferCaseId },
+                  {
+                    label: "Result",
+                    value: operatingPlan.transferCaseId
+                      ? operatingPlan.transferCasePassed
+                        ? "Passed"
+                        : "Not passed"
+                      : "",
+                  },
+                  {
+                    label: "Critical failures",
+                    value: operatingPlan.criticalFailures.map(sentenceCase),
+                  },
+                ],
+              },
+            ])
+          : [],
+      },
     ],
     [
       activeMode,
@@ -888,8 +1210,35 @@ export default function PortfolioDossier() {
       frictionBudget,
       evidenceChecklist,
       architectureDecision,
+      timingPolicy,
+      holdingsSlate,
+      operatingPlan,
     ],
   );
+
+  // A record that wants attention opens itself. Hiding a review-required
+  // artifact behind a click is the one case where the compression costs more
+  // than it saves.
+  const isOpen = (section: Section) =>
+    expanded[section.id] ?? Boolean(section.needsReview);
+  const setAllExpanded = (open: boolean) =>
+    setExpanded(Object.fromEntries(sections.map((s) => [s.id, open])));
+  const allOpen = sections.length > 0 && sections.every(isOpen);
+
+  /**
+   * Print with everything open.
+   *
+   * A collapsed `details` prints collapsed, which would turn a printed dossier
+   * into thirteen headings. `Copy as text` is unaffected either way — it reads
+   * the section data, never the DOM — so this only covers the browser's own
+   * print path.
+   */
+  useEffect(() => {
+    const openAll = () =>
+      setExpanded(Object.fromEntries(sections.map((s) => [s.id, true])));
+    window.addEventListener("beforeprint", openAll);
+    return () => window.removeEventListener("beforeprint", openAll);
+  }, [sections]);
 
   const recorded = sections.filter((s) => Boolean(s.updatedAt));
   const lastUpdated = recorded
@@ -941,42 +1290,66 @@ export default function PortfolioDossier() {
           <span className="h-px w-8 bg-white/30" />
           <span className="text-accent-amber">Portfolio Builder</span>
         </div>
-        <h1 className="ops-display mt-5 text-4xl leading-[1.05] sm:text-5xl">
+        {/*
+         * Sized down below `sm` only. At 390 this preamble ran to 476px — over
+         * half a viewport before the first control, which is the one thing on
+         * this page that broke a stated rule rather than merely reading long.
+         * The words are unchanged; only the type scale and rhythm are.
+         */}
+        <h1 className="ops-display mt-4 text-3xl leading-[1.05] sm:mt-5 sm:text-5xl">
           Your portfolio dossier
         </h1>
-        <p className="ops-body mt-5 text-lg leading-8 text-slate-200">
+        <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200 sm:mt-5 sm:text-lg sm:leading-8">
           Your saved lesson artifacts and selected Workbench case, in one place. Each
           mission adds a decision you can inspect, revise, and eventually defend.
         </p>
 
-        <div className="mt-7 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300">
-            Showing {modeLabel(activeMode)}
+        {/*
+         * Five wrapping pills came to 188px on a phone, four rows deep. The
+         * padding and type shrink below `sm`, and two labels drop the words a
+         * narrow screen can infer: the mode pill loses "Showing", the count loses
+         * "artifacts". Nothing is abbreviated into something a reader has to
+         * decode, and desktop reads exactly as it did.
+         */}
+        <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-7 sm:gap-3">
+          <span className="rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-slate-300 sm:px-4 sm:py-2 sm:text-sm">
+            <span className="hidden sm:inline">Showing </span>
+            {modeLabel(activeMode)}
           </span>
           <span
             className={cn(
-              "rounded-full border px-4 py-2 text-sm tabular-nums",
+              "rounded-full border px-3 py-1.5 text-[13px] tabular-nums sm:px-4 sm:py-2 sm:text-sm",
               recorded.length === sections.length
                 ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
                 : "border-accent-amber/40 bg-accent-amber/10 text-accent-amber",
             )}
           >
-            {recorded.length} of {sections.length} artifacts recorded
+            {recorded.length} of {sections.length}
+            <span className="hidden sm:inline"> artifacts</span> recorded
           </span>
           {lastUpdated && (
-            <span className="text-[14px] text-slate-400">
-              Last updated {formatWhen(lastUpdated)}
+            <span className="text-[13px] text-slate-400 sm:text-[14px]">
+              <span className="hidden sm:inline">Last u</span>
+              <span className="sm:hidden">U</span>
+              pdated {formatWhen(lastUpdated)}
             </span>
           )}
           {recorded.length > 0 && (
             <button
               type="button"
               onClick={copyAsText}
-              className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+              className="min-h-11 rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40 sm:min-h-0 sm:px-4 sm:py-2 sm:text-sm"
             >
               {copied ? "Copied" : "Copy as text"}
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setAllExpanded(!allOpen)}
+            className="min-h-11 rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40 sm:min-h-0 sm:px-4 sm:py-2 sm:text-sm"
+          >
+            {allOpen ? "Collapse all" : "Expand all"}
+          </button>
         </div>
       </header>
 
@@ -998,9 +1371,14 @@ export default function PortfolioDossier() {
         </div>
       )}
 
-      <div className="mt-12 space-y-6">
+      <div className="mt-8 space-y-3 sm:mt-12 sm:space-y-6">
         {sections.map((s) => (
-          <ArtifactCard key={s.id} section={s} />
+          <ArtifactCard
+            key={s.id}
+            section={s}
+            open={isOpen(s)}
+            onToggle={(next) => setExpanded((current) => ({ ...current, [s.id]: next }))}
+          />
         ))}
       </div>
 
@@ -1024,48 +1402,98 @@ export default function PortfolioDossier() {
   );
 }
 
-function ArtifactCard({ section }: { section: Section }) {
+function ArtifactCard({
+  section,
+  open,
+  onToggle,
+}: {
+  section: Section;
+  open: boolean;
+  onToggle: (next: boolean) => void;
+}) {
   const recorded = Boolean(section.updatedAt) && section.groups.length > 0;
 
   return (
     <section
       aria-labelledby={`artifact-${section.id}`}
       className={cn(
-        "rounded-2xl border p-5 sm:p-7",
+        "rounded-2xl border",
         recorded
           ? "border-white/12 bg-white/[0.03]"
           : "border-dashed border-white/12 bg-transparent",
       )}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="ops-caption text-[12px] text-accent-amber">{section.mission}</div>
-          <h2
-            id={`artifact-${section.id}`}
-            className={cn(
-              "ops-section-title mt-2 text-xl sm:text-2xl",
-              !recorded && "text-slate-400",
-            )}
-          >
-            {section.title}
-          </h2>
-          <p className="ops-body mt-2 text-[14px] text-slate-400">{section.purpose}</p>
-        </div>
-        <span
-          className={cn(
-            "ops-caption flex-shrink-0 rounded-full border px-3 py-1 text-[12px]",
-            section.needsReview
-              ? "border-accent-amber/40 bg-accent-amber/10 text-accent-amber"
-              : recorded
-              ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
-              // The dossier is a dark page: slate-500 measured 4.23:1 here, and
-              // this pill is the artifact's status, not decoration.
-              : "border-white/15 text-slate-400",
-          )}
-        >
-          {recorded ? section.statusLabel ?? "Recorded" : "Not yet"}
-        </span>
-      </div>
+      {/*
+       * The mission, the artifact's name and its status stay on the summary, so
+       * a closed dossier still answers "what have I decided, and where is it
+       * unfinished?" without opening anything. The purpose line and the record
+       * move inside: they are what you came to read once you have chosen a row.
+       */}
+      <details
+        open={open}
+        onToggle={(event) => onToggle((event.currentTarget as HTMLDetailsElement).open)}
+        className="group"
+      >
+      {/*
+       * No `flex-wrap`. On a phone the status group used to drop onto its own
+       * line, which cost a flat 40px on every row it happened to: rows measured
+       * 94px unwrapped and 134px wrapped, 162px where the title also ran to two
+       * lines. Letting the title column shrink instead keeps the pill on the
+       * right and wraps only the text, which is the part that can afford it.
+       *
+       * The Show/Hide words go with it below `sm` and a chevron carries the
+       * affordance. Nothing is lost to a screen reader either way — `summary`
+       * is a native disclosure button and announces its own expanded state.
+       */}
+        <summary className="flex min-h-11 cursor-pointer list-none items-start justify-between gap-3 p-4 sm:p-7">
+          <div className="min-w-0">
+            <div className="ops-caption text-[12px] text-accent-amber">{section.mission}</div>
+            <h2
+              id={`artifact-${section.id}`}
+              className={cn(
+                "ops-section-title mt-1.5 text-lg sm:mt-2 sm:text-2xl",
+                !recorded && "text-slate-400",
+              )}
+            >
+              {section.title}
+            </h2>
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+            <span
+              className={cn(
+                "ops-caption rounded-full border px-2.5 py-1 text-[12px] sm:px-3",
+                section.needsReview
+                  ? "border-accent-amber/40 bg-accent-amber/10 text-accent-amber"
+                  : recorded
+                  ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
+                  // The dossier is a dark page: slate-500 measured 4.23:1 here,
+                  // and this pill is the artifact's status, not decoration.
+                  : "border-white/15 text-slate-400",
+              )}
+            >
+              {recorded ? section.statusLabel ?? "Recorded" : "Not yet"}
+            </span>
+            <span className="hidden text-[13px] text-slate-400 group-open:hidden sm:inline">
+              Show
+            </span>
+            <span className="hidden text-[13px] text-slate-400 sm:group-open:inline">Hide</span>
+            <svg
+              aria-hidden
+              viewBox="0 0 24 24"
+              className="h-4 w-4 flex-shrink-0 text-slate-400 transition-transform group-open:rotate-90 motion-reduce:transition-none sm:hidden"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </div>
+        </summary>
+
+        <div className="px-4 pb-4 sm:px-7 sm:pb-7">
+          <p className="ops-body text-[14px] text-slate-400">{section.purpose}</p>
 
       {recorded ? (
         <>
@@ -1110,6 +1538,8 @@ function ArtifactCard({ section }: { section: Section }) {
           </Link>
         </div>
       )}
+        </div>
+      </details>
     </section>
   );
 }

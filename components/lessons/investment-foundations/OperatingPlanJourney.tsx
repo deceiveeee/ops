@@ -9,9 +9,13 @@ import {
   completionState,
   computeDrift,
   evaluateAllMethods,
+  FLIGHT_A,
+  FLIGHT_B,
   PREREQUISITE_CHECKPOINTS,
   readinessGaps,
   totalDeviationBps,
+  WORKED_SCENARIO,
+  type FlightScenario,
   type SleeveDrift,
 } from "@/lib/operating-plan";
 import {
@@ -218,70 +222,14 @@ const NEEDED_BY: Partial<Record<WorkbenchCheckpointId, string>> = {
 };
 
 // ---------------------------------------------------------------------------
-// The nine scenarios. One is worked in stage 3; eight run unaided.
+// The nine scenarios live in lib/operating-plan.ts, because the Dossier reads
+// the same nine back to the learner and the two must not drift apart.
 // ---------------------------------------------------------------------------
 
-type Scenario = { id: string; title: string; prompt: string };
+type Scenario = FlightScenario;
 
-const WORKED: Scenario = {
-  id: "crash",
-  title: "The market falls 30% in seven weeks",
-  prompt:
-    "Your growth sleeve is down roughly a third. Nothing about the companies you own has changed that you know of. Your income is unaffected.",
-};
-
-const FLIGHT_A: Scenario[] = [
-  {
-    id: "income",
-    title: "Your income stops",
-    prompt:
-      "You lose your job. You have no offer yet, and no clear date for the next one.",
-  },
-  {
-    id: "cash",
-    title: "You need money quickly",
-    prompt:
-      "An urgent bill arrives that your emergency savings do not fully cover.",
-  },
-  {
-    id: "contribution",
-    title: "New money arrives",
-    prompt: "A bonus lands. Your sleeves are not at their target weights.",
-  },
-  {
-    id: "drift",
-    title: "One sleeve has run away",
-    prompt:
-      "After a strong year your growth sleeve sits well outside the band you set.",
-  },
-];
-
-const FLIGHT_B: Scenario[] = [
-  {
-    id: "thesis",
-    title: "The reason you bought it is gone",
-    prompt:
-      "A fund you hold announces it is changing the index it tracks.",
-  },
-  {
-    id: "stale",
-    title: "The data is older than you thought",
-    prompt:
-      "The holdings file behind your overlap figure turns out to be four months old.",
-  },
-  {
-    id: "licence",
-    title: "The edge licence expires",
-    prompt:
-      "The review date on your active sleeve arrives. It has beaten its benchmark two years running.",
-  },
-  {
-    id: "mandate",
-    title: "A very good idea",
-    prompt:
-      "Someone you trust explains a strategy that has worked for them for years. It does not fit what you wrote.",
-  },
-];
+/** The one scenario stage 3 walks through in full. */
+const WORKED = WORKED_SCENARIO;
 
 const RESPONSE_OPTIONS = [
   { id: "no-action" as const, label: "Do nothing", hint: "My plan already covers this." },

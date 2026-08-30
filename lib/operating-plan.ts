@@ -239,6 +239,90 @@ export function readinessGaps(
 }
 
 // ---------------------------------------------------------------------------
+// The flight test — nine scenarios
+// ---------------------------------------------------------------------------
+
+/**
+ * One scenario in the Mission 13 flight test.
+ *
+ * These live here rather than inside the journey because the Dossier has to name
+ * the same nine records back to the learner. Held in one place, a scenario
+ * cannot be titled one thing where it is answered and another where it is read
+ * back, and a tenth cannot be added without the Dossier seeing it.
+ */
+export type FlightScenario = { id: string; title: string; prompt: string };
+
+/** Worked all the way through in stage 3, so the learner sees the shape once. */
+export const WORKED_SCENARIO: FlightScenario = {
+  id: "crash",
+  title: "The market falls 30% in seven weeks",
+  prompt:
+    "Your growth sleeve is down roughly a third. Nothing about the companies you own has changed that you know of. Your income is unaffected.",
+};
+
+/** Four contingencies the learner's own circumstances create. */
+export const FLIGHT_A: FlightScenario[] = [
+  {
+    id: "income",
+    title: "Your income stops",
+    prompt:
+      "You lose your job. You have no offer yet, and no clear date for the next one.",
+  },
+  {
+    id: "cash",
+    title: "You need money quickly",
+    prompt:
+      "An urgent bill arrives that your emergency savings do not fully cover.",
+  },
+  {
+    id: "contribution",
+    title: "New money arrives",
+    prompt: "A bonus lands. Your sleeves are not at their target weights.",
+  },
+  {
+    id: "drift",
+    title: "One sleeve has run away",
+    prompt:
+      "After a strong year your growth sleeve sits well outside the band you set.",
+  },
+];
+
+/** Four where the evidence behind an already-saved decision expires. */
+export const FLIGHT_B: FlightScenario[] = [
+  {
+    id: "thesis",
+    title: "The reason you bought it is gone",
+    prompt:
+      "A fund you hold announces it is changing the index it tracks.",
+  },
+  {
+    id: "stale",
+    title: "The data is older than you thought",
+    prompt:
+      "The holdings file behind your overlap figure turns out to be four months old.",
+  },
+  {
+    id: "licence",
+    title: "The edge licence expires",
+    prompt:
+      "The review date on your active sleeve arrives. It has beaten its benchmark two years running.",
+  },
+  {
+    id: "mandate",
+    title: "A very good idea",
+    prompt:
+      "Someone you trust explains a strategy that has worked for them for years. It does not fit what you wrote.",
+  },
+];
+
+/** All nine, in the order the learner meets them. */
+export const ALL_FLIGHT_SCENARIOS: readonly FlightScenario[] = [
+  WORKED_SCENARIO,
+  ...FLIGHT_A,
+  ...FLIGHT_B,
+];
+
+// ---------------------------------------------------------------------------
 // Critical failures — a gate, never a deduction
 // ---------------------------------------------------------------------------
 
