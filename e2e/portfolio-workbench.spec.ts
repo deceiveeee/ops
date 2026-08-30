@@ -6,8 +6,43 @@ import {
 
 const MISSION_5 = "/lessons/if-pb-05-set-allocation-and-risk-limits";
 
-async function visibleMode(page: Page, name: "Build mine" | "Practice case") {
-  return page.locator("button:visible").filter({ hasText: name }).first();
+/**
+ * Choose the portfolio mode the way the course now asks for it.
+ *
+ * Mission 5's readiness runway is the only place this choice is offered. The
+ * workbench rail used to carry a duplicate segmented toggle and this spec drove
+ * that, but it flipped a global setting from every lesson page with nothing on
+ * the page confirming the change, so it was removed. The runway's radio is
+ * `sr-only` inside its card, so the click goes through the rendered label.
+ *
+ * Switching remounts the journey — the mode is part of its React key — so the
+ * caller lands on whichever stage that mode had restored, not necessarily this
+ * one.
+ */
+async function chooseMode(page: Page, mode: "personal" | "practice") {
+  await page
+    .locator(`label:has(input[type='radio'][value='${mode}'])`)
+    .first()
+    .click();
+  /*
+   * Read the switch back off the rail, not off the radio. Choosing a mode
+   * remounts the journey on whichever stage that mode had restored, so the
+   * runway — and the radio with it — can leave the page before it can be
+   * asserted on. The rail is mounted on every lesson page and names the case.
+   */
+  if (mode === "practice") await expectPracticeCase(page);
+  else await expect(rail(page)).not.toContainText("Practice case");
+}
+
+function rail(page: Page) {
+  return page
+    .getByRole("region", { name: "Build while you learn" })
+    .filter({ visible: true });
+}
+
+/** The rail names the active case only when it is not the default. */
+async function expectPracticeCase(page: Page) {
+  await expect(rail(page)).toContainText("Practice case");
 }
 
 async function choose(page: Page, text: string | RegExp) {
@@ -44,7 +79,7 @@ async function advanceIfStillOnStage(page: Page, name: RegExp) {
 }
 
 async function completePracticeReadiness(page: Page) {
-  await (await visibleMode(page, "Practice case")).click();
+  await chooseMode(page, "practice");
 
   for (const name of [
     "Continue to Goal",
@@ -138,7 +173,7 @@ test("Mission 5 persists a practice policy, restores completion, and keeps modes
   await expect(workbench).toContainText("Research checked");
 
   await page.reload();
-  await expect(await visibleMode(page, "Practice case")).toHaveAttribute("aria-pressed", "true");
+  await expectPracticeCase(page);
   await expect(page.getByText("7 of 7 stages complete", { exact: false })).toBeVisible();
 
   await Promise.all([
@@ -151,11 +186,15 @@ test("Mission 5 persists a practice policy, restores completion, and keeps modes
   await expect(page.getByText("Range 15% to 25%; target 20%", { exact: false })).toBeVisible();
 
   await page.goto(MISSION_5);
-  await (await visibleMode(page, "Build mine")).click();
+  // The choice lives on the runway now, so reach it before switching. Practice
+  // has finished the lesson, so its stage nav offers the completed runway.
+  await page.getByRole("button", { name: "Runway, complete" }).click();
+  await chooseMode(page, "personal");
   await expect(workbench).toContainText("0 / 7");
-  await (await visibleMode(page, "Practice case")).click();
+  await chooseMode(page, "practice");
   await expect(workbench).toContainText("2 / 7");
 
+  // Switching back remounted practice on its own restored stage, not the runway.
   await page.getByRole("button", { name: "Runway, complete" }).click();
   await page.getByRole("button", { name: "Continue to Goal" }).click();
   await page.getByLabel("Required within two years", { exact: true }).fill("9000");
@@ -223,10 +262,7 @@ test("Mission 5 does not credit a migrated v1 mandate without exact readiness ev
   );
   await page.goto(MISSION_5);
 
-  await expect(await visibleMode(page, "Practice case")).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expectPracticeCase(page);
   await expect(page.getByText("0 of 7 stages complete", { exact: false })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Define what this portfolio must protect." }),

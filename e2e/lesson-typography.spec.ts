@@ -1099,12 +1099,37 @@ for (const slug of IF_LESSON_ROUTES) {
       .toBe(true);
 
     if (slug === "if-pb-05-set-allocation-and-risk-limits") {
-      const practiceMode = page
-        .locator("button:visible")
-        .filter({ hasText: "Practice case" })
-        .first();
-      await practiceMode.click();
-      await expect(practiceMode).toHaveAttribute("aria-pressed", "true");
+      /**
+       * Mission 5 opens on the readiness runway, which is where the course
+       * actually asks whose mandate is being built, with the consequence of each
+       * route on screen. The workbench rail used to carry a second copy of that
+       * choice as a segmented toggle, and this walk used to click it; it was
+       * removed because it flipped a global setting from every lesson page with
+       * nothing on the page confirming it had changed. The walk now drives the
+       * control the learner is left with.
+       *
+       * The radio is `sr-only` inside its card, so the click goes through the
+       * rendered label to the input, the same way `choose:` does above.
+       */
+      const chosen = await page.evaluate(() => {
+        const card = [...document.querySelectorAll("label")].find((candidate) => {
+          const box = candidate.getBoundingClientRect();
+          return (
+            box.width > 0 &&
+            box.height > 0 &&
+            /Practice case/.test(candidate.textContent ?? "")
+          );
+        });
+        const field = card?.querySelector<HTMLInputElement>(
+          "input[type='radio'][value='practice']",
+        );
+        field?.click();
+        return Boolean(field);
+      });
+      expect(chosen, `${slug}: the practice-case card was never on screen`).toBe(true);
+      await expect(
+        page.locator("input[type='radio'][value='practice']").first(),
+      ).toBeChecked();
     }
 
     const findings: Finding[] = [];
