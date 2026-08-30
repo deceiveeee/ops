@@ -191,6 +191,32 @@ test("a sleeve breaching mission 5's loss budget stays disabled", async ({ page 
   ).toBeDisabled();
 });
 
+/**
+ * Open every artifact on the dossier, once React is actually listening.
+ *
+ * Playwright's actionability check sees a rendered button and clicks it, which
+ * on a freshly navigated page can land before hydration has attached the
+ * handler. The click is swallowed, every later assertion reads a still-collapsed
+ * record, and because it is a race it fails only sometimes — it survived four
+ * five-worker runs and failed at two workers, where hydration has less headroom.
+ *
+ * The label only flips to "Collapse all" once the state genuinely changed, so
+ * that is the signal worth retrying against.
+ */
+async function expandDossier(page: Page) {
+  await expect(async () => {
+    const expand = page.getByRole("button", { name: "Expand all" });
+    if (await expand.count()) await expand.click();
+    // Both halves matter. The dossier gates its first paint on the Workbench
+    // loading, so a page still showing the skeleton has no `details` at all --
+    // and "none are closed" is vacuously true of nothing, which let this return
+    // against an empty page, click nothing, and leave every assertion after it
+    // reading a collapsed record.
+    expect(await page.locator("details").count()).toBeGreaterThan(0);
+    expect(await page.locator("details:not([open])").count()).toBe(0);
+  }).toPass({ timeout: 15_000 });
+}
+
 test("a fully passive decision is a complete outcome that reaches the dossier", async ({
   page,
 }) => {
@@ -215,7 +241,7 @@ test("a fully passive decision is a complete outcome that reaches the dossier", 
   await expect(page.getByText("6 of 6 stages complete", { exact: false })).toBeVisible();
 
   await page.goto("/dossier");
-  await page.getByRole("button", { name: "Expand all" }).click();
+  await expandDossier(page);
   await expect(page.getByText("Passive core only", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("A single total world equity index fund.")).toBeVisible();
   await expect(page.getByText("30 June 2026", { exact: true }).first()).toBeVisible();
