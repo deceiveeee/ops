@@ -14,6 +14,8 @@ import {
   EMPTY_ARCHITECTURE_DECISION,
   EMPTY_EVIDENCE_CHECKLIST,
   EMPTY_FRICTION_BUDGET,
+  FRICTION_FALLBACK_ONE_WAY_PCT,
+  frictionOneWayPct,
   EMPTY_STATEMENT_BRIEF,
   EMPTY_VALUATION_RANGE,
   useIFProgress,
@@ -340,5 +342,38 @@ describe("artifacts reach the Portfolio Workbench", () => {
     expect(architecture.status).toBe("review-required");
     expect(architecture.review?.sourceCheckpoint).toBe("beliefs");
     expect(architecture.review?.reason).toMatch(/Market observations changed/);
+  });
+});
+
+describe("frictionOneWayPct", () => {
+  // Mission 8 sums five decimal-fraction options. The cheapest reachable budget
+  // is 0.002 (rare trading, liquid names, sheltered account) and the most
+  // expensive is 0.039 (monthly, illiquid, meaningful size, urgent, taxable and
+  // short-held). Both ends must survive the conversion intact.
+  it("converts a saved decimal-fraction drag into one leg in percentage points", () => {
+    expect(frictionOneWayPct({ ...EMPTY_FRICTION_BUDGET, estimatedAnnualDrag: 0.019 })).toBeCloseTo(0.95, 10);
+    expect(frictionOneWayPct({ ...EMPTY_FRICTION_BUDGET, estimatedAnnualDrag: 0.002 })).toBeCloseTo(0.1, 10);
+    expect(frictionOneWayPct({ ...EMPTY_FRICTION_BUDGET, estimatedAnnualDrag: 0.039 })).toBeCloseTo(1.95, 10);
+  });
+
+  /**
+   * The defect this function exists to prevent. Mission 11 prints this value to
+   * two decimals, so a conversion that drops the factor of 100 renders `0.00%
+   * each way` across the entire range of budgets Mission 8 can produce.
+   */
+  it("never renders as 0.00% for any budget Mission 8 can produce", () => {
+    for (const drag of [0.002, 0.008, 0.019, 0.039]) {
+      const shown = frictionOneWayPct({ ...EMPTY_FRICTION_BUDGET, estimatedAnnualDrag: drag }).toFixed(2);
+      expect(shown).not.toBe("0.00");
+    }
+  });
+
+  it("falls back to the labelled placeholder when Mission 8 has not been saved", () => {
+    expect(frictionOneWayPct(EMPTY_FRICTION_BUDGET)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
+    expect(frictionOneWayPct(null)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
+    expect(frictionOneWayPct(undefined)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
+    expect(
+      frictionOneWayPct({ ...EMPTY_FRICTION_BUDGET, estimatedAnnualDrag: Number.NaN }),
+    ).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
   });
 });
