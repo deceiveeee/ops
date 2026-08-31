@@ -121,6 +121,12 @@ test("the model stage charges risk and friction until a market-beating strategy 
 });
 
 test("no single impressive number unlocks the sleeve", async ({ page }) => {
+  // Same budget as the other two tests that walk to the licence and answer all
+  // eleven edge questions. The default 30s covers that work on an idle machine
+  // and does not when the suite runs five browsers against one dev server, so
+  // this failed intermittently -- and reported wherever it happened to be, in a
+  // walk helper or mid-questionnaire, which read as a different bug each run.
+  test.setTimeout(90_000);
   await page.goto(MISSION_10);
   await walkToLicence(page);
 
@@ -176,6 +182,7 @@ test("a sleeve licenses only once every condition is met", async ({ page }) => {
 });
 
 test("a sleeve breaching mission 5's loss budget stays disabled", async ({ page }) => {
+  test.setTimeout(90_000);
   await seedPriorMissions(page);
   await page.goto(MISSION_10);
   await walkToLicence(page);
