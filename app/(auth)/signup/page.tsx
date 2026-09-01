@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import GlassPanel from "@/components/ui/GlassPanel";
 import Button from "@/components/ui/Button";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { authErrorMessage } from "@/lib/supabase/auth-errors";
 
 function SignupForm() {
   const params = useSearchParams();
@@ -27,7 +28,7 @@ function SignupForm() {
       options: { emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
     setBusy(false);
-    if (error) return setError(error.message);
+    if (error) return setError(authErrorMessage(error));
     setSent(true);
   }
 
