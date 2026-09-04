@@ -115,7 +115,7 @@ export function validateAllocationSleeves(
       issues.push({
         code: "empty-id",
         path: `${path}.id`,
-        message: "Each allocation sleeve needs a stable identifier.",
+        message: "Each allocation slice needs a stable identifier.",
       });
     } else if (ids.has(id)) {
       issues.push({
@@ -153,7 +153,7 @@ export function validateAllocationSleeves(
       issues.push({
         code: "invalid-range",
         path,
-        message: "The sleeve range must satisfy minimum <= target <= maximum.",
+        message: "The slice range must satisfy minimum ≤ target ≤ maximum.",
       });
     }
   });

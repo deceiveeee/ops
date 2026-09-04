@@ -317,7 +317,7 @@ describe("artifacts reach the Portfolio Workbench", () => {
 
   it("adopts a belief stated before the record was split out", async () => {
     // A learner who answered Mission 2 while the belief still lived inside the
-    // philosophy draft must not lose it, in the lesson or in the dossier.
+    // philosophy draft must not lose it, in the lesson or in the plan.
     window.localStorage.setItem(
       "ops-if-philosophy-draft-v1",
       JSON.stringify({

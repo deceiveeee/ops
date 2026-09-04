@@ -181,7 +181,7 @@ export default function Lesson8_6() {
       </ConceptSection>
 
       {/* 6. DIMINISHING RETURNS */}
-      <ConceptSection index="8.6.6" eyebrow="Section 6 · Diminishing returns and marginal allocation" title="Invest at the margin, not by category" intro="Each successive tranche of capital earns less. Management should invest while the marginal return exceeds the opportunity cost of capital.">
+      <ConceptSection index="8.6.6" eyebrow="Section 6 · Diminishing returns and marginal allocation" title="Invest at the margin, not by category" intro="Each successive block of capital earns less. Management should invest while the marginal return exceeds the opportunity cost of capital.">
         <Reveal><InteractiveFrame><MarginalReinvestmentCurve /></InteractiveFrame></Reveal>
       </ConceptSection>
 

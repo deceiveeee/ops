@@ -1517,9 +1517,9 @@ export function validateMandateForCoherence(
     issues.push("Practice mode requires the practice-only readiness route.");
   }
   if (mode === "personal" && mandate.route === "practice-only") {
-    issues.push("Personal mode requires a personal readiness route.");
+    issues.push("Personal mode needs a personal readiness result.");
   }
-  if (!mandate.acknowledgedAt) issues.push("Acknowledge the mandate constraints.");
+  if (!mandate.acknowledgedAt) issues.push("Acknowledge the limits you recorded.");
   return issues;
 }
 
@@ -1604,7 +1604,7 @@ export function validateAllocationForCoherence(
     mandateAmount > 0 &&
     referenceAmount !== mandateAmount
   ) {
-    issues.push("The allocation reference amount must match the saved mandate.");
+    issues.push("The allocation reference amount must match the goal and limits you saved.");
   }
   if (
     Number.isFinite(mandateNeed) &&

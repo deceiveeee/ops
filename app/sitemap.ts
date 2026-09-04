@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/courses",
     "/courses/finance-foundations",
     "/courses/investment-foundations",
-    "/dossier",
+    "/plan",
     "/filings",
     "/start",
     ...getAllLessons().map(({ lesson }) => `/lessons/${lesson.slug}`),

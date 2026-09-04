@@ -69,8 +69,8 @@ const STAGES: readonly ValuationStage[] = [
     label: "Decision",
     title: "Set the architecture you will actually run.",
     guide:
-      "A fully passive portfolio is a complete answer. A sleeve needs every condition met.",
-    instruction: "Choose your architecture and save it to the dossier.",
+      "A fully passive portfolio is a complete answer. An active slice needs every condition met.",
+    instruction: "Choose your architecture and save it to your plan.",
     next: "Finish the mission",
   },
 ];
@@ -233,7 +233,7 @@ export default function ArchitectureJourney() {
 
   const proposal: EdgeProposal = useMemo(
     () => ({
-      replacesExposure: "Part of the growth sleeve",
+      replacesExposure: "Part of the growth slice",
       benchmark: coreBenchmark || "Total world equity index, net of fees",
       pocket,
       whoIsWrong,
@@ -364,7 +364,7 @@ export default function ArchitectureJourney() {
     {
       id: "edge-thesis-break",
       kind: "text",
-      label: "What would make you close this sleeve?",
+      label: "What would make you close this slice?",
       help: "Not the same as being wrong once. Name the result that ends it.",
       example:
         "Index funds change their rules and stop dumping spin-offs, so the forced selling never happens.",
@@ -772,13 +772,13 @@ export default function ArchitectureJourney() {
                   selected={mode === "active-sleeve"}
                   onClick={() => setMode("active-sleeve")}
                 >
-                  Passive core plus the active sleeve I licensed
+                  Passive core plus the active slice I licensed
                 </Choice>
               </div>
 
               {mode === "active-sleeve" && !licence.licensed && (
                 <Feedback status="incorrect">
-                  The sleeve is not licensed. {licence.unmet.length} condition
+                  The slice is not licensed. {licence.unmet.length} condition
                   {licence.unmet.length === 1 ? "" : "s"} remain unmet, so this option cannot
                   be saved. Go back to the licence stage, or choose the passive core.
                 </Feedback>
@@ -831,8 +831,8 @@ export default function ArchitectureJourney() {
 
               {saved && (
                 <Feedback status="correct">
-                  Saved to your dossier. You have a written architecture with a benchmark, a
-                  dated base rate, and a review date — and if you licensed a sleeve, the
+                  Saved to your plan. You have a written architecture with a benchmark, a
+                  dated base rate, and a review date — and if you licensed a slice, the
                   condition that would close it. Mission 11 asks whether you will deviate
                   from this on timing.
                 </Feedback>
@@ -855,8 +855,8 @@ export default function ArchitectureJourney() {
       stages={STAGES}
       renderStage={renderStage}
       labLabel="Guided architecture lab"
-      finishHref="/dossier"
-      finishLabel="See your dossier"
+      finishHref="/plan"
+      finishLabel="See your plan"
       savedArtifactLabel="Architecture and Edge Decision"
       initialCompleted={STAGES.map(() => restored)}
       initialStage={restored ? STAGES.length - 1 : 0}
@@ -1036,7 +1036,7 @@ function VerdictStep({
       <SwitchboardStatus
         licence={licence}
         onContinue={onContinue}
-        continueLabel="Continue with the sleeve licensed"
+        continueLabel="Continue with the slice licensed"
       />
       <Button size="sm" variant="outline" onClick={onBack}>
         ← Back to the questions
@@ -1166,8 +1166,8 @@ function SwitchboardStatus({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="ops-body-strong text-[15px] text-white">
           {licence.licensed
-            ? "Every condition met — the sleeve can be licensed"
-            : `Sleeve disabled · ${licence.unmet.length} condition${licence.unmet.length === 1 ? "" : "s"} unmet`}
+            ? "Every condition met — the slice can be licensed"
+            : `Slice disabled · ${licence.unmet.length} condition${licence.unmet.length === 1 ? "" : "s"} unmet`}
         </h3>
         <Button size="sm" disabled={!licence.licensed} onClick={onContinue}>
           {continueLabel}

@@ -1,10 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 
 /**
- * Mission 10's whole point is that a sleeve cannot be talked open. These tests
+ * Mission 10’s whole point is that an active slice cannot be talked open. These tests
  * exist to keep that true: that the switchboard names every unmet condition
  * rather than the first, that a fully passive decision is a complete outcome,
- * and that the saved decision survives a reload into the dossier.
+ * and that the saved decision survives a reload into the plan.
  */
 
 const MISSION_10 = "/lessons/if-8-1-choose-passive-or-prove-an-edge";
@@ -120,7 +120,7 @@ test("the model stage charges risk and friction until a market-beating strategy 
   await expect(page.getByText(/beat the market and destroyed value/)).toBeVisible();
 });
 
-test("no single impressive number unlocks the sleeve", async ({ page }) => {
+test("no single impressive number unlocks the slice", async ({ page }) => {
   await page.goto(MISSION_10);
   await walkToLicence(page);
 
@@ -139,9 +139,9 @@ test("no single impressive number unlocks the sleeve", async ({ page }) => {
     await page.getByRole("button", { name: /Next question|See the verdict/ }).click();
   }
 
-  const status = page.getByText(/Sleeve disabled ·/);
+  const status = page.getByText(/Slice disabled ·/);
   await expect(status).toBeVisible();
-  await expect(page.getByRole("button", { name: /Continue with the sleeve licensed/ })).toBeDisabled();
+  await expect(page.getByRole("button", { name: /Continue with the slice licensed/ })).toBeDisabled();
 
   // Every unmet condition is named, not just the first. A 40% claimed edge
   // clears the net-edge test on its own and still licenses nothing.
@@ -149,7 +149,7 @@ test("no single impressive number unlocks the sleeve", async ({ page }) => {
     "Specific mispricing",
     "Correction mechanism",
     "Your capability",
-    "Falsifiable claim",
+    "A claim you could disprove",
     "Evidence design",
     "Your friction",
     "Valuation range",
@@ -159,7 +159,7 @@ test("no single impressive number unlocks the sleeve", async ({ page }) => {
   }
 });
 
-test("a sleeve licenses only once every condition is met", async ({ page }) => {
+test("an active slice licenses only once every condition is met", async ({ page }) => {
   test.setTimeout(90_000);
   await seedPriorMissions(page);
   await page.goto(MISSION_10);
@@ -171,11 +171,11 @@ test("a sleeve licenses only once every condition is met", async ({ page }) => {
   await expect(page.getByText("2.80%").first()).toBeVisible();
   await expect(page.getByText(/Every condition met/)).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /Continue with the sleeve licensed/ }),
+    page.getByRole("button", { name: /Continue with the slice licensed/ }),
   ).toBeEnabled();
 });
 
-test("a sleeve breaching mission 5's loss budget stays disabled", async ({ page }) => {
+test("a slice breaching mission 5’s loss budget stays disabled", async ({ page }) => {
   await seedPriorMissions(page);
   await page.goto(MISSION_10);
   await walkToLicence(page);
@@ -187,11 +187,11 @@ test("a sleeve breaching mission 5's loss budget stays disabled", async ({ page 
   await expect(page.getByText("Loss budget", { exact: true })).toBeVisible();
   await expect(page.getByText("Position ceiling", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /Continue with the sleeve licensed/ }),
+    page.getByRole("button", { name: /Continue with the slice licensed/ }),
   ).toBeDisabled();
 });
 
-test("a fully passive decision is a complete outcome that reaches the dossier", async ({
+test("a fully passive decision is a complete outcome that reaches the plan", async ({
   page,
 }) => {
   test.setTimeout(90_000);
@@ -214,10 +214,10 @@ test("a fully passive decision is a complete outcome that reaches the dossier", 
   await page.reload();
   await expect(page.getByText("6 of 6 stages complete", { exact: false })).toBeVisible();
 
-  await page.goto("/dossier");
+  await page.goto("/plan");
   await expect(page.getByText("Passive core only", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("A single total world equity index fund.")).toBeVisible();
   await expect(page.getByText("30 June 2026", { exact: true }).first()).toBeVisible();
-  // A passive decision records no sleeve, so those rows must not appear at all.
+  // A passive decision records no active slice, so those rows must not appear at all.
   await expect(page.getByText("Mispricing", { exact: true })).toHaveCount(0);
 });

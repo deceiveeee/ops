@@ -30,15 +30,15 @@ export default function PortfolioBuilderPath({
     <div>
       <section
         className="overflow-hidden rounded-[30px] border border-black/10 bg-white shadow-[0_24px_70px_-48px_rgba(0,0,0,0.35)]"
-        aria-labelledby="portfolio-dossier-title"
+        aria-labelledby="portfolio-plan-title"
       >
         <div className="grid gap-8 px-6 py-7 sm:px-8 sm:py-9 lg:grid-cols-[minmax(0,1fr)_240px] lg:px-10">
           <div>
             <div className="text-[14px] font-semibold tracking-[0.02em] text-[#8A5A00]">
-              Portfolio dossier scan
+              Your portfolio plan
             </div>
             <h2
-              id="portfolio-dossier-title"
+              id="portfolio-plan-title"
               className="mt-3 max-w-3xl font-display text-[clamp(34px,4vw,56px)] font-medium leading-[1.04] tracking-[-0.025em] text-[#1D1D1F]"
             >
               {path.missions.length} decisions. One portfolio you can defend.
@@ -71,7 +71,7 @@ export default function PortfolioBuilderPath({
 
         <div
           className="relative isolate overflow-hidden border-y border-black/10 bg-[#F7F5EF] px-4 py-6 sm:px-7"
-          aria-label="Portfolio dossier artifacts"
+          aria-label="Decisions saved to your plan"
         >
           {/*
             Rendered unconditionally, reduced by CSS and by the transition.
@@ -129,7 +129,7 @@ export default function PortfolioBuilderPath({
             Required path
           </div>
           <h2 className="mt-3 font-display text-[clamp(34px,4vw,52px)] font-medium leading-[1.06] tracking-[-0.02em] text-[#1D1D1F]">
-            Build the dossier in decision order.
+            Build your plan in decision order.
           </h2>
           <p className="mt-4 text-[17px] leading-7 text-[#424245]">
             The first five missions reuse the strongest guided work already built. Later missions stay visible so the destination is always clear.

@@ -113,7 +113,7 @@ export default function MarginalReinvestmentCurve() {
       <div className={cn("rounded-2xl border p-5 sm:p-6", totalNPV > 0 ? "border-accent-green/25 bg-accent-green/[0.05]" : "border-accent-red/25 bg-accent-red/[0.05]")}>
         <p className="ops-body text-[16px] leading-[1.7] text-slate-100">
           {cutoff === 0 ? (
-            <>With a {required}% required return, no tranche earns enough. Management should not invest
+            <>With a {required}% required return, no block earns enough. Management should not invest
             and should return capital to shareholders or repay debt instead.</>
           ) : (
             <>Under these assumptions, management should invest the first <span className="text-white">${fmt(totalInvested)}M</span>{" "}

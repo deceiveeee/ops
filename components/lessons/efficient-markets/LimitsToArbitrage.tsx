@@ -97,7 +97,7 @@ const LIMITS: {
       "Clients compare managers to peers and benchmarks over short windows.",
       "Internal risk officers monitor drawdowns and position losses.",
       "Avoiding a crowded trade can produce extended underperformance.",
-      "Capital allocators move mandates away from managers who look wrong for too long.",
+      "The institutions that hand out the money move it away from managers who look wrong for too long.",
       "The manager may be fired before the thesis is vindicated.",
     ],
     example: {

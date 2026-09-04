@@ -20,7 +20,7 @@ async function openFilingStage(page: Page) {
   await page.goto(MISSION_12);
   await page.getByRole("button", { name: /Look up/ }).click();
   await page.getByRole("button", { name: /I can tell a filer/ }).click();
-  await page.getByRole("button", { name: /Continue to the passport/ }).click();
+  await page.getByRole("button", { name: /Continue to the fund identity/ }).click();
   await page.getByRole("button", { name: /Now let me fill one in/ }).click();
   await page.getByRole("button", { name: /Continue to the filing/ }).click();
   await expect(page.getByRole("radiogroup")).toBeVisible();

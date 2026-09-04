@@ -54,7 +54,7 @@ Read `AGENTS.md` and the approved Portfolio Builder authorities, then inspect co
 - `app/(marketing)/page.tsx`;
 - `components/marketing/HomePage.tsx`;
 - every component under `components/marketing/` used by the current page;
-- the `/start`, `/courses`, Portfolio Builder course, lesson, and Dossier entry routes;
+- the `/start`, `/courses`, Portfolio Builder course, lesson, and plan entry routes;
 - `app/globals.css`, theme/type tokens, header, footer, and analytics/performance wiring;
 - existing current visual-audit screenshots as baseline context only.
 
@@ -98,7 +98,7 @@ Preferred visual sequence:
 - valuation gravity changes with assumptions;
 - portfolio constellation reveals covariance/diversification;
 - macro control room shows transmission, not prediction;
-- the final scan resolves into the learner's 13-mission Workbench and Dossier.
+- the final scan resolves into the learner’s 13-mission Workbench and plan.
 
 Use static or clearly illustrative data. No live market API is required or authorized.
 
@@ -152,7 +152,7 @@ Use static or clearly illustrative data. No live market API is required or autho
 ## Conversion without manipulation
 
 - Primary CTA starts/resumes the course at the correct state.
-- Secondary CTA previews the 13 decisions or completed Dossier outcome.
+- Secondary CTA previews the 13 decisions or completed plan outcome.
 - Never use false urgency, fake social proof, fabricated market results, or shame.
 - If authentication is optional, let visitors understand the product before asking for it.
 - Explain local/private progress accurately.

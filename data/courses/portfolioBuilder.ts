@@ -4,7 +4,7 @@ export type PortfolioMissionStatus = "available" | "planned";
 
 /**
  * One checkpoint per mission. All checkpoints compile into the persistent
- * Portfolio Workbench and final Dossier. Ids are internal; `label` is what the
+ * Portfolio Workbench and final plan. Ids are internal; `label` is what the
  * learner sees.
  * Source of truth for this spine:
  * docs/lesson-plans/portfolio-builder-mission-curriculum.md
@@ -129,7 +129,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
   // estimates. The total stays stable as missions move from planned to built.
   targetMinutes: 629,
   artifacts: [
-    { id: "mandate", label: "Mandate", missionIds: ["pb-01"] },
+    { id: "mandate", label: "Goal", missionIds: ["pb-01"] },
     { id: "beliefs", label: "Beliefs", missionIds: ["pb-02"] },
     { id: "bond-risk", label: "Bond risk", missionIds: ["pb-03"] },
     { id: "required-return", label: "Required return", missionIds: ["pb-04"] },
@@ -138,21 +138,21 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
     { id: "valuation", label: "Value", missionIds: ["pb-07"] },
     { id: "friction", label: "Friction", missionIds: ["pb-08"] },
     { id: "evidence-test", label: "Evidence test", missionIds: ["pb-09"] },
-    { id: "architecture", label: "Architecture", missionIds: ["pb-10"] },
+    { id: "architecture", label: "Index or edge", missionIds: ["pb-10"] },
     { id: "timing", label: "Timing", missionIds: ["pb-11"] },
     { id: "holdings", label: "Holdings", missionIds: ["pb-12"] },
-    { id: "policy", label: "Policy", missionIds: ["pb-13"] },
+    { id: "policy", label: "Rules", missionIds: ["pb-13"] },
   ],
   missions: [
     {
       id: "pb-01",
       order: 1,
-      title: "Define your investor mandate",
+      title: "Set your goal and your limits",
       decision: "Who is this money for, and what could derail the plan?",
       outcome:
         "Choose a personal or practice path, then state the goal, horizon, cash needs, readiness, loss capacity and behavioural limits the portfolio must respect.",
       artifactId: "mandate",
-      artifactLabel: "Investor Mandate",
+      artifactLabel: "Goal and limits",
       targetMinutes: 40,
       status: "available",
       startLessonSlug: MANDATE_CORE[0],
@@ -172,7 +172,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Read three dated disclosures before seeing the price, and record one observation you could defend alongside what it does not establish.",
       artifactId: "beliefs",
-      artifactLabel: "Market Observation Note",
+      artifactLabel: "Market observation note",
       targetMinutes: 17,
       status: "available",
       startLessonSlug: BELIEF_CORE[0],
@@ -188,7 +188,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Separate interest-rate risk from default risk, measure sensitivity with duration, and turn a credit view into a required yield.",
       artifactId: "bond-risk",
-      artifactLabel: "Bond Risk Brief",
+      artifactLabel: "Bond risk brief",
       targetMinutes: 82,
       status: "available",
       startLessonSlug: BOND_CORE[0],
@@ -204,7 +204,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Define equity risk, read beta with its limits, choose the measures you rely on, and fix a price rule.",
       artifactId: "required-return",
-      artifactLabel: "Equity Risk Policy",
+      artifactLabel: "Equity risk policy",
       targetMinutes: 70,
       status: "available",
       startLessonSlug: EQUITY_RISK_CORE[0],
@@ -224,7 +224,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Use a short portfolio-theory preflight, then set strategic weights, a liquidity bucket and a transparent stress-loss budget without treating a model as a personal answer.",
       artifactId: "allocation",
-      artifactLabel: "Allocation and Risk Policy",
+      artifactLabel: "Allocation and risk limits",
       targetMinutes: 45,
       status: "available",
       startLessonSlug: ALLOCATION_CORE[0],
@@ -240,7 +240,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Connect the three statements, then read profitability, leverage and investor cash flow while keeping the candidate on a research-only watchlist.",
       artifactId: "evidence",
-      artifactLabel: "Business Evidence Brief",
+      artifactLabel: "Business evidence brief",
       targetMinutes: 100,
       status: "available",
       startLessonSlug: STATEMENT_CORE[0],
@@ -259,7 +259,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Build an internally consistent value range, cross-check it against peers, and save action and thesis-break rules without treating research as ownership.",
       artifactId: "valuation",
-      artifactLabel: "Valuation and Return Range",
+      artifactLabel: "Valuation and return range",
       targetMinutes: 50,
       status: "available",
       startLessonSlug: VALUATION_CORE[0],
@@ -275,7 +275,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Quantify spread, price impact, the cost of waiting, turnover and tax drag before deciding how actively to trade.",
       artifactId: "friction",
-      artifactLabel: "Friction Budget",
+      artifactLabel: "Friction budget",
       targetMinutes: 35,
       status: "available",
       startLessonSlug: FRICTION_CORE[0],
@@ -293,7 +293,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       artifactId: "evidence-test",
       // Two artifacts since curriculum amendment 1: the belief arrives here,
       // where the learner can finally test one.
-      artifactLabel: "Evidence Test Checklist and Market Belief Statement",
+      artifactLabel: "Evidence test checklist and market belief",
       targetMinutes: 40,
       status: "available",
       startLessonSlug: EVIDENCE_TEST_CORE[0],
@@ -307,9 +307,9 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       title: "Choose passive, or prove an edge",
       decision: "Is active risk justified for this investor?",
       outcome:
-        "Default to passive unless a falsifiable edge survives the current base rate, evidence, friction, capacity, durability, size and thesis-break tests.",
+        "Default to index funds unless an edge you could disprove survives the current base rate, evidence, friction, capacity, durability, size and thesis-break tests.",
       artifactId: "architecture",
-      artifactLabel: "Architecture and Edge Decision",
+      artifactLabel: "Index-or-edge decision",
       targetMinutes: 40,
       status: "available",
       startLessonSlug: ARCHITECTURE_CORE[0],
@@ -327,7 +327,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Price the cost of being out of the market, then write a no-timing or explicitly bounded timing rule.",
       artifactId: "timing",
-      artifactLabel: "Timing Policy",
+      artifactLabel: "Timing policy",
       targetMinutes: 30,
       status: "available",
       startLessonSlug: "if-pb-11-set-a-market-timing-policy",
@@ -345,7 +345,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Verify each product's exact identity, exposure, structure, fees, tracking, liquidity, source date and overlap, then rehearse an order without submitting it.",
       artifactId: "holdings",
-      artifactLabel: "Holdings Slate",
+      artifactLabel: "Holdings list",
       targetMinutes: 40,
       status: "available",
       startLessonSlug: "if-pb-12-choose-the-actual-holdings",
@@ -363,7 +363,7 @@ export const portfolioBuilderPath: PortfolioBuilderPath = {
       outcome:
         "Specify contribution, withdrawal, rebalance, tax-warning, sell and thesis-break rules, then pass a portfolio flight test and defend the whole policy.",
       artifactId: "policy",
-      artifactLabel: "Operating Plan and IPS",
+      artifactLabel: "Operating rules",
       targetMinutes: 40,
       status: "available",
       startLessonSlug: "if-pb-13-write-the-rules-and-defend-the-portfolio",

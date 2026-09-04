@@ -56,7 +56,7 @@ export default function LessonIF_1_1() {
                 Three real cases
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
-                One saved Market Observation Note
+                One saved market observation note
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
                 No market opinion required

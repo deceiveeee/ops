@@ -1442,8 +1442,9 @@ export default function Lesson5_6() {
           </h2>
           <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200">
             Cedar Ridge has asked you to evaluate two proposed portfolios built
-            from three fictional securities. Your recommendation must satisfy
-            the mandate below and acknowledge the limits of the evidence.
+            from three fictional securities. Your recommendation must satisfy the
+            mandate below — the rules Cedar Ridge requires the portfolio to follow —
+            and acknowledge the limits of the evidence.
           </p>
           <ul className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {[

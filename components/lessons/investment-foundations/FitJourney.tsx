@@ -54,14 +54,14 @@ const STEPS = [
     guide:
       "Behavioral fit appears when prices fall, evidence changes, or cash needs arrive. Use a review rule that connects evidence to action.",
     instruction: "Choose the disciplined response in all three stress events.",
-    next: "Build the fit charter",
+    next: "Build the fit check",
   },
   {
-    label: "Charter",
+    label: "Fit check",
     title: "Record your implementation conditions",
     guide:
       "Select one research candidate and record the horizon, liquidity, research, loss-response, and account conditions that require verification.",
-    instruction: "Complete and save the provisional investor-fit charter.",
+    instruction: "Complete and save the provisional investor-fit check.",
     next: "Return to the course",
   },
 ] as const;
@@ -211,7 +211,7 @@ export default function FitJourney() {
                 disabled
                 className="order-3 rounded-full border border-white/10 px-5 py-2 text-sm text-slate-500"
               >
-                Save the fit charter to finish
+                Save the fit check to finish
               </button>
             )}
           </div>
@@ -1014,9 +1014,9 @@ function FitCharterScene({
   return (
     <div>
       <DefinitionPanel
-        label="Final artifact"
-        title="What is a fit charter?"
-        definition="A fit charter records the conditions an investor must verify before implementing a philosophy. It names the candidate, available capacity, review rule, cost and account rule, and the remaining implementation question."
+        label="What you save at the end"
+        title="What is a fit check?"
+        definition="A fit check records the conditions an investor must verify before using a philosophy. It names the candidate, available capacity, review rule, cost and account rule, and the remaining implementation question."
       />
 
       {draft.candidateFamilies.length === 0 && (
@@ -1237,15 +1237,15 @@ function FitCharterScene({
           onClick={() => setReady(true)}
           className="mt-6 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
         >
-          Assemble the provisional fit charter →
+          Assemble the provisional fit check →
         </button>
       )}
 
       {ready && (
         <div className="mt-6 rounded-2xl border border-accent-green/30 bg-accent-green/[0.04] p-5 sm:p-6">
-          {/* The charter's title, above the six rows it summarises. */}
+          {/* The fit check’s title, above the six rows it summarises. */}
           <h3 className="ops-body-strong text-[15px] text-accent-green">
-            Provisional fit charter
+            Provisional fit check
           </h3>
           <dl className="mt-3">
             <CharterRow label="Research candidate" value={family} />
@@ -1261,7 +1261,7 @@ function FitCharterScene({
             disabled={saved}
             className="mt-5 rounded-full border border-accent-green/40 bg-accent-green/10 px-5 py-2.5 text-sm font-semibold text-accent-green transition-colors hover:bg-accent-green/20 disabled:cursor-default disabled:opacity-70"
           >
-            {saved ? "Fit charter saved ✓" : "Save fit charter to this browser"}
+            {saved ? "Fit check saved ✓" : "Save the fit check to this browser"}
           </button>
         </div>
       )}
@@ -1271,7 +1271,7 @@ function FitCharterScene({
           Educational boundary
         </div>
         <p className="ops-body mt-1 text-[14px] text-slate-300">
-          This charter organizes research questions. Personal tax, legal,
+          This fit check organizes research questions. Personal tax, legal,
           liquidity, and suitability decisions require current information and
           the investor&apos;s complete financial circumstances.
         </p>

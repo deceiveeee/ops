@@ -18,7 +18,7 @@ The learner must always be able to answer:
 4. What must I review next?
 
 The shell connects the course mission map, current lesson, affected artifact, saved state,
-downstream review requirements, and destination Dossier without becoming a generic
+downstream review requirements, and destination plan page without becoming a generic
 dashboard or a second curriculum.
 
 ## Preconditions
@@ -30,7 +30,7 @@ complete, do not invent presentational mock state or a competing schema. Report
 Inspect in addition:
 
 - `components/courses/PortfolioBuilderPath.tsx`
-- `components/dossier/PortfolioDossier.tsx`
+- `components/plan/PortfolioPlan.tsx`
 - `components/lessons/investment-foundations/IFLessonLayout.tsx`
 - `components/lessons/investment-foundations/IFProgressRail.tsx`
 - `components/lessons/investment-foundations/IFSourcePanel.tsx`

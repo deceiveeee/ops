@@ -25,7 +25,7 @@ course coherent; concept-native metaphors should make each mission memorable.
 Before editing:
 
 1. run `git status --short` and inspect all relevant diffs;
-2. trace the course landing → mission map → lesson shell → Workbench → Dossier flow;
+2. trace the course landing → mission map → lesson shell → Workbench → plan flow;
 3. inspect every mission at its entry, model, guided, independent, feedback, and completed
    state;
 4. capture desktop/mobile and light/dark baseline screenshots;
@@ -51,7 +51,7 @@ The learner-facing hierarchy is:
 Do not present modules and missions as competing directions. Source sessions support the
 decision but never become progress steps.
 
-The mission map should show one dossier accumulating through controlled states. The current
+The mission map should show one plan accumulating through controlled states. The current
 mission, latest meaningful achievement, unresolved review item, and next action should be
 obvious without reading a manual.
 
@@ -159,7 +159,7 @@ grids, arbitrary sliders, duplicated dashboards, decorative tickers, and random 
 
 ## Required browser review
 
-Inspect every mission and the course map/Dossier at:
+Inspect every mission and the course map / plan page at:
 
 - approximately 1440×900;
 - 1024×768;

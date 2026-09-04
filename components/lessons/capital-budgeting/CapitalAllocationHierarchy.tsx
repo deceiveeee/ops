@@ -15,7 +15,7 @@ const STEPS: Record<StepKey, { title: string; detail: string; items: string[] }>
   2: {
     title: "Preserve financial resilience",
     detail: "Ensure the balance sheet can absorb adverse scenarios without forcing destructive decisions.",
-    items: ["Adequate liquidity", "Covenant headroom", "Manageable leverage", "Adverse-scenario capacity"],
+    items: ["Adequate liquidity", "Room under its loan terms", "Manageable leverage", "Adverse-scenario capacity"],
   },
   3: {
     title: "Fund positive-NPV organic investment",

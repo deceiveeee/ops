@@ -51,7 +51,7 @@ const SOURCES = [
 const HIGH_RETURN_EXPLANATIONS = [
   "Genuine underpricing",
   "Greater systematic risk",
-  "Illiquidity — the asset cannot be sold quickly without a large price concession",
+  "Illiquidity — the asset cannot be sold quickly without accepting a much lower price",
   "Poor performance during recessions, when the capital is most needed",
   "Financing difficulty — the asset is expensive or risky to hold with leverage",
   "Uncertainty investors strongly dislike — outcomes that cannot be reliably modeled",

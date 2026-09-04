@@ -23,7 +23,7 @@ export default function MarginalStoreTranches() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
-          Declining returns by location tranche
+          Declining returns by location block
         </div>
         <div className="mt-4 space-y-3">
           {TRANCHES.map((t, i) => {
@@ -83,7 +83,7 @@ export default function MarginalStoreTranches() {
             capital. The weakest 50 stores would have destroyed $4M. The 100-store cutoff is defensible.</>
           ) : (
             <>Funding only the best 50 stores produces +{fmt(totalNPV)}M of NPV with minimal capital. This
-            is the most disciplined option — but forgoes the $6M of positive NPV from the middle tranche.</>
+            is the most disciplined option — but gives up the $6M of positive NPV from the middle block.</>
           )}
         </p>
         <p className="ops-body mt-3 text-[15px] leading-[1.65] text-slate-200">

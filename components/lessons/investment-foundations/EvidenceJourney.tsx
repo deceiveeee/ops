@@ -74,7 +74,7 @@ const STAGES: readonly ValuationStage[] = [
     title: "Charge the claim for risk and for your own friction.",
     guide:
       "A claim has to clear the return its risk demands, and then it has to clear what trading it costs you. Most claims die on the second charge.",
-    instruction: "Set the test, then save the checklist to your dossier.",
+    instruction: "Set the test, then save the checklist to your plan.",
     next: "State your belief",
   },
   {
@@ -89,7 +89,7 @@ const STAGES: readonly ValuationStage[] = [
     title: "Now say what you believe, and what would change it.",
     guide:
       "In Mission 2 you recorded what you could observe. Seven missions later you can test a claim, so this is the point where a belief is worth stating - and where naming its falsifier costs you something.",
-    instruction: "Choose a position, a reason it might persist, and a falsifier.",
+    instruction: "Choose a position, a reason it might persist, and what would prove it wrong.",
     next: "Finish the mission",
   },
 ];
@@ -971,7 +971,7 @@ export default function EvidenceJourney() {
               </div>
               {saved && (
                 <Feedback status="correct">
-                  Saved to your dossier. Mission 10 reads it next to your friction budget: a
+                  Saved to your plan. Mission 10 reads it next to your friction budget: a
                   claim that fails either one is not an edge.
                 </Feedback>
               )}
@@ -1080,7 +1080,7 @@ export default function EvidenceJourney() {
 
             {beliefSaved ? (
               <Feedback status="correct">
-                Saved to your dossier. Mission 10 tests this against the base
+                Saved to your plan. Mission 10 tests this against the base
                 rate, your friction budget and the checklist you just wrote.
               </Feedback>
             ) : null}
@@ -1095,7 +1095,7 @@ export default function EvidenceJourney() {
 
   // A saved checklist is this lesson's terminal state. Without restoring it, a
   // hard refresh reset all seven stages to incomplete while the artifact was
-  // still sitting in the dossier — the gate mission 9 left open. Artifacts load
+  // still sitting in the plan — the gate mission 9 left open. Artifacts load
   // in an effect, so the shell's state initialisers see nothing on first paint;
   // the key remounts it once the store is ready, the way mission 5 does.
   const checklistRestored = ready && Boolean(evidenceChecklist.updatedAt);
@@ -1114,8 +1114,8 @@ export default function EvidenceJourney() {
       stages={STAGES}
       renderStage={renderStage}
       labLabel="Guided evidence lab"
-      finishHref="/dossier"
-      finishLabel="See your dossier"
+      finishHref="/plan"
+      finishLabel="See your plan"
       savedArtifactLabel="Evidence Test Checklist and Market Belief Statement"
       initialCompleted={restoredStages}
       // A saved checklist returns to the checklist stage, not past it: the save

@@ -5,7 +5,7 @@ import { GUEST_ONLY_BETA } from "@/lib/beta";
 export async function middleware(request: NextRequest) {
   if (GUEST_ONLY_BETA) {
     if (request.nextUrl.pathname === "/studio") {
-      return NextResponse.redirect(new URL("/dossier", request.url));
+      return NextResponse.redirect(new URL("/plan", request.url));
     }
     if (
       request.nextUrl.pathname === "/login" ||

@@ -31,7 +31,7 @@ After the master-prompt reads, inspect completely:
 - `lib/progress/merge.ts` and its tests
 - `lib/portfolio-builder-progress.ts` and its tests
 - `data/courses/portfolioBuilder.ts` and its tests
-- `components/dossier/PortfolioDossier.tsx`
+- `components/plan/PortfolioPlan.tsx`
 - `components/courses/PortfolioBuilderPath.tsx`
 - the Supabase progress adapter/migrations if local state can later synchronize through them
 - all reads and writes of `ops-if-*`, `ops-portfolio-*`, `legacyCompletionSlugs`, and
@@ -113,7 +113,7 @@ Create and test an explicit dependency model. At minimum:
   and operating rules, even when the valid policy is `no timing`;
 - product identity or source-date changes can invalidate overlap, order draft, and the
   flight test;
-- operating-rule changes invalidate the compiled Dossier/IPS assessment result.
+- operating-rule changes invalidate the compiled plan and operating-rules assessment result.
 
 Invalidation marks the dependent record `Review required` with the changed field, affected
 mission, time, and reason. It must not silently recalculate a new approved decision.

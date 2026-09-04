@@ -34,7 +34,7 @@ export default function LessonIF_1_4() {
                   <p className="ops-body-strong mt-2 max-w-xl text-[16px] text-white">
                     Compare one philosophy with two investor profiles, diagnose
                     capacity shortfalls, rehearse difficult moments, and save a
-                    provisional investor-fit charter.
+                    provisional investor-fit check.
                   </p>
                 </div>
                 <a
@@ -56,7 +56,7 @@ export default function LessonIF_1_4() {
                 Six guided fit decisions
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
-                One saved fit charter
+                One saved fit check
               </span>
             </div>
           </Reveal>

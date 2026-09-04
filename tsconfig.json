@@ -20,5 +20,8 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  // tmp/ is gitignored scratch (dev logs, fetched corpora, stale Next build
+  // output). A leftover generated route type in there fails the typecheck
+  // whenever a real route is renamed, so it is not part of the program.
+  "exclude": ["node_modules", "tmp"]
 }

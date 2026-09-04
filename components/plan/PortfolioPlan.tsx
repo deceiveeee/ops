@@ -8,7 +8,14 @@ import {
   calculateStressContributionBps,
   isLiquidityCovered,
 } from "@/lib/allocation-policy";
-import { useIFProgress } from "@/lib/if-progress";
+import {
+  useIFProgress,
+  type HoldingsSlate,
+  type OperatingPlan,
+  type PhilosophyDraft,
+  type ScenarioResponse,
+  type TimingPolicy,
+} from "@/lib/if-progress";
 import {
   type AllocationRecord,
   type AssumptionOwner,
@@ -21,16 +28,15 @@ import { usePortfolioWorkbench } from "@/lib/use-portfolio-workbench";
 import { cn } from "@/lib/utils";
 
 /**
- * The learner writes six artifacts across Investment Foundations and, until this
- * view existed, could never read any of them back. Everything here is rendered
- * from the same localStorage records the lessons write, via useIFProgress, so it
- * updates live and stores nothing of its own.
+ * The learner writes one decision artifact in each of the thirteen Portfolio
+ * Builder missions. Everything here is rendered from the same browser records
+ * the lessons write, so it updates live and stores nothing of its own.
  */
 
 type Field = { label: string; value: string | string[] };
 type Group = { heading?: string; fields: Field[] };
 
-type Section = {
+export type Section = {
   id: string;
   mission: string;
   title: string;
@@ -50,6 +56,9 @@ const money = (v: number) =>
   `$${Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}m`;
 const percent = (v: number, digits = 1) => `${(Number(v) * 100).toFixed(digits)}%`;
 
+const percentagePoints = (v: number, digits = 2) =>
+  `${Number(v).toFixed(digits)}%`;
+
 const dollars = (value: number) =>
   `$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
@@ -67,9 +76,9 @@ const modeLabel = (mode: WorkbenchMode) =>
   mode === "personal" ? "Personal planning case" : "Practice case";
 
 const ownerLabel = (owner: AssumptionOwner) => {
-  if (owner === "learner") return "Learner-defined";
-  if (owner === "ops") return "OPS practice adaptation";
-  return "Reviewed source";
+  if (owner === "learner") return "You entered this";
+  if (owner === "ops") return "An OPS practice figure";
+  return "From a reviewed source";
 };
 
 const readinessRouteLabel = (route: MandateRecord["route"]) => {
@@ -79,10 +88,39 @@ const readinessRouteLabel = (route: MandateRecord["route"]) => {
   return "Not assessed";
 };
 
+const latestTimestamp = (...values: string[]) =>
+  values.filter(Boolean).reduce((latest, value) => (value > latest ? value : latest), "");
+
+const decisionLabel = (response: ScenarioResponse["response"]) => {
+  if (response === "act") return "Act";
+  if (response === "no-action") return "Do nothing";
+  if (response === "review") return "Review";
+  return "Not answered";
+};
+
+const rebalanceMethodLabel = (method: OperatingPlan["rebalanceRule"]["method"]) => {
+  if (method === "sell-and-buy") return "Sell overweight holdings and buy underweight holdings";
+  if (method === "new-money") return "Use new contributions to restore target weights";
+  if (method === "redirect-flows") return "Redirect contributions or withdrawals toward target weights";
+  return "Not recorded";
+};
+
+const SCENARIO_TITLES: Record<string, string> = {
+  crash: "The market falls 30% in seven weeks",
+  income: "Your income stops",
+  cash: "You need money quickly",
+  contribution: "New money arrives",
+  drift: "One slice has run away",
+  thesis: "The reason you bought it is gone",
+  stale: "The data is older than you thought",
+  licence: "The edge licence expires",
+  mandate: "A very good idea",
+};
+
 const checkpointStatusLabel = (checkpoint: CheckpointState) => {
   if (checkpoint.status === "saved-unverified") return "Saved, not independently verified";
   if (checkpoint.status === "review-required") return "Review required";
-  if (checkpoint.status === "coherent") return "Coherence checks passed";
+  if (checkpoint.status === "coherent") return "Consistency checks passed";
   if (checkpoint.status === "blocked") return "Blocked pending review";
   if (checkpoint.status === "draft") return "Draft";
   return "Not started";
@@ -177,27 +215,84 @@ function workbenchStatusGroup(mode: WorkbenchMode, checkpoint: CheckpointState):
   };
 }
 
+function philosophyDraftGroups(draft: PhilosophyDraft): Group[] {
+  if (!draft.updatedAt) return [];
+  return [
+    {
+      heading: "Mission 1 fit and process notes",
+      fields: [
+        {
+          label: "Record scope",
+          value:
+            "Earlier Mission 1 work saved in this browser. Check it against the case you have selected before you rely on it as policy.",
+        },
+        { label: "Stage of the process", value: draft.advantageStage },
+        { label: "Strategy", value: draft.strategy },
+        { label: "Implementation risks", value: draft.implementationRisks },
+        { label: "Execution rule", value: draft.executionRule },
+        { label: "Evaluation rule", value: draft.evaluationRule },
+      ],
+    },
+    {
+      heading: "Investor fit notes",
+      fields: [
+        { label: "Risk preference", value: draft.constraints.riskPreference },
+        { label: "Horizon", value: draft.constraints.horizon },
+        { label: "Cash needs", value: draft.constraints.cashNeeds },
+        { label: "Liquidity needs", value: draft.constraints.liquidityNeeds },
+        { label: "Tax considerations", value: draft.constraints.taxConsiderations },
+        { label: "Capital", value: draft.constraints.capital },
+        { label: "Research time", value: draft.constraints.researchTime },
+        { label: "Patience", value: draft.constraints.patience },
+        { label: "Analytical tools", value: draft.constraints.analyticalTools },
+        {
+          label: "Underperformance tolerance",
+          value: draft.constraints.underperformanceTolerance,
+        },
+      ],
+    },
+    {
+      heading: "Research path",
+      fields: [
+        { label: "Families considered", value: draft.candidateFamilies },
+        { label: "Evidence rule", value: draft.familyEvidenceRule },
+        { label: "Open research question", value: draft.familyResearchQuestion },
+        { label: "Chosen family", value: draft.fitFamily },
+        { label: "Capacity to run it", value: draft.fitCapacitySummary },
+        { label: "Review rule", value: draft.fitReviewRule },
+        { label: "Open fit question", value: draft.fitOpenQuestion },
+      ],
+    },
+  ];
+}
+
 function mandateSection(
   mode: WorkbenchMode,
   mandate: MandateRecord,
   checkpoint: CheckpointState,
+  draft: PhilosophyDraft,
 ): Section {
   const details = mandate.readinessDetails;
   const hasExactDetails = details.profileOwner !== "unassessed";
   return {
     id: "mandate",
-    mission: "Mission 1 · readiness bridge updated in Mission 5",
-    title: "Mandate",
+    mission: "Mission 1",
+    title: "Your goal and limits",
     purpose:
-      "The planning constraints and readiness route that frame this case before allocation.",
+      "What this money is for, what limits it, and what you can act on now — the frame every later decision has to respect.",
     lessonSlug: "if-pb-05-set-allocation-and-risk-limits",
-    lessonLabel: "Set allocation and risk limits",
+    lessonLabel: "Start with the readiness steps",
     willContain:
-      "the selected case mode, goal, horizon, liquidity constraints, readiness route, and any action required before a personal allocation is treated as coherent",
-    updatedAt: checkpoint.updatedAt,
-    statusLabel: checkpointStatusLabel(checkpoint),
+      "the case you chose, your goal, your horizon, the cash you need to keep available, what you can act on now, and anything you must do first before a personal allocation counts as sound",
+    updatedAt: latestTimestamp(checkpoint.updatedAt, draft.updatedAt),
+    statusLabel:
+      draft.updatedAt && !checkpoint.updatedAt
+        ? "Older notes recorded; your goal and limits need review"
+        : checkpointStatusLabel(checkpoint),
     needsReview:
-      checkpoint.status === "review-required" || checkpoint.status === "blocked",
+      checkpoint.status === "review-required" ||
+      checkpoint.status === "blocked" ||
+      Boolean(draft.updatedAt && !checkpoint.updatedAt),
     groups: present([
       workbenchStatusGroup(mode, checkpoint),
       {
@@ -250,7 +345,7 @@ function mandateSection(
       {
         heading: "Route",
         fields: [
-          { label: "Readiness route", value: readinessRouteLabel(mandate.route) },
+          { label: "What you can do now", value: readinessRouteLabel(mandate.route) },
           { label: "Next actions", value: mandate.deploymentActions },
           {
             label: "Acknowledged",
@@ -258,6 +353,7 @@ function mandateSection(
           },
         ],
       },
+      ...philosophyDraftGroups(draft),
     ]),
   };
 }
@@ -309,7 +405,7 @@ function allocationSection(
     const details = [
       `${sentenceCase(sleeve.role)} role. Range ${bpsPercent(sleeve.minBps)} to ${bpsPercent(
         sleeve.maxBps,
-      )}; target ${bpsPercent(sleeve.targetBps)}. ${ownerLabel(sleeve.owner)} policy.`,
+      )}; target ${bpsPercent(sleeve.targetBps)}. ${ownerLabel(sleeve.owner)}.`,
       `Target reference value: ${approximateDollars(referenceAmount, sleeve.targetBps)}.`,
     ];
     if (loss !== null && contribution !== null) {
@@ -359,13 +455,13 @@ function allocationSection(
   return {
     id: "allocation-policy",
     mission: "Mission 5",
-    title: "Allocation & risk policy",
+    title: "Allocation and risk limits",
     purpose:
-      "A saved policy draft linking sleeve roles, ranges, liquidity needs, and labeled stress assumptions.",
+      "A saved draft linking each slice’s role and range, the cash you need available, and every labelled stress assumption.",
     lessonSlug: "if-pb-05-set-allocation-and-risk-limits",
     lessonLabel: "Set allocation and risk limits",
     willContain:
-      "target ranges, reference values, scenario provenance, stress contributions, the recorded loss budget, liquidity coverage, and an optional candidate-position ceiling",
+      "target ranges, reference values, where each scenario figure came from, stress contributions, the recorded loss limit, cash coverage, and an optional ceiling for a single position",
     updatedAt: checkpoint.updatedAt || allocation.savedAt,
     statusLabel: checkpointStatusLabel(checkpoint),
     needsReview:
@@ -390,12 +486,12 @@ function allocationSection(
               "These are planning targets for the selected case, not a statement of owned holdings or permission to trade.",
           },
           {
-            label: "Mandate rationale and accepted trade-off",
+            label: "Why you chose this, and the trade-off you accepted",
             value: allocation.mandateRationale,
           },
         ],
       },
-      { heading: "Sleeve policy", fields: sleeveFields },
+      { heading: "Slice policy", fields: sleeveFields },
       {
         heading: "Selected stress scenario",
         fields: [
@@ -403,7 +499,7 @@ function allocationSection(
           ...scenarioAssumptions,
           { label: "Total stress vs budget", value: stressComparison },
           {
-            label: "Budget provenance",
+            label: "Where the loss limit came from",
             value:
               budgetBps === null
                 ? "Not recorded"
@@ -449,14 +545,14 @@ function allocationSection(
         fields: [
           { label: "Inputs", value: candidateInputs },
           {
-            label: "Contribution provenance",
+            label: "Where the contribution figure came from",
             value:
               candidateContribution === null
                 ? ""
                 : assumptionDetail(allocation.maximumPortfolioLossContributionBps),
           },
           {
-            label: "Loss provenance",
+            label: "Where the loss figure came from",
             value:
               candidateLoss === null
                 ? ""
@@ -474,7 +570,242 @@ function allocationSection(
   };
 }
 
-export default function PortfolioDossier() {
+function checkpointNeedsReview(checkpoint: CheckpointState) {
+  return checkpoint.status === "review-required" || checkpoint.status === "blocked";
+}
+
+export function timingPolicySection(
+  mode: WorkbenchMode,
+  policy: TimingPolicy,
+  checkpoint: CheckpointState,
+): Section {
+  const boundedFields: Group[] =
+    policy.mode === "bounded"
+      ? [
+          {
+            heading: "Bounded deviation rule",
+            fields: [
+              { label: "Signal", value: policy.signal },
+              { label: "Benchmark", value: policy.benchmark },
+              {
+                label: "Maximum deviation",
+                value: percentagePoints(policy.maxDeviationPct, 0),
+              },
+              { label: "Eligible slice", value: policy.eligibleSleeve },
+              { label: "Expires", value: policy.expiryDate },
+              { label: "What would prove it wrong", value: policy.falsifier },
+              { label: "Review date", value: policy.reviewDate },
+            ],
+          },
+        ]
+      : [];
+
+  return {
+    id: "timing",
+    mission: "Mission 11",
+    title: "Market-timing policy",
+    purpose: "Whether you time the market, and the boundary around any deviation.",
+    lessonSlug: "if-pb-11-set-a-market-timing-policy",
+    lessonLabel: "Set a market-timing policy",
+    willContain:
+      "your no-timing decision or bounded signal, benchmark, maximum deviation, eligible slice, expiry date, what would prove it wrong, review date, and friction charge",
+    updatedAt: policy.updatedAt,
+    statusLabel: checkpointStatusLabel(checkpoint),
+    needsReview: checkpointNeedsReview(checkpoint),
+    groups: policy.updatedAt
+      ? present([
+          workbenchStatusGroup(mode, checkpoint),
+          {
+            heading: "Decision",
+            fields: [
+              {
+                label: "Policy",
+                value:
+                  policy.mode === "bounded"
+                    ? "A bounded deviation is permitted"
+                    : "Stay at strategic policy weights; no market timing",
+              },
+              { label: "Reason", value: policy.reason },
+              {
+                label: "Round-trip friction charged",
+                value: percentagePoints(policy.frictionCostPct),
+              },
+            ],
+          },
+          ...boundedFields,
+        ])
+      : [],
+  };
+}
+
+export function holdingsSlateSection(
+  mode: WorkbenchMode,
+  slate: HoldingsSlate,
+  checkpoint: CheckpointState,
+): Section {
+  const holdingFields: Field[] = slate.lines.map((line, index) => ({
+    label: `${line.ticker || "Holding"} ${index + 1}`,
+    value: [
+      `${sentenceCase(line.sleeve)} slice; ${percentagePoints(
+        line.targetWeightPct,
+        0,
+      )} target weight`,
+      `SEC series ${line.seriesId}; class ${line.classId}`,
+    ],
+  }));
+
+  const order = slate.orderDraft;
+  const orderFields: Field[] = order.ticker
+    ? [
+        {
+          label: "Draft",
+          value: `${sentenceCase(order.direction)} ${order.ticker} (${order.classId})`,
+        },
+        { label: "Approximate amount", value: dollars(order.approxAmountUsd) },
+        { label: "Order type", value: sentenceCase(order.orderType) },
+        {
+          label: "Estimated one-way friction",
+          value: percentagePoints(order.estimatedFrictionPct),
+        },
+        {
+          label: "Transmission",
+          value: order.transmitted
+            ? "Unexpected transmitted state"
+            : "Not transmitted — rehearsal only",
+        },
+      ]
+    : [];
+
+  return {
+    id: "holdings",
+    mission: "Mission 12",
+    title: "Holdings list",
+    purpose: "The exact securities, identities, target weights, and order rehearsal.",
+    lessonSlug: "if-pb-12-choose-the-actual-holdings",
+    lessonLabel: "Choose the actual holdings",
+    willContain:
+      "each ticker’s SEC series and class identity, its slice and target weight, overlap and staleness checks, and a practice order that is never sent",
+    updatedAt: slate.updatedAt,
+    statusLabel: checkpointStatusLabel(checkpoint),
+    needsReview: checkpointNeedsReview(checkpoint) || slate.reviewRequired,
+    groups: slate.updatedAt
+      ? present([
+          workbenchStatusGroup(mode, checkpoint),
+          { heading: "Portfolio lines", fields: holdingFields },
+          {
+            heading: "Identity and evidence checks",
+            fields: [
+              { label: "Look-through key", value: sentenceCase(slate.issuerKeyMode) },
+              {
+                label: "Overlap",
+                value: slate.overlapAcknowledged
+                  ? "Reviewed and acknowledged"
+                  : "Not acknowledged",
+              },
+              {
+                label: "Stale holdings data",
+                value: slate.staleDataAcknowledged
+                  ? "Age and limits acknowledged"
+                  : "Not acknowledged",
+              },
+              {
+                label: "Upstream review",
+                value: slate.reviewRequired ? "Review required" : "No review flag",
+              },
+            ],
+          },
+          { heading: "Order rehearsal", fields: orderFields },
+        ])
+      : [],
+  };
+}
+
+export function operatingPlanSection(
+  mode: WorkbenchMode,
+  plan: OperatingPlan,
+  checkpoint: CheckpointState,
+): Section {
+  const scenarioFields: Field[] = Object.keys(SCENARIO_TITLES).flatMap((id) => {
+    const response = plan.scenarioResponses[id];
+    if (!response) return [];
+    const details = [
+      `Decision: ${decisionLabel(response.response)}`,
+      `Controlling rule: ${sentenceCase(response.controllingPolicy)}`,
+    ];
+    if (response.whatChanged.trim()) details.push(`Changed: ${response.whatChanged}`);
+    if (response.downstream.trim()) details.push(`Affected work: ${response.downstream}`);
+    if (response.wouldChangeIf.trim()) {
+      details.push(`Would change if: ${response.wouldChangeIf}`);
+    }
+    if (response.policySilent) details.push("Policy gap found: no saved rule covers this");
+    return [{ label: SCENARIO_TITLES[id], value: details }];
+  });
+
+  const trigger = plan.rebalanceRule.trigger;
+  const rebalanceTrigger =
+    trigger === "calendar"
+      ? `Calendar review every ${plan.rebalanceRule.cadenceMonths} month${
+          plan.rebalanceRule.cadenceMonths === 1 ? "" : "s"
+        }`
+      : trigger === "threshold"
+        ? `Threshold band of ${bpsPercent(plan.rebalanceRule.bandBps)}`
+        : "Not recorded";
+
+  return {
+    id: "policy",
+    mission: "Mission 13",
+    title: "Your operating rules",
+    purpose: "The rules for maintaining the portfolio and defending it under stress.",
+    lessonSlug: "if-pb-13-write-the-rules-and-defend-the-portfolio",
+    lessonLabel: "Write the rules and defend the portfolio",
+    willContain:
+      "your review, rebalance, contribution, withdrawal, sell or replace, and thesis-break rules; nine flight-test decisions; and the transfer result",
+    updatedAt: plan.updatedAt,
+    statusLabel: checkpointStatusLabel(checkpoint),
+    needsReview: checkpointNeedsReview(checkpoint) || plan.criticalFailures.length > 0,
+    groups: plan.updatedAt
+      ? present([
+          workbenchStatusGroup(mode, checkpoint),
+          {
+            heading: "Operating rules",
+            fields: [
+              { label: "Plan mode", value: sentenceCase(plan.mode) },
+              { label: "Review process", value: plan.reviewProcess },
+              { label: "Rebalance trigger", value: rebalanceTrigger },
+              {
+                label: "Rebalance method",
+                value: rebalanceMethodLabel(plan.rebalanceRule.method),
+              },
+              { label: "Contribution rule", value: plan.contributionRule },
+              { label: "Withdrawal rule", value: plan.withdrawalRule },
+              { label: "Sell or replace rule", value: plan.sellReplaceRule },
+              { label: "Thesis-break rule", value: plan.thesisBreakRule },
+            ],
+          },
+          { heading: "Portfolio flight test", fields: scenarioFields },
+          {
+            heading: "Independent transfer",
+            fields: [
+              { label: "Case", value: plan.transferCaseId },
+              {
+                label: "Result",
+                value: plan.transferCasePassed ? "Passed" : "Not passed",
+              },
+              {
+                label: "Critical failures",
+                value:
+                  plan.criticalFailures.length > 0
+                    ? plan.criticalFailures
+                    : ["None recorded"],
+              },
+            ],
+          },
+        ])
+      : [],
+  };
+}
+
+export default function PortfolioPlan() {
   const {
     draft,
     bondBrief,
@@ -484,6 +815,9 @@ export default function PortfolioDossier() {
     frictionBudget,
     evidenceChecklist,
     architectureDecision,
+    timingPolicy,
+    holdingsSlate,
+    operatingPlan,
     beliefStatement,
     observationNote,
   } = useIFProgress();
@@ -494,80 +828,20 @@ export default function PortfolioDossier() {
   } = usePortfolioWorkbench();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
 
   // Artifacts load in an effect, so the first paint has none. Gate on mount to
-  // avoid rendering an "empty dossier" that immediately replaces itself.
+  // avoid rendering an "empty plan" that immediately replaces itself.
   useEffect(() => setMounted(true), []);
 
   const sections = useMemo<Section[]>(
     () => [
-      mandateSection(activeMode, activeCase.mandate, activeCase.checkpoints.mandate),
-      allocationSection(
+      mandateSection(
         activeMode,
-        activeCase.allocation,
-        activeCase.checkpoints.allocation,
+        activeCase.mandate,
+        activeCase.checkpoints.mandate,
+        draft,
       ),
-      {
-        id: "philosophy",
-        mission: "Mission 1",
-        title: "Investment philosophy draft",
-        purpose: "Who you are building this for, and what you can actually run.",
-        lessonSlug: "if-1-4-when-a-philosophy-fits-the-investor",
-        lessonLabel: "Investor–philosophy fit",
-        willContain:
-          "the constraints you actually face, a candidate strategy, and the rules you would follow to run it",
-        updatedAt: draft.updatedAt,
-        groups: present([
-          {
-            heading: "Where the advantage arises",
-            fields: [{ label: "Stage of the process", value: draft.advantageStage }],
-          },
-          {
-            heading: "Investor constraints",
-            fields: [
-              { label: "Risk preference", value: draft.constraints.riskPreference },
-              { label: "Horizon", value: draft.constraints.horizon },
-              { label: "Cash needs", value: draft.constraints.cashNeeds },
-              { label: "Liquidity needs", value: draft.constraints.liquidityNeeds },
-              { label: "Tax considerations", value: draft.constraints.taxConsiderations },
-              { label: "Capital", value: draft.constraints.capital },
-              { label: "Research time", value: draft.constraints.researchTime },
-              { label: "Patience", value: draft.constraints.patience },
-              { label: "Analytical tools", value: draft.constraints.analyticalTools },
-              {
-                label: "Underperformance tolerance",
-                value: draft.constraints.underperformanceTolerance,
-              },
-            ],
-          },
-          {
-            heading: "Strategy and rules",
-            fields: [
-              { label: "Strategy", value: draft.strategy },
-              { label: "Implementation risks", value: draft.implementationRisks },
-              { label: "Execution rule", value: draft.executionRule },
-              { label: "Evaluation rule", value: draft.evaluationRule },
-            ],
-          },
-          {
-            heading: "Philosophy families considered",
-            fields: [
-              { label: "Candidates", value: draft.candidateFamilies },
-              { label: "Evidence rule", value: draft.familyEvidenceRule },
-              { label: "Open research question", value: draft.familyResearchQuestion },
-            ],
-          },
-          {
-            heading: "Fit",
-            fields: [
-              { label: "Chosen family", value: draft.fitFamily },
-              { label: "Capacity to run it", value: draft.fitCapacitySummary },
-              { label: "Review rule", value: draft.fitReviewRule },
-              { label: "Open question", value: draft.fitOpenQuestion },
-            ],
-          },
-        ]),
-      },
       {
         id: "beliefs",
         mission: "Mission 2",
@@ -594,7 +868,7 @@ export default function PortfolioDossier() {
               { label: "Needed before generalising", value: observationNote.nextEvidence },
               {
                 label: "Enough for a market belief?",
-                // The mission's most literate outcome, so the dossier records it
+                // The mission’s most literate outcome, so the plan records it
                 // as a finding rather than leaving the field blank.
                 value: observationNote.declinedToGeneralise
                   ? "Not yet — three cases cannot support a belief. The belief is written in Mission 9."
@@ -654,6 +928,11 @@ export default function PortfolioDossier() {
           },
         ]),
       },
+      allocationSection(
+        activeMode,
+        activeCase.allocation,
+        activeCase.checkpoints.allocation,
+      ),
       {
         id: "statements",
         mission: "Mission 6",
@@ -805,12 +1084,12 @@ export default function PortfolioDossier() {
       {
         id: "architecture",
         mission: "Mission 10",
-        title: "Architecture and edge decision",
+        title: "Index-or-edge decision",
         purpose: "Whether you will run a passive core, and what it took to justify anything else.",
         lessonSlug: "if-8-1-choose-passive-or-prove-an-edge",
         lessonLabel: "Choose passive, or prove an edge",
         willContain:
-          "the exposure your core holds, the benchmark it is judged against, the base rate you decided under with its date, and — only if every condition was met — the sleeve you licensed, what would close it, and when you will review",
+          "what your core holds, the benchmark it is judged against, the base rate you decided under with its date, and — only if every condition was met — the active slice you licensed, what would close it, and when you will review",
         updatedAt: architectureDecision.updatedAt,
         groups: architectureDecision.updatedAt
           ? present([
@@ -820,7 +1099,7 @@ export default function PortfolioDossier() {
                     label: "Architecture",
                     value:
                       architectureDecision.mode === "active-sleeve"
-                        ? "Passive core plus a licensed active sleeve"
+                        ? "Passive core plus a licensed active slice"
                         : "Passive core only",
                   },
                   { label: "Core exposure", value: architectureDecision.coreExposure },
@@ -836,12 +1115,12 @@ export default function PortfolioDossier() {
                   { label: "Scope", value: architectureDecision.baseRateScope },
                 ],
               },
-              // Sleeve detail is omitted entirely for a passive-only decision —
+              // Slice detail is omitted entirely for an index-only decision —
               // that outcome is complete, not a record with gaps in it.
               ...(architectureDecision.mode === "active-sleeve"
                 ? [
                     {
-                      heading: "The licensed sleeve",
+                      heading: "The licensed active slice",
                       fields: [
                         { label: "Mispricing", value: architectureDecision.pocket },
                         { label: "Who is wrong", value: architectureDecision.whoIsWrong },
@@ -874,6 +1153,21 @@ export default function PortfolioDossier() {
             ])
           : [],
       },
+      timingPolicySection(
+        activeMode,
+        timingPolicy,
+        activeCase.checkpoints.timing,
+      ),
+      holdingsSlateSection(
+        activeMode,
+        holdingsSlate,
+        activeCase.checkpoints.holdings,
+      ),
+      operatingPlanSection(
+        activeMode,
+        operatingPlan,
+        activeCase.checkpoints.policy,
+      ),
     ],
     [
       activeMode,
@@ -888,6 +1182,9 @@ export default function PortfolioDossier() {
       frictionBudget,
       evidenceChecklist,
       architectureDecision,
+      timingPolicy,
+      holdingsSlate,
+      operatingPlan,
     ],
   );
 
@@ -896,9 +1193,13 @@ export default function PortfolioDossier() {
     .map((s) => s.updatedAt)
     .sort()
     .reverse()[0];
+  const selectedSection =
+    sections.find((section) => section.id === selectedSectionId) ??
+    recorded.at(-1) ??
+    sections[0];
 
   const copyAsText = async () => {
-    const lines: string[] = ["PORTFOLIO DOSSIER", ""];
+    const lines: string[] = ["PORTFOLIO PLAN", ""];
     for (const s of recorded) {
       lines.push(`${s.mission.toUpperCase()} — ${s.title.toUpperCase()}`);
       for (const g of s.groups) {
@@ -934,7 +1235,7 @@ export default function PortfolioDossier() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+    <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
       <header>
         <div className="ops-eyebrow flex items-center gap-3 text-xs">
           <span>Investment Foundations</span>
@@ -942,11 +1243,11 @@ export default function PortfolioDossier() {
           <span className="text-accent-amber">Portfolio Builder</span>
         </div>
         <h1 className="ops-display mt-5 text-4xl leading-[1.05] sm:text-5xl">
-          Your portfolio dossier
+          Your portfolio plan
         </h1>
         <p className="ops-body mt-5 text-lg leading-8 text-slate-200">
-          Your saved lesson artifacts and selected Workbench case, in one place. Each
-          mission adds a decision you can inspect, revise, and eventually defend.
+          Every decision you have saved, in one place. Each mission adds one more you
+          can check, change, and eventually defend.
         </p>
 
         <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -961,7 +1262,7 @@ export default function PortfolioDossier() {
                 : "border-accent-amber/40 bg-accent-amber/10 text-accent-amber",
             )}
           >
-            {recorded.length} of {sections.length} artifacts recorded
+            {recorded.length} of {sections.length} decisions recorded
           </span>
           {lastUpdated && (
             <span className="text-[14px] text-slate-400">
@@ -980,38 +1281,26 @@ export default function PortfolioDossier() {
         </div>
       </header>
 
-      {recorded.length === 0 && (
-        <div className="ops-definition-card mt-10 p-6">
-          {/* The empty state's title, not a label on something else. Heading
-              semantics, caption styling — the look is unchanged. */}
-          <h2 className="ops-caption text-[12px] text-accent-amber">Nothing recorded yet</h2>
-          <p className="ops-body mt-3 text-[15px] text-slate-200">
-            Your dossier fills in as you finish missions. Each one ends with a decision
-            that is saved here, so the work accumulates instead of disappearing.
-          </p>
-          <Link
-            href="/lessons/if-1-1-how-an-investor-builds-a-philosophy"
-            className="mt-5 inline-flex items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
-          >
-            Start with mission 1 →
-          </Link>
-        </div>
-      )}
-
-      <div className="mt-12 space-y-6">
-        {sections.map((s) => (
-          <ArtifactCard key={s.id} section={s} />
-        ))}
+      <div className="mt-8">
+        <PlanMissionMap
+          sections={sections}
+          selectedId={selectedSection.id}
+          onSelect={setSelectedSectionId}
+        />
       </div>
 
-      <footer className="mt-14 border-t border-white/10 pt-6">
+      <div className="mt-5">
+        <DecisionCard section={selectedSection} />
+      </div>
+
+      <footer className="mt-8 border-t border-white/10 pt-5">
         <p className="text-[14px] leading-6 text-slate-400">
-          This dossier is your own work, stored in this browser only. It is educational
+          This plan is your own work, stored in this browser only. It is educational
           material, not investment advice.
         </p>
         <p className="mt-2 text-[13px] leading-6 text-slate-400">
-          Workbench cases use a separate local record. This dossier can display and copy
-          the selected case, but it does not clear or delete Workbench data.
+          Workbench cases use a separate record in this browser. This page can show and
+          copy the case you selected, but it never clears or deletes that data.
         </p>
         <Link
           href="/courses/investment-foundations"
@@ -1024,12 +1313,76 @@ export default function PortfolioDossier() {
   );
 }
 
-function ArtifactCard({ section }: { section: Section }) {
+function PlanMissionMap({
+  sections,
+  selectedId,
+  onSelect,
+}: {
+  sections: Section[];
+  selectedId: string;
+  onSelect: (id: string) => void;
+}) {
+  const recordedCount = sections.filter((section) => Boolean(section.updatedAt)).length;
+  return (
+    <section aria-labelledby="plan-mission-map">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 id="plan-mission-map" className="ops-body-strong text-[16px] text-white">
+            Mission map
+          </h2>
+          <p className="mt-1 text-[13px] leading-5 text-slate-400">
+            {recordedCount === 0
+              ? "Start with Mission 1. Select any number to preview what it will add."
+              : "Select a mission to inspect or revise its saved decision."}
+          </p>
+        </div>
+        <span className="hidden text-[12px] text-slate-500 sm:block">
+          Green means recorded
+        </span>
+      </div>
+      <div className="mt-4 grid grid-cols-7 gap-2" role="group" aria-label="Plan missions">
+        {sections.map((section, index) => {
+          const recorded = Boolean(section.updatedAt);
+          const selected = section.id === selectedId;
+          return (
+            <button
+              key={section.id}
+              type="button"
+              aria-pressed={selected}
+              aria-label={`Mission ${index + 1}: ${section.title}. ${
+                recorded ? "Recorded" : "Not yet recorded"
+              }`}
+              onClick={() => onSelect(section.id)}
+              className={cn(
+                "relative flex min-h-11 items-center justify-center rounded-lg border text-[13px] font-semibold tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
+                selected
+                  ? "border-accent-amber/60 bg-accent-amber/12 text-accent-amber"
+                  : recorded
+                    ? "border-accent-green/35 bg-accent-green/8 text-accent-green hover:bg-accent-green/12"
+                    : "border-white/12 text-slate-400 hover:border-white/25 hover:text-slate-200",
+              )}
+            >
+              M{index + 1}
+              {recorded && (
+                <span
+                  aria-hidden
+                  className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent-green"
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function DecisionCard({ section }: { section: Section }) {
   const recorded = Boolean(section.updatedAt) && section.groups.length > 0;
 
   return (
     <section
-      aria-labelledby={`artifact-${section.id}`}
+      aria-labelledby={`decision-${section.id}`}
       className={cn(
         "rounded-2xl border p-5 sm:p-7",
         recorded
@@ -1041,7 +1394,7 @@ function ArtifactCard({ section }: { section: Section }) {
         <div className="min-w-0">
           <div className="ops-caption text-[12px] text-accent-amber">{section.mission}</div>
           <h2
-            id={`artifact-${section.id}`}
+            id={`decision-${section.id}`}
             className={cn(
               "ops-section-title mt-2 text-xl sm:text-2xl",
               !recorded && "text-slate-400",
@@ -1058,7 +1411,7 @@ function ArtifactCard({ section }: { section: Section }) {
               ? "border-accent-amber/40 bg-accent-amber/10 text-accent-amber"
               : recorded
               ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
-              // The dossier is a dark page: slate-500 measured 4.23:1 here, and
+              // The plan is a dark page: slate-500 measured 4.23:1 here, and
               // this pill is the artifact's status, not decoration.
               : "border-white/15 text-slate-400",
           )}

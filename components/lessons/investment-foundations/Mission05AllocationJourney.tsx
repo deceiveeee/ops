@@ -37,8 +37,8 @@ const STAGES: readonly ValuationStage[] = [
     label: "Runway",
     title: "Define what this portfolio must protect.",
     guide:
-      "A portfolio begins with a person or a fully specified practice case. Record the goal, clock, cash need, capacity, willingness, and deployment constraints before assigning risk.",
-    instruction: "Complete and save the readiness route.",
+      "A portfolio begins with a person or a fully specified practice case. Record the goal, the clock, the cash need, your capacity, your willingness, and anything that limits investing real money — all before assigning risk.",
+    instruction: "Finish the readiness steps and save them.",
     next: "Run the theory preflight",
   },
   {
@@ -71,7 +71,7 @@ const STAGES: readonly ValuationStage[] = [
     guide:
       "Build your own policy or the complete practice policy. Nothing here chooses products, predicts returns, or declares an optimum.",
     instruction: "Make every policy check pass, then lock the draft for transfer.",
-    next: "Face a changed mandate",
+    next: "Face a changed goal",
   },
   {
     label: "Transfer",
@@ -86,8 +86,8 @@ const STAGES: readonly ValuationStage[] = [
     title: "Prove the method, then save your policy.",
     guide:
       "Choose the only coherent fresh allocation, calculate a candidate ceiling, and identify who owns that rule. Your actual draft is saved only after the independent proof passes.",
-    instruction: "Pass both assessment items and save the Workbench checkpoint.",
-    next: "Open the Portfolio Dossier",
+    instruction: "Pass both assessment questions, then save the checkpoint.",
+    next: "Open your plan",
   },
 ] as const;
 
@@ -247,7 +247,7 @@ export default function Mission05AllocationJourney() {
     );
     if (!result.ok) {
       setRunwayFailure({
-        title: "The readiness route is not saved yet.",
+        title: "That is not saved yet.",
         items: [result.message, ...result.issues],
       });
       return;
@@ -306,8 +306,8 @@ export default function Mission05AllocationJourney() {
       lessonSlug={LESSON_SLUG}
       ariaLabel="Mission 5 allocation and risk-limit journey"
       stages={STAGES}
-      finishHref="/dossier"
-      finishLabel="Open the Portfolio Dossier"
+      finishHref="/plan"
+      finishLabel="Open your plan"
       labLabel={`${activeMode === "personal" ? "Build mine" : "Practice case"} · Allocation policy lab`}
       savedArtifactLabel="Allocation and Risk Policy"
       initialCompleted={restoredStages}
@@ -491,7 +491,7 @@ function PreflightScene({
         "The model has guaranteed the realized return",
       ],
       freshCorrect: 0,
-      freshSuccess: "Correct. An opportunity-set estimate and a personally usable mandate answer different questions.",
+      freshSuccess: "Correct. An opportunity-set estimate and a goal you can actually use answer different questions.",
       freshRetry: "Not yet. The frontier describes modelled trade-offs; the investor's goal and constraints determine personal fit.",
     },
     {
@@ -664,12 +664,12 @@ function ModelScene({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
-        <Definition title="Sleeve">A broad portfolio role grouped by its job. Ready, Steady, and Grow are OPS teaching names, not products.</Definition>
-        <Definition title="Strategic weight">The long-run target percentage assigned to a sleeve under the current mandate.</Definition>
-        <Definition title="Liquidity bucket">A liquidity bucket is the portfolio portion assigned to meet a known cash need by its date. For example, Mina assigns $8,000 to Ready for tuition due in 18 months, so she need not plan to sell a declined Grow sleeve to pay that bill.</Definition>
-        <Definition title="Target range">A target range is the minimum-to-maximum interval allowed around a strategic weight before review. For example, a 30% Steady target with a 25%–35% range reaches 36% after market movement; that breach prompts review and a possible rebalance under the mandate.</Definition>
+        <Definition title="Slice">A part of the portfolio grouped by the job it does. Ready, Steady, and Grow are OPS teaching names, not products; the industry usually calls a slice a sleeve.</Definition>
+        <Definition title="Strategic weight">The long-run target percentage assigned to a slice under the goal and limits you saved.</Definition>
+        <Definition title="Liquidity bucket">A liquidity bucket is the portfolio portion assigned to meet a known cash need by its date. For example, Mina assigns $8,000 to Ready for tuition due in 18 months, so she need not plan to sell a fallen Grow slice to pay that bill.</Definition>
+        <Definition title="Target range">A target range is the minimum-to-maximum interval allowed around a strategic weight before review. For example, a 30% Steady target with a 25%–35% range reaches 36% after market movement; that breach prompts review and a possible rebalance under your saved limits.</Definition>
         <Definition title="Stress assumption">An explicit hypothetical loss used to inspect consequences. It is not a forecast or maximum possible loss.</Definition>
-        <Definition title="Loss contribution">A sleeve&apos;s portfolio loss in percentage points: sleeve weight × assumed sleeve loss.</Definition>
+        <Definition title="Loss contribution">A slice’s share of portfolio loss in percentage points: slice weight × assumed slice loss.</Definition>
       </div>
 
       <Notice tone="cyan" title="Mina · fictional practice case">
@@ -756,7 +756,7 @@ function RepairScene({ onComplete }: { onComplete: () => void }) {
   const repairs = [
     {
       title: "Repair 1 · Assign every dollar once",
-      instruction: "This draft totals 105%. Reduce any sleeve or combination of sleeves until the same capital is no longer counted twice.",
+      instruction: "This draft totals 105%. Reduce any slice or combination of slices until the same capital is no longer counted twice.",
       initialWeightsBps: { ready: 2_000, steady: 3_000, grow: 5_500 },
       portfolioAmount: 40_000,
       nearTermNeed: 0,
@@ -857,9 +857,9 @@ function BuildScene({
           ? "Mina's supplied facts and illustrative policy are loaded. Inspect them, change them if you choose, and acknowledge the assumptions."
           : "OPS supplies no recommended weights. Use the goal and cash need from your readiness record, then choose and explain each policy input."}
       </Notice>
-      <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4" aria-label="Saved mandate ribbon">
+      <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4" aria-label="The goal and limits you saved">
         <Stat label="Goal" value={mandate.goal || "Not recorded"} detail={mandate.horizon || "Horizon not recorded"} />
-        <Stat label="Route" value={mandate.route.replace(/-/g, " ")} detail="Controls deployment, never course access" />
+        <Stat label="Where you stand" value={mandate.route.replace(/-/g, " ")} detail="Affects investing real money, never course access" />
         <Stat label="Capacity" value={mandate.capacityForLoss.replace(/-/g, " ")} detail="Financial ability to absorb loss" />
         <Stat label="Willingness" value={mandate.willingnessForLoss.replace(/-/g, " ")} detail="Ability to follow the written plan" />
       </div>
@@ -888,7 +888,7 @@ function TransferScene({ alreadyPassed, onComplete }: { alreadyPassed: boolean; 
   const correct =
     repair !== null &&
     answers.cause === "Capacity and liquidity changed; willingness may be unchanged" &&
-    answers.review === "Allocation and every dependent architecture, timing, product, order, flight-test, operating, and IPS record";
+    answers.review === "Allocation and every dependent architecture, timing, product, order, flight-test, and operating record";
 
   useEffect(() => {
     if (!alreadyPassed) {
@@ -923,15 +923,15 @@ function TransferScene({ alreadyPassed, onComplete }: { alreadyPassed: boolean; 
           suppliedLossBps={{ ready: 0, steady: 800, grow: 4_000 }}
           lossBudgetBps={2_000}
           requireRationale
-          title="Rebuild the changed mandate"
+          title="Rebuild after the change"
           instruction="Enter any allocation that totals 100%, assigns at least $15,000 to Ready, and stays at or below the 20% case budget. Explain the trade-off without using the illustrative answer as a template."
           submitLabel="Lock the independent repair"
           onPass={setRepair}
         />
       )}
-      <ChoiceGroup legend="What changed in the mandate?" name="transfer-cause" options={["Capacity and liquidity changed; willingness may be unchanged", "Only willingness changed", "Nothing changed because market expectations did not change"]} value={answers.cause ?? ""} onChange={(value) => setAnswers((current) => ({ ...current, cause: value }))} />
-      <ChoiceGroup legend="What must be marked for review after this mandate change?" name="transfer-review" options={["Allocation and every dependent architecture, timing, product, order, flight-test, operating, and IPS record", "Only the Ready label", "Nothing; recompute silently and keep every approval"]} value={answers.review ?? ""} onChange={(value) => setAnswers((current) => ({ ...current, review: value }))} />
-      {checked && <Notice tone={correct ? "green" : "amber"} title={correct ? "Transfer passed" : "The repaired policy is not yet coherent"}>{correct ? "The new near-term obligation changes financial capacity and cash timing, then propagates into every dependent portfolio decision." : "Require 100%, at least 25% Ready, no more than 20% stated stress loss, and an explicit downstream review."}</Notice>}
+      <ChoiceGroup legend="What changed in the goal and limits?" name="transfer-cause" options={["Capacity and liquidity changed; willingness may be unchanged", "Only willingness changed", "Nothing changed because market expectations did not change"]} value={answers.cause ?? ""} onChange={(value) => setAnswers((current) => ({ ...current, cause: value }))} />
+      <ChoiceGroup legend="What must be marked for review after this change?" name="transfer-review" options={["Allocation and every dependent architecture, timing, product, order, flight-test, and operating record", "Only the Ready label", "Nothing; recompute silently and keep every approval"]} value={answers.review ?? ""} onChange={(value) => setAnswers((current) => ({ ...current, review: value }))} />
+      {checked && <Notice tone={correct ? "green" : "amber"} title={correct ? "Transfer passed" : "The repaired policy is not yet consistent"}>{correct ? "The new near-term obligation changes financial capacity and cash timing, then propagates into every dependent portfolio decision." : "Require 100%, at least 25% Ready, no more than 20% stated stress loss, and an explicit downstream review."}</Notice>}
       <button type="button" disabled={!repair || Object.keys(answers).length < 2} onClick={() => { setChecked(true); if (correct) onComplete(); }} className={primaryButton}>Check the unfamiliar case</button>
     </div>
   );
@@ -969,7 +969,7 @@ function AssessmentScene({
     if (!correct || !allocationDraftIsCoherent(draft, mandate) || !preflightPassed || !transferPassed) return;
     const result = onSave(allocationRecordFromDraft(draft, mode));
     if (!result.ok) {
-      setSaveError([result.message ?? "The Workbench could not save this policy.", ...(result.issues ?? [])]);
+      setSaveError([result.message ?? "This policy could not be saved.", ...(result.issues ?? [])]);
       return;
     }
     setSaveError([]);
@@ -982,7 +982,7 @@ function AssessmentScene({
         $12,000 is required within one year, so Ready must cover at least 15%. The supplied teaching stress is 0% Ready, 12% Steady, and 40% Grow. The stated stress-loss budget is 25%. Capacity and willingness are already recorded separately.
       </Notice>
       <ChoiceGroup
-        legend="Which policy is coherent?"
+        legend="Which policy is consistent?"
         name="assessment-allocation"
         options={[
           "A · 15% Ready / 35% Steady / 50% Grow",
@@ -1017,8 +1017,8 @@ function AssessmentScene({
           <ul className="mt-2 list-disc space-y-1 pl-5">{saveError.map((item) => <li key={item}>{item}</li>)}</ul>
         </div>
       )}
-      <button type="button" disabled={!allocationAnswer || !ceiling || !meaning} onClick={submit} className={primaryButton}>Save Allocation and Risk Policy</button>
-      <p className="text-[12px] leading-5 text-slate-500">Saving updates the {mode === "personal" ? "personal" : "practice"} Workbench only. The readiness route recorded is {mandate.route.replace(/-/g, " ")}.</p>
+      <button type="button" disabled={!allocationAnswer || !ceiling || !meaning} onClick={submit} className={primaryButton}>Save your allocation and risk limits</button>
+      <p className="text-[12px] leading-5 text-slate-500">Saving updates your {mode === "personal" ? "personal" : "practice"} case only. What you can do now is recorded as: {mandate.route.replace(/-/g, " ")}.</p>
     </div>
   );
 }

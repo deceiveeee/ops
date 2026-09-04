@@ -32,7 +32,7 @@ export default function LessonIF_PB_12() {
                     Your mission
                   </div>
                   <p className="ops-body-strong mt-2 max-w-xl text-[16px] text-white">
-                    Find out what a ticker legally is, fill a Fund Passport from a real
+                    Find out what a ticker legally is, fill in a fund’s identity from its own
                     prospectus one fact at a time, X-ray the exposure you are holding
                     twice, then rehearse an order that names the exact share class — and
                     is never sent anywhere.
@@ -57,7 +57,7 @@ export default function LessonIF_PB_12() {
                 Eight guided stages
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
-                One saved Holdings Slate
+                One saved holdings list
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
                 No order is ever transmitted

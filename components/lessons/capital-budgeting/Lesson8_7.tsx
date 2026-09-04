@@ -115,14 +115,14 @@ const QUESTIONS: MasteryQuestion[] = [
   },
   {
     id: "q7", type: "single",
-    prompt: "The first expansion tranche earns an expected 18%. The next earns only 7%. Required return is 10%. How much should management invest?",
+    prompt: "The first expansion block earns an expected 18%. The next earns only 7%. Required return is 10%. How much should management invest?",
     choices: [
-      { id: "a", label: "Fund the first tranche but reject the second. Capital allocation should be made at the margin." },
+      { id: "a", label: "Fund the first block but reject the second. Capital allocation should be made at the margin." },
       { id: "b", label: "Fund both because the average return exceeds 10%." },
       { id: "c", label: "Fund neither because returns are declining." },
     ],
     correctId: "a",
-    hint: "Continue investing while marginal NPV > 0. The second tranche's 7% return is below the 10% required return, so it destroys value.",
+    hint: "Continue investing while marginal NPV > 0. The second block’s 7% return is below the 10% required return, so it destroys value.",
   },
 ];
 
@@ -282,7 +282,7 @@ export default function Lesson8_7() {
       </ConceptSection>
 
       {/* 8. MARGINAL TRANCHES */}
-      <ConceptSection index="8.7.8" eyebrow="Section 8 · Declining returns across store tranches" title="Positive total NPV can hide negative marginal NPV" intro="150 stores produce positive total NPV. But the final 50 stores destroy value. Should all 150 be built?">
+      <ConceptSection index="8.7.8" eyebrow="Section 8 · Declining returns across store blocks" title="Positive total NPV can hide negative marginal NPV" intro="150 stores produce positive total NPV. But the final 50 stores destroy value. Should all 150 be built?">
         <Reveal><InteractiveFrame><MarginalStoreTranches /></InteractiveFrame></Reveal>
       </ConceptSection>
 

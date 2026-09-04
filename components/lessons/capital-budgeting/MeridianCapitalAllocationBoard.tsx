@@ -61,7 +61,7 @@ export default function MeridianCapitalAllocationBoard() {
         {!maintenanceOK && <div className="rounded-xl border border-accent-red/30 bg-accent-red/[0.06] px-4 py-2.5"><span className="text-[14px] text-accent-red">⚠ Maintenance underfunded by {fmt(100 - alloc.maintenance)}.</span></div>}
         {!liquidityOK && <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] px-4 py-2.5"><span className="text-[14px] text-accent-amber">⚠ Liquidity below prudent minimum ({fmt(80)}).</span></div>}
         {alloc.acquisition > 0 && <div className="rounded-xl border border-accent-red/30 bg-accent-red/[0.06] px-4 py-2.5"><span className="text-[14px] text-accent-red">⚠ Acquisition has negative NPV (−{fmt(35 * alloc.acquisition / 300)}).</span></div>}
-        {alloc.stores150 > 0 && <div className="rounded-xl border border-accent-red/30 bg-accent-red/[0.06] px-4 py-2.5"><span className="text-[14px] text-accent-red">⚠ Final store tranche has negative marginal NPV.</span></div>}
+        {alloc.stores150 > 0 && <div className="rounded-xl border border-accent-red/30 bg-accent-red/[0.06] px-4 py-2.5"><span className="text-[14px] text-accent-red">⚠ Final store block has negative marginal NPV.</span></div>}
       </div>
 
       {/* Allocation sliders */}

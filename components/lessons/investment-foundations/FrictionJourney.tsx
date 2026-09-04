@@ -75,7 +75,7 @@ const STAGES: readonly ValuationStage[] = [
     title: "Turn all of it into one number you own.",
     guide:
       "A friction budget is not trivia. It is the hurdle any strategy of yours has to clear before it beats simply holding an index.",
-    instruction: "Describe your own plan, then save the budget to your dossier.",
+    instruction: "Describe your own plan, then save the budget to your plan.",
     next: "Finish the mission",
   },
 ];
@@ -872,7 +872,7 @@ export default function FrictionJourney() {
                   disabled={!budgetComplete}
                   onClick={() => saveBudget(onComplete)}
                 >
-                  Save to Portfolio Dossier
+                  Save to your plan
                 </Button>
                 {!budgetComplete && (
                   <span className="text-xs text-slate-400">
@@ -893,8 +893,8 @@ export default function FrictionJourney() {
                   Mission status
                 </div>
                 <p className="ops-body-strong mt-2 text-[16px] text-white">
-                  Complete. Mission 8 now contributes the Friction artifact to your
-                  Portfolio Dossier, and its hurdle constrains mission 10.
+                  Complete. Mission 8 now adds your friction budget to your plan, and
+                  its hurdle limits what mission 10 can approve.
                 </p>
               </Panel>
             )}
@@ -913,8 +913,8 @@ export default function FrictionJourney() {
       stages={STAGES}
       renderStage={renderStage}
       labLabel="Guided cost lab"
-      finishHref="/dossier"
-      finishLabel="See your dossier"
+      finishHref="/plan"
+      finishLabel="See your plan"
     />
   );
 }

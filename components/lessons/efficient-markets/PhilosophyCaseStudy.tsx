@@ -25,7 +25,7 @@ const EVAL_QUESTIONS = [
 ];
 
 const MISSING_ITEMS = [
-  "An explicit benchmark for both the passive core and the active sleeve",
+  "An explicit benchmark for both the passive core and the active slice",
   "Sell or revision criteria beyond quarterly reviews",
   "A documentation method (written thesis, decision journal)",
   "Tax treatment of rebalancing and active turnover",

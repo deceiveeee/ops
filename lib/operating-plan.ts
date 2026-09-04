@@ -287,7 +287,7 @@ export type CompletionInputs = {
 
 /**
  * `Execute-ready` requires everything `Practice-complete` requires, plus a
- * personal (not practice) dossier, no checkpoint gaps, and resolved readiness
+ * personal (not practice) plan, no checkpoint gaps, and resolved readiness
  * blockers. Neither state is advice or authorization to trade, and nothing in
  * this module should ever be rendered as an endorsement.
  */

@@ -73,7 +73,7 @@ describe("portfolio builder progress", () => {
     ).toBe("planned");
   });
 
-  it("rolls mission progress into dossier artifact progress", () => {
+  it("rolls mission progress into plan artifact progress", () => {
     const mission = missionById("pb-07");
     const artifact = portfolioBuilderPath.artifacts.find(
       (a) => a.id === "valuation",

@@ -27,7 +27,7 @@ export default function PlanVsMarketExpectations() {
       <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-5 sm:p-6">
         <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">Information surprise</div>
         <p className="ops-body mt-3 text-[16px] leading-[1.7] text-slate-100">
-          The core store expansion may create value. The final store tranche and acquisition appear
+          The core store expansion may create value. The final store block and acquisition appear
           unattractive. The announced plan is <span className="text-white">worse than prior
           expectations</span>. The stock could fall even though part of the plan has positive NPV —
           because investors previously expected a more disciplined allocation.

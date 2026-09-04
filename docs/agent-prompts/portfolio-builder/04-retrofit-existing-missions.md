@@ -18,7 +18,7 @@ on that historical count.
 For each available core lesson:
 
 - map the route slug to mission ID, artifact ID, legacy completion key, current progress
-  write, Dossier read, and downstream dependencies;
+  write, plan read, and downstream dependencies;
 - identify learner-facing module/mission labels that contradict the approved 13-mission
   spine;
 - identify any final shell text copied from the wrong domain;
@@ -66,9 +66,9 @@ Mission 12.
 - Changing a migrated upstream answer triggers the same dependency invalidation as a new
   answer.
 
-## Dossier behavior
+## Plan page behavior
 
-Refactor the Dossier only as needed to read the Workbench through its authoritative API.
+Refactor the plan page only as needed to read the Workbench through its authoritative API.
 It must:
 
 - compile one learner-readable portfolio document rather than duplicate storage;
@@ -93,7 +93,7 @@ In the browser, inspect:
 - Build mine and Practice case;
 - refresh and cross-tab update;
 - an upstream edit producing downstream `Review required`;
-- Dossier output before and after confirmation;
+- plan output before and after confirmation;
 - every affected lesson's final save state on desktop/mobile, light/dark, keyboard, and
   reduced motion.
 

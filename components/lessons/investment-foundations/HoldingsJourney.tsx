@@ -44,21 +44,21 @@ const STAGES: readonly ValuationStage[] = [
     guide:
       "You think you are buying VTI. Ask the SEC what VTI is and it has never heard of it — because no such filer exists. What exists is a trust, a fund inside it, and a share class you can buy.",
     instruction: "Look the ticker up, then read what actually came back.",
-    next: "Continue to the passport",
+    next: "Continue to the fund identity",
   },
   {
-    label: "Passport",
+    label: "Fund identity",
     title: "Everything one filing will tell you",
     guide:
       "This is a complete product record, and every line is pinned to the filing that answers it. Read it once here, because in a moment you will build one yourself.",
-    instruction: "Read the passport, then meet the fund that looks identical.",
+    instruction: "Read the fund identity, then meet the fund that looks identical.",
     next: "Continue to the filing",
   },
   {
     label: "Filing",
     title: "Find one fact at a time",
     guide:
-      "A different fund, a different sponsor, and an empty passport. Each question below is answered somewhere in this filing. Pick the passage you think answers it and watch the field fill.",
+      "A different fund, a different sponsor, and no identity filled in yet. Each question below is answered somewhere in this filing. Pick the passage you think answers it and watch the field fill.",
     instruction:
       "Answer all five. A wrong pick fills the field with a wrong value rather than a red cross — read what you produced.",
     next: "Continue to the X-ray",
@@ -67,7 +67,7 @@ const STAGES: readonly ValuationStage[] = [
     label: "X-ray",
     title: "What you actually own",
     guide:
-      "Your growth sleeve holds two funds. Both are cheap, both are broad, and holding both feels like diversifying. The look-through asks a different question: which companies do you end up owning, and through how many routes?",
+      "Your growth slice holds two funds. Both are cheap, both are broad, and holding both feels like diversifying. The look-through asks a different question: which companies do you end up owning, and through how many routes?",
     instruction: "Choose the key the look-through runs on, then read the table.",
     next: "Continue to the finding",
   },
@@ -97,10 +97,10 @@ const STAGES: readonly ValuationStage[] = [
   },
   {
     label: "Save",
-    title: "Save the Holdings Slate",
+    title: "Save your holdings list",
     guide:
-      "This becomes the slate later missions check against. The flight test and the operating plan both read it.",
-    instruction: "Review the draft, then save it to the dossier.",
+      "This becomes the list later missions check against. The flight test and the operating plan both read it.",
+    instruction: "Review the draft, then save it to your plan.",
     next: "Return to Investment Foundations",
   },
 ];
@@ -313,12 +313,12 @@ function StagePassport({ onComplete }: { onComplete: () => void }) {
       </p>
 
       <div className="ops-definition-card p-5">
-        <div className="ops-caption text-[12px] text-accent-amber">Fund Passport</div>
+        <div className="ops-caption text-[12px] text-accent-amber">Fund identity</div>
         <h3 className="ops-body-strong mt-1 text-[16px] text-white">
           {p.legalSeriesName} — {p.className} ({p.ticker})
         </h3>
         {/*
-          The nine fields that decide whether a product fits a sleeve stay on
+          The nine fields that decide whether a product fits a slice stay on
           screen; the rest of the record goes behind a disclosure. Measured, the
           full fifteen-row list put this stage at 3.21 screens at 1440 and 5.51
           at 390, against the Screen Budget Rule's 1.5. Splitting it also says
@@ -398,7 +398,7 @@ function StagePassport({ onComplete }: { onComplete: () => void }) {
             </Row>
             <Row term="Material changes">{p.materialChanges}</Row>
             <Row term="Spread and premium">
-              Described but not quantified. No filing in this slate publishes a
+              Described but not quantified. No filing in this list publishes a
               bid-ask spread or premium/discount figure.
             </Row>
           </dl>
@@ -408,7 +408,7 @@ function StagePassport({ onComplete }: { onComplete: () => void }) {
       <Provenance product={p} />
 
       <p className="ops-body text-[15px] leading-7 text-slate-300">
-        The passport reports fields. It does not score, rank or recommend — whether
+        The identity panel reports fields. It does not score, rank or recommend — whether
         this fund belongs in your portfolio was settled in Mission 10, when you
         licensed the sleeve.
       </p>
@@ -453,7 +453,7 @@ const AGG_FINDS: Find[] = [
           "The Fund seeks to track the investment results of the Bloomberg U.S. Aggregate Bond Index, which measures the performance of the total U.S. investment-grade bond market.",
         fills: "Tracks the Bloomberg U.S. Aggregate Bond Index",
         wrong:
-          "That is the index it tracks, not how it tracks it. The passport still has no replication method, so nothing tells you whether the fund holds all 13,972 issues or a sample of them.",
+          "That is the index it tracks, not how it tracks it. The identity panel still has no replication method, so nothing tells you whether the fund holds all 13,972 issues or a sample of them.",
       },
       {
         id: "c",
@@ -488,7 +488,7 @@ const AGG_FINDS: Find[] = [
           "BFA will pay all operating expenses of the Fund, except: (i) the management fees, (ii) interest expenses, (iii) taxes…",
         fills: "The adviser pays operating expenses",
         wrong:
-          "True, and it explains why Other Expenses reads 0.00% — but it is the fee structure, not the fee. The passport still has no number in it.",
+          "True, and it explains why Other Expenses reads 0.00% — but it is the fee structure, not the fee. The identity panel still has no number in it.",
       },
     ],
   },
@@ -564,7 +564,7 @@ const AGG_FINDS: Find[] = [
         passage: "repPdEnd — 2027-02-28",
         fills: "2027-02-28",
         wrong:
-          "That is the fund's fiscal year end, not its holdings date — and look at what you just wrote into the passport. It is in the future. A fund cannot report what it held on a date that has not happened.",
+          "That is the fund's fiscal year end, not its holdings date — and look at what you just wrote into the identity panel. It is in the future. A fund cannot report what it held on a date that has not happened.",
       },
       {
         id: "c",
@@ -610,7 +610,7 @@ function StageLens({
       {idx > 0 ? (
         <div className="rounded-xl border border-white/12 bg-white/[0.02] p-4">
           <h3 className="ops-body-strong text-[15px] text-white">
-            Passport so far
+            Identity so far
           </h3>
           <dl className="mt-2">
             {AGG_FINDS.slice(0, idx).map((f) => {
@@ -652,7 +652,7 @@ function StageLens({
             aria-live="polite"
           >
             <div className="ops-caption text-[12px] text-slate-400">
-              Your passport now reads
+              Your identity panel now reads
             </div>
             <p className="ops-body-strong mt-1 text-[16px] text-white">
               {find.field}: {picked.fills}
@@ -817,7 +817,7 @@ function StageLookThrough({
           <span className="tabular-nums text-white">
             {view.coveragePct.toFixed(1)}%
           </span>{" "}
-          of the money in the slate; the rest is each fund&rsquo;s long tail, not
+          of the money in the list; the rest is each fund&rsquo;s long tail, not
           shown and not zero. Holdings as of {view.asOfDates.join(" and ")}. Weights
           inside each fund sum to {PRODUCTS.VTI.holdings.weightSumPct}% and{" "}
           {PRODUCTS.VOO.holdings.weightSumPct}%, not 100% — left in rather than
@@ -838,7 +838,7 @@ function StageLookThrough({
           </span>
         </summary>
         <p className="mt-2 text-[15px] leading-7 text-slate-300">
-          One CUSIP in this slate, {IDENTITY_CONFLICTS[0].cusip}, is filed under
+          One CUSIP in this list, {IDENTITY_CONFLICTS[0].cusip}, is filed under
           three different names and two different legal-entity identifiers — by two
           funds from the same sponsor, on the same day.
         </p>
@@ -938,16 +938,16 @@ function StageRepair({
             Two funds. One portfolio.
           </h3>
           <p className="mt-2 text-[15px] leading-7 text-slate-300">
-            Holding VTI and VOO together does not spread your growth sleeve across
-            two things. It buys the largest US companies twice. Repair the slate by
-            putting the second 40% into a sleeve that is actually different.
+            Holding VTI and VOO together does not spread your growth slice across
+            two things. It buys the largest US companies twice. Repair the list by
+            putting the second 40% into a slice that is actually different.
           </p>
           <button
             type="button"
             onClick={() => setRepaired(true)}
             className="mt-3 min-h-11 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
           >
-            Replace VOO with AGG in the stability sleeve
+            Replace VOO with AGG in the stability slice
           </button>
         </div>
       ) : (
@@ -959,8 +959,8 @@ function StageRepair({
             On the instrument key, a stock fund and a bond fund share nothing: 0.00%.
             Switch the key to issuer and 14.94% of AGG turns out to be debt issued by
             companies whose shares VTI already owns — JPMorgan, Bank of America,
-            Morgan Stanley, Oracle, Amazon. Your stability sleeve lends money to the
-            same companies your growth sleeve owns.
+            Morgan Stanley, Oracle, Amazon. Your stability slice lends money to the
+            same companies your growth slice owns.
           </p>
           <p className="mt-2 text-[14px] leading-6 text-slate-400">
             That is not a reason to avoid either fund. It is a reason to know the
@@ -975,7 +975,7 @@ function StageRepair({
         onClick={onComplete}
         className="min-h-11 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20 disabled:cursor-default disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
       >
-        {repaired ? "Continue to the checks" : "Repair the slate to continue"}
+        {repaired ? "Continue to the checks" : "Repair the list to continue"}
       </button>
     </div>
   );
@@ -1040,7 +1040,7 @@ function StageChecks({
     {
       id: "diversified",
       question:
-        "A learner's growth sleeve holds 60% VTI and 40% VOO. They say it is diversified across two funds. What is wrong?",
+        "A learner’s growth slice holds 60% VTI and 40% VOO. They say it is diversified across two funds. What is wrong?",
       options: [
         { id: "fees", label: "Nothing — both funds are cheap and broad" },
         { id: "overlap", label: "Almost all of the second fund is inside the first" },
@@ -1049,7 +1049,7 @@ function StageChecks({
       reveal: (
         <p className="text-[15px] leading-7 text-slate-300">
           99.88% of VOO&rsquo;s reported weight is held by VTI as well. Exactly two
-          of VOO&rsquo;s positions are not in VTI. The sleeve is not diversified
+          of VOO&rsquo;s positions are not in VTI. The slice is not diversified
           across two funds; it is concentrated in one portfolio bought twice. Fund
           count is not a diversification measure — issuer exposure is.
         </p>
@@ -1361,7 +1361,7 @@ function StageSave({
       {blockers.length > 0 ? (
         <div className="ops-definition-card p-5">
           <h3 className="ops-body-strong text-[16px] text-white">
-            Before this slate counts as verified
+            Before this list counts as verified
           </h3>
           <ul className="mt-2 space-y-1 text-[15px] leading-7 text-slate-300">
             {blockers.map((b) => (
@@ -1382,7 +1382,7 @@ function StageSave({
         onClick={onSave}
         className="min-h-11 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20 disabled:cursor-default disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
       >
-        {saved ? "Holdings Slate saved ✓" : "Save the Holdings Slate"}
+        {saved ? "Holdings list saved ✓" : "Save the holdings list"}
       </button>
       {!saved && !ready ? (
         <p className="text-[14px] leading-6 text-slate-400">
@@ -1540,7 +1540,7 @@ export default function HoldingsJourney() {
       lessonSlug={LESSON_SLUG}
       ariaLabel="Choose the actual holdings"
       labLabel="Guided holdings lab"
-      savedArtifactLabel="Holdings Slate"
+      savedArtifactLabel="holdings list"
       stages={STAGES}
       renderStage={renderStage}
     />

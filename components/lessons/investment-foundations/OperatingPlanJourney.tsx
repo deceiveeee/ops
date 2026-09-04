@@ -33,7 +33,7 @@ const LESSON_SLUG = "if-pb-13-write-the-rules-and-defend-the-portfolio";
  * own primary control and no stage requires a correct answer to proceed.
  *
  * Stage 3 works the crash through and then asks for it: it is the first of the
- * nine scenario responses the dossier carries, so it completes on two choices
+ * nine scenario responses the plan carries, so it completes on two choices
  * rather than on a single Continue.
  *
  * Stage 5 needs a number as well as two choices, so the calendar cadence ships
@@ -106,10 +106,10 @@ const STAGES: readonly ValuationStage[] = [
     guide:
       "This is the one governance element that matters for someone investing alone. It is what stops a policy being rewritten in the middle of a crash to justify a decision already made.",
     instruction: "Write the review process.",
-    next: "Continue to the dossier",
+    next: "Continue to your plan",
   },
   {
-    label: "Dossier",
+    label: "Your plan",
     title: "Twelve missions, one document",
     guide:
       "Nothing here asks you a question you have already answered. It compiles — and where something is missing, it says which mission holds it.",
@@ -193,7 +193,7 @@ function Field({
 }
 
 const CHECKPOINT_LABELS: Record<WorkbenchCheckpointId, string> = {
-  mandate: "Investor mandate — the goal, horizon and loss capacity",
+  mandate: "Goal and limits — what the money is for, by when, and the loss you can take",
   beliefs: "Market beliefs — the view the whole plan rests on",
   "bond-risk": "Bond risk policy",
   "required-return": "Required return",
@@ -204,14 +204,14 @@ const CHECKPOINT_LABELS: Record<WorkbenchCheckpointId, string> = {
   "evidence-test": "Evidence test — the bar a claim must clear",
   architecture: "Architecture licence — passive core and benchmark",
   timing: "Timing policy — whether deviation is allowed at all",
-  holdings: "Holdings slate — exact products, costs and source dates",
+  holdings: "Holdings list — exact products, costs and source dates",
   policy: "Operating plan",
 };
 
 const NEEDED_BY: Partial<Record<WorkbenchCheckpointId, string>> = {
   allocation: "The control room cannot measure drift without your weights.",
   friction: "Rebalancing cost is charged from this budget.",
-  holdings: "The dossier records product identity and source dates from here.",
+  holdings: "Your plan records product identity and source dates from here.",
   timing: "A rebalance is not a tactical deviation, and this says which is which.",
   architecture: "The benchmark your result is measured against comes from here.",
   mandate: "Every scenario is judged against the goal you wrote.",
@@ -227,7 +227,7 @@ const WORKED: Scenario = {
   id: "crash",
   title: "The market falls 30% in seven weeks",
   prompt:
-    "Your growth sleeve is down roughly a third. Nothing about the companies you own has changed that you know of. Your income is unaffected.",
+    "Your growth slice is down roughly a third. Nothing about the companies you own has changed that you know of. Your income is unaffected.",
 };
 
 const FLIGHT_A: Scenario[] = [
@@ -250,9 +250,9 @@ const FLIGHT_A: Scenario[] = [
   },
   {
     id: "drift",
-    title: "One sleeve has run away",
+    title: "One slice has run away",
     prompt:
-      "After a strong year your growth sleeve sits well outside the band you set.",
+      "After a strong year your growth slice sits well outside the band you set.",
   },
 ];
 
@@ -273,7 +273,7 @@ const FLIGHT_B: Scenario[] = [
     id: "licence",
     title: "The edge licence expires",
     prompt:
-      "The review date on your active sleeve arrives. It has beaten its benchmark two years running.",
+      "The review date on your active slice arrives. It has beaten its benchmark two years running.",
   },
   {
     id: "mandate",
@@ -590,7 +590,7 @@ export default function OperatingPlanJourney() {
           </div>
 
           {/*
-           * The crash is the first of the nine responses the dossier carries,
+           * The crash is the first of the nine responses the plan carries,
            * so it is recorded here rather than only demonstrated. Working it
            * through and never asking for it left the flight test collecting
            * eight of nine — which the completion gate reads as unfinished, and
@@ -650,10 +650,10 @@ export default function OperatingPlanJourney() {
                 </h3>
                 <TableScroll>
                   <table className="mt-3 w-full min-w-[30rem] text-left text-[14px]">
-                    <caption className="sr-only">Sleeve drift</caption>
+                    <caption className="sr-only">Slice drift</caption>
                     <thead className="text-slate-400">
                       <tr>
-                        <th scope="col" className="py-2 pr-3 font-normal">Sleeve</th>
+                        <th scope="col" className="py-2 pr-3 font-normal">Slice</th>
                         <th scope="col" className="py-2 pr-3 text-right font-normal">Target</th>
                         <th scope="col" className="py-2 pr-3 text-right font-normal">Now</th>
                         <th scope="col" className="py-2 pr-3 text-right font-normal">Band</th>
@@ -686,7 +686,7 @@ export default function OperatingPlanJourney() {
                   <span className="tabular-nums text-white">
                     {(totalDeviationBps(drift) / 100).toFixed(1)}%
                   </span>
-                  . A sleeve inside its own band is not drifted, however far it sits
+                  . A slice inside its own band is not drifted, however far it sits
                   from target — that is what a band is for. Current weights here are
                   an illustration: OPS holds your targets and bands, not your balances.
                 </p>
@@ -865,7 +865,7 @@ export default function OperatingPlanJourney() {
               label="New money — where does it go?"
               value={plan.contributionRule}
               onChange={(contributionRule) => set({ contributionRule })}
-              placeholder="Monthly, into whichever sleeve is furthest below target."
+              placeholder="Monthly, into whichever slice is furthest below target."
             />
             <Field
               label="Withdrawals — where do they come from?"
@@ -929,7 +929,7 @@ export default function OperatingPlanJourney() {
             </div>
           </div>
           <button type="button" disabled={!ready} onClick={onComplete} className={BTN}>
-            {ready ? "Continue to the dossier" : "Write the review process"}
+            {ready ? "Continue to your plan" : "Write the review process"}
           </button>
         </div>
       );
@@ -972,7 +972,7 @@ export default function OperatingPlanJourney() {
                 {plan.rebalanceRule.trigger === "calendar"
                   ? `Every ${plan.rebalanceRule.cadenceMonths} months`
                   : plan.rebalanceRule.trigger === "threshold"
-                    ? `When a sleeve moves ${(plan.rebalanceRule.bandBps / 100).toFixed(0)} points from target`
+                    ? `When a slice moves ${(plan.rebalanceRule.bandBps / 100).toFixed(0)} points from target`
                     : "Not written"}
                 {plan.rebalanceRule.method ? `, using ${plan.rebalanceRule.method.replace(/-/g, " ")}` : ""}
               </Row>
@@ -1022,8 +1022,8 @@ export default function OperatingPlanJourney() {
 
     // ---- 10 transfer case and save ------------------------------------------
     const CASE_DEFECTS = [
-      { id: "weights", label: "The sleeve weights total 104%", real: true },
-      { id: "liquidity", label: "Next year's tuition sits in the growth sleeve", real: true },
+      { id: "weights", label: "The slice weights total 104%", real: true },
+      { id: "liquidity", label: "Next year’s tuition sits in the growth slice", real: true },
       { id: "identity", label: "The plan names a ticker but no share class", real: true },
       { id: "stale", label: "The overlap figure carries no as-of date", real: true },
       { id: "fees", label: "One fund charges 0.03% rather than 0.02%", real: false },
@@ -1112,7 +1112,7 @@ export default function OperatingPlanJourney() {
       lessonSlug={LESSON_SLUG}
       ariaLabel="Write the rules and defend the portfolio"
       labLabel="Guided operating lab"
-      savedArtifactLabel="Operating Plan and IPS"
+      savedArtifactLabel="operating rules"
       stages={STAGES}
       renderStage={renderStage}
     />

@@ -11,7 +11,7 @@ type Step = { n: number; title: string; detail: string; phase: Phase };
 const STEPS: Step[] = [
   { n: 1, title: "Determine how much cash the business generates", detail: "Start with operating cash flow, adjusted for cyclicality and sustainability.", phase: "assess" },
   { n: 2, title: "Separate mandatory maintenance from discretionary capital", detail: "Estimate the minimum required to sustain operations. Only residual capital is available for discretionary allocation.", phase: "assess" },
-  { n: 3, title: "Evaluate balance-sheet needs", detail: "Assess leverage, liquidity, covenant headroom, and refinancing risk before considering growth or distributions.", phase: "assess" },
+  { n: 3, title: "Evaluate balance-sheet needs", detail: "Assess leverage, liquidity, room under its loan terms, and refinancing risk before considering growth or distributions.", phase: "assess" },
   { n: 4, title: "Estimate returns on incremental organic investment", detail: "Use marginal analysis: what return does the next dollar of growth capital earn?", phase: "evaluate" },
   { n: 5, title: "Evaluate acquisition price and synergies", detail: "Separate target quality from purchase price. Include integration costs and test synergy credibility.", phase: "evaluate" },
   { n: 6, title: "Assess debt-repayment benefits", detail: "Interest savings, distress-risk reduction, and financing flexibility versus opportunity cost.", phase: "evaluate" },

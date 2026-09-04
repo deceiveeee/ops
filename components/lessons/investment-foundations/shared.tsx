@@ -452,7 +452,7 @@ export const IF_MODULE_12_LESSONS = [
   {
     slug: "if-pb-12-choose-the-actual-holdings",
     title: "Choose the Actual Holdings",
-    shortTitle: "Holdings Slate",
+    shortTitle: "Holdings List",
     n: "12.1",
   },
 ] as const;

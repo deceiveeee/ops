@@ -31,7 +31,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 function normalizeRoute(raw: string | undefined): string | undefined {
   if (!raw) return raw;
   if (/^https?:\/\//.test(raw)) return raw;
-  const mangled = raw.match(/^[a-zA-Z]:[\\/].*?[\\/](lessons|courses|dossier|start)[\\/](.*)$/);
+  const mangled = raw.match(/^[a-zA-Z]:[\\/].*?[\\/](lessons|courses|plan|start)[\\/](.*)$/);
   if (mangled) return `/${mangled[1]}/${mangled[2]}`.replace(/\\/g, "/");
   return raw.startsWith("/") ? raw : `/${raw}`;
 }

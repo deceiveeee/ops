@@ -9,7 +9,7 @@ approved Portfolio Builder build without losing the source discipline, learning 
 design quality behind the curriculum.
 
 This is not one giant "make the website beautiful" prompt. The work is split into bounded
-passes because the same progress, registry, course, dossier, and end-to-end files are touched
+passes because the same progress, registry, course, plan, and end-to-end files are touched
 by nearly every mission. One agent owns those shared files at a time.
 
 ## The quality equation
@@ -102,7 +102,7 @@ Portfolio Builder spine:
 - `data/courses/courses.ts`
 - `data/courses/portfolioBuilder.ts`
 - `lib/lessonRegistry.ts`
-- `components/dossier/PortfolioDossier.tsx`
+- `components/plan/PortfolioPlan.tsx`
 - `components/courses/PortfolioBuilderPath.tsx`
 - `e2e/lesson-typography.spec.ts`
 

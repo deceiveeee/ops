@@ -216,11 +216,11 @@ describe("completionState", () => {
     readinessBlockersResolved: true,
   };
 
-  it("reaches execute-ready only with a personal dossier and no gaps", () => {
+  it("reaches execute-ready only with a personal plan and no gaps", () => {
     expect(completionState(base)).toBe("execute-ready");
   });
 
-  it("caps a practice dossier at practice-complete", () => {
+  it("caps a practice plan at practice-complete", () => {
     expect(completionState({ ...base, mode: "practice" })).toBe("practice-complete");
   });
 

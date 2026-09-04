@@ -9,7 +9,7 @@ Paste after `00-master-operating-prompt.md`.
 Close Mission 13's source and learner-sequence gates, then make the learner operate and
 defend the completed portfolio.
 
-The mission must compile the Workbench into a human-readable Dossier and Investment Policy
+The mission must compile the Workbench into a human-readable plan and Investment Policy
 Statement, run the learner through realistic shocks, and administer an unfamiliar transfer
 case. Passing demonstrates beginner portfolio competence for a stated personal or practice
 case; it does not grant an advisory credential or authorization to trade.
@@ -75,7 +75,7 @@ Show drift repaired, remaining deviation, estimated friction, possible tax flags
 effect, and why a chosen action fits the written policy. Never calculate tax liability or
 declare one method universally optimal.
 
-### IPS and Dossier Compiler
+### Operating rules and plan compiler
 
 Compile, do not re-ask, the learner's:
 
@@ -120,15 +120,15 @@ validated until learner testing calibrates it.
    governance, and IPS.
 2. Model one fully worked scenario and the corresponding IPS rule.
 3. Guided practice operates the learner's portfolio with visible policy references.
-4. Learner writes/edits operating rules and compiles the Dossier.
+4. Learner writes/edits operating rules and compiles the plan.
 5. Independent flight scenarios remove hints.
 6. Transfer case and defense assess integrated competence.
 
 ## Completion states
 
-- `Practice-complete`: complete, coherent practice/paper Dossier plus transfer pass and no
+- `Practice-complete`: complete, coherent practice/paper plan plus transfer pass and no
   critical failure.
-- `Execute-ready`: only when the personal Dossier is coherent, readiness blockers are
+- `Execute-ready`: only when the personal plan is coherent, readiness blockers are
   resolved, transfer passes, and no critical failure remains. It still is not advice or a
   transaction authorization.
 
@@ -146,7 +146,7 @@ hide unresolved `Review required` records.
 ## Tests and QA
 
 Test all scenario branches, each critical failure, score boundaries, unresolved review
-items blocking both completion modes, every missing Mission 1–12 checkpoint, Dossier compilation,
+items blocking both completion modes, every missing Mission 1–12 checkpoint, plan compilation,
 missing/stale sources, rebalancing math,
 refresh/resume, print/export where implemented, and no order transmission.
 
@@ -164,7 +164,7 @@ Do not:
 - use one universal rebalance threshold;
 - place trades or connect accounts;
 - let a high aggregate score override a critical failure;
-- let the learner pass by copying their own Dossier into the transfer case;
+- let the learner pass by copying their own plan into the transfer case;
 - commit or push.
 
 End with the complete-course gate status, not only the mission's local status.

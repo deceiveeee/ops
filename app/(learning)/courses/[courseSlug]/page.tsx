@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { courses, getCourse } from "@/data/courses";
+import { getLessonsForModule } from "@/data/lessons";
 import { portfolioBuilderPath } from "@/data/courses/portfolioBuilder";
 import ModuleSection from "@/components/courses/ModuleSection";
 import CourseRail from "@/components/courses/CourseRail";
@@ -68,15 +69,15 @@ const courseOutcomes: Record<string, { title: string; points: string[] }[]> = {
     {
       title: "What you will learn",
       points: [
-        "Set a mandate, allocation, and risk budget",
+        "Set a goal, an allocation, and a loss budget",
         "Evaluate business evidence and expected return",
-        "Choose a passive core or defend an active sleeve",
+        "Choose a passive core, or defend an active slice",
       ],
     },
     {
       title: "How the course works",
       points: [
-        `${portfolioBuilderPath.missions.length} decisions build one Portfolio Dossier`,
+        `${portfolioBuilderPath.missions.length} decisions build one portfolio plan`,
         "Existing guided journeys earn mission credit",
         "Damodaran depth remains available without blocking progress",
       ],
@@ -98,10 +99,14 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
 
   const accent = courseAccent[course.slug] ?? "#22d3ee";
   const accentInk = courseAccentInk[course.slug] ?? "#0e7490";
-  const totalLessons = course.modules.reduce(
-    (sum, m) => sum + m.lessonSlugs.length,
+  const publicModules = course.modules.filter(
+    (module) => getLessonsForModule(module.id).length > 0,
+  );
+  const totalLessons = publicModules.reduce(
+    (sum, module) => sum + getLessonsForModule(module.id).length,
     0,
   );
+  const firstLessonSlug = getLessonsForModule(publicModules[0]?.id ?? "")[0]?.slug;
   const isPortfolioBuilder = course.slug === "investment-foundations";
   const outcomes = courseOutcomes[course.slug] ?? courseOutcomes["finance-foundations"];
 
@@ -142,7 +147,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
               <p className="hp-body mt-5 max-w-[560px]">{course.description}</p>
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
-                <Button href={`/lessons/${course.modules[0]?.lessonSlugs[0]}`} size="lg">
+                <Button href={`/lessons/${firstLessonSlug}`} size="lg">
                   {isPortfolioBuilder ? "Start building" : "Start course"}
                 </Button>
                 <Link
@@ -175,7 +180,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
                 ) : (
                   <>
                     <HeroStat label="Hours" value={String(course.estimatedHours)} accent={accentInk} />
-                    <HeroStat label="Modules" value={String(course.modules.length)} accent={accentInk} />
+                    <HeroStat label="Modules" value={String(publicModules.length)} accent={accentInk} />
                     <HeroStat label="Lessons" value={String(totalLessons)} accent={accentInk} />
                   </>
                 )}
@@ -186,7 +191,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
                 <div className="text-[14px] font-medium uppercase tracking-[0.06em] text-slate-500">
                   {course.slug === "finance-foundations"
                     ? "Price → Business → Cash flow → Value → Portfolio"
-                    : "Mandate → Allocation → Evidence → Value → Holdings → Policy"}
+                    : "Goal → Allocation → Evidence → Value → Holdings → Rules"}
                 </div>
                 {/* Decorative SVG: keep the bright accent, it colors shapes not text. */}
                 <CourseFlowVisual slug={course.slug} accent={accent} />
@@ -269,7 +274,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
                 </>
               ) : (
                 <>
-                  {course.modules.length} {course.modules.length === 1 ? "module" : "modules"}.
+                  {publicModules.length} {publicModules.length === 1 ? "module" : "modules"}.
                   <br />
                   {totalLessons} {totalLessons === 1 ? "lesson" : "lessons"}.
                 </>
@@ -277,7 +282,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
             </h2>
             {isPortfolioBuilder && (
               <p className="mt-5 max-w-3xl text-[18px] leading-8 text-[#424245]">
-                The routes already built remain available. Required journeys contribute to the mission dossier; optional investigations preserve the source depth without extending core completion.
+                The routes already built remain available. Required journeys add to your plan; optional investigations preserve the source depth without extending core completion.
               </p>
             )}
           </div>
@@ -288,7 +293,7 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
             className="mb-10 lg:hidden"
           >
             <div className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-2">
-              {course.modules.map((m) => (
+              {publicModules.map((m) => (
                 <a
                   key={m.id}
                   href={`#module-${m.order}`}
@@ -305,10 +310,10 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
 
           {/* Two-column curriculum: sticky rail + content */}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
-            <CourseRail course={course} modules={course.modules} accentColor={accentInk} />
+            <CourseRail course={course} modules={publicModules} accentColor={accentInk} />
 
             <div className="space-y-20">
-              {course.modules.map((m, i) => (
+              {publicModules.map((m, i) => (
                 <ModuleSection
                   key={m.id}
                   module={m}
@@ -334,15 +339,19 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
           </h2>
           <p className="course-lead mx-auto mt-8 text-balance">
             {isPortfolioBuilder
-              ? "Start with the investor mandate, then let each decision update the dossier."
-              : "Start with the first lesson, or jump straight into the studio."}
+              ? "Start by setting your goal and your limits, then let each decision update your plan."
+              : "Start with the first lesson, then continue into the portfolio-building course."}
           </p>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <Button href={`/lessons/${course.modules[0]?.lessonSlugs[0]}`} size="lg">
+            <Button href={`/lessons/${firstLessonSlug}`} size="lg">
               {isPortfolioBuilder ? "Start building" : "Start course"}
             </Button>
-            <Button href="/studio" variant="outline" size="lg">
-              Enter the studio
+            <Button
+              href={isPortfolioBuilder ? "/plan" : "/courses/investment-foundations"}
+              variant="outline"
+              size="lg"
+            >
+              {isPortfolioBuilder ? "Open your plan" : "See Portfolio Builder"}
             </Button>
           </div>
         </div>
@@ -372,7 +381,7 @@ function CourseFlowVisual({ slug, accent }: { slug: string; accent: string }) {
   const steps =
     slug === "finance-foundations"
       ? ["Price", "Business", "Cash flow", "Value", "Portfolio"]
-      : ["Mandate", "Allocation", "Evidence", "Value", "Holdings", "Policy"];
+      : ["Goal", "Allocation", "Evidence", "Value", "Holdings", "Rules"];
 
   return (
     <svg

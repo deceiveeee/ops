@@ -77,7 +77,7 @@ const SCENARIOS: {
   },
   {
     id: "s4",
-    text: "Different maturity markets are partly separated by investor mandates.",
+    text: "Different maturity markets are partly separated by the rules investors must follow.",
     answer: "segmentation",
     explain:
       "Market Segmentation: supply and demand in each maturity bucket can set rates somewhat independently.",

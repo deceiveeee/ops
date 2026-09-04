@@ -37,7 +37,7 @@ describe("SiteHeader public beta navigation", () => {
   it("exposes only complete beta surfaces", () => {
     renderHeader();
     expect(screen.getAllByText("Courses").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Your dossier").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Your plan").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Filings").length).toBeGreaterThan(0);
     expect(screen.queryByText("Studio")).not.toBeInTheDocument();
   });

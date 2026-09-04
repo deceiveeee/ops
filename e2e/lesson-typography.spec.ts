@@ -136,7 +136,7 @@ const ANSWER_KEYS: Record<string, string[]> = {
     "Continue to Change",
     "choose:Capacity and liquidity changed; willingness may be unchanged",
     "choose:Record the $12,000 as near-term cash",
-    "Save readiness route",
+    "Save what you can do now",
   ],
   "if-pb-05-set-allocation-and-risk-limits#1": [
     "choose:Their weights, each asset's volatility",
@@ -183,7 +183,7 @@ const ANSWER_KEYS: Record<string, string[]> = {
     "choose:A · 15% Ready / 35% Steady / 50% Grow",
     "type:candidate-ceiling-answer=3",
     "choose:A learner/OPS policy from a hypothetical loss",
-    "Save Allocation and Risk Policy",
+    "Save your allocation and risk limits",
   ],
   "if-4-6-trace-cash-to-the-investor#3": [
     "Accounts receivable and inventory",
@@ -225,8 +225,8 @@ const ANSWER_KEYS: Record<string, string[]> = {
    * of choices satisfies it. This is the mission's one keyed stage.
    */
   "if-pb-13-write-the-rules-and-defend-the-portfolio#10": [
-    "Problem — The sleeve weights total 104%",
-    "Problem — Next year's tuition sits in the growth sleeve",
+    "Problem — The slice weights total 104%",
+    "Problem — Next year’s tuition sits in the growth slice",
     "Problem — The plan names a ticker but no share class",
     "Problem — The overlap figure carries no as-of date",
     "Not a problem — One fund charges 0.03% rather than 0.02%",
@@ -1101,7 +1101,7 @@ for (const slug of IF_LESSON_ROUTES) {
     if (slug === "if-pb-05-set-allocation-and-risk-limits") {
       /**
        * Mission 5 opens on the readiness runway, which is where the course
-       * actually asks whose mandate is being built, with the consequence of each
+       * actually asks whose plan is being built, with the consequence of each
        * route on screen. The workbench rail used to carry a second copy of that
        * choice as a segmented toggle, and this walk used to click it; it was
        * removed because it flipped a global setting from every lesson page with
@@ -1242,7 +1242,7 @@ test("the gate still fails on the defects it was built to catch", async ({ page 
 });
 
 for (const route of [
-  "/dossier",
+  "/plan",
   "/courses/investment-foundations",
   "/courses/finance-foundations",
 ]) {

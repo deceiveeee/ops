@@ -77,7 +77,7 @@ const STAGES: readonly ValuationStage[] = [
     title: "Convert uncertainty into a decision rule.",
     guide:
       "You now have a range, not a point. A buffer turns that range into a rule you can act on before emotion gets a vote.",
-    instruction: "Choose a decision buffer, then save the range to your dossier.",
+    instruction: "Choose a decision buffer, then save the range to your plan.",
     next: "Defend the range",
   },
   {
@@ -1002,7 +1002,7 @@ export default function ValuationRangeJourney() {
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Button size="md" onClick={() => saveArtifact(onComplete)}>
-                Save to Portfolio Dossier
+                Save to your plan
               </Button>
               {(savedThisVisit || valuationRange.updatedAt) && (
                 <span className="text-xs text-accent-green">
@@ -1034,8 +1034,8 @@ export default function ValuationRangeJourney() {
                   Mission status
                 </div>
                 <p className="ops-body-strong mt-2 text-[16px] text-white">
-                  Complete. Mission 7 now contributes to the Valuation artifact in
-                  your Portfolio Dossier.
+                  Complete. Mission 7 now adds your valuation range to
+                  your plan.
                 </p>
               </Panel>
             )}

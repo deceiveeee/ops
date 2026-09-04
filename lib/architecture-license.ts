@@ -8,7 +8,7 @@
  * evaluation always returns the complete list of failures rather than stopping
  * at the first one — the UI names all of them beside a disabled control.
  *
- * Pure and browser-free by design. "Why is this sleeve still disabled" is a
+ * Pure and browser-free by design. "Why is this slice still disabled" is a
  * question that should be answerable in a unit test, not only by clicking.
  */
 
@@ -181,7 +181,7 @@ export function evaluateEdgeLicense(
   if (!stated(proposal.falsifiableClaim) || !stated(proposal.disconfirming)) {
     add(
       "not-falsifiable",
-      "Falsifiable claim",
+      "A claim you could disprove",
       "State the claim and the evidence that would refute it. A claim nothing could disprove cannot be tested.",
       "mission-9",
     );
@@ -251,7 +251,7 @@ export function evaluateEdgeLicense(
     add(
       "no-thesis-break",
       "Thesis break",
-      "Name the result that would make you close this sleeve, while you can still think clearly about it.",
+      "Name the result that would make you close this slice, while you can still think clearly about it.",
       "mission-10",
     );
   }

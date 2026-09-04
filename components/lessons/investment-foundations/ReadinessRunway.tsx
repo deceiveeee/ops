@@ -221,7 +221,7 @@ const DEBT_OPTIONS = [
   {
     value: "paying-down",
     label: "A payoff plan is underway",
-    detail: "Keep personal deployment constrained while the recorded plan is unresolved.",
+    detail: "Hold off on putting real money in while the recorded plan is unresolved.",
   },
   {
     value: "present",
@@ -318,7 +318,7 @@ const JURISDICTION_OPTIONS = [
   {
     value: "outside-us",
     label: "Outside the United States",
-    detail: "Continue learning, but verify local eligibility and rules before deployment.",
+    detail: "Keep learning, but check local eligibility and rules before you put real money in.",
   },
   {
     value: "unknown",
@@ -364,7 +364,7 @@ const EARNED_INCOME_OPTIONS = [
   {
     value: "verify",
     label: "It may matter; I need to verify",
-    detail: "Keep deployment conditional until account eligibility is checked.",
+    detail: "Hold off on putting real money in until account eligibility is checked.",
   },
   {
     value: "unknown",
@@ -394,7 +394,7 @@ const LIFE_DIAGNOSIS_OPTIONS = [
 const LIFE_ACTION_OPTIONS = [
   {
     value: "protect-cash-need",
-    label: "Record the $12,000 as near-term cash and keep deployment constrained until it is protected",
+    label: "Record the $12,000 as near-term cash and hold off on investing it until it is protected",
     detail: "Jordan can continue the full course with a paper portfolio while the cash need is resolved.",
   },
   {
@@ -416,9 +416,9 @@ export function deriveReadinessRoute(
   if (mode === "practice") {
     return {
       route: "practice-only",
-      title: "Practice only",
+      title: "Practice case only",
       summary:
-        "Build the same complete portfolio with fictional facts and no real-money deployment.",
+        "Build the same complete portfolio with fictional facts and no real money.",
       reasons: [
         "The case is fictional and carries the same teaching, assessment, and capstone standard.",
       ],
@@ -435,7 +435,7 @@ export function deriveReadinessRoute(
   }
   if (record.highInterestDebt !== "none") {
     reasons.push("High-interest debt is present, being paid down, or still unknown.");
-    actions.push("Verify the debt context and record the payoff or review step before deployment.");
+    actions.push("Check the debt context and record the payoff or review step before you put real money in.");
   }
   if (record.jurisdiction !== "us") {
     reasons.push("The applicable jurisdiction is outside the current US source layer or unverified.");
@@ -488,9 +488,9 @@ export function deriveReadinessRoute(
   if (reasons.length > 0) {
     return {
       route: "personal-constrained",
-      title: "Personal constrained",
+      title: "Your own case, on paper for now",
       summary:
-        "Keep building the portfolio on paper while the recorded deployment conditions are resolved.",
+        "Keep building the portfolio on paper while the conditions you recorded are resolved.",
       reasons,
       actions: unique(actions),
     };
@@ -498,13 +498,13 @@ export function deriveReadinessRoute(
 
   return {
     route: "personal-deployment-available",
-    title: "Personal deployment available",
+    title: "Your own case, nothing holding it back",
     summary:
-      "No readiness blocker is recorded. This is a planning route—not advice, account approval, or permission to trade.",
+      "Nothing you recorded is holding this back. That is a planning result—not advice, account approval, or permission to trade.",
     reasons: [
       "The learner-selected reserve target, debt review, jurisdiction, authority, and account-context flags are recorded as resolved.",
     ],
-    actions: ["Carry the mandate into allocation and keep every later decision reviewable."],
+    actions: ["Carry your goal and limits into allocation, and keep every later decision reviewable."],
   };
 }
 
@@ -699,7 +699,7 @@ export default function ReadinessRunway({
                 disabled={!profileComplete || !lifeChangePassed}
                 className="min-h-11 rounded-full border border-accent-green/40 bg-accent-green/10 px-5 py-2.5 text-[14px] font-semibold text-accent-green transition-colors hover:bg-accent-green/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-green/50 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
               >
-                Save readiness route
+                Save what you can do now
               </button>
             )}
           </div>
@@ -709,10 +709,10 @@ export default function ReadinessRunway({
             disclosure, never stacked under it. Below the step this panel added
             420px — nearly half a viewport of scroll — to reach a Continue
             button. It opens on demand and stays open once opened. */}
-        <details className="group border-t border-white/10 bg-white/[0.025]" aria-label="Readiness route">
+        <details className="group border-t border-white/10 bg-white/[0.025]" aria-label="What you can do now">
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 text-[13px] font-semibold text-slate-300 hover:text-white sm:px-7 lg:px-8">
             <span>
-              Current route
+              Where you stand
               <span className="ml-2 font-normal text-accent-amber">{routeResult.title}</span>
             </span>
             <span className="text-[12px] font-normal text-slate-400 group-open:hidden">
@@ -750,12 +750,12 @@ function ModeStep({
        turned a single choice into most of a screen of scroll. */
     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] xl:items-start xl:gap-8">
       <DefinitionBlock
-        title="Not ready to deploy is different from not ready to learn"
+        title="Not ready to invest is different from not ready to learn"
         body="Both paths use the same concepts, practice, assessment, and capstone. The only difference is whose facts the paper portfolio uses."
       />
       <fieldset className="min-w-0">
         <legend className="ops-body-strong text-[17px] font-semibold">
-          Whose mandate will you build?
+          Whose plan will you build?
         </legend>
         {/* One per row inside its own pane: the pane is roughly half the step,
             so pairing them here would recreate the 190px column this layout
@@ -767,7 +767,7 @@ function ModeStep({
             value="personal"
             title="Build mine"
             body="Use approximate personal facts. Never enter credentials, account numbers, tax IDs, or exact addresses."
-            note="A constraint creates a paper deployment plan—not a failed course."
+            note="A constraint creates a paper plan—not a failed course."
             onChange={() => onChoose("personal")}
           />
           <ModeCard
@@ -864,7 +864,7 @@ function GoalStep({
               </div>
               <p className="ops-body mt-2 max-w-xl text-[15px] leading-6 text-slate-300">
                 This is a planning split, not a forecast. Mission 5 will decide which broad
-                sleeve is compatible with each job.
+                slice is compatible with each job.
               </p>
             </div>
             <div className="text-right tabular-nums">
@@ -1115,7 +1115,7 @@ function RoutePanel({
   return (
     <div className="lg:sticky lg:top-24">
       <div className="text-[13px] font-semibold tracking-[0.02em] text-slate-400">
-        {complete ? "Current route" : "Route forming"}
+{complete ? "What you can do now" : "Still forming"}
       </div>
       <div
         className={cn("mt-3 text-[26px] font-semibold leading-tight tracking-[-0.02em]", routeTone)}
@@ -1154,7 +1154,7 @@ function RoutePanel({
             </ul>
           </div>
           <div className="mt-6 border-t border-white/10 pt-5">
-            <div className="text-[13px] font-semibold text-slate-300">Deployment action plan</div>
+            <div className="text-[13px] font-semibold text-slate-300">What to do next</div>
             <ol className="mt-3 space-y-3 text-[13px] leading-5 text-slate-400">
               {result.actions.map((action, index) => (
                 <li key={action} className="flex gap-3">

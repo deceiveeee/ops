@@ -57,7 +57,7 @@ export default function LessonIF_PB_13() {
                 Eleven guided stages
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
-                One saved Operating Plan and IPS
+                One saved set of operating rules
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
                 Neither state is advice
