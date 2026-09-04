@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { JOURNEY_GROUPS } from "./IFProgressRail";
-import { getLessonComponent } from "@/lib/lessonRegistry";
+import { hasLessonComponent } from "@/lib/lessonSlugs";
 import { lessons } from "@/data/lessons/lessons";
 
 /**
@@ -39,9 +39,7 @@ describe("the lesson rail resolves a module for every lesson", () => {
   });
 
   it("only lists lessons that actually render", () => {
-    const unrenderable = railSlugs.filter(
-      (slug) => !getLessonComponent(slug as Parameters<typeof getLessonComponent>[0]),
-    );
+    const unrenderable = railSlugs.filter((slug) => !hasLessonComponent(slug));
     expect(unrenderable).toEqual([]);
   });
 
