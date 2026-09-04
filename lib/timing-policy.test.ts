@@ -5,7 +5,12 @@ import {
   ILLUSTRATIVE_PATH,
   simulateTiming,
 } from "./timing-policy";
-import { EMPTY_TIMING_POLICY, isTimingPolicyComplete } from "./if-progress";
+import {
+  EMPTY_FRICTION_BUDGET,
+  EMPTY_TIMING_POLICY,
+  frictionOneWayPct,
+  isTimingPolicyComplete,
+} from "./if-progress";
 
 const FRICTION = 0.5;
 
@@ -93,6 +98,33 @@ describe("simulateTiming", () => {
     const out = simulateTiming("first-drop", "stop-rule", FRICTION);
     expect(out.series).toHaveLength(ILLUSTRATIVE_PATH.length);
     expect(out.policySeries).toHaveLength(ILLUSTRATIVE_PATH.length);
+  });
+});
+
+describe("friction carried from a saved Mission 8 budget", () => {
+  const budget = (estimatedAnnualDrag: number) => ({
+    ...EMPTY_FRICTION_BUDGET,
+    estimatedAnnualDrag,
+  });
+
+  it("charges a heavy budget as whole percentage points", () => {
+    const out = simulateTiming(
+      "first-drop",
+      "expiry",
+      frictionOneWayPct(budget(0.039)),
+    );
+    expect(out.frictionChargedPct).toBeCloseTo(3.9, 10);
+  });
+
+  it("charges even the cheapest reachable budget", () => {
+    const charged = simulateTiming(
+      "first-drop",
+      "expiry",
+      frictionOneWayPct(budget(0.002)),
+    );
+    const free = simulateTiming("first-drop", "expiry", 0);
+    expect(charged.frictionChargedPct).toBeCloseTo(0.2, 10);
+    expect(free.endingValue - charged.endingValue).toBeGreaterThan(0.1);
   });
 });
 

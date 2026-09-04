@@ -14,6 +14,8 @@ import {
   EMPTY_ARCHITECTURE_DECISION,
   EMPTY_EVIDENCE_CHECKLIST,
   EMPTY_FRICTION_BUDGET,
+  FRICTION_FALLBACK_ONE_WAY_PCT,
+  frictionOneWayPct,
   EMPTY_STATEMENT_BRIEF,
   EMPTY_VALUATION_RANGE,
   useIFProgress,
@@ -181,6 +183,47 @@ describe("Investment Foundations artifact persistence", () => {
         hurdleRule: "External update",
       }),
     );
+  });
+});
+
+describe("frictionOneWayPct", () => {
+  it("converts Mission 8 decimal fractions to one leg in percentage points", () => {
+    expect(
+      frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: 0.019,
+      }),
+    ).toBeCloseTo(0.95, 10);
+    expect(
+      frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: 0.002,
+      }),
+    ).toBeCloseTo(0.1, 10);
+    expect(
+      frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: 0.039,
+      }),
+    ).toBeCloseTo(1.95, 10);
+  });
+
+  it("never rounds a reachable saved budget to 0.00%", () => {
+    for (const drag of [0.002, 0.008, 0.019, 0.039]) {
+      const shown = frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: drag,
+      }).toFixed(2);
+      expect(shown).not.toBe("0.00");
+    }
+  });
+
+  it("uses the labelled fallback when Mission 8 has not been saved", () => {
+    expect(frictionOneWayPct(EMPTY_FRICTION_BUDGET)).toBe(
+      FRICTION_FALLBACK_ONE_WAY_PCT,
+    );
+    expect(frictionOneWayPct(null)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
+    expect(frictionOneWayPct(undefined)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
   });
 });
 

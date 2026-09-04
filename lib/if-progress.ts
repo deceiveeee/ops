@@ -329,6 +329,23 @@ export const EMPTY_FRICTION_BUDGET: FrictionBudget = {
   updatedAt: "",
 };
 
+/** One leg of a round trip when Mission 8 has not been done yet, in percent. */
+export const FRICTION_FALLBACK_ONE_WAY_PCT = 0.5;
+
+/**
+ * Convert Mission 8's decimal-fraction drag into one round-trip leg expressed
+ * in percentage points, which is the unit consumed by Missions 11 and 12.
+ */
+export function frictionOneWayPct(
+  budget: FrictionBudget | null | undefined,
+): number {
+  const annualDrag = Number(budget?.estimatedAnnualDrag ?? 0);
+  if (!Number.isFinite(annualDrag) || annualDrag <= 0) {
+    return FRICTION_FALLBACK_ONE_WAY_PCT;
+  }
+  return (annualDrag * 100) / 2;
+}
+
 /**
  * Mission 9. How this learner will decide whether a claim about beating the
  * market survives contact with evidence — the test, the guards against the
@@ -386,7 +403,7 @@ export type TimingPolicy = {
   expiryDate: string;
   falsifier: string;
   reviewDate: string;
-  /** Charged from the saved Mission 8 friction budget, not typed by the learner. */
+  /** Percentage points, charged from the saved Mission 8 budget, not typed by the learner. */
   frictionCostPct: number;
   updatedAt: string;
 };
@@ -507,7 +524,7 @@ export type OrderDraft = {
   direction: "" | "buy" | "sell";
   approxAmountUsd: number;
   orderType: "" | "market" | "limit";
-  /** Charged from the saved Mission 8 friction budget, not typed by the learner. */
+  /** Percentage points, charged from the saved Mission 8 budget, not typed by the learner. */
   estimatedFrictionPct: number;
   transmitted: false;
 };

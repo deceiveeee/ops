@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { SessionProvider } from "@/lib/supabase/session";
 import { ProgressProvider } from "@/lib/progress/store";
 import { OnboardingProvider } from "@/lib/onboarding/store";
 import SiteHeader from "./SiteHeader";
 
-function baseClient(user: User | null) {
+function baseClient() {
   return {
     auth: {
-      getUser: async () => ({ data: { user } }),
+      getUser: async () => ({ data: { user: null } }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
       signOut: async () => ({}),
     },
@@ -20,10 +20,10 @@ function baseClient(user: User | null) {
   } as unknown as SupabaseClient;
 }
 
-function renderWith(user: User | null) {
-  const client = baseClient(user);
+function renderHeader() {
+  const client = baseClient();
   return render(
-    <SessionProvider client={client}>
+    <SessionProvider client={client} guestOnly>
       <OnboardingProvider>
         <ProgressProvider>
           <SiteHeader />
@@ -33,15 +33,18 @@ function renderWith(user: User | null) {
   );
 }
 
-describe("SiteHeader account affordance", () => {
-  it("shows Sign in when unauthenticated", async () => {
-    renderWith(null);
-    expect(screen.getByText("Sign in")).toBeInTheDocument();
+describe("SiteHeader public beta navigation", () => {
+  it("exposes only complete beta surfaces", () => {
+    renderHeader();
+    expect(screen.getAllByText("Courses").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Your dossier").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Filings").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Studio")).not.toBeInTheDocument();
   });
 
-  it("shows email and Synced when authenticated", async () => {
-    renderWith({ id: "u1", email: "a@b.com" } as unknown as User);
-    expect(await screen.findByText("a@b.com")).toBeInTheDocument();
-    expect(await screen.findByText("Synced")).toBeInTheDocument();
+  it("keeps account entry points out of the guest-only beta", () => {
+    renderHeader();
+    expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Start building").length).toBeGreaterThan(0);
   });
 });

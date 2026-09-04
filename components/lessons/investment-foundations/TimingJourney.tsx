@@ -14,6 +14,7 @@ import {
 } from "@/lib/timing-policy";
 import {
   EMPTY_TIMING_POLICY,
+  frictionOneWayPct,
   isTimingPolicyComplete,
   useIFProgress,
   type TimingPolicy,
@@ -173,13 +174,14 @@ export default function TimingJourney() {
 
   /**
    * The learner's own friction, not a stand-in. Mission 8 saves an estimated
-   * annual drag; a round trip is two legs, so one leg is half of it. Falls back
-   * to a labelled 0.5% only when Mission 8 has not been done yet.
+   * annual drag; a round trip is two legs, so one leg is half of it, converted
+   * to the percentage points the simulation charges. Falls back to a labelled
+   * 0.5% only when Mission 8 has not been done yet.
    */
-  const frictionOneWay = useMemo(() => {
-    const annualDrag = Number(frictionBudget?.estimatedAnnualDrag ?? 0);
-    return Number.isFinite(annualDrag) && annualDrag > 0 ? annualDrag / 2 : 0.5;
-  }, [frictionBudget]);
+  const frictionOneWay = useMemo(
+    () => frictionOneWayPct(frictionBudget),
+    [frictionBudget],
+  );
 
   const outcome = useMemo(
     () =>

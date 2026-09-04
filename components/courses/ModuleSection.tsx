@@ -79,7 +79,7 @@ export default function ModuleSection({
             <span className="whitespace-nowrap font-medium tabular-nums">
               {showCurriculumRequirements
                 ? `${coreLessons.length} required`
-                : `${module.lessonSlugs.length} ${module.lessonSlugs.length === 1 ? "lesson" : "lessons"}`}
+                : `${lessons.length} ${lessons.length === 1 ? "lesson" : "lessons"}`}
             </span>
             <span aria-hidden>·</span>
             <span className="whitespace-nowrap tabular-nums">

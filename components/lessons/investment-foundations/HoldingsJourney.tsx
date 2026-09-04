@@ -19,6 +19,7 @@ import {
 import {
   EMPTY_HOLDINGS_SLATE,
   EMPTY_ORDER_DRAFT,
+  frictionOneWayPct,
   isHoldingsSlateComplete,
   useIFProgress,
   type HoldingsSlate,
@@ -1426,14 +1427,14 @@ export default function HoldingsJourney() {
 
   /**
    * The learner's own friction, not a stand-in. Mission 8 saves an estimated
-   * annual drag; a round trip is two legs, so one leg is half of it. Falls back
-   * to a labelled 0.5% only when Mission 8 has not been done yet — matching the
-   * Mission 11 journey so the two lessons quote the same number.
+   * annual drag; a round trip is two legs, so one leg is half of it in
+   * percentage points. Falls back to a labelled 0.5% only when Mission 8 has not
+   * been done yet. Shared with Mission 11 so the two lessons cannot disagree.
    */
-  const frictionOneWay = useMemo(() => {
-    const annualDrag = Number(frictionBudget?.estimatedAnnualDrag ?? 0);
-    return Number.isFinite(annualDrag) && annualDrag > 0 ? annualDrag / 2 : 0.5;
-  }, [frictionBudget]);
+  const frictionOneWay = useMemo(
+    () => frictionOneWayPct(frictionBudget),
+    [frictionBudget],
+  );
 
   // The slate the learner repaired in stage 3 is the slate they rehearse
   // against in stage 5. Built here rather than in the stage so the two cannot
