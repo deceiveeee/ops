@@ -428,11 +428,24 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
 
       <Panel>
         <div className="ops-caption text-[11px] text-slate-500">Assume prices change by</div>
-        <div className="mt-3 grid gap-4 sm:grid-cols-3">
+        {/*
+          One field per asset class the catalog can actually hold. International
+          was missing while every reviewed fund tracked a US index; adding VXUS
+          made its shock apply to a real holding with no way to set it, so the
+          scenario silently used a stored default. Global has no instrument yet
+          and stays out for the same reason in reverse — a control with nothing
+          to act on.
+        */}
+        <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field
             label="US stocks" type="number" min={-100} max={100} suffix="%"
             value={plan.stress.usStocksPct}
             onChange={(value) => setStress({ usStocksPct: num(value) })}
+          />
+          <Field
+            label="International stocks" type="number" min={-100} max={100} suffix="%"
+            value={plan.stress.internationalStocksPct}
+            onChange={(value) => setStress({ internationalStocksPct: num(value) })}
           />
           <Field
             label="Bonds" type="number" min={-100} max={100} suffix="%"

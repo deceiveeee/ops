@@ -113,13 +113,14 @@ describe("Studio catalog provenance", () => {
     expect(kinds).toContain("stock");
     expect(kinds).toContain("bond");
     // The gaps must describe the catalog as it actually is. Individual company
-    // shares and international funds are still absent entirely.
+    // shares are still absent entirely.
     expect(STUDIO_CATALOG.some((item) => item.kind === "stock")).toBe(false);
-    expect(STUDIO_CATALOG.some((item) => item.assetClass === "international-equity")).toBe(false);
-    // Bonds are present but thin, so that gap has to describe a shortfall
-    // rather than an absence.
+    // Bonds and international funds are present but thin, so those gaps have to
+    // describe a shortfall rather than an absence.
     expect(STUDIO_CATALOG.some((item) => item.kind === "bond")).toBe(true);
+    expect(STUDIO_CATALOG.some((item) => item.assetClass === "international-equity")).toBe(true);
     expect(CATALOG_GAPS.find((gap) => gap.kind === "bond")?.missing).toMatch(/more individual bonds/i);
+    expect(CATALOG_GAPS.find((gap) => gap.kind === "international")?.missing).toMatch(/global fund|more of any/i);
   });
 
   it("resolves instruments by id and reports unknown ones as unknown", () => {
@@ -168,6 +169,35 @@ describe("Studio calculations over the real catalog", () => {
     // Partial by construction: neither fund's full holdings are documented.
     expect(result.exposureCoveragePct).toBeGreaterThan(0);
     expect(result.exposureCoveragePct).toBeLessThan(100);
+  });
+
+  it("shows a US and an international stock fund holding different companies", () => {
+    // The counterpart to the VTI/VOO case above, and the reason an
+    // international fund is in the catalog at all. VTI's documented issuers are
+    // NVIDIA, Apple, Alphabet and the rest; VXUS's are TSMC, Samsung, ASML,
+    // Tencent and so on. No shared LEI, so no repeated exposure to report.
+    const result = calculateStudio(twoWayPlan(10_000, "vti", 50, "vxus", 50), STUDIO_CATALOG);
+    expect(result.overlaps).toEqual([]);
+    // Both funds are only partly documented, so the check itself is partial and
+    // the number has to say so rather than implying a clean bill.
+    expect(result.exposureCoveragePct).toBeGreaterThan(0);
+    expect(result.exposureCoveragePct).toBeLessThan(50);
+  });
+
+  it("applies the international shock to an international fund", () => {
+    // Defaults are -30% US stocks and -30% international, so a 50/50 split of
+    // $10,000 loses $1,500 on each side: -$3,000, or -30%.
+    let plan = twoWayPlan(10_000, "vti", 50, "vxus", 50);
+    plan = { ...plan, stress: { ...plan.stress, usStocksPct: -20, internationalStocksPct: -40 } };
+    // Split apart, the two shocks must land on the right holdings:
+    // 5,000 x -0.20 = -1,000 and 5,000 x -0.40 = -2,000, so -$3,000 again but
+    // for different reasons. Reversing them would give the same total, so the
+    // per-row figures are what actually prove the mapping.
+    const result = calculateStudio(plan, STUDIO_CATALOG);
+    const rows = Object.fromEntries(result.stress.rows.map((row) => [row.instrumentId, row.changeDollars]));
+    expect(rows.vti).toBe(-1_000);
+    expect(rows.vxus).toBe(-2_000);
+    expect(result.stress.changeDollars).toBe(-3_000);
   });
 
   it("reports no overlap between a stock fund and a Treasury fund", () => {

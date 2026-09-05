@@ -10,14 +10,18 @@ import { PRODUCTS, RETRIEVED_AT, type Passport } from "@/lib/holdings-slate";
  *
  * Two consequences of that rule shape the whole module:
  *
- * 1. Entries are derived from `lib/holdings-slate.ts` rather than retyped. That
- *    record carries Mission 12's reviewed filings with their accession numbers,
- *    and `docs/source-audits/mission-12-holdings.md` is its audit. Copying the
- *    numbers here would create a second version to drift.
- * 2. `referencePrice` is null everywhere. OPS holds no market-data licence, and
- *    EDGAR publishes filings, not quotes. The buying worksheet already handles
- *    this: it keeps the dollar target and asks for a dated broker quote rather
- *    than inventing a price. See `orderFor` in lib/studio.ts.
+ * 1. The four Mission 12 funds are derived from `lib/holdings-slate.ts` rather
+ *    than retyped. That record carries their reviewed filings with accession
+ *    numbers, audited in `docs/source-audits/mission-12-holdings.md`; copying
+ *    the numbers here would create a second version to drift. The two entries
+ *    that record does not cover — VXUS and the Treasury note — are written out
+ *    below, each with its own filing, because adding them to Mission 12's
+ *    teaching set would change the lesson.
+ * 2. No fund carries a price. OPS holds no market-data licence, and EDGAR
+ *    publishes filings, not quotes, so the buying worksheet keeps the dollar
+ *    target and asks for a dated broker quote rather than inventing one. See
+ *    `orderFor` in lib/studio.ts. The single exception is the Treasury note,
+ *    which carries the auction price Treasury itself publishes.
  *
  * `CATALOG_GAPS` records what a user cannot yet research here. Studio must show
  * that rather than let an incomplete library read as a complete one.
@@ -71,7 +75,7 @@ export interface StudioInstrument {
   assetClass: StudioAssetClass;
   /** Annual fund operating expenses. Null for anything with no filed fee table. */
   expenseRatioPct: number | null;
-  /** Always null: no market-data licence. The user supplies a dated quote. */
+  /** Null unless an official source publishes a price. Funds have none. */
   referencePrice: number | null;
   priceAsOf: string;
   /** Smallest tradeable increment. Shares for funds and stocks; face value for bonds. */
@@ -100,9 +104,9 @@ function filingIndexUrl(cik: string, accession: string): string {
 
 /**
  * Asset class drives the stress scenario, so it is assigned from what each fund
- * says it tracks, not from a guess about how it behaves. All four reviewed
- * products track US indexes; none is an international or global fund, which is
- * exactly why `CATALOG_GAPS` names that as missing.
+ * says it tracks, not from a guess about how it behaves. All four of Mission
+ * 12's products track US indexes; VXUS and the Treasury note are classified
+ * where they are defined below.
  */
 const ASSET_CLASS: Record<string, StudioAssetClass> = {
   VTI: "us-equity",
@@ -226,13 +230,83 @@ const TREASURY_10Y: StudioInstrument = {
 };
 
 /**
+ * One broad international stock fund, so a portfolio built here is not
+ * necessarily all-US and the stress model's international setting has
+ * something real to act on.
+ *
+ * Reviewed 2026-09-04 from the fund's own filings. It is written out here
+ * rather than added to lib/holdings-slate.ts because that record is Mission
+ * 12's teaching set with its own audit; adding a fifth product would change
+ * the lesson.
+ *
+ * The prospectus figures are from the ETF share class specifically. The filing
+ * carries five separate prospectus sections for this one fund, one per share
+ * class group, and only the ETF section describes VXUS.
+ */
+const VXUS: StudioInstrument = {
+  id: "vxus",
+  symbol: "VXUS",
+  name: "Vanguard Total International Stock Index Fund",
+  kind: "fund",
+  assetClass: "international-equity",
+  expenseRatioPct: 0.05,
+  referencePrice: null,
+  priceAsOf: "",
+  quantityStep: 1,
+  minimumUnits: 1,
+  // The eight largest issuers by weight, rolled up across every position each
+  // one holds. They are 12.9901% of a fund of 8,878 positions, which is what
+  // `exposureCoveragePct` says: an overlap check against this fund sees an
+  // eighth of it. The fund's holdings are unusually flat — its whole top ten
+  // is 14.34% — so a short list cannot cover much of it, and pretending
+  // otherwise would make an overlap result look more complete than it is.
+  exposures: [
+    { label: "Taiwan Semiconductor Manufacturing Co Ltd", key: "549300KB6NK5SBD14S87", weightPct: 3.9281 },
+    { label: "Vanguard Cmt Funds-Vanguard Market Liquidity Fund", key: "1I6HV0TLSTR3A4XQ6L78", weightPct: 2.475 },
+    { label: "Samsung Electronics Co Ltd", key: "9884007ER46L6N7EI764", weightPct: 1.8543 },
+    { label: "ASML Holding NV", key: "724500Y6DUVHQD6OXN27", weightPct: 1.3047 },
+    { label: "SK hynix Inc", key: "988400XAIK6XISWQV045", weightPct: 1.1234 },
+    { label: "Tencent Holdings Ltd", key: "254900N4SLUMW4XUYY11", weightPct: 0.8746 },
+    { label: "HSBC Holdings PLC", key: "MLU0ZO3ML4LN2LL2TL39", weightPct: 0.735 },
+    { label: "Roche Holding AG", key: "549300U41AUUVOAAOB37", weightPct: 0.695 },
+  ],
+  exposureCoveragePct: 12.9901,
+  bond: null,
+  sources: [
+    {
+      label:
+        "485BPOS prospectus, Vanguard Star Funds, ETF share class (0001193125-26-077488)",
+      url: filingIndexUrl("0000736054", "0001193125-26-077488"),
+      asOf: "2026-02-27",
+    },
+    {
+      label:
+        "N-PORT holdings, Vanguard Total International Stock Index Fund (0000736054-26-000191)",
+      url: filingIndexUrl("0000736054", "0000736054-26-000191"),
+      asOf: "2026-04-30",
+    },
+  ],
+  whatItIs:
+    "An exchange-traded share class of an open-end index fund. It seeks to track the performance of a benchmark index that measures the investment return of stocks issued by companies located in developed and emerging markets, excluding the United States. It tracks the FTSE Global All Cap ex US Index and holds it by full replication, meaning it generally holds the same stocks as the index in approximately the same proportions.",
+  mainRisks: [
+    "Investing in foreign markets — political, economic and regulatory conditions differ from the US",
+    "Emerging markets, where those foreign-market risks are heightened",
+    "Currency — the shares it holds are priced in other currencies, so their dollar value moves with exchange rates as well as with the shares",
+    "Index investing — it follows its index rather than stepping out of a falling market",
+    "Concentration in whichever countries and companies its index weights most heavily",
+    "ETF share trading — the market price may differ from net asset value",
+  ],
+};
+
+/**
  * Order is the research library's reading order, not a ranking or a
- * recommendation: two broad US stock funds, two US bond funds, one individual
- * Treasury note.
+ * recommendation: two broad US stock funds, one international stock fund, two
+ * US bond funds, one individual Treasury note.
  */
 export const STUDIO_CATALOG: readonly StudioInstrument[] = [
   instrumentFromPassport(PRODUCTS.VTI),
   instrumentFromPassport(PRODUCTS.VOO),
+  VXUS,
   instrumentFromPassport(PRODUCTS.AGG),
   instrumentFromPassport(PRODUCTS.SGOV),
   TREASURY_10Y,
@@ -263,11 +337,11 @@ export type StudioCatalogGap = {
 export const CATALOG_GAPS: readonly StudioCatalogGap[] = [
   {
     kind: "international",
-    missing: "International and global stock funds",
+    missing: "A global fund, and more of any international fund's holdings",
     whyItMatters:
-      "All four reviewed funds track US indexes, so a portfolio built only from this library holds US companies. The stress scenario has international and global settings with nothing yet to apply them to.",
+      "One international fund is here and it excludes the United States, so nothing in this library is a single global holding. The documented issuers cover 12.9901% of it, because a fund of 8,878 positions cannot be summarised by eight of them — an overlap check against it sees an eighth of the fund.",
     whatItNeeds:
-      "A prospectus and N-PORT review for each candidate fund, the same review Mission 12 ran on the four already here.",
+      "A prospectus and N-PORT review per additional fund, and a deeper issuer list where a fund's holdings are too flat for a short one to be informative.",
   },
   {
     kind: "stock",

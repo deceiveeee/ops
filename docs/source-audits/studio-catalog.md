@@ -9,8 +9,8 @@ figure is estimated, rounded for presentation, or carried over from memory.
 
 ## 1. Source lock
 
-The catalog holds no independent research. It derives from `lib/holdings-slate.ts`, whose
-four products were reviewed for Mission 12 and audited in
+Four of the six entries derive from `lib/holdings-slate.ts`, whose products were reviewed
+for Mission 12 and audited in
 [`mission-12-holdings.md`](./mission-12-holdings.md). Retrieval date `2026-08-16`, exported
 as `CATALOG_REVIEWED_AT`.
 
@@ -24,7 +24,44 @@ as `CATALOG_REVIEWED_AT`.
 Entries are computed from those records at module load rather than retyped, so there is no
 second copy of a filed number to drift from the first.
 
-## 1a. One individual Treasury note
+## 1a. One international stock fund
+
+VXUS, added 2026-09-04. Reviewed from the fund's own filings, not from
+`holdings-slate.ts`, which covers Mission 12's four products only.
+
+| Field | Value | Source |
+| --- | --- | --- |
+| Registrant / CIK | Vanguard Star Funds / 0000736054 | `company_tickers_mf.json` |
+| Series / class | S000002932 / C000094038 | `company_tickers_mf.json` |
+| Series LEI | BF5U5YXM0ZHVXS3F8G71 | N-PORT `seriesLei` |
+| Total annual expenses | **0.05%** — management 0.03%, 12b-1 0.00%, other 0.02% | 485BPOS 0001193125-26-077488, ETF section |
+| Expense example on $10,000 | $5 / $16 / $28 / $64 over 1/3/5/10 years | same |
+| Target index | FTSE Global All Cap ex US Index | same, Principal Investment Strategies |
+| Replication | Full — "generally holds the same stocks … in approximately the same proportions" | same |
+| Prospectus date | 2026-02-27, period ended 2025-10-31 | same |
+| Holdings as of | 2026-04-30, filed 2026-06-26 | N-PORT 0000736054-26-000191 |
+| Net assets | $629,120,124,704.15 | N-PORT `netAssets` |
+| Positions | 8,878 | N-PORT |
+| Weight sum | 101.3637% — not normalised | N-PORT |
+
+**The fee table is share-class specific.** The filing carries five separate prospectus
+sections for this one fund, one per share-class group. Only the ETF section describes
+VXUS, and 0.05% is its figure. Reading any other section would state the wrong fee.
+
+**Documented coverage is 12.9901%**, the sum of the eight largest issuers, and that is low
+for a defensible reason: the fund's whole top ten is 14.3373% of it. A flat 8,878-position
+fund cannot be summarised by a short list, so an overlap check against VXUS sees an eighth
+of it. The number is carried through to the interface rather than smoothed.
+
+**One parsing defect, found and fixed during the review.** The filing writes `N/A` in the
+`lei` element for a position with no identifier rather than leaving it empty. Treating that
+string as an identifier collapsed every unidentified holding into one issuer and produced a
+top holding of "Brookfield Infrastructure Corp" at 7.453% spanning 3,172 positions — an
+artefact, not a position. With `N/A` normalised to null, the true largest issuer is Taiwan
+Semiconductor at 3.9281% in a single position, and 3,222 positions (7.4414%) are correctly
+recorded as having no LEI. `holdings-slate.ts` documents the same rule for its own products.
+
+## 1b. One individual Treasury note
 
 Added 2026-09-04 from the US Treasury's own auction record, retrieved that day through the
 Fiscal Data auctions query. It exists so the worksheet's face-value and accrued-interest
@@ -52,7 +89,7 @@ would be wrong for every date except 2026-08-17.
 
 ## 2. Prices, and the one exception
 
-`referencePrice` is `null` and `priceAsOf` empty for all four funds. OPS holds no
+`referencePrice` is `null` and `priceAsOf` empty for all five funds. OPS holds no
 market-data licence, and EDGAR publishes filings, not quotes. The buying worksheet handles
 this correctly: it keeps the user's dollar target, declines to invent a share count, and
 asks for a dated broker quote from the broker they would actually order through.
@@ -64,10 +101,18 @@ already warns that a price taken from the catalog is a dated research price to v
 a broker, and a test asserts that a fund never gains a price without that being a
 deliberate licence decision.
 
-## 3. Two findings that changed the code
+## 3. Three findings that changed the code
 
-Both were caught by `lib/studio-catalog.test.ts` rather than by reading, and both would
-have produced a confidently wrong answer on screen.
+The first two were caught by `lib/studio-catalog.test.ts` rather than by reading, and both
+would have produced a confidently wrong answer on screen. The third was caught by driving
+the page.
+
+**The scenario had no international input.** While every reviewed fund tracked a US index,
+offering only US stocks, bonds and cash was right — there was nothing for an international
+shock to act on. Adding VXUS made `internationalStocksPct` apply to a real holding that a
+user could not reach, so the scenario silently used whatever value was already stored.
+The field is now in the panel. Global stays out for the same reason in reverse: no global
+instrument exists, and a control with nothing to act on is the same defect.
 
 **Issuer coverage was paired with the wrong figure.** `HoldingsRecord.shownCoveragePct`
 describes the top *positions* slice. `topIssuers` is a different slice: each row already
@@ -96,7 +141,7 @@ as a complete one. All four reviewed funds track US indexes.
 
 | Missing | Consequence | What it needs |
 | --- | --- | --- |
-| International and global stock funds | A portfolio built only from this library is entirely US companies. The stress model's international and global settings have nothing to apply to. | Prospectus and N-PORT review per candidate, matching the Mission 12 standard. |
+| A global fund, and deeper holdings for the international one | Nothing here is a single global holding: VXUS excludes the United States. Its documented issuers are 12.9901% of the fund, so an overlap check against it sees an eighth. | Prospectus and N-PORT review per additional fund, and a deeper issuer list where holdings are too flat for a short one. |
 | Individual company shares, US and foreign | No individual-stock research path. For a foreign company, domicile, trading currency and where the business earns are three separate facts. | Per-company filing review, plus the ADR mechanics already sourced as P3/P4 in [`studio-learning.md`](./studio-learning.md). |
 | More individual bonds | One Treasury note is present. No corporate or municipal bonds, and no issue states accrued interest for a chosen settlement date, so a bond total is short by exactly that unstated amount. | Per-issue terms from each issuer official source, and an accrual basis worked out for the settlement date rather than the auction. |
 
@@ -106,7 +151,7 @@ security carries its own dated source record.
 
 ## 5. Verification
 
-`lib/studio-catalog.test.ts`, 18 assertions. Expected values come from the filings and the
+`lib/studio-catalog.test.ts`, 20 assertions. Expected values come from the filings and the
 auction record, or from arithmetic worked by hand in the test comments, never read back out
 of the code under test: a 60/40 split of $10,000 is $6,000 and $4,000; the default scenario
 gives −$1,800 and −$400 for −22%; expense at 0.03% on each side is $3.00 a year; 8 whole
@@ -121,6 +166,6 @@ actually contains.
 
 ## 6. Gate status
 
-Catalog provenance and exposure handling are verified for the four reviewed funds and the
-one Treasury note. No market data, no international fund, no individual company share, and
-no UI are covered here. Studio must not be marked release-ready from this document.
+Catalog provenance and exposure handling are verified for the four Mission 12 funds, VXUS
+and the Treasury note. No market data, no individual company share, and no UI are covered
+here. Studio must not be marked release-ready from this document.
