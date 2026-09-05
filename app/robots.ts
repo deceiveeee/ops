@@ -12,7 +12,6 @@ export default function robots(): MetadataRoute.Robots {
         "/login",
         "/signup",
         "/forgot-password",
-        "/studio",
       ],
     },
     sitemap: new URL("/sitemap.xml", getSiteUrl()).toString(),

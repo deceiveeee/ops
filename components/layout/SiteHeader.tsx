@@ -7,13 +7,16 @@ import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 
 /**
- * The public beta exposes only complete learner surfaces. Accounts and the
- * placeholder Studio remain in the repository but are intentionally absent
- * from discovery until their release gates close.
+ * The public beta exposes only complete learner surfaces. Accounts remain in
+ * the repository but are intentionally absent from discovery until their
+ * release gate closes. Studio joined the nav when it stopped being a preview
+ * and became a working workspace; the investments it cannot yet research are
+ * named inside it rather than hidden.
  */
 const nav = [
   { href: "/courses", label: "Courses" },
   { href: "/plan", label: "Your plan" },
+  { href: "/studio", label: "Studio" },
   { href: "/filings", label: "Filings" },
 ];
 

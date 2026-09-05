@@ -4,9 +4,9 @@ import { GUEST_ONLY_BETA } from "@/lib/beta";
 
 export async function middleware(request: NextRequest) {
   if (GUEST_ONLY_BETA) {
-    if (request.nextUrl.pathname === "/studio") {
-      return NextResponse.redirect(new URL("/plan", request.url));
-    }
+    // /studio was redirected away while it was a placeholder of six sample
+    // panels. It is now a working portfolio workspace that saves in the
+    // browser and needs no account, so the guest-only beta includes it.
     if (
       request.nextUrl.pathname === "/login" ||
       request.nextUrl.pathname === "/signup" ||

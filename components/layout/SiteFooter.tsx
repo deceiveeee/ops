@@ -30,6 +30,7 @@ export default function SiteFooter() {
               title="Build"
               links={[
                 { href: "/plan", label: "Your plan" },
+                { href: "/studio", label: "Studio" },
                 { href: "/start", label: "Find your starting point" },
                 { href: "/lessons/portfolio-risk-covariance-correlation", label: "Portfolio risk" },
               ]}

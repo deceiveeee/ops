@@ -39,7 +39,9 @@ describe("SiteHeader public beta navigation", () => {
     expect(screen.getAllByText("Courses").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Your plan").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Filings").length).toBeGreaterThan(0);
-    expect(screen.queryByText("Studio")).not.toBeInTheDocument();
+    // Studio was excluded while it was six sample panels. It is now a working
+    // workspace, so the beta surfaces it.
+    expect(screen.getAllByText("Studio").length).toBeGreaterThan(0);
   });
 
   it("keeps account entry points out of the guest-only beta", () => {

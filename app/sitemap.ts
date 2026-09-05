@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/courses/investment-foundations",
     "/plan",
     "/filings",
+    "/studio",
     "/start",
     ...getAllLessons().map(({ lesson }) => `/lessons/${lesson.slug}`),
   ];
