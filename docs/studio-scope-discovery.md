@@ -2,6 +2,8 @@
 
 Date: 2026-09-04
 
+Scope update, 2026-09-05: the user's subsequent team strategy and final report establish substantially deeper research requirements. Use [Studio research workspace: implementation handoff for Claude](agent-prompts/studio-research-workspace-handoff.md) for the expanded implementation plan and completion criteria. The inventory and six-area implementation sequence below are historical; they do not describe all current code or the complete requested scope.
+
 Status: product scope confirmed; implementation and verification in progress. This document does not mark Studio release-ready.
 
 ## User's requested outcome
