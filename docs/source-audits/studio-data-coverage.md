@@ -121,9 +121,66 @@ Real limitations, none of them fatal but all of which must reach the interface:
 4. **FX is embedded.** `valUSD` is already converted; the local price requires dividing by the
    filing's stated rate, and that rate is itself dated.
 
-This is a candidate, not a conclusion. Before it is relied upon, the achievable observation
-frequency for the intended universe must be measured directly, and the Level 1/2/3 mix
-inspected. Both are M1 work still outstanding.
+### Measured, 2026-09-05
+
+Both limits were measured rather than estimated.
+
+**Accuracy — the implied price is the market price.** VTI and VOO are separate portfolios that
+both reported 2026-03-31. 487 securities are held by both, matched on LEI and CUSIP. Their
+independently filed implied prices agree:
+
+| Statistic | Relative difference |
+| --- | --- |
+| Median | 0.000000% |
+| 95th percentile | 0.000000% |
+| 99th percentile | 0.000000% |
+| Within 0.01% | **486 of 487** |
+
+Apple $253.79 in both filings. Microsoft $370.17. NVIDIA $174.40. Broadcom $309.51. Two
+independent filings agreeing to the cent is strong evidence the figure is a market price and
+not a fund-specific valuation.
+
+The single disagreement is **Vanguard Market Liquidity Fund**, an internal cash vehicle where
+the unit convention differs from a share. It is explicable rather than a failure, and it is the
+reason non-equity unit types must be excluded rather than assumed comparable.
+
+**Valuation level depends entirely on geography.** This is the finding that must reach the
+interface:
+
+| Fund | Level 1 | Level 2 | Level 3 |
+| --- | --- | --- | --- |
+| VTI, US total market | 3,465 positions, **100.25% of fund** | 14 positions, 0.00% | 45 positions, 0.00% |
+| VXUS, international | 532 positions, 13.08% | 8,264 positions, **88.24%** | 82 positions, 0.04% |
+
+A US equity price from N-PORT is a **Level 1 quoted market price**. A foreign equity price is
+overwhelmingly **Level 2** — a fair value adjusted for market movement after the foreign
+exchange closed. Both are usable; they are not the same thing, and Studio must label which it
+is showing rather than presenting one figure type.
+
+**Frequency — monthly is achievable by pooling.** Any single trust makes only its own quarter
+public, but fiscal year-ends differ, so pooling covers every month. Measured across eight
+trusts since 2024-01-01:
+
+| Trust | Cadence observed |
+| --- | --- |
+| Vanguard Index Funds | Mar, Jun, Sep, Dec |
+| Vanguard STAR Funds | Jan, Apr, Jul, Oct |
+| Fidelity Covington, Vanguard Scottsdale | Feb, May, Aug, Nov |
+| SPDR S&P 500 ETF Trust | Mar, Jun, Sep, Dec |
+| iShares Trust | **every month** |
+| Schwab Strategic, Invesco ETF Trust II | eight or more per year |
+
+**Pooled: 12 of 12 months in 2024, 12 of 12 in 2025, 6 of 6 elapsed in 2026.** That matches the
+monthly frequency the team used for covariance.
+
+**The remaining caveat, unmeasured.** This establishes that *some* fund reported at each month
+end, not that a *given security* was held by a fund reporting at that date. For widely held
+names the two are nearly the same; for a narrow holding they are not. Per-security coverage
+must be verified per security when the universe is fixed, and a security with sparse coverage
+must show its actual observation dates rather than an interpolated series.
+
+**Conclusion.** Price history is no longer a blocked dependency. It is public domain, exact for
+US equities, monthly by pooling, and honest about foreign fair values. D2 is resolved.
 
 ## Finding 4 — what mathematics already exists, and what does not
 

@@ -10,7 +10,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | Milestone | Status | Evidence |
 | --- | --- | --- |
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
-| M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md) — five findings established; four items outstanding, one needs a user decision |
+| M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md) — D1 and D2 both resolved with measurements; four build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration and operations in `lib/studio-project/`; 16 tests. Storage adapter and conflict handling still to do |
 | M3 complete stock prototype | Not started | |
 | M4 curate and generalize | Not started | |
@@ -90,13 +90,23 @@ handoff asks that paid-source requirements never be hidden.
   2023 — a fee-revenue subset — while net interest income is $5,982M in 2025. Wrong by roughly
   tenfold, stale by two years, and completely silent, because the field is populated. Every
   metric needs an explicit concept mapping per sector, recorded per number.
-- **D2 researched and decided.** Tiingo and Alpha Vantage free tiers are internal-use only and
-  forbid redistribution; Stooq's terms could not be established. User decision: **curated dated
-  snapshots**. That still needs a lawful source, and one was found and tested — N-PORT filings
-  carry a share count and a USD value per position, so an implied price is derivable from
-  public-domain SEC data. 8,774 of 8,878 positions in the VXUS filing carry both. Frequency is
-  roughly quarterly per filer and the figures are fund valuations rather than trade prices;
-  both limits must be measured before this is relied on.
+- **D2 resolved.** Commercial feeds were the wrong place to look. Tiingo and Alpha Vantage free
+  tiers are internal-use only; Stooq's terms could not be established. The answer is
+  public-domain SEC data: N-PORT positions carry a share count and a USD value, so price =
+  value ÷ shares. All three worries about it were then measured and cleared.
+  - **Accuracy.** VTI and VOO both reported 2026-03-31 and share 487 securities. Their
+    independently filed implied prices agree to within 0.01% for **486 of 487**, median
+    difference exactly zero. Apple $253.79 in both, NVIDIA $174.40 in both. The one outlier is
+    an internal money-market fund with a different unit convention.
+  - **Valuation level is geographic.** VTI is 100.25% Level 1 — real quoted prices. VXUS is
+    88.24% Level 2 — fair values adjusted after foreign exchanges close. Both usable, not the
+    same thing, and the interface must say which.
+  - **Frequency.** Trusts have different fiscal year-ends, so pooling eight of them gives 12 of
+    12 months in 2024, 12 of 12 in 2025 and 6 of 6 so far in 2026. iShares Trust alone files
+    monthly. This matches the monthly frequency the team used.
+  - **Unmeasured caveat.** This shows some fund reported at each month end, not that a given
+    security was held by one. Per-security coverage needs checking when the universe is fixed,
+    and sparse names must show their real observation dates rather than an interpolated line.
 - **Maths inventory complete.** Reusable as-is: `lib/fixed-income.ts`, `lib/risk-return.ts`,
   `lib/allocation-policy.ts`, `lib/operating-plan.ts`, `lib/valuation-basics.ts`,
   `lib/northstar-case.ts`. `lib/portfolio-theory.ts` is **three-asset only** — its solvers call
@@ -140,7 +150,8 @@ actually switches the UI over.
 
 ### Next concrete action
 
-1. Get a user decision on price data — Finding 3 of the data coverage document.
+1. Build the price-snapshot ingestion: pool N-PORT filings across trusts, exclude non-share unit
+   types, and record the fair-value level with every observation.
 2. Field inventory for one complete investigation and one portfolio comparison.
 3. Confirm permitted use of Damodaran's NYU industry data files.
 4. Read strategy pp. 8-10 as images before designing the screen surface.
