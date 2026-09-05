@@ -11,7 +11,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | --- | --- | --- |
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md) — five findings established; four items outstanding, one needs a user decision |
-| M2 project state and recovery | Not started | Schema defect confirmed, see below |
+| M2 project state and recovery | **In progress** | v2 schema, migration and operations in `lib/studio-project/`; 16 tests. Storage adapter and conflict handling still to do |
 | M3 complete stock prototype | Not started | |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
@@ -107,6 +107,36 @@ handoff asks that paid-source requirements never be hidden.
 - **Atkore is a good prototype for an unexpected reason.** Its latest year shows net income of
   −$15,175,000 and EPS of −$0.45, exercising both the deteriorating-profitability tension the
   handoff wants taught and the undefined-earnings-yield method question.
+
+## M2 record
+
+### Done
+
+- **Schema v2** in `lib/studio-project/schema.ts`. A `CandidateInvestigation` is now a
+  first-class record; a `PortfolioPosition` only points at one. `PortfolioAlternative` supports
+  named comparisons, and `DecisionRecord` gives changed inputs somewhere to record their cause.
+- **Non-destructive migration** in `migrate.ts`. The original v1 text is kept byte-for-byte on
+  `migratedFrom.raw`, so a migration bug can never be why a learner loses work. A newer unknown
+  schema is refused and handed back rather than coerced.
+- **Operations** in `operations.ts`. `removePosition` removes a position and nothing else.
+- **16 tests**, including one that pins the *old* behaviour: it runs v1's `removeStudioHolding`
+  and asserts the research is gone from the serialized plan. The contrast is demonstrated
+  rather than claimed, and it guards against anyone reintroducing research-inside-holding.
+
+### Deliberate deviation from the plan
+
+The plan named `lib/studio/` for this code. `lib/studio.ts` already exists and has three
+importers, so a same-named directory is a module-resolution hazard — the handoff warns about
+exactly this. v2 is therefore additive in **`lib/studio-project/`**, touching nothing that
+works today. Consolidation behind a compatibility facade belongs with the milestone that
+actually switches the UI over.
+
+### Still to do in M2
+
+- Storage adapter, with IndexedDB for the larger research state.
+- Multi-tab conflict detection and failed-save reporting carried over from `use-studio-plan.ts`.
+- Backup import and export round trips on the v2 record.
+- The dependency graph that marks downstream work `needs review` when an input changes.
 
 ### Next concrete action
 
