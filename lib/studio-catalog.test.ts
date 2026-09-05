@@ -54,21 +54,42 @@ describe("Studio catalog provenance", () => {
     expect(instrument("SGOV").expenseRatioPct).not.toBe(instrument("VTI").expenseRatioPct);
   });
 
-  it("gives every instrument at least one dated, resolvable source", () => {
+  it("gives every instrument at least one dated source on an official domain", () => {
     for (const item of STUDIO_CATALOG) {
       expect(item.sources.length).toBeGreaterThan(0);
       for (const source of item.sources) {
         expect(source.asOf).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-        expect(source.url).toMatch(/^https:\/\/www\.sec\.gov\/Archives\/edgar\/data\/\d+\//);
+        expect(source.url).toMatch(/^https:\/\/(www\.sec\.gov|www\.treasurydirect\.gov)\//);
         expect(source.label.trim()).not.toBe("");
       }
     }
   });
 
-  it("states no price, because OPS holds no market-data licence", () => {
+  it("states a price only where an official source publishes one", () => {
     for (const item of STUDIO_CATALOG) {
-      expect(item.referencePrice).toBeNull();
-      expect(item.priceAsOf).toBe("");
+      if (item.referencePrice === null) {
+        // No market-data licence, so a fund carries no price at all.
+        expect(item.priceAsOf).toBe("");
+      } else {
+        // Treasury publishes its own auction price, so that one entry has a
+        // dated figure. A price without its date would be unusable.
+        expect(item.priceAsOf).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(item.referencePrice).toBeGreaterThan(0);
+      }
+    }
+    // Only the Treasury note. If a fund ever gains a price, that is a licence
+    // question and not a detail to slip through.
+    const priced = STUDIO_CATALOG.filter((item) => item.referencePrice !== null);
+    expect(priced.map((item) => item.kind)).toEqual(["bond"]);
+  });
+
+  it("leaves bond accrued interest unstated, because it depends on the settlement date", () => {
+    for (const bond of STUDIO_CATALOG.filter((item) => item.kind === "bond")) {
+      expect(bond.bond).not.toBeNull();
+      expect(bond.bond?.accruedInterestPer100).toBeNull();
+      expect(bond.bond?.cusip).toMatch(/^[0-9A-Z]{9}$/);
+      expect(bond.bond?.maturity).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(bond.bond?.couponPct).toBeGreaterThan(0);
     }
   });
 
@@ -91,10 +112,14 @@ describe("Studio catalog provenance", () => {
     expect(kinds).toContain("international");
     expect(kinds).toContain("stock");
     expect(kinds).toContain("bond");
-    // The gaps must describe the catalog as it actually is.
+    // The gaps must describe the catalog as it actually is. Individual company
+    // shares and international funds are still absent entirely.
     expect(STUDIO_CATALOG.some((item) => item.kind === "stock")).toBe(false);
-    expect(STUDIO_CATALOG.some((item) => item.kind === "bond")).toBe(false);
     expect(STUDIO_CATALOG.some((item) => item.assetClass === "international-equity")).toBe(false);
+    // Bonds are present but thin, so that gap has to describe a shortfall
+    // rather than an absence.
+    expect(STUDIO_CATALOG.some((item) => item.kind === "bond")).toBe(true);
+    expect(CATALOG_GAPS.find((gap) => gap.kind === "bond")?.missing).toMatch(/more individual bonds/i);
   });
 
   it("resolves instruments by id and reports unknown ones as unknown", () => {
@@ -182,6 +207,33 @@ describe("Studio calculations over the real catalog", () => {
     expect(order?.quantity).toBe(24);
     expect(order?.principalCost).toBe(6_000);
     expect(order?.leftover).toBe(0);
+  });
+
+  it("buys a bond in face value at its published auction price", () => {
+    // $4,000 of target against a quote of 99.540696 per $100 of face value.
+    // 4,000 / 99.540696 = 40.18 lots of $100, so 40 lots, $4,000 face value.
+    // 4,000 x 0.99540696 = 3,981.62784, which rounds to $3,981.63, leaving
+    // $18.37. Treasury sells in $100 multiples, so the remainder cannot buy
+    // another lot.
+    const result = calculateStudio(twoWayPlan(10_000, "vti", 60, "ust-91282crf0", 40), STUDIO_CATALOG);
+    const order = result.orders.find((item) => item.instrumentId === "ust-91282crf0");
+    expect(order?.unit).toBe("face value");
+    expect(order?.quantity).toBe(4_000);
+    expect(order?.principalCost).toBe(3_981.63);
+    expect(order?.leftover).toBe(18.37);
+    // Accrued interest is unknown, so the estimate is explicitly incomplete
+    // rather than quietly treating it as zero.
+    expect(order?.accruedInterest).toBeNull();
+    expect(order?.complete).toBe(false);
+    expect(order?.warnings.join(" ")).toMatch(/accrued interest is unknown/i);
+  });
+
+  it("counts a Treasury note and a Treasury fund as the same issuer", () => {
+    // The note is 100% one issuer and SGOV's Treasury line is clamped to 100%,
+    // each at half the portfolio, so the whole portfolio is that one issuer.
+    const result = calculateStudio(twoWayPlan(10_000, "ust-91282crf0", 50, "sgov", 50), STUDIO_CATALOG);
+    const government = result.overlaps.find((overlap) => overlap.label.includes("United States"));
+    expect(government?.portfolioWeightPct).toBeCloseTo(100, 1);
   });
 
   it("never spends more than the dollar target on whole shares", () => {

@@ -167,14 +167,75 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
 }
 
 /**
+ * One individual Treasury note, so the buying worksheet's face-value and
+ * accrued-interest handling has a real issue to work on.
+ *
+ * Every figure is from the US Treasury's own auction record for this CUSIP,
+ * retrieved 2026-09-04 from the Fiscal Data auctions query. It is the only
+ * catalog entry carrying a price, and the reason is narrow: Treasury publishes
+ * the auction price itself, so this is an official dated figure rather than
+ * market data OPS is not licensed to supply. It is the price at one auction on
+ * one date, not a current quote, and the worksheet says so — an entry with a
+ * `referencePrice` and no user quote already warns that it is a dated research
+ * price to verify with a broker.
+ */
+const TREASURY_10Y: StudioInstrument = {
+  id: "ust-91282crf0",
+  symbol: "91282CRF0",
+  name: "United States Treasury Note, 4.625% due 15 August 2036",
+  kind: "bond",
+  assetClass: "fixed-income",
+  // A single bond has no fund operating expenses. Null, not zero: a broker's
+  // markup is a real cost and is simply not stated here.
+  expenseRatioPct: null,
+  referencePrice: 99.540696,
+  priceAsOf: "2026-08-12",
+  // Treasury sets a $100 minimum in $100 multiples. A broker may require more,
+  // which the worksheet tells the user to confirm.
+  quantityStep: 100,
+  minimumUnits: 100,
+  // A Treasury note is entirely one issuer, which is a fact rather than a
+  // sample. The LEI is the one N-PORT filings use for this issuer, so a
+  // portfolio holding this note alongside AGG or SGOV shows the concentration
+  // instead of reading as three separate things.
+  exposures: [{ label: "United States of America", key: "254900HROIFWPRGM1V77", weightPct: 100 }],
+  exposureCoveragePct: 100,
+  bond: {
+    cusip: "91282CRF0",
+    couponPct: 4.625,
+    maturity: "2036-08-15",
+    // Accrued interest depends on the settlement date, and the auction record
+    // states it only for issue-date settlement. Any other date needs its own
+    // figure, so the worksheet excludes it and says the total is incomplete.
+    accruedInterestPer100: null,
+  },
+  sources: [
+    {
+      label: "US Treasury auction results for CUSIP 91282CRF0, 10-year note auctioned 2026-08-12, issued 2026-08-17",
+      url: "https://www.treasurydirect.gov/auctions/announcements-data-results/",
+      asOf: "2026-08-12",
+    },
+  ],
+  whatItIs:
+    "A loan to the United States government. It pays 4.625% a year on its face value, in two payments a year, and repays the face value on 15 August 2036. Bought at auction for 99.540696 per $100 of face value. Prices are quoted per $100 of face value, so $1,000 of face value at a quote of 99.54 costs about $995.40, plus any interest that has built up since the last payment.",
+  mainRisks: [
+    "Its market price falls when interest rates rise, and the longer the time to maturity the larger that move",
+    "Selling before 15 August 2036 means taking whatever price the market offers, which can be less than you paid",
+    "Inflation can outpace a fixed 4.625% payment, so the money repaid buys less than the money lent",
+  ],
+};
+
+/**
  * Order is the research library's reading order, not a ranking or a
- * recommendation: two broad US stock funds, then two US bond funds.
+ * recommendation: two broad US stock funds, two US bond funds, one individual
+ * Treasury note.
  */
 export const STUDIO_CATALOG: readonly StudioInstrument[] = [
   instrumentFromPassport(PRODUCTS.VTI),
   instrumentFromPassport(PRODUCTS.VOO),
   instrumentFromPassport(PRODUCTS.AGG),
   instrumentFromPassport(PRODUCTS.SGOV),
+  TREASURY_10Y,
 ];
 
 /** The date every catalog filing above was retrieved and reviewed. */
@@ -218,10 +279,10 @@ export const CATALOG_GAPS: readonly StudioCatalogGap[] = [
   },
   {
     kind: "bond",
-    missing: "Individual bonds, including Treasuries",
+    missing: "More individual bonds, and accrued interest for the one that is here",
     whyItMatters:
-      "The buying worksheet already prices bonds by face value and accrued interest, but no reviewed issue exists to apply it to.",
+      "The catalog holds a single Treasury note. There are no corporate or municipal bonds, and no issue states accrued interest for a settlement date you choose, so a bond's estimated total here is short by exactly that unstated amount.",
     whatItNeeds:
-      "Per-issue terms — CUSIP, coupon, maturity and an accrual basis — from an official source such as TreasuryDirect, with the settlement date the accrued figure assumes.",
+      "Per-issue terms from each issuer's official source, and an accrual basis worked out for the settlement date rather than for the auction.",
   },
 ];
