@@ -9,7 +9,7 @@ figure is estimated, rounded for presentation, or carried over from memory.
 
 ## 1. Source lock
 
-Four of the six entries derive from `lib/holdings-slate.ts`, whose products were reviewed
+Four of the seven entries derive from `lib/holdings-slate.ts`, whose products were reviewed
 for Mission 12 and audited in
 [`mission-12-holdings.md`](./mission-12-holdings.md). Retrieval date `2026-08-16`, exported
 as `CATALOG_REVIEWED_AT`.
@@ -61,7 +61,53 @@ artefact, not a position. With `N/A` normalised to null, the true largest issuer
 Semiconductor at 3.9281% in a single position, and 3,222 positions (7.4414%) are correctly
 recorded as having no LEI. `holdings-slate.ts` documents the same rule for its own products.
 
-## 1b. One individual Treasury note
+## 1b. Two individual company shares
+
+Added 2026-09-04, each reviewed from its own annual report. Both were chosen because a fund
+already in this catalog holds them, so the repeated-exposure check has something real to
+find — the thing a beginner buying a single stock most needs to see.
+
+| Field | Apple Inc. | Taiwan Semiconductor Manufacturing Company Limited |
+| --- | --- | --- |
+| Ticker / exchange | AAPL / Nasdaq | TSM / NYSE |
+| CIK | 0000320193 | 0001046179 |
+| LEI | HWUPKR0MPOU8FGXBT394 | 549300KB6NK5SBD14S87 |
+| Annual report | 10-K `0000320193-25-000079`, FY ended 2025-09-27 | 20-F `0001628280-26-025362`, year ended 2025-12-31 |
+| Incorporated in | California | Taiwan (cover code F5) |
+| US listing | Ordinary common stock | American depositary shares, each representing five common shares |
+| Reports in | US dollars | New Taiwan dollars, under IFRS |
+| Asset class | `us-equity` | `international-equity` |
+
+Each LEI is the one its fund's N-PORT filing uses, so the direct holding and the fund
+holding match on an identifier rather than on a name. Verified: AAPL at 50% beside VTI at
+50% reports 52.97% in Apple, which is 50% plus 50% × VTI's documented 5.9407%. TSM beside
+VXUS reports 51.96% on the same arithmetic.
+
+**Business descriptions are the filings' own words.** Apple: "designs, manufactures and
+markets smartphones, personal computers, tablets, wearables and accessories, and sells a
+variety of related services." TSMC: "We manufacture a variety of semiconductors based on
+designs provided by our customers. Our business model is commonly called a 'dedicated
+semiconductor foundry.'" The ADS ratio comes from the 20-F's own phrasing, "each ADS
+represents five (5) common shares".
+
+**`mainRisks` are the filings’ risk-factor category headings, not a ranking.** Apple files
+four — macroeconomic and industry, business, legal and regulatory compliance, financial.
+TSMC files risks relating to its business and, separately, risks relating to ownership of
+ADSs, including limited voting rights. The field carries the filings’ language only: the
+card labels it as the filing’s, so an OPS observation cannot sit in the same list. The
+point that one share has nothing else in it to offset those risks is made in `whatItIs`,
+which opens "A share in one company, not a fund."
+
+**TSM is classified `international-equity` although it trades in US dollars on a US
+exchange.** That is the point: domicile, exchange, listing form and reporting currency are
+four separate facts, and the research card now shows all four rather than letting a dollar
+price imply a US holding. TSMC's 2025 net revenue was NT$3,809,054 million, which its own
+filing converts to US$121,423 million.
+
+**No financial results.** Neither entry carries revenue, profit, debt or a valuation, so
+nothing here supports judging whether a share is worth its price. `CATALOG_GAPS` says so.
+
+## 1c. One individual Treasury note
 
 Added 2026-09-04 from the US Treasury's own auction record, retrieved that day through the
 Fiscal Data auctions query. It exists so the worksheet's face-value and accrued-interest
@@ -89,7 +135,7 @@ would be wrong for every date except 2026-08-17.
 
 ## 2. Prices, and the one exception
 
-`referencePrice` is `null` and `priceAsOf` empty for all five funds. OPS holds no
+`referencePrice` is `null` and `priceAsOf` empty for all five funds and both company shares. OPS holds no
 market-data licence, and EDGAR publishes filings, not quotes. The buying worksheet handles
 this correctly: it keeps the user's dollar target, declines to invent a share count, and
 asks for a dated broker quote from the broker they would actually order through.
@@ -142,7 +188,7 @@ as a complete one. All four reviewed funds track US indexes.
 | Missing | Consequence | What it needs |
 | --- | --- | --- |
 | A global fund, and deeper holdings for the international one | Nothing here is a single global holding: VXUS excludes the United States. Its documented issuers are 12.9901% of the fund, so an overlap check against it sees an eighth. | Prospectus and N-PORT review per additional fund, and a deeper issuer list where holdings are too flat for a short one. |
-| Individual company shares, US and foreign | No individual-stock research path. For a foreign company, domicile, trading currency and where the business earns are three separate facts. | Per-company filing review, plus the ADR mechanics already sourced as P3/P4 in [`studio-learning.md`](./studio-learning.md). |
+| More company shares, and any company financial results | Two companies are here, both already inside funds in this library. Neither carries revenue, profit, debt or a valuation, so nothing supports judging whether a share is worth its price. | A per-company filing review for each addition, and a separate decision about whether Studio carries financial statement figures at all. |
 | More individual bonds | One Treasury note is present. No corporate or municipal bonds, and no issue states accrued interest for a chosen settlement date, so a bond total is short by exactly that unstated amount. | Per-issue terms from each issuer official source, and an accrual basis worked out for the settlement date rather than the auction. |
 
 The user's confirmed launch scope requires individual stocks, foreign stocks and individual
@@ -151,7 +197,7 @@ security carries its own dated source record.
 
 ## 5. Verification
 
-`lib/studio-catalog.test.ts`, 20 assertions. Expected values come from the filings and the
+`lib/studio-catalog.test.ts`, 25 assertions. Expected values come from the filings and the
 auction record, or from arithmetic worked by hand in the test comments, never read back out
 of the code under test: a 60/40 split of $10,000 is $6,000 and $4,000; the default scenario
 gives −$1,800 and −$400 for −22%; expense at 0.03% on each side is $3.00 a year; 8 whole
@@ -166,6 +212,7 @@ actually contains.
 
 ## 6. Gate status
 
-Catalog provenance and exposure handling are verified for the four Mission 12 funds, VXUS
-and the Treasury note. No market data, no individual company share, and no UI are covered
-here. Studio must not be marked release-ready from this document.
+Catalog provenance and exposure handling are verified for all seven entries. No market
+data and no company financial results are covered here, and the interface has had targeted
+checks rather than a full visual pass. Studio must not be marked release-ready from this
+document.

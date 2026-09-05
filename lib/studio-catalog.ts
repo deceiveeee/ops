@@ -13,10 +13,10 @@ import { PRODUCTS, RETRIEVED_AT, type Passport } from "@/lib/holdings-slate";
  * 1. The four Mission 12 funds are derived from `lib/holdings-slate.ts` rather
  *    than retyped. That record carries their reviewed filings with accession
  *    numbers, audited in `docs/source-audits/mission-12-holdings.md`; copying
- *    the numbers here would create a second version to drift. The two entries
- *    that record does not cover — VXUS and the Treasury note — are written out
- *    below, each with its own filing, because adding them to Mission 12's
- *    teaching set would change the lesson.
+ *    the numbers here would create a second version to drift. The four entries
+ *    that record does not cover — VXUS, two company shares and the Treasury
+ *    note — are written out below, each with its own filing, because adding
+ *    them to Mission 12’s teaching set would change the lesson.
  * 2. No fund carries a price. OPS holds no market-data licence, and EDGAR
  *    publishes filings, not quotes, so the buying worksheet keeps the dollar
  *    target and asks for a dated broker quote rather than inventing one. See
@@ -55,6 +55,31 @@ export type StudioSource = {
  */
 export type StudioExposure = { label: string; key?: string; weightPct: number };
 
+/**
+ * What a single company share needs beyond a fund's fields.
+ *
+ * Domicile, listing, trading currency and reporting currency are four separate
+ * facts and the interface has to keep them apart. A US investor buys TSM in
+ * dollars on the NYSE, but the company is incorporated in Taiwan and reports
+ * in New Taiwan dollars — its 2025 net revenue was NT$3,809,054 million, which
+ * the filing converts to US$121,423 million. Paying in dollars does not make
+ * it a dollar business, and `docs/source-audits/studio-learning.md` (P3–P5)
+ * records that separation as a requirement rather than a nicety.
+ */
+export type StudioStockFacts = {
+  /** As the filing's own cover states it. */
+  incorporatedIn: string;
+  exchange: string;
+  /** How a US investor holds it: ordinary shares, or depositary shares. */
+  usListing: string;
+  /** Underlying shares per US-listed unit, where the filing states a ratio. */
+  adsRatio: number | null;
+  /** The currency the business reports in, which need not be the traded one. */
+  reportsIn: string;
+  /** The annual report these facts came from. */
+  annualReportForm: string;
+};
+
 export type StudioBondTerms = {
   cusip: string;
   couponPct: number;
@@ -89,6 +114,7 @@ export interface StudioInstrument {
    */
   exposureCoveragePct: number | null;
   bond: StudioBondTerms | null;
+  stock: StudioStockFacts | null;
   sources: StudioSource[];
   /** Plain-language, drawn from the filing's own objective and structure. */
   whatItIs: string;
@@ -151,6 +177,7 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
       holdings.topIssuers.reduce((total, issuer) => total + issuer.weightPct, 0),
     ),
     bond: null,
+    stock: null,
     sources: [
       {
         label: `${prospectus.form} prospectus, ${passport.registrant} (${prospectus.accession})`,
@@ -169,6 +196,111 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
     mainRisks: passport.riskHighlights,
   };
 }
+
+/**
+ * Two individual company shares, one US and one foreign.
+ *
+ * Both were chosen because a fund already in this catalog holds them: Apple is
+ * VTI's and VOO's second largest documented issuer, and Taiwan Semiconductor is
+ * VXUS's largest. Holding either one directly alongside its fund makes the
+ * repeated-exposure check report the same company twice, which is the thing a
+ * beginner buying a single stock most needs to see and cannot see anywhere
+ * else in the product.
+ *
+ * Each carries the LEI its fund's N-PORT filing uses, so the two sides match on
+ * an identifier rather than on a name.
+ */
+const APPLE: StudioInstrument = {
+  id: "aapl",
+  symbol: "AAPL",
+  name: "Apple Inc.",
+  kind: "stock",
+  assetClass: "us-equity",
+  // A share has no fund operating expenses. Null rather than zero: holding it
+  // still costs commission and spread, which this figure does not describe.
+  expenseRatioPct: null,
+  referencePrice: null,
+  priceAsOf: "",
+  quantityStep: 1,
+  minimumUnits: 1,
+  // One company is one issuer, at its whole weight. Not a sample, so coverage
+  // is complete — the opposite of a fund, where it never is.
+  exposures: [{ label: "Apple Inc", key: "HWUPKR0MPOU8FGXBT394", weightPct: 100 }],
+  exposureCoveragePct: 100,
+  bond: null,
+  stock: {
+    incorporatedIn: "California, United States",
+    exchange: "Nasdaq",
+    usListing: "Ordinary common stock",
+    adsRatio: null,
+    reportsIn: "US dollars",
+    annualReportForm: "10-K",
+  },
+  sources: [
+    {
+      label: "Form 10-K, Apple Inc., fiscal year ended 2025-09-27 (0000320193-25-000079)",
+      url: filingIndexUrl("0000320193", "0000320193-25-000079"),
+      asOf: "2025-09-27",
+    },
+  ],
+  whatItIs:
+    "A share in one company, not a fund. Apple designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services. It is incorporated in California and its shares trade on Nasdaq in US dollars.",
+  // The filing’s own four risk-factor categories, in its order. Headings, not a
+  // ranking, and each covers many specific risks the 10-K sets out in full. Only
+  // the filing’s language belongs in this field: the card labels it as the
+  // filing’s, and the single-company point is made in whatItIs instead.
+  mainRisks: [
+    "Macroeconomic and industry risks — the filing's first risk category",
+    "Business risks, covering products, competition, suppliers and demand",
+    "Legal and regulatory compliance risks",
+    "Financial risks",
+  ],
+};
+
+const TSMC: StudioInstrument = {
+  id: "tsm",
+  symbol: "TSM",
+  name: "Taiwan Semiconductor Manufacturing Company Limited",
+  kind: "stock",
+  // Classified by where the business is, not by where it trades. TSM is bought
+  // in dollars on a US exchange and is still a Taiwanese company, so the
+  // international shock is the one that should apply to it.
+  assetClass: "international-equity",
+  expenseRatioPct: null,
+  referencePrice: null,
+  priceAsOf: "",
+  quantityStep: 1,
+  minimumUnits: 1,
+  exposures: [
+    { label: "Taiwan Semiconductor Manufacturing Co Ltd", key: "549300KB6NK5SBD14S87", weightPct: 100 },
+  ],
+  exposureCoveragePct: 100,
+  bond: null,
+  stock: {
+    incorporatedIn: "Taiwan",
+    exchange: "NYSE",
+    usListing: "American depositary shares",
+    // From the 20-F: "each ADS represents five (5) common shares".
+    adsRatio: 5,
+    reportsIn: "New Taiwan dollars",
+    annualReportForm: "20-F",
+  },
+  sources: [
+    {
+      label:
+        "Form 20-F, Taiwan Semiconductor Manufacturing Company Limited, year ended 2025-12-31 (0001628280-26-025362)",
+      url: filingIndexUrl("0001046179", "0001628280-26-025362"),
+      asOf: "2025-12-31",
+    },
+  ],
+  whatItIs:
+    "A share in one company, based in Taiwan and bought in US dollars. TSMC manufactures semiconductors to designs its customers provide — a business model it calls a dedicated semiconductor foundry. What trades on the NYSE is an American depositary share, and each one represents five of the company's common shares. The company reports in New Taiwan dollars: its 2025 net revenue was NT$3,809,054 million, which the filing converts to US$121,423 million. Buying in dollars does not remove that currency difference.",
+  mainRisks: [
+    "Risks relating to the business — the filing's own first category, covering demand, competition, supply and manufacturing",
+    "Risks relating to owning depositary shares, which the filing lists separately, including limited voting rights",
+    "Currency — the business earns in New Taiwan dollars while the shares are priced in US dollars",
+  ],
+};
 
 /**
  * One individual Treasury note, so the buying worksheet's face-value and
@@ -204,6 +336,7 @@ const TREASURY_10Y: StudioInstrument = {
   // instead of reading as three separate things.
   exposures: [{ label: "United States of America", key: "254900HROIFWPRGM1V77", weightPct: 100 }],
   exposureCoveragePct: 100,
+  stock: null,
   bond: {
     cusip: "91282CRF0",
     couponPct: 4.625,
@@ -272,6 +405,7 @@ const VXUS: StudioInstrument = {
   ],
   exposureCoveragePct: 12.9901,
   bond: null,
+  stock: null,
   sources: [
     {
       label:
@@ -301,12 +435,14 @@ const VXUS: StudioInstrument = {
 /**
  * Order is the research library's reading order, not a ranking or a
  * recommendation: two broad US stock funds, one international stock fund, two
- * US bond funds, one individual Treasury note.
+ * individual company shares, two US bond funds, one individual Treasury note.
  */
 export const STUDIO_CATALOG: readonly StudioInstrument[] = [
   instrumentFromPassport(PRODUCTS.VTI),
   instrumentFromPassport(PRODUCTS.VOO),
   VXUS,
+  APPLE,
+  TSMC,
   instrumentFromPassport(PRODUCTS.AGG),
   instrumentFromPassport(PRODUCTS.SGOV),
   TREASURY_10Y,
@@ -345,11 +481,11 @@ export const CATALOG_GAPS: readonly StudioCatalogGap[] = [
   },
   {
     kind: "stock",
-    missing: "Individual company shares, US and foreign",
+    missing: "More company shares, and any company's financial results",
     whyItMatters:
-      "Researching one company is a different job from researching a fund: it needs the company's own filings, and for a foreign company the domicile, trading currency and where the business actually earns its money are three separate facts.",
+      "Two companies are here, both large and both already inside funds in this library. Neither carries revenue, profit, debt or a valuation, so nothing here supports judging whether a share is worth its price — only what the company is and what it says can go wrong.",
     whatItNeeds:
-      "Per-company filing review, plus the ADR mechanics already sourced in docs/source-audits/studio-learning.md (P3, P4).",
+      "A per-company filing review for each addition, and a separate decision about whether Studio should carry financial statement figures at all, which is a much larger source commitment than identity and risk.",
   },
   {
     kind: "bond",

@@ -112,15 +112,15 @@ describe("Studio catalog provenance", () => {
     expect(kinds).toContain("international");
     expect(kinds).toContain("stock");
     expect(kinds).toContain("bond");
-    // The gaps must describe the catalog as it actually is. Individual company
-    // shares are still absent entirely.
-    expect(STUDIO_CATALOG.some((item) => item.kind === "stock")).toBe(false);
-    // Bonds and international funds are present but thin, so those gaps have to
-    // describe a shortfall rather than an absence.
+    // Every kind the launch scope asked for now exists, so each gap has to
+    // describe a shortfall rather than an absence. A gap still claiming
+    // something is missing when it is present is the failure this catches.
+    expect(STUDIO_CATALOG.some((item) => item.kind === "stock")).toBe(true);
     expect(STUDIO_CATALOG.some((item) => item.kind === "bond")).toBe(true);
     expect(STUDIO_CATALOG.some((item) => item.assetClass === "international-equity")).toBe(true);
     expect(CATALOG_GAPS.find((gap) => gap.kind === "bond")?.missing).toMatch(/more individual bonds/i);
     expect(CATALOG_GAPS.find((gap) => gap.kind === "international")?.missing).toMatch(/global fund|more of any/i);
+    expect(CATALOG_GAPS.find((gap) => gap.kind === "stock")?.missing).toMatch(/more company shares/i);
   });
 
   it("resolves instruments by id and reports unknown ones as unknown", () => {
@@ -198,6 +198,64 @@ describe("Studio calculations over the real catalog", () => {
     expect(rows.vti).toBe(-1_000);
     expect(rows.vxus).toBe(-2_000);
     expect(result.stress.changeDollars).toBe(-3_000);
+  });
+
+  it("catches a company owned directly and again through a fund", () => {
+    // The reason both shares are in the catalog. Apple is VTI's second largest
+    // documented issuer at 5.9407%, so holding AAPL beside VTI owns it twice:
+    // 50% directly, plus 50% x 5.9407% = 2.97035% through the fund, which is
+    // 52.97% of the portfolio in one company.
+    const result = calculateStudio(twoWayPlan(10_000, "aapl", 50, "vti", 50), STUDIO_CATALOG);
+    const apple = result.overlaps.find((overlap) => overlap.label.includes("Apple"));
+    expect(apple).toBeDefined();
+    expect(apple?.instrumentIds.sort()).toEqual(["aapl", "vti"]);
+    expect(apple?.portfolioWeightPct).toBeCloseTo(52.97, 1);
+  });
+
+  it("catches the same thing across a border", () => {
+    // TSMC is VXUS's largest documented issuer at 3.9281%.
+    // 50% + 50% x 3.9281% = 51.96%.
+    const result = calculateStudio(twoWayPlan(10_000, "tsm", 50, "vxus", 50), STUDIO_CATALOG);
+    const tsmc = result.overlaps.find((overlap) => overlap.label.includes("Taiwan Semiconductor"));
+    expect(tsmc?.instrumentIds.sort()).toEqual(["tsm", "vxus"]);
+    expect(tsmc?.portfolioWeightPct).toBeCloseTo(51.96, 1);
+  });
+
+  it("treats a foreign company as international however it is traded", () => {
+    // TSM is bought in US dollars on the NYSE and is still a Taiwanese
+    // company, so the international shock applies, not the US one.
+    let plan = twoWayPlan(10_000, "aapl", 50, "tsm", 50);
+    plan = { ...plan, stress: { ...plan.stress, usStocksPct: -20, internationalStocksPct: -40 } };
+    const rows = Object.fromEntries(
+      calculateStudio(plan, STUDIO_CATALOG).stress.rows.map((row) => [row.instrumentId, row.changeDollars]),
+    );
+    expect(rows.aapl).toBe(-1_000);
+    expect(rows.tsm).toBe(-2_000);
+  });
+
+  it("keeps a foreign share's domicile, listing and currency as separate facts", () => {
+    const tsm = instrument("TSM");
+    expect(tsm.stock?.incorporatedIn).toMatch(/Taiwan/);
+    expect(tsm.stock?.exchange).toBe("NYSE");
+    expect(tsm.stock?.usListing).toMatch(/depositary/i);
+    // From the 20-F: each ADS represents five common shares.
+    expect(tsm.stock?.adsRatio).toBe(5);
+    // Traded in dollars, reports in another currency. Conflating the two is the
+    // mistake the whole foreign-share section exists to prevent.
+    expect(tsm.stock?.reportsIn).toMatch(/New Taiwan/);
+    const aapl = instrument("AAPL");
+    expect(aapl.stock?.adsRatio).toBeNull();
+    expect(aapl.stock?.reportsIn).toMatch(/US dollars/);
+  });
+
+  it("charges no fund expense on a single share", () => {
+    // A share has no expense ratio, and its absence must not be read as zero
+    // cost or drag the fund coverage figure down.
+    const result = calculateStudio(twoWayPlan(10_000, "aapl", 50, "vti", 50), STUDIO_CATALOG);
+    expect(instrument("AAPL").expenseRatioPct).toBeNull();
+    // Only VTI's $5,000 at 0.03% counts: $1.50.
+    expect(result.fees.annualKnownCost).toBe(1.5);
+    expect(result.fees.coveragePct).toBe(100);
   });
 
   it("reports no overlap between a stock fund and a Treasury fund", () => {

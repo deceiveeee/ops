@@ -201,3 +201,17 @@ export function Stat({ label, value, detail }: { label: string; value: string; d
 export function TableScroll({ children }: { children: ReactNode }) {
   return <div className="-mx-1 overflow-x-auto px-1">{children}</div>;
 }
+
+/**
+ * One labelled fact in a definition list. Used where several small facts have
+ * to stay visibly distinct from each other — a foreign share's domicile,
+ * exchange, listing form and reporting currency being the case it exists for.
+ */
+export function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-wrap items-baseline gap-x-2">
+      <dt className="text-[13px] text-slate-500">{label}</dt>
+      <dd className="text-[13px] text-slate-300">{value}</dd>
+    </div>
+  );
+}

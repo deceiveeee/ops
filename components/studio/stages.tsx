@@ -14,7 +14,7 @@ import {
   type StudioPlan,
 } from "@/lib/studio";
 import type { StudioMutationResult } from "@/lib/use-studio-plan";
-import { Choice, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole } from "./shared";
+import { Choice, Fact, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole } from "./shared";
 
 export type StageProps = {
   plan: StudioPlan;
@@ -225,18 +225,53 @@ export function ResearchStage({ plan, update }: StageProps) {
                     </ul>
                   </div>
 
-                  <div>
-                    <div className="ops-caption text-[11px] text-slate-500">
-                      Largest holdings, {pct(instrument.exposureCoveragePct ?? 0)} of the fund documented
+                  {/*
+                    Four facts a single share needs kept apart, because the
+                    convenient assumption is that buying in dollars on a US
+                    exchange makes something a US holding. It does not: TSM is
+                    a Taiwanese company reporting in New Taiwan dollars, bought
+                    in US dollars as a depositary share standing for five
+                    ordinary ones. docs/source-audits/studio-learning.md (P3-P5)
+                    requires the separation.
+                  */}
+                  {instrument.stock ? (
+                    <div>
+                      <div className="ops-caption text-[11px] text-slate-500">How you would hold it</div>
+                      <dl className="mt-2 grid gap-x-6 gap-y-1 sm:grid-cols-2">
+                        <Fact label="Incorporated in" value={instrument.stock.incorporatedIn} />
+                        <Fact label="Trades on" value={`${instrument.stock.exchange}, in US dollars`} />
+                        <Fact
+                          label="What you buy"
+                          value={
+                            instrument.stock.adsRatio === null
+                              ? instrument.stock.usListing
+                              : `${instrument.stock.usListing}, each standing for ${instrument.stock.adsRatio} ordinary shares`
+                          }
+                        />
+                        <Fact label="Company reports in" value={instrument.stock.reportsIn} />
+                      </dl>
                     </div>
-                    <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                      {instrument.exposures.slice(0, 6).map((exposure) => (
-                        <li key={exposure.label} className="text-[13px] tabular-nums text-slate-400">
-                          {exposure.label} {exposure.weightPct.toFixed(2)}%
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  ) : null}
+
+                  {/*
+                    Only funds. A single share is its own issuer at 100%, so
+                    "largest holdings, 100% documented" would restate the name
+                    as though it were a finding.
+                  */}
+                  {instrument.kind === "fund" ? (
+                    <div>
+                      <div className="ops-caption text-[11px] text-slate-500">
+                        Largest holdings, {pct(instrument.exposureCoveragePct ?? 0)} of the fund documented
+                      </div>
+                      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                        {instrument.exposures.slice(0, 6).map((exposure) => (
+                          <li key={exposure.label} className="text-[13px] tabular-nums text-slate-400">
+                            {exposure.label} {exposure.weightPct.toFixed(2)}%
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
 
                   <div>
                     <div className="ops-caption text-[11px] text-slate-500">Where these facts come from</div>
@@ -494,7 +529,7 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
       </Panel>
 
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Companies you own through more than one fund</div>
+        <div className="ops-caption text-[11px] text-slate-500">Companies you own more than once</div>
         {calculation.overlaps.length === 0 ? (
           <p className="mt-2 text-[14px] leading-6 text-slate-300">
             No repeated company appears in the holdings that have been documented. That is not proof there is none —
@@ -506,7 +541,7 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
               {calculation.overlaps.slice(0, 8).map((overlap) => (
                 <li key={overlap.label} className="text-[14px] leading-6 text-slate-300">
                   <span className="tabular-nums text-white">{pct(overlap.portfolioWeightPct, 2)}</span> {overlap.label},
-                  held through {overlap.instrumentIds.join(" and ")}
+                  held through {overlap.instrumentIds.map((id) => findStudioInstrument(id)?.symbol ?? id).join(" and ")}
                 </li>
               ))}
             </ul>
