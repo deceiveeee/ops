@@ -10,7 +10,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | Milestone | Status | Evidence |
 | --- | --- | --- |
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
-| M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md) — D1 and D2 both resolved with measurements; four build items outstanding |
+| M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration and operations in `lib/studio-project/`; 16 tests. Storage adapter and conflict handling still to do |
 | M3 complete stock prototype | Not started | |
 | M4 curate and generalize | Not started | |
@@ -87,17 +87,19 @@ handoff asks that paid-source requirements never be hidden.
   operating income, so two of the team's five Business Quality inputs are uncomputable for it.
   Metric templates must be per-sector.
 - **The bank revenue trap found.** A generic revenue lookup on Fifth Third returns $577M dated
-  2023 — a fee-revenue subset — while net interest income is $5,982M in 2025. Wrong by roughly
-  tenfold, stale by two years, and completely silent, because the field is populated. Every
-  metric needs an explicit concept mapping per sector, recorded per number.
+  2023 — a fee-revenue subset — against a bank revenue of $9,017M in 2025 (net interest income
+  $5,982M plus noninterest income $3,035M). Wrong by about **fifteen times**, stale by two
+  years, and completely silent, because the field is populated. Every metric needs an explicit
+  concept mapping per sector, recorded per number. Built; see below.
 - **D2 resolved.** Commercial feeds were the wrong place to look. Tiingo and Alpha Vantage free
   tiers are internal-use only; Stooq's terms could not be established. The answer is
   public-domain SEC data: N-PORT positions carry a share count and a USD value, so price =
   value ÷ shares. All three worries about it were then measured and cleared.
-  - **Accuracy.** VTI and VOO both reported 2026-03-31 and share 487 securities. Their
-    independently filed implied prices agree to within 0.01% for **486 of 487**, median
-    difference exactly zero. Apple $253.79 in both, NVIDIA $174.40 in both. The one outlier is
-    an internal money-market fund with a different unit convention.
+  - **Accuracy.** VTI and VOO both reported 2026-03-31 and file independently. Keyed on the
+    security rather than the issuer they share 501 securities, and their implied prices agree
+    for **501 of 501**, worst difference 0.000000%. Apple $253.79 in both, NVIDIA $174.40 in
+    both. *This supersedes an earlier 486-of-487 reading and its explanation; see the
+    correction under "Price ingestion built and run" below.*
   - **Valuation level is geographic.** VTI is 100.25% Level 1 — real quoted prices. VXUS is
     88.24% Level 2 — fair values adjusted after foreign exchanges close. Both usable, not the
     same thing, and the interface must say which.
@@ -117,6 +119,121 @@ handoff asks that paid-source requirements never be hidden.
 - **Atkore is a good prototype for an unexpected reason.** Its latest year shows net income of
   −$15,175,000 and EPS of −$0.45, exercising both the deteriorating-profitability tension the
   handoff wants taught and the undefined-earnings-yield method question.
+
+### Price ingestion built and run
+
+`scripts/source/fetch-nport-prices.mjs` with `scripts/source/nport-manifest.json`; extraction
+rules in `lib/studio-project/prices.ts`, 27 tests. Node strips the types so the script and the
+app share one implementation instead of a copy. Report:
+[`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md).
+
+First real snapshot, `2026-09-05`: **90,028 observations, 13,549 securities, 18 report dates**
+from 2025-01-31 to 2026-06-30, built from 24 filings by VTI, VOO, VXUS and VTHR. 112 MB of raw
+filings live in the gitignored `.source-cache/`; only the report is committed.
+
+**Four defects found by measuring, each of which would have been silent.** They are the reason
+the module looks the way it does, and each has a test.
+
+1. **LEI is an issuer, not a security.** 217 of 5,378 issuers in one filing carry more than one
+   security under one LEI. Cemex is $12.30 as a US ADR and $1.23 as a Mexican local share;
+   Banco Santander Chile $31.98 and $0.08. Keys are ISIN, then CUSIP, never LEI.
+2. **A third of international positions have no LEI and no CUSIP.** Only 718 of 8,777 foreign
+   positions carried a CUSIP. The earlier LEI+CUSIP key would have dropped 34% of the
+   international universe — the securities the user specifically asked Studio to support.
+3. **One security can carry several prices on one day.** Barrick appears in one filing on three
+   exchanges: New York $39.3400 and Toronto $39.2903 at Level 1, London $39.3401 at Level 2
+   because that exchange had closed. Currency and country are part of the key.
+4. **Level 3 is two different populations.** Of 490 Level 3 observations, 282 are priced under
+   a hundredth of a cent — sanctioned Russian holdings, delisted shells, suspended listings —
+   against 12 of 89,538 quoted observations that cheap. The rest are large holdings caught
+   mid-event: Emirates Telecommunications at $5.16 on a $259M position, Samsung Biologics at
+   $855. `isMarketPrice` separates them; charting a write-down as a price would show a company
+   collapsing to zero when it merely stopped trading.
+
+**A correction to the earlier M1 record.** The 486-of-487 cross-fund agreement was reported as
+one money-market outlier with "a different unit convention". That was wrong. Both entries were
+`NS`, and the real cause was two share classes of one fund sharing an LEI with no CUSIP and no
+ISIN — the same identifier collision as Cemex. With security-identifier keys the agreement is
+**501 of 501, worst difference 0.000000%**, and across the full snapshot no security reported
+by more than one filing disagreed at all.
+
+**Independent verification.** `valUSD` was arbitrated by `pctVal`, a field the pipeline never
+reads: across **93,408 positions in all 24 filings, every one reproduces inside the filing's
+own truncation window** of 1e-12. The first attempt at this check failed, and the diagnosis
+mattered — the filings *truncate* `pctVal` rather than rounding it, and a uniform relative
+tolerance is meaningless on positions worth nine cents. The pipeline was right; the check was
+wrong.
+
+**Design notes worth keeping.** Registrants file one NPORT-P per fund and the submissions index
+does not say which — `primaryDocDescription` is empty. Only the document names the series, and
+SEC ignores `Range` headers, so the script streams a filing and cancels after `</genInfo>`:
+16 KB instead of 3.1 MB, a 99.5% saving, and every `seriesId` in the manifest was read that way
+rather than guessed. Trusts keep different fiscal year-ends, so three of them cover all twelve
+month-ends of 2025 — though per security rather than per filing a US stock reaches eight and an
+international one four. Monthly coverage needs a monthly filer such as iShares Trust, deferred
+to M4 because which funds to add depends on the universe.
+
+**Limits that must travel with these numbers.** They are price returns, not total returns —
+dividends are not in them. Coverage is per filing, not per security. Level 1 and Level 2 are
+not the same kind of number and any display must say which.
+
+### Per-sector metric mapping built and run
+
+`lib/studio-project/metrics.ts` with 29 tests; `scripts/source/fetch-fundamentals.mjs` and
+`fundamentals-manifest.json`. Audit:
+[`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). Twelve companies
+spanning banking, insurance, real estate, utilities, transport, energy, software,
+semiconductors, retail, pharma, telecom and industrials, each chosen because it breaks
+something a single definition would assume.
+
+**The design conclusion is stronger than the plan anticipated.** The ledger called for
+per-sector concept tables. Tables are necessary but *not sufficient*: resolution must be
+**for a stated period**, because filers migrate their tagging. A concept qualifies only if it
+carries a value covering the requested period; preference then decides among the ones that
+qualify. Sector lists constrain meaning, period qualification constrains currency, and
+neither alone is enough.
+
+**Four silent failures, each measured.**
+
+1. **Wrong concept for the sector.** Fifth Third's contract revenue is $577M — a fee subset —
+   against net interest income $5,982M and noninterest income $3,035M. Wrong by about fifteen
+   times. A bank's revenue is now assembled as a sum, and the contract-revenue concepts are
+   excluded from the banking list on purpose. A test pins the old behaviour for contrast.
+2. **Concepts companies abandon.** The largest class, and **not a sector problem**: 11 of 113
+   first-choice resolutions returned data staler than the company's own latest period.
+   NVIDIA's old capex tag last appears in **2012**; Verizon's cost of revenue in 2014;
+   Prologis's depreciation in 2015; Microsoft's `CostOfRevenue` in 2017; Costco's
+   `GrossProfit` in 2019. Every one still resolves and is populated.
+3. **Metrics that do not apply.** Gross profit is undefined for a bank, an insurer, a REIT, a
+   railroad or a utility — six of the twelve report neither gross profit nor any cost of
+   revenue. That is now a distinct outcome from "missing", with the reason naming the shape.
+   Free cash flow is likewise refused for banks and insurers, which both the competition team
+   (dividend yield substitution) and Morgan Stanley (financials excluded for accounting
+   reasons) independently support.
+4. **Names that resemble the answer.** NextEra tags `CapitalExpendituresIncurredButNotYetPaid`
+   at $7.64B, an accrual rather than cash spending. Prologis tags `PaymentsToAcquireRealEstate`
+   at $1.80B, which is buying buildings rather than maintaining them. Verizon, Exxon and Union
+   Pacific all report `CostsAndExpenses`, total operating expense — subtracting it from revenue
+   yields operating income wearing the name of gross profit. All three are excluded by name.
+
+**A fifth failure, outside the metric layer entirely: a ticker is not an identity.** `XOM`
+resolves to **ExxonMobil Holdings Corp**, a 2026 reorganisation entity with 94 concepts and
+**zero** annual revenue periods, whose `entityName` still reads "Exxon Mobil Corporation". The
+operating company, CIK 0000034088, has 438 concepts and fifteen years. Nothing in the payload
+distinguishes them. CIKs are now pinned in the manifest, the cache is keyed by **CIK rather
+than ticker** — the first run reused a stale ticker-keyed file and served the wrong entity, so
+this is a fixed bug and not a hypothetical — and any entity with fewer than three annual
+periods is rejected.
+
+**Verification.** A false-negative check that could have failed: are the "unavailable" gross
+margins real? Verizon, Exxon and Union Pacific report no cost-of-revenue concept for the
+current year — only `CostsAndExpenses`. Using it would have made Verizon's gross profit
+$29.26B, which is its operating income. The refusals are correct.
+
+**This is the Morgan Stanley prerequisite.** Disaggregated ROIC, profit pool and the value
+stick all need metric definitions that survive crossing from an industrial to a bank. The
+Moat appendix's own exclusion of financials "for accounting reasons" is the same finding
+arrived at independently.
 
 ## M2 record
 
@@ -150,14 +267,20 @@ actually switches the UI over.
 
 ### Next concrete action
 
-1. Build the price-snapshot ingestion: pool N-PORT filings across trusts, exclude non-share unit
-   types, and record the fair-value level with every observation.
-2. Field inventory for one complete investigation and one portfolio comparison.
-3. Confirm permitted use of Damodaran's NYU industry data files.
-4. Read strategy pp. 8-10 as images before designing the screen surface.
-5. Build the per-sector concept-mapping tables that Findings 1 and 2 require.
+M1's two data dependencies are now both resolved and implemented. What remains is the
+Morgan Stanley backbone, which is documented but has no code and no surface.
 
-M2 schema work is source-independent and proceeds in parallel while price data is unresolved.
+1. Industry surfaces from *Measuring the Moat*, in the paper's own outside-in order: industry
+   map, structure classification, profit pool, market-share instability. None exists yet.
+2. Disaggregated ROIC, now unblocked: NOPAT margin times invested-capital turnover, on the
+   per-sector metric layer.
+3. Field inventory for one complete investigation and one portfolio comparison.
+4. Confirm permitted use of Damodaran's NYU industry data files.
+5. Read strategy pp. 8-10 as images before designing the screen surface.
+6. Check per-security price coverage once the universe is fixed, and add a monthly filer if
+   the gaps matter.
+
+M2 schema work is source-independent and proceeds in parallel with any of these.
 
 ## Working files
 
@@ -166,6 +289,8 @@ M2 schema work is source-independent and proceeds in parallel while price data i
 | `tmp/pdfs/wic-strategy-review/` | 134 page renders plus `strategy.txt` | No — scratch |
 | `tmp/pdfs/wic-report-review/` | 18 page renders plus `report.txt` | No — scratch |
 | `tmp/pdfs/firm-process/` | Morgan Stanley papers and extraction | No — scratch, retrievable |
+| `.source-cache/nport/` | 24 raw filings, 112 MB, plus the built snapshots | No — gitignored cache, rebuildable |
+| `.source-cache/fundamentals/` | XBRL company facts for 12 companies, keyed by CIK | No — gitignored cache, rebuildable |
 | `docs/source-audits/studio-research-coverage.md` | The M0 map | Yes |
 | This file | The ledger | Yes |
 
