@@ -333,16 +333,21 @@ export const EMPTY_FRICTION_BUDGET: FrictionBudget = {
 export const FRICTION_FALLBACK_ONE_WAY_PCT = 0.5;
 
 /**
- * Convert Mission 8's decimal-fraction drag into one round-trip leg expressed
- * in percentage points, which is the unit consumed by Missions 11 and 12.
+ * One leg of a round trip, in percentage points, from the saved Mission 8 budget.
+ *
+ * `estimatedAnnualDrag` is a decimal fraction; every field named `*Pct` here and
+ * every friction argument in `lib/timing-policy.ts` is percentage points. The
+ * conversion lives in one place because missions 11 and 12 each wrote their own
+ * and both omitted it, halving the fraction and passing it on undivided. A saved
+ * 1.9% budget was then charged as 0.0095%, so the mission whose whole argument is
+ * that friction defeats timing displayed `0.00% each way` to precisely the
+ * learners who had done the prerequisite. The fallback was already in percentage
+ * points, which inverted the lesson: skipping Mission 8 charged more than
+ * finishing it.
  */
-export function frictionOneWayPct(
-  budget: FrictionBudget | null | undefined,
-): number {
+export function frictionOneWayPct(budget: FrictionBudget | null | undefined): number {
   const annualDrag = Number(budget?.estimatedAnnualDrag ?? 0);
-  if (!Number.isFinite(annualDrag) || annualDrag <= 0) {
-    return FRICTION_FALLBACK_ONE_WAY_PCT;
-  }
+  if (!Number.isFinite(annualDrag) || annualDrag <= 0) return FRICTION_FALLBACK_ONE_WAY_PCT;
   return (annualDrag * 100) / 2;
 }
 

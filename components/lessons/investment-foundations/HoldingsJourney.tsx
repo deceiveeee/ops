@@ -1429,7 +1429,8 @@ export default function HoldingsJourney() {
    * The learner's own friction, not a stand-in. Mission 8 saves an estimated
    * annual drag; a round trip is two legs, so one leg is half of it in
    * percentage points. Falls back to a labelled 0.5% only when Mission 8 has not
-   * been done yet. Shared with Mission 11 so the two lessons cannot disagree.
+   * been done yet. Shared with the Mission 11 journey so the two lessons cannot
+   * quote different numbers.
    */
   const frictionOneWay = useMemo(
     () => frictionOneWayPct(frictionBudget),

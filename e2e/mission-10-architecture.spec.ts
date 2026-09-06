@@ -121,6 +121,12 @@ test("the model stage charges risk and friction until a market-beating strategy 
 });
 
 test("no single impressive number unlocks the slice", async ({ page }) => {
+  // Same budget as the other two tests that walk to the licence and answer all
+  // eleven edge questions. The default 30s covers that work on an idle machine
+  // and does not when the suite runs five browsers against one dev server, so
+  // this failed intermittently -- and reported wherever it happened to be, in a
+  // walk helper or mid-questionnaire, which read as a different bug each run.
+  test.setTimeout(90_000);
   await page.goto(MISSION_10);
   await walkToLicence(page);
 
@@ -176,6 +182,7 @@ test("an active slice licenses only once every condition is met", async ({ page 
 });
 
 test("a slice breaching mission 5’s loss budget stays disabled", async ({ page }) => {
+  test.setTimeout(90_000);
   await seedPriorMissions(page);
   await page.goto(MISSION_10);
   await walkToLicence(page);
@@ -190,6 +197,32 @@ test("a slice breaching mission 5’s loss budget stays disabled", async ({ page
     page.getByRole("button", { name: /Continue with the slice licensed/ }),
   ).toBeDisabled();
 });
+
+/**
+ * Open every artifact on the plan, once React is actually listening.
+ *
+ * Playwright's actionability check sees a rendered button and clicks it, which
+ * on a freshly navigated page can land before hydration has attached the
+ * handler. The click is swallowed, every later assertion reads a still-collapsed
+ * record, and because it is a race it fails only sometimes — it survived four
+ * five-worker runs and failed at two workers, where hydration has less headroom.
+ *
+ * The label only flips to "Collapse all" once the state genuinely changed, so
+ * that is the signal worth retrying against.
+ */
+async function expandPlan(page: Page) {
+  await expect(async () => {
+    const expand = page.getByRole("button", { name: "Expand all" });
+    if (await expand.count()) await expand.click();
+    // Both halves matter. The plan gates its first paint on the Workbench
+    // loading, so a page still showing the skeleton has no `details` at all --
+    // and "none are closed" is vacuously true of nothing, which let this return
+    // against an empty page, click nothing, and leave every assertion after it
+    // reading a collapsed record.
+    expect(await page.locator("details").count()).toBeGreaterThan(0);
+    expect(await page.locator("details:not([open])").count()).toBe(0);
+  }).toPass({ timeout: 15_000 });
+}
 
 test("a fully passive decision is a complete outcome that reaches the plan", async ({
   page,
@@ -215,6 +248,7 @@ test("a fully passive decision is a complete outcome that reaches the plan", asy
   await expect(page.getByText("6 of 6 stages complete", { exact: false })).toBeVisible();
 
   await page.goto("/plan");
+  await expandPlan(page);
   await expect(page.getByText("Passive core only", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("A single total world equity index fund.")).toBeVisible();
   await expect(page.getByText("30 June 2026", { exact: true }).first()).toBeVisible();

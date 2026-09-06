@@ -208,3 +208,37 @@ describe("isTimingPolicyComplete", () => {
     ).toBe(true);
   });
 });
+
+/**
+ * Mission 11's argument is that friction is what makes a timing round trip lose.
+ * That argument only lands if the learner's own saved budget arrives here in the
+ * unit `simulateTiming` charges. Wiring Mission 8's decimal fraction straight in
+ * understated every charge by 100x, so these assert the whole path rather than
+ * the conversion alone.
+ */
+describe("friction carried from a saved Mission 8 budget", () => {
+  const budget = (estimatedAnnualDrag: number) => ({
+    ...EMPTY_FRICTION_BUDGET,
+    estimatedAnnualDrag,
+  });
+
+  it("charges a heavy budget as whole percentage points of the round trip", () => {
+    const out = simulateTiming("first-drop", "expiry", frictionOneWayPct(budget(0.039)));
+    expect(out.frictionChargedPct).toBeCloseTo(3.9, 10);
+  });
+
+  it("charges even the cheapest budget enough to move the ending value", () => {
+    const charged = simulateTiming("first-drop", "expiry", frictionOneWayPct(budget(0.002)));
+    const free = simulateTiming("first-drop", "expiry", 0);
+    expect(charged.frictionChargedPct).toBeCloseTo(0.2, 10);
+    // Two legs at 0.1% each, compounded on a path both runs share.
+    expect(free.endingValue - charged.endingValue).toBeGreaterThan(0.1);
+  });
+
+  it("scales the charge with the budget instead of collapsing to zero", () => {
+    const light = simulateTiming("first-drop", "expiry", frictionOneWayPct(budget(0.002)));
+    const heavy = simulateTiming("first-drop", "expiry", frictionOneWayPct(budget(0.039)));
+    expect(heavy.frictionChargedPct / light.frictionChargedPct).toBeCloseTo(19.5, 6);
+    expect(heavy.endingValue).toBeLessThan(light.endingValue);
+  });
+});

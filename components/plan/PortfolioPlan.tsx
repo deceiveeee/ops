@@ -16,6 +16,7 @@ import {
   type ScenarioResponse,
   type TimingPolicy,
 } from "@/lib/if-progress";
+import { ALL_FLIGHT_SCENARIOS } from "@/lib/operating-plan";
 import {
   type AllocationRecord,
   type AssumptionOwner,
@@ -103,18 +104,6 @@ const rebalanceMethodLabel = (method: OperatingPlan["rebalanceRule"]["method"]) 
   if (method === "new-money") return "Use new contributions to restore target weights";
   if (method === "redirect-flows") return "Redirect contributions or withdrawals toward target weights";
   return "Not recorded";
-};
-
-const SCENARIO_TITLES: Record<string, string> = {
-  crash: "The market falls 30% in seven weeks",
-  income: "Your income stops",
-  cash: "You need money quickly",
-  contribution: "New money arrives",
-  drift: "One slice has run away",
-  thesis: "The reason you bought it is gone",
-  stale: "The data is older than you thought",
-  licence: "The edge licence expires",
-  mandate: "A very good idea",
 };
 
 const checkpointStatusLabel = (checkpoint: CheckpointState) => {
@@ -725,8 +714,8 @@ export function operatingPlanSection(
   plan: OperatingPlan,
   checkpoint: CheckpointState,
 ): Section {
-  const scenarioFields: Field[] = Object.keys(SCENARIO_TITLES).flatMap((id) => {
-    const response = plan.scenarioResponses[id];
+  const scenarioFields: Field[] = ALL_FLIGHT_SCENARIOS.flatMap((scenario) => {
+    const response = plan.scenarioResponses[scenario.id];
     if (!response) return [];
     const details = [
       `Decision: ${decisionLabel(response.response)}`,
@@ -738,7 +727,7 @@ export function operatingPlanSection(
       details.push(`Would change if: ${response.wouldChangeIf}`);
     }
     if (response.policySilent) details.push("Policy gap found: no saved rule covers this");
-    return [{ label: SCENARIO_TITLES[id], value: details }];
+    return [{ label: scenario.title, value: details }];
   });
 
   const trigger = plan.rebalanceRule.trigger;
@@ -828,7 +817,16 @@ export default function PortfolioPlan() {
   } = usePortfolioWorkbench();
   const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  /**
+   * Which artifacts are open. Absent means "use the default for this section",
+   * which is closed unless the record is asking to be looked at.
+   *
+   * Thirteen artifacts fully expanded ran to 8.4 screens at 1440 and 12.5 on a
+   * phone, so the compiled document could not be scanned without scrolling past
+   * the thing you came for. Collapsed, the page is a list of thirteen decisions
+   * you open one at a time.
+   */
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   // Artifacts load in an effect, so the first paint has none. Gate on mount to
   // avoid rendering an "empty plan" that immediately replaces itself.
@@ -1188,16 +1186,35 @@ export default function PortfolioPlan() {
     ],
   );
 
+  // A record that wants attention opens itself. Hiding a review-required
+  // artifact behind a click is the one case where the compression costs more
+  // than it saves.
+  const isOpen = (section: Section) =>
+    expanded[section.id] ?? Boolean(section.needsReview);
+  const setAllExpanded = (open: boolean) =>
+    setExpanded(Object.fromEntries(sections.map((s) => [s.id, open])));
+  const allOpen = sections.length > 0 && sections.every(isOpen);
+
+  /**
+   * Print with everything open.
+   *
+   * A collapsed `details` prints collapsed, which would turn a printed plan
+   * into thirteen headings. `Copy as text` is unaffected either way — it reads
+   * the section data, never the DOM — so this only covers the browser's own
+   * print path.
+   */
+  useEffect(() => {
+    const openAll = () =>
+      setExpanded(Object.fromEntries(sections.map((s) => [s.id, true])));
+    window.addEventListener("beforeprint", openAll);
+    return () => window.removeEventListener("beforeprint", openAll);
+  }, [sections]);
+
   const recorded = sections.filter((s) => Boolean(s.updatedAt));
   const lastUpdated = recorded
     .map((s) => s.updatedAt)
     .sort()
     .reverse()[0];
-  const selectedSection =
-    sections.find((section) => section.id === selectedSectionId) ??
-    recorded.at(-1) ??
-    sections[0];
-
   const copyAsText = async () => {
     const lines: string[] = ["PORTFOLIO PLAN", ""];
     for (const s of recorded) {
@@ -1242,55 +1259,96 @@ export default function PortfolioPlan() {
           <span className="h-px w-8 bg-white/30" />
           <span className="text-accent-amber">Portfolio Builder</span>
         </div>
-        <h1 className="ops-display mt-5 text-4xl leading-[1.05] sm:text-5xl">
+        {/*
+         * Sized down below `sm` only. At 390 this preamble ran to 476px -- over
+         * half a viewport before the first control, which is the one thing on
+         * this page that broke a stated rule rather than merely reading long.
+         * The words are unchanged; only the type scale and rhythm are.
+         */}
+        <h1 className="ops-display mt-4 text-3xl leading-[1.05] sm:mt-5 sm:text-5xl">
           Your portfolio plan
         </h1>
-        <p className="ops-body mt-5 text-lg leading-8 text-slate-200">
+        <p className="ops-body mt-3 text-[15px] leading-7 text-slate-200 sm:mt-5 sm:text-lg sm:leading-8">
           Every decision you have saved, in one place. Each mission adds one more you
           can check, change, and eventually defend.
         </p>
 
-        <div className="mt-7 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300">
-            Showing {modeLabel(activeMode)}
+        {/*
+         * Five wrapping pills came to 188px on a phone, four rows deep. The
+         * padding and type shrink below `sm`, and two labels drop the words a
+         * narrow screen can infer: the mode pill loses "Showing", the count loses
+         * "artifacts". Nothing is abbreviated into something a reader has to
+         * decode, and desktop reads exactly as it did.
+         */}
+        <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-7 sm:gap-3">
+          <span className="rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-slate-300 sm:px-4 sm:py-2 sm:text-sm">
+            <span className="hidden sm:inline">Showing </span>
+            {modeLabel(activeMode)}
           </span>
           <span
             className={cn(
-              "rounded-full border px-4 py-2 text-sm tabular-nums",
+              "rounded-full border px-3 py-1.5 text-[13px] tabular-nums sm:px-4 sm:py-2 sm:text-sm",
               recorded.length === sections.length
                 ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
                 : "border-accent-amber/40 bg-accent-amber/10 text-accent-amber",
             )}
           >
-            {recorded.length} of {sections.length} decisions recorded
+            {recorded.length} of {sections.length}
+            <span className="hidden sm:inline"> decisions</span> recorded
           </span>
           {lastUpdated && (
-            <span className="text-[14px] text-slate-400">
-              Last updated {formatWhen(lastUpdated)}
+            <span className="text-[13px] text-slate-400 sm:text-[14px]">
+              <span className="hidden sm:inline">Last u</span>
+              <span className="sm:hidden">U</span>
+              pdated {formatWhen(lastUpdated)}
             </span>
           )}
           {recorded.length > 0 && (
             <button
               type="button"
               onClick={copyAsText}
-              className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+              className="min-h-11 rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40 sm:min-h-0 sm:px-4 sm:py-2 sm:text-sm"
             >
               {copied ? "Copied" : "Copy as text"}
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setAllExpanded(!allOpen)}
+            className="min-h-11 rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-slate-300 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40 sm:min-h-0 sm:px-4 sm:py-2 sm:text-sm"
+          >
+            {allOpen ? "Collapse all" : "Expand all"}
+          </button>
         </div>
       </header>
 
-      <div className="mt-8">
-        <PlanMissionMap
-          sections={sections}
-          selectedId={selectedSection.id}
-          onSelect={setSelectedSectionId}
-        />
-      </div>
+      {recorded.length === 0 && (
+        <div className="ops-definition-card mt-10 p-6">
+          {/* The empty state's title, not a label on something else. Heading
+              semantics, caption styling — the look is unchanged. */}
+          <h2 className="ops-caption text-[12px] text-accent-amber">Nothing recorded yet</h2>
+          <p className="ops-body mt-3 text-[15px] text-slate-200">
+            Your plan fills in as you finish missions. Each one ends with a decision
+            that is saved here, so the work accumulates instead of disappearing.
+          </p>
+          <Link
+            href="/lessons/if-1-1-how-an-investor-builds-a-philosophy"
+            className="mt-5 inline-flex items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
+          >
+            Start with mission 1 →
+          </Link>
+        </div>
+      )}
 
-      <div className="mt-5">
-        <DecisionCard section={selectedSection} />
+      <div className="mt-8 space-y-3 sm:mt-12 sm:space-y-6">
+        {sections.map((s) => (
+          <ArtifactCard
+            key={s.id}
+            section={s}
+            open={isOpen(s)}
+            onToggle={(next) => setExpanded((current) => ({ ...current, [s.id]: next }))}
+          />
+        ))}
       </div>
 
       <footer className="mt-8 border-t border-white/10 pt-5">
@@ -1313,112 +1371,98 @@ export default function PortfolioPlan() {
   );
 }
 
-function PlanMissionMap({
-  sections,
-  selectedId,
-  onSelect,
+function ArtifactCard({
+  section,
+  open,
+  onToggle,
 }: {
-  sections: Section[];
-  selectedId: string;
-  onSelect: (id: string) => void;
+  section: Section;
+  open: boolean;
+  onToggle: (next: boolean) => void;
 }) {
-  const recordedCount = sections.filter((section) => Boolean(section.updatedAt)).length;
-  return (
-    <section aria-labelledby="plan-mission-map">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 id="plan-mission-map" className="ops-body-strong text-[16px] text-white">
-            Mission map
-          </h2>
-          <p className="mt-1 text-[13px] leading-5 text-slate-400">
-            {recordedCount === 0
-              ? "Start with Mission 1. Select any number to preview what it will add."
-              : "Select a mission to inspect or revise its saved decision."}
-          </p>
-        </div>
-        <span className="hidden text-[12px] text-slate-500 sm:block">
-          Green means recorded
-        </span>
-      </div>
-      <div className="mt-4 grid grid-cols-7 gap-2" role="group" aria-label="Plan missions">
-        {sections.map((section, index) => {
-          const recorded = Boolean(section.updatedAt);
-          const selected = section.id === selectedId;
-          return (
-            <button
-              key={section.id}
-              type="button"
-              aria-pressed={selected}
-              aria-label={`Mission ${index + 1}: ${section.title}. ${
-                recorded ? "Recorded" : "Not yet recorded"
-              }`}
-              onClick={() => onSelect(section.id)}
-              className={cn(
-                "relative flex min-h-11 items-center justify-center rounded-lg border text-[13px] font-semibold tabular-nums transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
-                selected
-                  ? "border-accent-amber/60 bg-accent-amber/12 text-accent-amber"
-                  : recorded
-                    ? "border-accent-green/35 bg-accent-green/8 text-accent-green hover:bg-accent-green/12"
-                    : "border-white/12 text-slate-400 hover:border-white/25 hover:text-slate-200",
-              )}
-            >
-              M{index + 1}
-              {recorded && (
-                <span
-                  aria-hidden
-                  className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent-green"
-                />
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function DecisionCard({ section }: { section: Section }) {
   const recorded = Boolean(section.updatedAt) && section.groups.length > 0;
 
   return (
     <section
-      aria-labelledby={`decision-${section.id}`}
+      aria-labelledby={`artifact-${section.id}`}
       className={cn(
-        "rounded-2xl border p-5 sm:p-7",
+        "rounded-2xl border",
         recorded
           ? "border-white/12 bg-white/[0.03]"
           : "border-dashed border-white/12 bg-transparent",
       )}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="ops-caption text-[12px] text-accent-amber">{section.mission}</div>
-          <h2
-            id={`decision-${section.id}`}
-            className={cn(
-              "ops-section-title mt-2 text-xl sm:text-2xl",
-              !recorded && "text-slate-400",
-            )}
-          >
-            {section.title}
-          </h2>
-          <p className="ops-body mt-2 text-[14px] text-slate-400">{section.purpose}</p>
-        </div>
-        <span
-          className={cn(
-            "ops-caption flex-shrink-0 rounded-full border px-3 py-1 text-[12px]",
-            section.needsReview
-              ? "border-accent-amber/40 bg-accent-amber/10 text-accent-amber"
-              : recorded
-              ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
-              // The plan is a dark page: slate-500 measured 4.23:1 here, and
-              // this pill is the artifact's status, not decoration.
-              : "border-white/15 text-slate-400",
-          )}
-        >
-          {recorded ? section.statusLabel ?? "Recorded" : "Not yet"}
-        </span>
-      </div>
+      {/*
+       * The mission, the artifact's name and its status stay on the summary, so
+       * a closed plan still answers "what have I decided, and where is it
+       * unfinished?" without opening anything. The purpose line and the record
+       * move inside: they are what you came to read once you have chosen a row.
+       */}
+      <details
+        open={open}
+        onToggle={(event) => onToggle((event.currentTarget as HTMLDetailsElement).open)}
+        className="group"
+      >
+      {/*
+       * No `flex-wrap`. On a phone the status group used to drop onto its own
+       * line, which cost a flat 40px on every row it happened to: rows measured
+       * 94px unwrapped and 134px wrapped, 162px where the title also ran to two
+       * lines. Letting the title column shrink instead keeps the pill on the
+       * right and wraps only the text, which is the part that can afford it.
+       *
+       * The Show/Hide words go with it below `sm` and a chevron carries the
+       * affordance. Nothing is lost to a screen reader either way — `summary`
+       * is a native disclosure button and announces its own expanded state.
+       */}
+        <summary className="flex min-h-11 cursor-pointer list-none items-start justify-between gap-3 p-4 sm:p-7">
+          <div className="min-w-0">
+            <div className="ops-caption text-[12px] text-accent-amber">{section.mission}</div>
+            <h2
+              id={`artifact-${section.id}`}
+              className={cn(
+                "ops-section-title mt-1.5 text-lg sm:mt-2 sm:text-2xl",
+                !recorded && "text-slate-400",
+              )}
+            >
+              {section.title}
+            </h2>
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+            <span
+              className={cn(
+                "ops-caption rounded-full border px-2.5 py-1 text-[12px] sm:px-3",
+                section.needsReview
+                  ? "border-accent-amber/40 bg-accent-amber/10 text-accent-amber"
+                  : recorded
+                  ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
+                  // The plan is a dark page: slate-500 measured 4.23:1 here,
+                  // and this pill is the artifact's status, not decoration.
+                  : "border-white/15 text-slate-400",
+              )}
+            >
+              {recorded ? section.statusLabel ?? "Recorded" : "Not yet"}
+            </span>
+            <span className="hidden text-[13px] text-slate-400 group-open:hidden sm:inline">
+              Show
+            </span>
+            <span className="hidden text-[13px] text-slate-400 sm:group-open:inline">Hide</span>
+            <svg
+              aria-hidden
+              viewBox="0 0 24 24"
+              className="h-4 w-4 flex-shrink-0 text-slate-400 transition-transform group-open:rotate-90 motion-reduce:transition-none sm:hidden"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </div>
+        </summary>
+
+        <div className="px-4 pb-4 sm:px-7 sm:pb-7">
+          <p className="ops-body text-[14px] text-slate-400">{section.purpose}</p>
 
       {recorded ? (
         <>
@@ -1463,6 +1507,8 @@ function DecisionCard({ section }: { section: Section }) {
           </Link>
         </div>
       )}
+        </div>
+      </details>
     </section>
   );
 }

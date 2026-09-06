@@ -162,6 +162,32 @@ async function completePracticeMission(page: Page) {
   await page.getByRole("button", { name: "Save your allocation and risk limits" }).click();
 }
 
+/**
+ * Open every artifact on the plan, once React is actually listening.
+ *
+ * Playwright's actionability check sees a rendered button and clicks it, which
+ * on a freshly navigated page can land before hydration has attached the
+ * handler. The click is swallowed, every later assertion reads a still-collapsed
+ * record, and because it is a race it fails only sometimes — it survived four
+ * five-worker runs and failed at two workers, where hydration has less headroom.
+ *
+ * The label only flips to "Collapse all" once the state genuinely changed, so
+ * that is the signal worth retrying against.
+ */
+async function expandPlan(page: Page) {
+  await expect(async () => {
+    const expand = page.getByRole("button", { name: "Expand all" });
+    if (await expand.count()) await expand.click();
+    // Both halves matter. The plan gates its first paint on the Workbench
+    // loading, so a page still showing the skeleton has no `details` at all --
+    // and "none are closed" is vacuously true of nothing, which let this return
+    // against an empty page, click nothing, and leave every assertion after it
+    // reading a collapsed record.
+    expect(await page.locator("details").count()).toBeGreaterThan(0);
+    expect(await page.locator("details:not([open])").count()).toBe(0);
+  }).toPass({ timeout: 15_000 });
+}
+
 test("Mission 5 persists a practice policy, restores completion, and keeps modes isolated", async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto(MISSION_5);
@@ -181,6 +207,7 @@ test("Mission 5 persists a practice policy, restores completion, and keeps modes
     page.getByRole("link", { name: /Open your plan/ }).last().click(),
   ]);
   await expect(page.getByRole("heading", { name: "Allocation and risk limits" })).toBeVisible();
+  await expandPlan(page);
   await expect(page.getByText("Mina protects the dated tuition need", { exact: false })).toBeVisible();
   await expect(page.getByText("Range 15% to 25%; target 20%", { exact: false })).toBeVisible();
 

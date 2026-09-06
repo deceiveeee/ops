@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import GlassPanel from "@/components/ui/GlassPanel";
 import Button from "@/components/ui/Button";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { authErrorMessage } from "@/lib/supabase/auth-errors";
 
 function LoginForm() {
   const router = useRouter();
@@ -23,7 +24,7 @@ function LoginForm() {
     const supabase = getSupabaseBrowser();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) return setError(error.message);
+    if (error) return setError(authErrorMessage(error));
     router.push(next);
   }
 

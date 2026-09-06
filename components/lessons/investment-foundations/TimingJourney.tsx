@@ -175,7 +175,7 @@ export default function TimingJourney() {
   /**
    * The learner's own friction, not a stand-in. Mission 8 saves an estimated
    * annual drag; a round trip is two legs, so one leg is half of it, converted
-   * to the percentage points the simulation charges. Falls back to a labelled
+   * to the percentage points `simulateTiming` charges. Falls back to a labelled
    * 0.5% only when Mission 8 has not been done yet.
    */
   const frictionOneWay = useMemo(

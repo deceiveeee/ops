@@ -2,12 +2,14 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import GlassPanel from "@/components/ui/GlassPanel";
 import Button from "@/components/ui/Button";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { authErrorMessage } from "@/lib/supabase/auth-errors";
 
 function SignupForm() {
+  const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") ?? "/";
   const [email, setEmail] = useState("");
@@ -21,13 +23,26 @@ function SignupForm() {
     setBusy(true);
     setError(null);
     const supabase = getSupabaseBrowser();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
     setBusy(false);
-    if (error) return setError(error.message);
+    if (error) return setError(authErrorMessage(error));
+    /**
+     * Whether a confirmation email exists at all is a project setting, not
+     * something this page can assume. With confirmations turned off Supabase
+     * returns a live session and the account is already usable, so the previous
+     * unconditional "check your email" sent every new learner to wait on a
+     * message that is never sent -- while they were, in fact, already signed in.
+     *
+     * The session is the only honest signal for which of the two happened.
+     */
+    if (data.session) {
+      router.push(next);
+      return;
+    }
     setSent(true);
   }
 
