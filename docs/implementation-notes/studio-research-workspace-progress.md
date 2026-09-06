@@ -12,7 +12,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration and operations in `lib/studio-project/`; 16 tests. Storage adapter and conflict handling still to do |
-| M3 complete stock prototype | **In progress** | Industry surface built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Company-level moat work not started |
+| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Five forces, value stick and industry map not started |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -295,12 +295,70 @@ scrolls sideways.
 375, against the project's 1.5 limit — better than Studio's own 1.68 and 2.44 but still over.
 The remaining excess is the cautions panel, kept visible deliberately.
 
+### Disaggregated ROIC
+
+`lib/studio-project/roic.ts` with 24 tests, wired through `fetch-industry.mjs` so every
+industry's leaders carry the split, and shown as a third view on `/studio/industry`.
+
+**Definitions from the papers.** ROIC is NOPAT over invested capital. It decomposes DuPont
+style into NOPAT margin times invested capital turnover — the sales cancel — and the split is
+what distinguishes **differentiation** (high margin, satisfactory turnover) from **cost
+leadership** (satisfactory margin, high turnover). Validated against an example the paper
+works in prose: 10% margin × 1.5x turnover = 15%, and after the supplier cuts price, 7.5% ×
+2.0x = the same 15%.
+
+**What the papers do not give, so this decides and says so.** Neither states a line-item
+formula for invested capital. OPS uses **interest-bearing debt + equity − cash**, because
+NOPAT is the profit available to lenders and shareholders together so the denominator must be
+what both put in. The common alternative — assets less non-debt current liabilities — was
+measured against it across twelve companies and runs **5% to 28% higher**, since it leaves
+long-term non-debt liabilities in the base. Operating leases sit outside and are reported
+beside it: $19.0B at Verizon, $16.5B at Microsoft, large enough to change the answer.
+
+**Two corrections the first run forced, both grounded in the papers' own wording.**
+
+1. **Prologis computed to a 46.9% margin on 0.10x turnover**, reading as textbook
+   differentiation. It is an artefact — a property company's capital is buildings at
+   depreciated cost. Both papers exclude financial and real-estate companies "because their
+   accounting is different than the rest", so banking, insurance and real estate are declined.
+2. **Atkore's loss year came out as "cost leadership"** on a 0.6% margin, because its capital
+   happened to turn over fast. The paper describes these as the routes by which companies
+   "enjoy attractive ROICs"; they explain a good return, not a bad one. Below an 8% hurdle the
+   route is withheld and the split still shown.
+
+**Four coverage gaps found and fixed, one rejected.**
+
+- **Foreign issuers were invisible.** Restricting to 10-K excluded every 20-F filer;
+  STMicroelectronics reports `Assets` only under 20-F and looked like a company with no annual
+  period. 20-F and 40-F are now annual forms — directly relevant to the foreign-share support
+  the user asked for.
+- **Oracle's debt** is tagged `DebtLongtermAndShorttermCombinedAmount`, EA's is `SeniorNotes`.
+  Both added.
+- **Debt-free companies were being refused.** ServiceNow and Shopify report no borrowings;
+  requiring the tag excluded them. Absent debt is now zero, recorded as an assumption. The
+  trap avoided: everything matching "Debt" at ServiceNow is
+  `AvailableForSaleSecuritiesDebtSecurities`, $6.3B of investments it **owns**, and reading
+  that as borrowing would invert the balance sheet.
+- **Rejected: deriving operating income** as gross profit less SG&A and R&D, to rescue the
+  five big pharma companies whose `OperatingIncomeLoss` is stale — J&J last tagged it in
+  **2014**. Checked against companies reporting both: NVIDIA exact, Texas Instruments 1.9%
+  out, **Microsoft 22.3% out**. Not adopted; those five stay declined with the reason.
+
+37 of 43 industry leaders now compute. Semiconductors: NVIDIA 71.3% earning it both ways,
+Broadcom and Texas Instruments by charging more, Applied Materials by turning capital faster.
+Variety stores: Costco 37.5% on a 2.8% margin and 13.29x turnover, which is the whole model in
+two numbers.
+
+**The surface** plots the margin-turnover plane the paper reads advantage off, with peer
+medians rather than invented thresholds. Loss-making companies are off the chart and named
+underneath — the paper truncates its own axes for the same reason. That view runs **2.0
+screens at 1440**, over the 1.5 budget, because it carries a chart and a table.
+
 ### Not built, and why
 
-`profitPool` is implemented and tested but has no surface. It needs per-company ROIC and
-invested capital, and a WACC, which is not derivable from filings at all: it needs a cost of
-equity, so it is an input with its own provenance rather than a fact read off a statement. It
-belongs with the company layer, not the industry one.
+`profitPool` is implemented and tested but still has no surface. It now has ROIC and invested
+capital, but still needs a WACC, which is not derivable from filings at all: it needs a cost of
+equity, so it is an input carrying its own provenance rather than a fact read off a statement.
 
 ## M2 record
 
@@ -334,12 +392,12 @@ actually switches the UI over.
 
 ### Next concrete action
 
-The industry half of the Moat backbone now exists. What is left is the company half.
+The industry half of the Moat backbone exists, and disaggregated ROIC with it. What is left is
+the qualitative company work.
 
-1. Disaggregated ROIC: NOPAT margin times invested-capital turnover, on the per-sector metric
-   layer. Unblocked, and the input the profit pool is waiting on.
-2. The five forces and the value stick as company surfaces, plus the industry map, which is
+1. The five forces and the value stick as company surfaces, plus the industry map, which is
    qualitative and has no data pipeline behind it.
+2. A WACC input with its own provenance, which is the last thing the profit pool needs.
 3. Field inventory for one complete investigation and one portfolio comparison.
 4. Confirm permitted use of Damodaran's NYU industry data files.
 5. Read strategy pp. 8-10 as images before designing the screen surface.

@@ -187,6 +187,24 @@ industry costs three calls rather than one per company.
   thirteen competitors plus an Other bucket, and its two-point rule is calibrated on that shape.
   Averaged over all 313 pharmaceutical filers it collapses to 0.1%. Both figures are reported.
 
+## Disaggregated return on capital
+
+Each industry's leaders also carry the split behind their return on capital: NOPAT margin times
+invested capital turnover, which multiply to ROIC because the sales cancel. High margin on
+ordinary turnover is the signature of differentiation; ordinary margin on high turnover is cost
+leadership. Costco earns 37.5% on a 2.8% margin and 13.29x turnover, which is its whole model in
+two numbers.
+
+Invested capital is **interest-bearing debt + equity − cash**, which the papers do not define
+line by line, so it is OPS's choice and stated as one. It pairs with the numerator: NOPAT is the
+profit available to lenders and shareholders together. The common alternative, assets less
+non-debt current liabilities, runs 5% to 28% higher across the twelve companies measured.
+Operating leases sit outside and are reported beside it.
+
+Banking, insurance and real estate are declined outright, as both papers decline them. A company
+earning less than 8% has its split shown but no strategy named — the paper describes these as
+routes to an *attractive* return, and Atkore's loss year otherwise read as cost leadership.
+
 ## What it cannot tell you
 
 SIC is a coarse market definition and SEC assigns one code per registrant. Only SEC filers

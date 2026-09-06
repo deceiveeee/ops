@@ -23,6 +23,8 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { industryPicture, BASIS_UNCERTAIN } from "../../lib/studio-project/industry.ts";
+import { effectiveTaxRate, isAvailable, isResolved, latestAnnualPeriod, resolvePrimitive, sectorFromSic, totalRevenue } from "../../lib/studio-project/metrics.ts";
+import { decomposeRoic, isComputed, readAdvantage } from "../../lib/studio-project/roic.ts";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "../..");
@@ -147,6 +149,102 @@ async function revenueFrame(year) {
 const money = (v) => (Math.abs(v) >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : `$${(v / 1e6).toFixed(0)}M`);
 const pct = (v) => `${(v * 100).toFixed(1)}%`;
 
+const FUNDAMENTALS = join(ROOT, ".source-cache", "fundamentals");
+
+/**
+ * Split each leader's return on capital into the margin and turnover behind it.
+ *
+ * The sector comes from the industry's own SIC rather than a per-company
+ * lookup, which saves a request each and is the same answer: every company here
+ * was found by that code. Companies whose operating profit or capital cannot be
+ * resolved are returned with the reason, never dropped.
+ */
+async function decomposeLeaders(industry) {
+  const sector = sectorFromSic(industry.sic);
+  const out = [];
+
+  for (const leader of industry.picture.shares.slice(0, 10)) {
+    const cik = String(leader.cik).padStart(10, "0");
+    const path = join(FUNDAMENTALS, `facts-${cik}.json`);
+    let facts;
+    try {
+      if (!existsSync(path)) {
+        const body = await sec(`https://data.sec.gov/api/xbrl/companyfacts/CIK${cik}.json`);
+        if (!body) { out.push({ cik: leader.cik, name: leader.name, reason: "no company facts filed" }); continue; }
+        writeFileSync(path, body, "utf8");
+      }
+      facts = JSON.parse(readFileSync(path, "utf8"));
+    } catch (error) {
+      out.push({ cik: leader.cik, name: leader.name, reason: `could not read company facts: ${String(error.message).slice(0, 40)}` });
+      continue;
+    }
+
+    const period = latestAnnualPeriod(facts);
+    if (!period) { out.push({ cik: leader.cik, name: leader.name, reason: "no annual period reported" }); continue; }
+
+    const value = (name) => { const o = resolvePrimitive(facts, name, sector, period); return isResolved(o) ? o.value : null; };
+    const revenue = totalRevenue(facts, sector, period);
+    const tax = effectiveTaxRate(facts, sector, period);
+    const operatingIncome = value("operatingIncome");
+    const equity = value("equity");
+    const longTerm = value("longTermDebt");
+
+    const missing = [];
+    if (operatingIncome === null) missing.push("operating profit");
+    if (!isAvailable(revenue)) missing.push("revenue");
+    if (equity === null) missing.push("equity");
+    if (missing.length) { out.push({ cik: leader.cik, name: leader.name, reason: `needs ${missing.join(", ")}` }); continue; }
+
+    // No debt tag means no borrowings, which is a real state and a common one
+    // in software: ServiceNow and Shopify report none. Requiring the tag to
+    // exist excluded every debt-free company. It is recorded as an assumption
+    // rather than passed off as a filed zero.
+    const shortTerm = value("shortTermDebt");
+    const debtAssumedZero = longTerm === null && shortTerm === null;
+
+    const result = decomposeRoic({
+      sector,
+      operatingIncome,
+      // Where a company's own effective rate cannot be read, the US federal
+      // statutory rate stands in and the substitution is recorded.
+      effectiveTaxRate: isAvailable(tax) ? tax.value : 0.21,
+      revenue: revenue.value,
+      totalDebt: (longTerm ?? 0) + (shortTerm ?? 0),
+      equity,
+      cash: value("cash") ?? 0,
+    });
+
+    out.push({
+      cik: leader.cik,
+      name: leader.name,
+      period,
+      taxRateAssumed: !isAvailable(tax),
+      debtAssumedZero,
+      operatingLeaseLiability: value("operatingLeaseLiability"),
+      ...(isComputed(result)
+        ? { roic: result.roic, nopatMargin: result.nopatMargin, capitalTurnover: result.capitalTurnover, nopat: result.nopat, investedCapital: result.investedCapital }
+        : { reason: result.reason }),
+    });
+  }
+
+  // The advantage read needs the peer group, so it happens once all are in.
+  const computed = out.filter((row) => row.roic !== undefined);
+  for (const row of computed) {
+    const peers = computed.filter((other) => other !== row);
+    const read = readAdvantage(row, peers);
+    if ("advantage" in read) {
+      row.advantage = read.advantage;
+      row.marginPercentile = read.marginPercentile;
+      row.turnoverPercentile = read.turnoverPercentile;
+      row.medianMargin = read.medianMargin;
+      row.medianTurnover = read.medianTurnover;
+    } else {
+      row.advantageWithheld = read.reason;
+    }
+  }
+  return out;
+}
+
 async function buildIndustry(sic, label, years) {
   const [earlierYear, laterYear] = years;
   const members = await sicMembers(sic);
@@ -243,6 +341,38 @@ function writeReport(industries, years) {
         "",
       );
     }
+    const earning = (ind.roic ?? []).filter((row) => row.roic !== undefined);
+    if (earning.length) {
+      lines.push(
+        "How the leaders earn their return on capital. Margin times turnover is the return —",
+        "the sales cancel — so the split says whether it comes from charging more or from",
+        "turning capital faster. Invested capital here is interest-bearing debt plus equity",
+        "less cash; operating leases are outside it and shown so their size is visible.",
+        "",
+        "| Company | Return | NOPAT margin | Capital turnover | Route | Leases excluded |",
+        "| --- | ---: | ---: | ---: | --- | ---: |",
+        ...earning
+          .slice()
+          .sort((a, b) => b.roic - a.roic)
+          .map(
+            (row) =>
+              `| ${row.name.slice(0, 32)}${row.debtAssumedZero ? " *" : ""}${row.taxRateAssumed ? " †" : ""} | ${pct(row.roic)} | ${pct(row.nopatMargin)} | ${row.capitalTurnover.toFixed(2)}x | ${row.advantage ?? "—"} | ${row.operatingLeaseLiability ? money(row.operatingLeaseLiability) : "—"} |`,
+          ),
+        "",
+        "\\* reports no borrowings, so debt is taken as zero. † no effective tax rate could be",
+        "read, so the 21% US federal statutory rate stands in.",
+        "",
+      );
+      const declined = (ind.roic ?? []).filter((row) => row.roic === undefined);
+      if (declined.length) {
+        lines.push(
+          "Declined, with the reason:",
+          "",
+          ...declined.map((row) => `- **${row.name}** — ${row.reason}`),
+          "",
+        );
+      }
+    }
     if (ind.picture.uncertainBasis.length) {
       lines.push(
         `Revenue basis doubtful for ${ind.picture.uncertainBasis.length}: ${ind.picture.uncertainBasis.slice(0, 6).join(", ")}. Resolve these individually before relying on their share.`,
@@ -289,6 +419,7 @@ const wanted = named.length
 const built = [];
 for (const { sic, label } of wanted) {
   const industry = await buildIndustry(sic, label, years);
+  industry.roic = argv.includes("--no-roic") ? [] : await decomposeLeaders(industry);
   built.push(industry);
   const inst = industry.picture.instability;
   console.log(
@@ -333,6 +464,7 @@ const dataset = {
         basisUncertain: r.basisUncertain,
       })),
       unresolvable: ind.picture.unresolvable,
+      roic: ind.roic ?? [],
       instability: ind.picture.instability && {
         average: ind.picture.instability.average,
         years: ind.picture.instability.years,

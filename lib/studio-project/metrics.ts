@@ -87,7 +87,10 @@ export type PrimitiveName =
   | "taxExpense"
   | "pretaxIncome"
   | "netInterestIncome"
-  | "noninterestIncome";
+  | "noninterestIncome"
+  | "longTermDebt"
+  | "shortTermDebt"
+  | "operatingLeaseLiability";
 
 interface ConceptPreference {
   /** Tried in order, for any sector without its own list. */
@@ -175,6 +178,26 @@ export const PRIMITIVE_CONCEPTS: Record<PrimitiveName, ConceptPreference> = {
     default: [],
     bySector: { banking: ["NoninterestIncome"] },
   },
+  longTermDebt: {
+    default: [
+      "DebtLongtermAndShorttermCombinedAmount",
+      "LongTermDebt",
+      "LongTermDebtNoncurrent",
+      "LongTermDebtAndCapitalLeaseObligations",
+      "LongTermNotesAndLoans",
+      "LongTermNotesPayable",
+      "SeniorNotes",
+    ],
+    note: "LongTermDebt is the total including the current portion, verified where all three appear: Microsoft 40.3 = 31.1 noncurrent + 9.2 current, NVIDIA 8.5 = 7.5 + 1.0, Atkore 0.8 = 0.8 + 0.0. Anything reading it must not add the current portion again. Nothing matching AvailableForSaleSecuritiesDebtSecurities belongs here under any circumstances: that is debt the company OWNS, $6.3B of it at ServiceNow, and reading it as borrowing would invert the balance sheet.",
+  },
+  shortTermDebt: {
+    default: ["ShortTermBorrowings", "CommercialPaper", "OtherShortTermBorrowings", "NotesPayableCurrent"],
+    note: "Deliberately excludes LongTermDebtCurrent, which is the current instalment of long-term debt and is already inside LongTermDebt. Adding it there would double-count Microsoft's $9.2B.",
+  },
+  operatingLeaseLiability: {
+    default: ["OperatingLeaseLiabilityNoncurrent"],
+    note: "Not part of debt here, but reported so its size is visible: it is $19.0B at Verizon and $16.5B at Microsoft, so whether a definition includes leases changes the answer materially.",
+  },
 };
 
 // ---------------------------------------------------------------- fact access
@@ -226,6 +249,16 @@ export interface UnresolvedFigure {
 export type FigureOutcome = ResolvedFigure | UnresolvedFigure;
 export const isResolved = (outcome: FigureOutcome): outcome is ResolvedFigure => "value" in outcome;
 
+/**
+ * The forms that carry an audited annual report.
+ *
+ * 20-F is how a foreign private issuer files, and 40-F how a Canadian one does.
+ * Restricting to 10-K silently excluded every one of them: STMicroelectronics
+ * reports Assets under 20-F and 20-F/A only, and looked to this module like a
+ * company with no annual period at all.
+ */
+const ANNUAL_FORMS = new Set(["10-K", "20-F", "40-F"]);
+
 /** An annual duration, allowing for 52/53-week fiscal years. */
 const isAnnualSpan = (fact: XbrlFact): boolean =>
   !fact.start || Date.parse(fact.end) - Date.parse(fact.start) > 300 * 86_400_000;
@@ -247,7 +280,7 @@ function factAt(facts: CompanyFacts, concept: string, periodEnd: string): XbrlFa
   const rows: XbrlFact[] = [];
   for (const series of Object.values(node.units)) {
     for (const fact of series) {
-      if (fact.form === "10-K" && fact.end === periodEnd && isAnnualSpan(fact)) rows.push(fact);
+      if (ANNUAL_FORMS.has(fact.form) && fact.end === periodEnd && isAnnualSpan(fact)) rows.push(fact);
     }
   }
   if (!rows.length) return null;
@@ -261,7 +294,7 @@ function newestPeriod(facts: CompanyFacts, concept: string): string | null {
   let newest: string | null = null;
   for (const series of Object.values(node.units)) {
     for (const fact of series) {
-      if (fact.form === "10-K" && isAnnualSpan(fact) && (!newest || fact.end > newest)) newest = fact.end;
+      if (ANNUAL_FORMS.has(fact.form) && isAnnualSpan(fact) && (!newest || fact.end > newest)) newest = fact.end;
     }
   }
   return newest;
