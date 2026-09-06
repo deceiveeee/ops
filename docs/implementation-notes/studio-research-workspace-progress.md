@@ -12,7 +12,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration and operations in `lib/studio-project/`; 16 tests. Storage adapter and conflict handling still to do |
-| M3 complete stock prototype | Not started | |
+| M3 complete stock prototype | **In progress** | Industry surface built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Company-level moat work not started |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -235,6 +235,73 @@ stick all need metric definitions that survive crossing from an industrial to a 
 Moat appendix's own exclusion of financials "for accounting reasons" is the same finding
 arrived at independently.
 
+## M3 record — the industry surface
+
+The first Moat-shaped build. `lib/studio-project/industry.ts` with 21 tests,
+`scripts/source/fetch-industry.mjs` and `industry-manifest.json`, the committed dataset at
+`lib/studio-project/data/industries.json`, the surface at
+`components/studio/IndustryView.tsx` on route `/studio/industry`, and the audit at
+[`studio-industry-view.md`](../source-audits/studio-industry-view.md).
+
+**Definitions are the paper's, transcribed rather than reconstructed.** Market share
+instability is the average absolute change in share between two periods, which *Measuring the
+Moat* attributes to Bruce Greenwald, with its stated rule of thumb that a five-year average of
+two points or less is relatively stable. Concentration is HHI and C4 as the paper defines them.
+The profit pool is (ROIC − WACC) × invested capital, drawn as spread by capital so the area is
+the economic profit.
+
+**Validated against the paper's own published answers**, which is genuinely independent of this
+code. Exhibit 13 (US search engines, 2018-2023) and Exhibit 14 (US airlines) give both inputs
+and result; the implementation reproduces 1% and 0.9% respectively. The web-browser and
+social-media exhibits are deliberately **not** used: their printed per-company changes do not
+reconcile with their printed shares — Safari is shown moving 14% to 20% with a stated change of
+5% — because the changes were computed from unrounded shares and only the shares were rounded.
+
+**Six defects found by measuring, each of which changed a headline number.**
+
+1. **Truncated registrant lists.** The first version stopped at 600 and browse-edgar returns
+   alphabetically, cutting Pfizer, Merck, Lilly and Johnson & Johnson out of pharmaceuticals —
+   $261B, more than the $184B that remained. HHI fell from 2186 to 788 once the loop ran to
+   exhaustion. The first figure was fiction.
+2. **A name is not an identity, for the third time this project.** Union Pacific filed as
+   "UNION PACIFIC CORPORATION" in 2019 and "UNION PACIFIC CORP" in 2024; matched on name that
+   is a 30-point exit plus a 32-point entry, and it alone took railroads from 1.6% to 9.0%.
+3. **The largest concept is not always right.** Burlington Northern files $91M of `Revenues`
+   against $23.4B of contract revenue, where larger is right. Tigo Energy's own filing tags
+   $54.0M and $54,014.0M for the same period, where it is wrong and made a small solar company
+   10.4% of semiconductors, ahead of Intel. Preferring `Revenues` fixes Tigo and breaks BNSF;
+   preferring the larger does the reverse. Past 100× the company is dropped and reported.
+4. **An exclusion must apply to both periods.** Dropping BNSF from 2024 while leaving it in
+   2019 read as an exit and pushed railroads to 10.5% — the exclusion inventing the mobility it
+   existed to avoid distorting.
+5. **Truncating each period separately invents entries and exits.** Analog Devices filed in
+   both years; slipping from tenth to eleventh had the surface say "no longer filing", a strong
+   claim and false. The named set is now the union of each period's leaders.
+6. **Instability depends on the number of rows averaged.** Over all 313 pharmaceutical filers
+   it collapses to 0.1%; over the paper's shape of leaders-plus-Other it is 2.0%. Only the
+   second is comparable to the paper's rule of thumb, and both are reported.
+
+**Both of the paper's cautions are on the page, not in a footnote**, because each changes what
+a reader should conclude: variance within industries exceeds variance across them, so this
+narrows a search and never settles it; and concentration is not reliably linked to value
+creation, so share leads and HHI is offered as description.
+
+**Verified in the browser.** All five industries render with the right leaders — semiconductors
+show NVIDIA 4.1% → 28.1% against Intel 27.2% → 11.5% across the five years, which is the story
+that actually happened. No console errors. Tables scroll inside themselves and the page never
+scrolls sideways.
+
+**Over the screen budget, and stated rather than hidden.** 1.60 screens at 1440 and 2.49 at
+375, against the project's 1.5 limit — better than Studio's own 1.68 and 2.44 but still over.
+The remaining excess is the cautions panel, kept visible deliberately.
+
+### Not built, and why
+
+`profitPool` is implemented and tested but has no surface. It needs per-company ROIC and
+invested capital, and a WACC, which is not derivable from filings at all: it needs a cost of
+equity, so it is an input with its own provenance rather than a fact read off a statement. It
+belongs with the company layer, not the industry one.
+
 ## M2 record
 
 ### Done
@@ -267,13 +334,12 @@ actually switches the UI over.
 
 ### Next concrete action
 
-M1's two data dependencies are now both resolved and implemented. What remains is the
-Morgan Stanley backbone, which is documented but has no code and no surface.
+The industry half of the Moat backbone now exists. What is left is the company half.
 
-1. Industry surfaces from *Measuring the Moat*, in the paper's own outside-in order: industry
-   map, structure classification, profit pool, market-share instability. None exists yet.
-2. Disaggregated ROIC, now unblocked: NOPAT margin times invested-capital turnover, on the
-   per-sector metric layer.
+1. Disaggregated ROIC: NOPAT margin times invested-capital turnover, on the per-sector metric
+   layer. Unblocked, and the input the profit pool is waiting on.
+2. The five forces and the value stick as company surfaces, plus the industry map, which is
+   qualitative and has no data pipeline behind it.
 3. Field inventory for one complete investigation and one portfolio comparison.
 4. Confirm permitted use of Damodaran's NYU industry data files.
 5. Read strategy pp. 8-10 as images before designing the screen surface.

@@ -144,6 +144,59 @@ rejected rather than screened.
 
 ---
 
+# Industry pipeline
+
+Who competes in an industry, how the revenue is split, and how much of that split has moved.
+
+```bash
+OPS_SEC_CONTACT=you@example.com node scripts/source/fetch-industry.mjs              # all manifest industries
+OPS_SEC_CONTACT=you@example.com node scripts/source/fetch-industry.mjs 3674         # one SIC
+OPS_SEC_CONTACT=you@example.com node scripts/source/fetch-industry.mjs --years 2019 2024
+```
+
+Measures live in `lib/studio-project/industry.ts`, unit-tested against Morgan Stanley's own
+published figures. Audit: `docs/source-audits/studio-industry-view.md`. The trimmed dataset the
+interface reads is committed at `lib/studio-project/data/industries.json`.
+
+Two endpoints do the work. `browse-edgar` lists every registrant carrying a SIC code; the XBRL
+`frames` API returns every filer reporting a concept for a period in one request, so a whole
+industry costs three calls rather than one per company.
+
+## Defects found by measuring, each of which changed a headline number
+
+- **Truncated registrant lists.** An early version stopped at 600 and browse-edgar returns
+  alphabetically, cutting Pfizer, Merck, Lilly and Johnson & Johnson out of pharmaceuticals —
+  $261B, more than the $184B that remained. Concentration fell from 2186 to 788 once the loop ran
+  to exhaustion, so the first figure was fiction.
+- **A name is not an identity.** Union Pacific filed as "UNION PACIFIC CORPORATION" in 2019 and
+  "UNION PACIFIC CORP" in 2024. Matched on name that reads as a 30-point exit plus a 32-point
+  entry, and it alone took the railroads from 1.6% to 9.0% instability. Identity is the CIK.
+- **One concept is not enough, and the largest is not always right.** `Revenues` alone covers
+  2,500 filers; three concepts cover 5,086. But 1,083 filers report under more than one and 245
+  disagree by over half again. Burlington Northern files $91M of `Revenues` against $23.4B of
+  contract revenue, where the larger is right; Tigo Energy's own filing tags $54.0M and
+  $54,014.0M for the same period, where it is wrong and made a small solar company 10.4% of the
+  semiconductor industry. Past 100× the company is dropped and reported rather than guessed at.
+- **An exclusion must apply to both periods.** Dropping Burlington Northern from 2024 while
+  leaving it in 2019 read as an exit and pushed the railroads to 10.5% — the exclusion inventing
+  the mobility it existed to avoid distorting.
+- **Truncating each period separately invents entries and exits.** Analog Devices filed in both
+  years; slipping from tenth to eleventh had the surface report it as "no longer filing". The
+  named set is now the union of each period's leaders, which is how the paper's tables are drawn.
+- **Instability depends on how many rows you average.** The paper's exhibits name four to
+  thirteen competitors plus an Other bucket, and its two-point rule is calibrated on that shape.
+  Averaged over all 313 pharmaceutical filers it collapses to 0.1%. Both figures are reported.
+
+## What it cannot tell you
+
+SIC is a coarse market definition and SEC assigns one code per registrant. Only SEC filers
+appear, so shares are shares of the filing universe rather than of the market. Revenue is a proxy
+distorted by price and by vertical integration — the paper's own examples use units, passenger
+miles or page views where those exist. Fiscal years are aligned by SEC's calendar-year mapping,
+so a January year-end is compared with a December one.
+
+---
+
 # Supplemental source pipeline
 
 ```bash
