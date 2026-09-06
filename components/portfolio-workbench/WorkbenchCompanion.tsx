@@ -6,12 +6,12 @@ import { usePortfolioWorkbench } from "@/lib/use-portfolio-workbench";
 import { cn } from "@/lib/utils";
 
 const LIFECYCLE = [
-  { id: "mandate", label: "Mandate drafted" },
-  { id: "allocation", label: "Policy coherent" },
+  { id: "mandate", label: "Goal and limits set" },
+  { id: "allocation", label: "Allocation set" },
   { id: "evidence", label: "Research checked" },
-  { id: "architecture", label: "Architecture licensed" },
+  { id: "architecture", label: "Index or edge chosen" },
   { id: "holdings", label: "Products verified" },
-  { id: "policy", label: "Operating plan ready" },
+  { id: "policy", label: "Operating rules written" },
   { id: "graduation", label: "Portfolio complete" },
 ] as const;
 
@@ -92,7 +92,7 @@ export default function WorkbenchCompanion({ compact = false }: { compact?: bool
       <div className="px-5 py-4">
         {loadState.kind !== "ok" && (
           <div className="mb-4 rounded-xl border border-accent-amber/30 bg-accent-amber/10 p-3 text-[12px] leading-5 text-accent-amber">
-            The saved Workbench needs review. Its original local record has been preserved.
+            Your saved work needs review. The original record in this browser has been kept.
           </div>
         )}
 

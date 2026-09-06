@@ -83,8 +83,8 @@ export default function HeroChapter() {
           <Button href="/start" size="lg">
             Find your starting point
           </Button>
-          <Button href="/studio" variant="outline" size="lg">
-            Enter the studio
+          <Button href="/plan" variant="outline" size="lg">
+            Open your plan
           </Button>
         </motion.div>
       </div>

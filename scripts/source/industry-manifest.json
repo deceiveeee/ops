@@ -1,0 +1,13 @@
+{
+  "purpose": "Industries wide enough to show that structure varies, and to exercise the cases where SIC is a poor market definition.",
+  "verifiedOn": "2026-09-05",
+  "years": [2019, 2024],
+  "note": "A five-year span, because the paper's rule of thumb for market share instability is stated for five years.",
+  "industries": [
+    { "sic": "3674", "label": "Semiconductors", "why": "Concentrated but mobile: NVIDIA's share moved a long way inside five years" },
+    { "sic": "4011", "label": "Railroads", "why": "A textbook stable oligopoly, and the smallest usable filing universe" },
+    { "sic": "5331", "label": "Variety stores", "why": "One dominant firm; shows HHI at the top of its range" },
+    { "sic": "2834", "label": "Pharmaceutical preparations", "why": "600+ registrants, most of them tiny: the case that exposed the truncated registrant list" },
+    { "sic": "7372", "label": "Prepackaged software", "why": "SIC is a poor market definition here, which the report should say plainly" }
+  ]
+}

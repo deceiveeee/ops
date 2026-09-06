@@ -97,7 +97,7 @@ async function walkToChecklist(page: Page) {
   await advance(page, /Write your checklist/, "Charge the claim for risk and for your own friction.");
 }
 
-const ABANDON_RULE = "Two consecutive years below the hurdle after costs, and I close the sleeve.";
+const ABANDON_RULE = "Two consecutive years below the hurdle after costs, and I close the slice.";
 
 async function saveChecklist(page: Page) {
   await select(page, "Sharpe ratio — excess return per unit of total risk");
@@ -110,7 +110,7 @@ async function saveChecklist(page: Page) {
 }
 
 /**
- * Open every artifact on the dossier, once React is actually listening.
+ * Open every artifact on the plan, once React is actually listening.
  *
  * Playwright's actionability check sees a rendered button and clicks it, which
  * on a freshly navigated page can land before hydration has attached the
@@ -121,11 +121,11 @@ async function saveChecklist(page: Page) {
  * The label only flips to "Collapse all" once the state genuinely changed, so
  * that is the signal worth retrying against.
  */
-async function expandDossier(page: Page) {
+async function expandPlan(page: Page) {
   await expect(async () => {
     const expand = page.getByRole("button", { name: "Expand all" });
     if (await expand.count()) await expand.click();
-    // Both halves matter. The dossier gates its first paint on the Workbench
+    // Both halves matter. The plan gates its first paint on the Workbench
     // loading, so a page still showing the skeleton has no `details` at all --
     // and "none are closed" is vacuously true of nothing, which let this return
     // against an empty page, click nothing, and leave every assertion after it
@@ -135,7 +135,7 @@ async function expandDossier(page: Page) {
   }).toPass({ timeout: 15_000 });
 }
 
-test("Mission 9 checklist survives a hard refresh and reaches the dossier", async ({ page }) => {
+test("Mission 9 checklist survives a hard refresh and reaches the plan", async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto(MISSION_9);
   await walkToChecklist(page);
@@ -165,15 +165,15 @@ test("Mission 9 checklist survives a hard refresh and reaches the dossier", asyn
   await page.reload();
   await expect(page.getByText("8 of 8 stages complete", { exact: false })).toBeVisible();
 
-  await page.goto("/dossier");
-  await expandDossier(page);
+  await page.goto("/plan");
+  await expandPlan(page);
   for (const label of ["Benchmark", "Test design", "Holdout", "Sampling", "Hurdle", "Abandon if"]) {
     await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
   }
   await expect(page.getByText("Sharpe ratio — excess return per unit of total risk")).toBeVisible();
   await expect(page.getByText(ABANDON_RULE)).toBeVisible();
 
-  // The belief reaches the dossier under Mission 9, not Mission 2.
+  // The belief reaches the plan under Mission 9, not Mission 2.
   await expect(page.getByText("Market belief", { exact: true }).first()).toBeVisible();
   await expect(
     page.getByText(/My position: Prices are hard enough to beat after costs/),

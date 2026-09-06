@@ -101,6 +101,33 @@ describe("simulateTiming", () => {
   });
 });
 
+describe("friction carried from a saved Mission 8 budget", () => {
+  const budget = (estimatedAnnualDrag: number) => ({
+    ...EMPTY_FRICTION_BUDGET,
+    estimatedAnnualDrag,
+  });
+
+  it("charges a heavy budget as whole percentage points", () => {
+    const out = simulateTiming(
+      "first-drop",
+      "expiry",
+      frictionOneWayPct(budget(0.039)),
+    );
+    expect(out.frictionChargedPct).toBeCloseTo(3.9, 10);
+  });
+
+  it("charges even the cheapest reachable budget", () => {
+    const charged = simulateTiming(
+      "first-drop",
+      "expiry",
+      frictionOneWayPct(budget(0.002)),
+    );
+    const free = simulateTiming("first-drop", "expiry", 0);
+    expect(charged.frictionChargedPct).toBeCloseTo(0.2, 10);
+    expect(free.endingValue - charged.endingValue).toBeGreaterThan(0.1);
+  });
+});
+
 describe("isTimingPolicyComplete", () => {
   it("rejects an unsaved policy", () => {
     expect(isTimingPolicyComplete(EMPTY_TIMING_POLICY)).toBe(false);

@@ -385,7 +385,7 @@ export default function AllocationStudio({
       ? totalStressLossBps - value.lossBudgetBps
       : null;
 
-  let consequence = "Enter a portfolio amount and coherent sleeve policy to reveal the consequence.";
+  let consequence = "Enter a portfolio amount and a consistent slice policy to reveal the consequence.";
   if (!sleeveValuesAreValid || !rangesAreCoherent) {
     consequence =
       "One or more policy inputs are outside 0%–100%, or a target sits outside its own range. Repair those inputs before reading the stress result.";
@@ -451,7 +451,7 @@ export default function AllocationStudio({
     },
     {
       passed: rationaleIsUsable,
-      label: "The policy rationale connects the weights and loss budget to the saved mandate.",
+      label: "The policy rationale connects the weights and loss budget to the goal and limits you saved.",
     },
     {
       passed: value.acknowledged,
@@ -509,7 +509,7 @@ export default function AllocationStudio({
               />
               <p id="allocation-amount-help" className="text-[12px] leading-5 text-slate-500 sm:col-span-2">
                 {referenceAmountsReadOnly
-                  ? "These reference facts come from the saved mandate. Return to Readiness to change them; percentages remain the policy record."
+                  ? "These reference facts come from the goal and limits you saved. Go back to Readiness to change them; the percentages stay the policy record."
                   : "Approximate dollars help reveal consequences; percentages remain the policy record."}
               </p>
             </div>
@@ -960,7 +960,7 @@ export default function AllocationStudio({
               Policy check
             </div>
             <h3 id="allocation-validation-title" className="mt-2 font-display text-2xl text-white">
-              {allChecksPass ? "Coherent and explainable" : "A few decisions remain"}
+              {allChecksPass ? "Consistent and explainable" : "A few decisions remain"}
             </h3>
             <p className="mt-3 text-[14px] leading-6 text-slate-400" aria-live="polite">
               {passedCount} of {validationItems.length} checks pass. The parent lesson decides when
@@ -983,7 +983,7 @@ export default function AllocationStudio({
 
         <div className="mt-6 rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-4 sm:p-5">
           <label htmlFor="allocation-mandate-rationale" className="block text-[13px] font-semibold text-white">
-            Why does this policy fit the saved mandate?
+            Why does this policy fit the goal and limits you saved?
           </label>
           <p id="allocation-mandate-rationale-help" className="mt-1 text-[12px] leading-5 text-slate-500">
             Connect the goal, cash timing, capacity, willingness, weights, and loss budget. Name one trade-off you accept. OPS cannot infer personal fit from a model output.

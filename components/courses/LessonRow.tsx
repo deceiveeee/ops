@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getLessonComponent } from "@/lib/lessonRegistry";
+import { hasLessonComponent } from "@/lib/lessonSlugs";
 import type { Lesson } from "@/data/courses/types";
 import type { CurriculumRequirement } from "@/data/courses/portfolioBuilder";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,7 @@ export default function LessonRow({
   accentColor?: string;
   requirement?: CurriculumRequirement;
 }) {
-  const hasComponent = Boolean(getLessonComponent(lesson.slug));
+  const hasComponent = hasLessonComponent(lesson.slug);
   const isComingSoon = lesson.status === "coming-soon";
   const statusText = isComingSoon
     ? "Coming soon"

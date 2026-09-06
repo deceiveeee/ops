@@ -1,5 +1,6 @@
 import type { Course, CourseModule, SourceSlot } from "./types";
 import { getLesson } from "../lessons/lessons";
+import { isPublicBetaLesson } from "@/lib/beta";
 
 export * from "./types";
 
@@ -86,7 +87,7 @@ const moduleSourceSlots = (moduleId: string): SourceSlot[] => {
         type: "course-note",
         required: true,
         url: "https://pages.stern.nyu.edu/~adamodar/pdfiles/invphilslides/session2.pdf",
-        note: "Official NYU Stern deck establishing that a stability sleeve can still carry interest-rate and default risk.",
+        note: "Official NYU Stern deck establishing that a stability slice can still carry interest-rate and default risk.",
       },
       {
         id: "damodaran-ip-38-session-2-test",
@@ -353,7 +354,7 @@ export const financeFoundations: Course = {
       "m01-introduction-and-course-overview",
       1,
       "Introduction and Course Overview",
-      "Orientation to the course, the finance problem space, and how to use Open Portfolio Studio as a learning and investigation environment.",
+      "Orientation to the course, the problems finance sets out to solve, and how to use Open Portfolio Studio as a learning and investigation environment.",
       "Understand what finance tries to solve and how the studio supports the learning path.",
       "foundation",
       [
@@ -368,7 +369,7 @@ export const financeFoundations: Course = {
       "m02-present-value-relations",
       2,
       "Present Value Relations",
-      "Learn how finance converts future cashflows into value today using timelines, discount rates, NPV, perpetuities, annuities, compounding, and inflation.",
+      "Learn how finance converts future cashflows into value today using timelines, discount rates, net present value (NPV), perpetuities, annuities, compounding, and inflation.",
       "Convert future cashflows into present value and make investment decisions with NPV.",
       "foundation",
       [
@@ -445,7 +446,7 @@ export const financeFoundations: Course = {
       "m09-the-capm-and-apt",
       7,
       "The CAPM and APT",
-      "CAPM equilibrium, beta and systematic risk, the security market line, estimating beta, alpha and performance, APT and multifactor models, and a synthesis in practice.",
+      "The Capital Asset Pricing Model (CAPM) and Arbitrage Pricing Theory (APT): market equilibrium, beta and systematic risk, the security market line, estimating beta, alpha and performance, multifactor models, and a synthesis in practice.",
       "Relate risk to expected return using the CAPM equilibrium and multifactor reasoning.",
       "asset-pricing",
       [
@@ -460,7 +461,7 @@ export const financeFoundations: Course = {
       "m10-capital-budgeting",
       8,
       "Capital Budgeting",
-      "The NPV rule, IRR and payback, project cash flows, sensitivity and scenario analysis, and real options intuition.",
+      "The NPV rule, the internal rate of return (IRR) and payback, project cash flows, sensitivity and scenario analysis, and real options intuition.",
       "Evaluate investment projects using NPV and related tools.",
       "corporate-finance",
       [
@@ -493,8 +494,8 @@ export const financeFoundations: Course = {
     module(
       "m12-integrated-portfolio-studio-application",
       10,
-      "Integrated Portfolio Studio Application",
-      "An applied integration module that connects the course concepts into a studio-style investment workflow and decision framework.",
+      "Putting It All Together",
+      "An applied module that connects everything in the course into one investment workflow and decision framework.",
       "Combine security analysis, valuation, and portfolio construction into an investment decision.",
       "integration",
       [
@@ -512,7 +513,7 @@ export const investmentFoundations: Course = {
   title: "Investment Foundations",
   subtitle: "Build, defend, and monitor an investment portfolio",
   description:
-    "Thirteen portfolio decisions connect your mandate, market beliefs, risk policies, allocation, evidence, valuation, friction, holdings, and operating rules into one Portfolio Dossier. Investigate a Damodaran strategy only when it informs a portfolio decision.",
+    "Thirteen portfolio decisions connect your goal, market beliefs, risk limits, allocation, evidence, valuation, costs, holdings, and operating rules into one portfolio plan. Investigate a Damodaran strategy only when it informs a portfolio decision.",
   estimatedHours: 10,
   order: 2,
   modules: [
@@ -523,7 +524,7 @@ export const investmentFoundations: Course = {
     module(
       "if-mission-1-mandate",
       1,
-      "Define Your Investor Mandate",
+      "Set Your Goal and Limits",
       "Map where a philosophy actually changes a decision, then work out which approaches fit the investor who has to carry them out — the goal, the horizon, the cash needs and the tolerance behind every later choice.",
       "State who the portfolio is being built for, and what that rules in and out.",
       "investment-philosophy",
@@ -636,9 +637,9 @@ export const investmentFoundations: Course = {
     module(
       "if-m08-architecture",
       10,
-      "Passive or Edge",
+      "Index or Edge",
       "Start from the architecture the evidence supports, then find out what it would actually take to justify leaving it — a specific mispricing, a mechanism, and a margin that survives your own costs.",
-      "Produce an Architecture and Edge Decision recording the passive core, its benchmark, a dated base rate, and — only if every condition was met — a licensed active sleeve with its thesis-break condition and review date.",
+      "Produce an index-or-edge decision recording the passive core, its benchmark, a dated base rate, and — only if every condition was met — a licensed active slice with its thesis-break condition and review date.",
       "security-pricing",
       ["if-8-1-choose-passive-or-prove-an-edge"],
       "Mission 10",
@@ -666,9 +667,9 @@ export const investmentFoundations: Course = {
     module(
       "if-m12-holdings",
       13,
-      "Holdings Slate",
-      "Turn licensed policy sleeves into exact legal products — verified against their own filings, X-rayed for the exposure you hold twice, and rehearsed as an order that is never sent.",
-      "Produce a Holdings Slate: verified products mapped to licensed sleeves, an overlap result carrying its key, coverage and as-of dates, and a non-executing order draft that names the share class.",
+      "Holdings List",
+      "Turn the policy slices you licensed into exact legal products — verified against their own filings, X-rayed for the exposure you hold twice, and rehearsed as an order that is never sent.",
+      "Produce a holdings list: verified products mapped to the slices you licensed, an overlap result carrying its key, coverage and as-of dates, and a non-executing order draft that names the share class.",
       "security-pricing",
       ["if-pb-12-choose-the-actual-holdings"],
       "Mission 12",
@@ -710,6 +711,7 @@ export function getAllLessons(): LessonWithContext[] {
   for (const course of courses) {
     for (const module of course.modules) {
       for (const slug of module.lessonSlugs) {
+        if (!isPublicBetaLesson(slug)) continue;
         const lesson = getLesson(slug);
         if (lesson) out.push({ course, module, lesson });
       }

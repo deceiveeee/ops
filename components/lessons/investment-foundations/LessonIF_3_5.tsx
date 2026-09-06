@@ -13,9 +13,9 @@ export default function LessonIF_3_5() {
         title="Choosing a Risk Measure"
         intro="Challenge CAPM at its boundaries, compare competing risk methods, and choose a method because it fits the investor's question."
         mission="Match theory, accounting, proxy, market-implied, cash-flow, and margin-of-safety approaches to the decisions they can support."
-        action="Open the switchboard"
+        action="Compare the methods"
         minutes="22–25 minutes"
-        artifact="Two-Method Risk Stack"
+        artifact="Two chosen risk methods"
       />
       <RiskMeasureJourney />
     </IFLessonLayout>

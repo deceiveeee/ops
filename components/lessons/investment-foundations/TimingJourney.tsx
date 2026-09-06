@@ -70,7 +70,7 @@ const STAGES: readonly ValuationStage[] = [
     title: "Save the timing policy",
     guide:
       "This becomes the rule that later missions check against. Holdings and the flight test both read it.",
-    instruction: "Save it to the dossier.",
+    instruction: "Save it to your plan.",
     next: "Return to Investment Foundations",
   },
 ];
@@ -731,7 +731,7 @@ function StagePolicy({
           />
           <Field
             id="timing-sleeve"
-            label="Eligible sleeve"
+            label="Eligible slice"
             value={policy.eligibleSleeve}
             onChange={(v) => set({ eligibleSleeve: v })}
           />
@@ -744,7 +744,7 @@ function StagePolicy({
           />
           <Field
             id="timing-falsifier"
-            label="Falsifier — what ends it early"
+            label="What would end it early"
             value={policy.falsifier}
             onChange={(v) => set({ falsifier: v })}
           />
@@ -773,7 +773,7 @@ function StagePolicy({
         <p className="text-[14px] text-slate-400">
           {policy.mode === "no-timing"
             ? "State your reason to continue."
-            : "Every field is required. A rule with no expiry or no falsifier is not a policy — it is an open-ended deviation."}
+            : "Every field is required. A rule with no expiry, and nothing that would end it, is not a policy — it is an open-ended deviation."}
         </p>
       )}
 
@@ -816,7 +816,7 @@ function StageHeadline({
       <p className="ops-body text-[15px] leading-7 text-slate-300">
         {policy.mode === "no-timing"
           ? "You wrote a no-timing policy. What does it tell you to do?"
-          : "Check it against what you actually wrote: your signal, your benchmark, your falsifier."}
+          : "Check it against what you actually wrote: your signal, your benchmark, and what would end it."}
       </p>
 
       <ChoiceGroup

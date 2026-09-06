@@ -1,0 +1,59 @@
+{
+  "purpose": "Dated share prices derived from N-PORT holdings filings, for Studio research. Price is filed USD value divided by filed share count. SEC filings are public domain, so unlike every commercial feed examined these numbers can be shown to a learner with their source attached.",
+  "verifiedOn": "2026-09-05",
+  "defaultSince": "2025-01-01",
+  "fairAccess": {
+    "policy": "https://www.sec.gov/os/webmaster-faq#developers",
+    "requires": "OPS_SEC_CONTACT, an address SEC can use to reach the operator. Never committed.",
+    "throttleMs": 400,
+    "note": "SEC permits 10 requests a second. This pipeline uses 2.5, and identifies a filing from its first 16 KB before deciding to download the whole thing."
+  },
+  "howFundsWereChosen": [
+    "Registrants file one NPORT-P per fund and the submissions index does not name it: primaryDocDescription is empty. Every seriesId below was read from the filing header with --discover, never guessed.",
+    "Trusts keep different fiscal year-ends, so they report on different month-ends. Pooling three of them widens the calendar: Vanguard Index Funds report Mar/Jun/Sep/Dec, Vanguard Scottsdale Feb/May/Aug/Nov, and Vanguard STAR Jan/Apr/Jul/Oct.",
+    "Two funds whose holdings overlap are kept deliberately. VTI and VOO share about 500 securities, and their independently filed prices agreeing is the check that the quotient really is the market price."
+  ],
+  "knownGaps": [
+    "US equities reach eight month-ends of twelve from these funds; international reaches four. Monthly coverage needs a registrant that files monthly, iShares Trust (CIK 0001100663) among them. Deferred to the milestone that fixes the research universe, because which funds to add depends on which securities that universe contains.",
+    "Coverage is per filing, not per security: that some fund reported on a date does not mean it held a given security then. A sparse security must show its real observation dates and never an interpolated line.",
+    "These are price returns. Dividends are not in them, so nothing built on them may be called a total return."
+  ],
+  "funds": [
+    {
+      "ticker": "VTI",
+      "seriesId": "S000002848",
+      "name": "Vanguard Total Stock Market Index Fund",
+      "cik": "0000036405",
+      "trust": "Vanguard Index Funds",
+      "reportsOn": "Mar/Jun/Sep/Dec",
+      "why": "Broadest US coverage of any single filing found: 3,480 positions carried a derivable price in the 2026-03-31 filing."
+    },
+    {
+      "ticker": "VOO",
+      "seriesId": "S000002839",
+      "name": "Vanguard 500 Index Fund",
+      "cik": "0000036405",
+      "trust": "Vanguard Index Funds",
+      "reportsOn": "Mar/Jun/Sep/Dec",
+      "why": "Overlaps VTI by about 500 securities. Independently filed, so the agreement between them is the pipeline's accuracy check rather than an assumption."
+    },
+    {
+      "ticker": "VXUS",
+      "seriesId": "S000002932",
+      "name": "Vanguard Total International Stock Index Fund",
+      "cik": "0000736054",
+      "trust": "Vanguard STAR Funds",
+      "reportsOn": "Jan/Apr/Jul/Oct",
+      "why": "International coverage, 8,747 priced positions. Also the only source of multi-exchange securities: Barrick appears in it on three exchanges at two different fair-value levels."
+    },
+    {
+      "ticker": "VTHR",
+      "seriesId": "S000030006",
+      "name": "Vanguard Russell 3000 Index Fund",
+      "cik": "0001021882",
+      "trust": "Vanguard Scottsdale Funds",
+      "reportsOn": "Feb/May/Aug/Nov",
+      "why": "Near-total US market on the month-ends the Vanguard Index Funds trust does not report, taking US coverage from four month-ends a year to eight."
+    }
+  ]
+}

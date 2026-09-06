@@ -257,7 +257,7 @@ export const WORKED_SCENARIO: FlightScenario = {
   id: "crash",
   title: "The market falls 30% in seven weeks",
   prompt:
-    "Your growth sleeve is down roughly a third. Nothing about the companies you own has changed that you know of. Your income is unaffected.",
+    "Your growth slice is down roughly a third. Nothing about the companies you own has changed that you know of. Your income is unaffected.",
 };
 
 /** Four contingencies the learner's own circumstances create. */
@@ -281,9 +281,9 @@ export const FLIGHT_A: FlightScenario[] = [
   },
   {
     id: "drift",
-    title: "One sleeve has run away",
+    title: "One slice has run away",
     prompt:
-      "After a strong year your growth sleeve sits well outside the band you set.",
+      "After a strong year your growth slice sits well outside the band you set.",
   },
 ];
 
@@ -305,7 +305,7 @@ export const FLIGHT_B: FlightScenario[] = [
     id: "licence",
     title: "The edge licence expires",
     prompt:
-      "The review date on your active sleeve arrives. It has beaten its benchmark two years running.",
+      "The review date on your active slice arrives. It has beaten its benchmark two years running.",
   },
   {
     id: "mandate",
@@ -371,7 +371,7 @@ export type CompletionInputs = {
 
 /**
  * `Execute-ready` requires everything `Practice-complete` requires, plus a
- * personal (not practice) dossier, no checkpoint gaps, and resolved readiness
+ * personal (not practice) plan, no checkpoint gaps, and resolved readiness
  * blockers. Neither state is advice or authorization to trade, and nothing in
  * this module should ever be rendered as an endorsement.
  */

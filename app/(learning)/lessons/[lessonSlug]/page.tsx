@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { courses, findLesson, getAllLessons } from "@/data/courses";
-import { getLessonComponent } from "@/lib/lessonRegistry";
+import { hasLessonComponent } from "@/lib/lessonSlugs";
+import LessonMount from "@/components/lessons/LessonMount";
 import SectionLabel from "@/components/ui/SectionLabel";
 
 export function generateStaticParams() {
@@ -22,8 +23,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
       ? `/courses/${course.slug}#portfolio-missions`
       : `/courses/${course.slug}#module-${module.order}`;
 
-  const Custom = getLessonComponent(lesson.slug);
-  if (Custom) {
+  if (hasLessonComponent(lesson.slug)) {
     return (
       <div className="relative w-full">
         <div className="pointer-events-none absolute inset-0 terminal-grid opacity-20" />
@@ -35,7 +35,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
             ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
           </Link>
         </div>
-        <Custom />
+        <LessonMount slug={lesson.slug} />
       </div>
     );
   }

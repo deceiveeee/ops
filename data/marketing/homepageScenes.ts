@@ -148,7 +148,7 @@ export const coursePath: { key: string; label: string; href?: string }[] = [
   { key: "valuation", label: "Valuation" },
   { key: "portfolio", label: "Portfolio" },
   { key: "macro", label: "Macro" },
-  { key: "studio", label: "Studio", href: "/studio" },
+  { key: "plan", label: "Your plan", href: "/plan" },
 ];
 
 export type HomepageScene = {

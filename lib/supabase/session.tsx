@@ -24,15 +24,24 @@ const Ctx = createContext<SessionValue | null>(null);
 export function SessionProvider({
   children,
   client,
+  guestOnly = false,
 }: {
   children: ReactNode;
   client?: SupabaseClient;
+  guestOnly?: boolean;
 }) {
   const supabase = useMemo(() => client ?? getSupabaseBrowser(), [client]);
   const [user, setUser] = useState<User | null>(null);
-  const [status, setStatus] = useState<Status>("loading");
+  const [status, setStatus] = useState<Status>(
+    guestOnly ? "unauthenticated" : "loading",
+  );
 
   useEffect(() => {
+    if (guestOnly) {
+      setUser(null);
+      setStatus("unauthenticated");
+      return;
+    }
     let active = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!active) return;
@@ -47,7 +56,7 @@ export function SessionProvider({
       active = false;
       data.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [guestOnly, supabase]);
 
   const value = useMemo<SessionValue>(
     () => ({ user, status, client: supabase }),

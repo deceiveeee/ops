@@ -92,7 +92,7 @@ async function completePracticeReadiness(page: Page) {
   }
   await choose(page, "Capacity and liquidity changed; willingness may be unchanged");
   await choose(page, /Record the \$12,000 as near-term cash/);
-  await page.getByRole("button", { name: "Save readiness route" }).click();
+  await page.getByRole("button", { name: "Save what you can do now" }).click();
 }
 
 async function completePracticeMission(page: Page) {
@@ -140,7 +140,7 @@ async function completePracticeMission(page: Page) {
     .getByRole("checkbox", { name: /I understand that the weights and budget/ })
     .check();
   await page.getByRole("button", { name: "Lock this draft for transfer" }).click();
-  await page.getByRole("button", { name: /Face a changed mandate/ }).click();
+  await page.getByRole("button", { name: /Face a changed goal/ }).click();
 
   await fillRepair(
     page,
@@ -159,11 +159,11 @@ async function completePracticeMission(page: Page) {
     page,
     "A learner/OPS policy from a hypothetical loss—not a regulator threshold or guarantee",
   );
-  await page.getByRole("button", { name: "Save Allocation and Risk Policy" }).click();
+  await page.getByRole("button", { name: "Save your allocation and risk limits" }).click();
 }
 
 /**
- * Open every artifact on the dossier, once React is actually listening.
+ * Open every artifact on the plan, once React is actually listening.
  *
  * Playwright's actionability check sees a rendered button and clicks it, which
  * on a freshly navigated page can land before hydration has attached the
@@ -174,11 +174,11 @@ async function completePracticeMission(page: Page) {
  * The label only flips to "Collapse all" once the state genuinely changed, so
  * that is the signal worth retrying against.
  */
-async function expandDossier(page: Page) {
+async function expandPlan(page: Page) {
   await expect(async () => {
     const expand = page.getByRole("button", { name: "Expand all" });
     if (await expand.count()) await expand.click();
-    // Both halves matter. The dossier gates its first paint on the Workbench
+    // Both halves matter. The plan gates its first paint on the Workbench
     // loading, so a page still showing the skeleton has no `details` at all --
     // and "none are closed" is vacuously true of nothing, which let this return
     // against an empty page, click nothing, and leave every assertion after it
@@ -203,11 +203,11 @@ test("Mission 5 persists a practice policy, restores completion, and keeps modes
   await expect(page.getByText("7 of 7 stages complete", { exact: false })).toBeVisible();
 
   await Promise.all([
-    page.waitForURL("**/dossier"),
-    page.getByRole("link", { name: /Open the Portfolio Dossier/ }).last().click(),
+    page.waitForURL("**/plan"),
+    page.getByRole("link", { name: /Open your plan/ }).last().click(),
   ]);
-  await expect(page.getByRole("heading", { name: "Allocation & risk policy" })).toBeVisible();
-  await expandDossier(page);
+  await expect(page.getByRole("heading", { name: "Allocation and risk limits" })).toBeVisible();
+  await expandPlan(page);
   await expect(page.getByText("Mina protects the dated tuition need", { exact: false })).toBeVisible();
   await expect(page.getByText("Range 15% to 25%; target 20%", { exact: false })).toBeVisible();
 
@@ -232,7 +232,7 @@ test("Mission 5 persists a practice policy, restores completion, and keeps modes
   ]) {
     await page.getByRole("button", { name }).click();
   }
-  await page.getByRole("button", { name: "Save readiness route" }).click();
+  await page.getByRole("button", { name: "Save what you can do now" }).click();
 
   await expect(page.getByText("4 of 7 stages complete", { exact: false })).toBeVisible();
   await expect(

@@ -75,8 +75,8 @@ export default function MarketHero() {
           <Button href="/courses" size="lg">
             Explore courses
           </Button>
-          <Button href="/studio" variant="outline" size="lg">
-            Enter the studio
+          <Button href="/plan" variant="outline" size="lg">
+            Open your plan
           </Button>
         </motion.div>
       </div>

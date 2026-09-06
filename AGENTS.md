@@ -36,6 +36,49 @@ Every lesson must be coherent for a learner encountering the topic for the first
 - Review pedagogy separately from visual, functional, accessibility, and responsive QA. Passing tests does not prove that the teaching sequence is logical.
 - Test the complete lesson from a fresh learner state, recording for every assessed idea where it was introduced and practiced.
 
+### Plain language is a release requirement
+
+Beta learners reported that OPS wording was too hard to follow, naming "dossier" and "investor mandate" as words that taught them nothing. Difficulty in the finance is the product. Difficulty in the labels is a defect. Before implementation and again during QA:
+
+- Separate the two vocabularies. A term a mission introduces and defines is taught vocabulary and stays. A term OPS invented for its own furniture, or a real finance term no mission defines, is a defect and must be rewritten in plain English.
+- Never name a surface, mission, saved record, button, or field with a word the learner has not met yet. Navigation, page titles, and calls to action are read before any lesson runs, so they carry the strictest version of this rule.
+- Preserve a source's own term where the cited framework depends on it, and gloss it in place on first use instead of renaming it. Renaming a labeled stage of a cited framework is a source-integrity defect, not a simplification.
+- Write plainly, not childishly. Short, concrete, adult sentences. No baby talk, no exclamation marks, no reassurance the learner did not ask for.
+- Keep one name per concept across the lessons, the plan page, the course pages, and the progress rail. A concept renamed on one surface only is worse than the jargon it replaced.
+- Treat copy as load-bearing for the test suite. Playwright asserts on button and heading text, so run the full e2e suite after any rename and update the specs rather than skipping them.
+- Review wording separately from visual, functional, accessibility, and responsive QA. A page can pass every assertion and still be unreadable to a first-time learner.
+
+Settled vocabulary, decided 2026-09-03. Use the second term; do not reintroduce the first:
+
+- dossier, Portfolio Dossier - your plan, at the route /plan
+- artifact - decision, or record
+- investor mandate - goal and limits
+- sleeve - slice, with "sleeve" named once as the industry word in the Mission 5 definition
+- holdings slate - holdings list
+- fit charter - fit check
+- Operating Plan and IPS - operating rules
+- falsifier - what would prove it wrong
+- provenance - where this came from
+- readiness route - what you can do now
+- deployment - putting real money in
+- coherent, in prose - consistent
+- Fund Passport - fund identity, or the identity panel
+- tranche, meaning a portion of capital - block
+- covenant headroom - room under its loan terms
+- price concession - a much lower price
+- switchboard, risk stack - name the methods themselves
+- Integrated Portfolio Studio Application - Putting It All Together
+
+Taught vocabulary that stays, because a mission introduces and defines each one: allocation, valuation, liquidity, friction, hurdle, passive, licence, flight test, preflight, and mandate inside the five-stage investment process, which is the source's own term and is glossed where it appears.
+
+Some terms were kept and defined rather than replaced, because the term is the subject
+being taught and no plain synonym carries it: "tranche" in securitization is now defined
+where Lesson 3.4 introduces pooled claims; "anomaly", "reflexive loop", "reinvestment
+runway" and the fixed-income "risk stack" already carry a definition at first use. That is
+the standard to meet. An acronym counts as undefined until it is expanded in the same
+place a learner can reach without the lesson - CAPM, APT and IRR are expanded in the
+Finance Foundations module descriptions for exactly that reason.
+
 ### Source integrity is a release requirement
 
 OPS lessons may be used by high school students who are encountering finance for the first time. Accuracy, authenticity, and traceability are required before lesson design or implementation begins:

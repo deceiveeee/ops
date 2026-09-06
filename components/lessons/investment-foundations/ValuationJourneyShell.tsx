@@ -26,7 +26,7 @@ export default function ValuationJourneyShell({
   finishHref = "/courses/investment-foundations",
   finishLabel = "Return to Investment Foundations",
   labLabel = "Guided valuation lab",
-  savedArtifactLabel = "lesson artifact",
+  savedArtifactLabel = "saved record",
   initialCompleted,
   initialStage,
 }: {
@@ -306,7 +306,7 @@ function GuideMessage({
         <p className="ops-body mt-1 text-[15px] text-slate-200">
           {done
             ? isLast
-              ? `${current.label} complete. You have finished the lesson, and your ${savedArtifactLabel} is saved to the dossier.`
+              ? `${current.label} complete. You have finished the lesson, and your ${savedArtifactLabel} is saved to your plan.`
               : `${current.label} complete. The next stage builds directly on this result.`
             : current.guide}
         </p>

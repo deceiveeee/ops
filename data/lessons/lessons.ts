@@ -5,6 +5,7 @@ import type {
   LessonType,
   SourceSlot,
 } from "../courses/types";
+import { isPublicBetaLesson } from "@/lib/beta";
 
 const COURSE_SLUG = "finance-foundations";
 
@@ -1816,7 +1817,7 @@ const specs: LessonSpec[] = [
     subtitle:
       "Match a philosophy's implementation demands with the investor's horizon, liquidity, loss capacity, behavior, resources, and account context.",
     description:
-      "A guided investor-fit lab defining demand–capacity matching, separating strategy demands from investor capacity and preference, comparing two investors with the same market belief, diagnosing binding constraints, rehearsing difficult moments, and saving a provisional fit charter.",
+      "A guided investor-fit lab defining demand–capacity matching, separating strategy demands from investor capacity and preference, comparing two investors with the same market belief, diagnosing binding constraints, rehearsing difficult moments, and saving a provisional fit check.",
     type: "interactive",
     lessonType: "Interactive Lesson",
     estimatedMinutes: 22,
@@ -1827,7 +1828,7 @@ const specs: LessonSpec[] = [
       "Demand–Capacity Analysis",
       "Constraint Diagnosis",
       "Behavioral Review Rules",
-      "Implementation Charter Design",
+      "Implementation Fit Check Design",
     ],
     objectives: [
       "Define investor–philosophy fit as a match between a philosophy's implementation demands and the investor's actual capacity.",
@@ -1836,7 +1837,7 @@ const specs: LessonSpec[] = [
       "Derive different portfolio actions for two investors who share the same market belief.",
       "Identify the binding constraint that prevents a philosophy from being executed as designed.",
       "Apply evidence-based review rules during losses, thesis changes, and emerging cash needs.",
-      "Save a provisional investor-fit charter for one shortlisted philosophy family.",
+      "Save a provisional investor-fit check for one shortlisted philosophy family.",
     ],
   },
   {
@@ -2372,8 +2373,8 @@ const specs: LessonSpec[] = [
     objectives: [
       "Separate financial capacity for loss from willingness to experience volatility.",
       "Explain why diversification and an efficient frontier do not choose a personally suitable portfolio by themselves.",
-      "Set broad sleeve weights and target ranges that total 100% and cover a stated near-term cash need.",
-      "Calculate each sleeve's contribution to an explicitly hypothetical portfolio stress loss.",
+      "Set broad slice weights and target ranges that total 100% and cover a stated near-term cash need.",
+      "Calculate each slice’s contribution to an explicitly hypothetical portfolio stress loss.",
       "Derive an optional candidate position ceiling from a learner-owned loss contribution and loss assumption without presenting it as a regulator rule.",
       "Repair an unfamiliar allocation after a cash need changes, then save a coherent policy to the Portfolio Workbench.",
     ],
@@ -2387,7 +2388,7 @@ const specs: LessonSpec[] = [
     subtitle:
       "Run the three tests that decide whether a market-beating claim survives, name the faults that sink most evidence, and charge the claim for risk and your own friction.",
     description:
-      "An evidence investigation that starts from the joint hypothesis problem, reads an event window and a portfolio study on their own numbers, walks the ten testing sins, and saves an Evidence Test Checklist to the Portfolio Dossier.",
+      "An evidence investigation that starts from the joint hypothesis problem, reads an event window and a portfolio study on their own numbers, walks the ten testing sins, and saves an evidence test checklist to your plan.",
     type: "interactive",
     lessonType: "Portfolio Mission",
     estimatedMinutes: 35,
@@ -2445,12 +2446,12 @@ const specs: LessonSpec[] = [
     slug: "if-pb-12-choose-the-actual-holdings",
     moduleId: "if-m12-holdings",
     order: 1,
-    shortTitle: "Holdings Slate",
+    shortTitle: "Holdings List",
     title: "Choose the Actual Holdings",
     subtitle:
-      "Establish what a ticker legally is, read the few facts in a filing that decide whether a product fits a sleeve you already licensed, find the exposure you hold twice, and rehearse an order you never send.",
+      "Establish what a ticker legally is, read the few facts in a filing that decide whether a product fits a slice you already licensed, find the exposure you hold twice, and rehearse an order you never send.",
     description:
-      "The first mission in which an exact legal security enters the plan. The learner searches EDGAR for a ticker and finds no filer, then resolves the registrant, series and share class that do exist. A complete Fund Passport is modelled against its filing before the learner fills one from a second sponsor's prospectus, one field at a time, where a wrong pick produces a wrong passport rather than a red cross — including a holdings date in the future. The Overlap X-ray shows that 99.88% of one growth fund sits inside another, and that changing the aggregation key from instrument to issuer changes the answer. Three checks follow: a turnover figure that measures nothing, a slate that looks diversified and is not, and a holdings file 138 days old. The mission ends in an order rehearsal that names the exact share class and cannot be transmitted, because no submission endpoint exists.",
+      "The first mission in which an exact legal security enters the plan. The learner searches EDGAR for a ticker and finds no filer, then resolves the registrant, series and share class that do exist. A complete fund identity is modelled against its filing before the learner fills one from a second sponsor's prospectus, one field at a time, where a wrong pick produces a wrong passport rather than a red cross — including a holdings date in the future. The Overlap X-ray shows that 99.88% of one growth fund sits inside another, and that changing the aggregation key from instrument to issuer changes the answer. Three checks follow: a turnover figure that measures nothing, a slate that looks diversified and is not, and a holdings file 138 days old. The mission ends in an order rehearsal that names the exact share class and cannot be transmitted, because no submission endpoint exists.",
     type: "interactive",
     lessonType: "Portfolio Mission",
     estimatedMinutes: 40,
@@ -2485,7 +2486,7 @@ const specs: LessonSpec[] = [
     subtitle:
       "Decide what you will do when the market falls, your income stops or the reason you bought something turns out to be wrong — then compile twelve missions into one document and defend a stranger's portfolio.",
     description:
-      "The capstone. It opens on a readiness map that names every checkpoint the plan depends on and why, then works one market-crash scenario end to end — including why a stop order is not protection, since the SEC's own description is that it becomes a market order at the moment prices move fastest. The rebalancing control room compares the three regulator-listed methods against the learner's own bands, showing that the cheapest repairs least and cannot run without ongoing contributions, while the one that repairs fully is the only one that can realise a gain. The learner then writes the two IPS elements the course has never produced — the review process and the rebalancing rule — plus contribution, withdrawal, replacement and thesis-break rules, and the compiler assembles the rest from Missions 1 to 12 without re-asking a single question. Eight unaided scenarios follow, where discovering that no written rule covers a situation is a finding rather than a mistake, and the mission closes on an unlabelled transfer case.",
+      "The capstone. It opens on a readiness map that names every checkpoint the plan depends on and why, then works one market-crash scenario end to end — including why a stop order is not protection, since the SEC's own description is that it becomes a market order at the moment prices move fastest. The rebalancing control room compares the three regulator-listed methods against the learner's own bands, showing that the cheapest repairs least and cannot run without ongoing contributions, while the one that repairs fully is the only one that can realise a gain. The learner then writes the two operating-rule elements the course has never produced — the review process and the rebalancing rule — plus contribution, withdrawal, replacement and thesis-break rules, and the compiler assembles the rest from Missions 1 to 12 without re-asking a single question. Eight unaided scenarios follow, where discovering that no written rule covers a situation is a finding rather than a mistake, and the mission closes on an unlabelled transfer case.",
     type: "interactive",
     lessonType: "Portfolio Mission",
     estimatedMinutes: 40,
@@ -2521,7 +2522,7 @@ const specs: LessonSpec[] = [
     subtitle:
       "Read the current base rate for what it does and does not say, watch a market-beating strategy destroy value once risk and friction are charged, and decide the architecture you will actually run.",
     description:
-      "An architecture decision that starts from a passive default, charges a persuasive active proposal for risk and the learner's own friction, tests a winning streak against a 25% no-continuity null, and saves an Architecture and Edge Decision to the Portfolio Dossier. A fully passive portfolio is a complete outcome.",
+      "An architecture decision that starts from a passive default, charges a persuasive active proposal for risk and the learner's own friction, tests a winning streak against a 25% no-continuity null, and saves an index-or-edge decision to your plan. A fully passive portfolio is a complete outcome.",
     type: "interactive",
     lessonType: "Portfolio Mission",
     estimatedMinutes: 40,
@@ -2552,7 +2553,7 @@ const specs: LessonSpec[] = [
     subtitle:
       "Break the cost of acting into spread, price impact, waiting, and tax; then work out the return your strategy must clear before it beats an index.",
     description:
-      "A cost investigation that starts from the active manager's historical 1% shortfall, independently recalculates Damodaran's published 12.22% approximation as about 12.24% for a 4% spread, and saves an explicitly illustrative Friction Budget to the Portfolio Dossier.",
+      "A cost investigation that starts from the active manager's historical 1% shortfall, independently recalculates Damodaran's published 12.22% approximation as about 12.24% for a 4% spread, and saves an explicitly illustrative friction budget to your plan.",
     type: "interactive",
     lessonType: "Portfolio Mission",
     estimatedMinutes: 35,
@@ -2583,7 +2584,7 @@ const specs: LessonSpec[] = [
     subtitle:
       "Match the claim, cash flow, and required return; test whether growth creates value; then turn uncertainty into a price rule.",
     description:
-      "A valuation-gravity investigation that corrects free-growth intuition, scans peer comparisons for missing controls, and saves a range-based buy/watch/avoid rule to the Portfolio Dossier.",
+      "A valuation-gravity investigation that corrects free-growth intuition, scans peer comparisons for missing controls, and saves a range-based buy/watch/avoid rule to your plan.",
     type: "interactive",
     lessonType: "Portfolio Mission",
     estimatedMinutes: 50,
@@ -2940,5 +2941,7 @@ export function getLesson(slug: string): Lesson | undefined {
 }
 
 export function getLessonsForModule(moduleId: string): Lesson[] {
-  return lessons.filter((l) => l.moduleId === moduleId);
+  return lessons.filter(
+    (lesson) => lesson.moduleId === moduleId && isPublicBetaLesson(lesson.slug),
+  );
 }

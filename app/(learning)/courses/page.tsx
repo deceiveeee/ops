@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { courses } from "@/data/courses";
+import { getLessonsForModule } from "@/data/lessons";
 import { portfolioBuilderPath } from "@/data/courses/portfolioBuilder";
 import Button from "@/components/ui/Button";
 import CourseCard from "@/components/courses/CourseCard";
@@ -13,7 +14,7 @@ export const metadata = { title: "Courses — Open Portfolio Studio" };
  *   1. Hero — large headline + supporting copy + 3-step path
  *   2. Two premium course product cards
  *   3. Recommended learning sequence
- *   4. Studio entry CTA
+ *   4. Your-plan entry CTA
  *
  * Uses the full desktop canvas (1400px max). No monospace, no tiny
  * uppercase metadata, no small outlined dashboard panels.
@@ -36,7 +37,18 @@ const MISSION_COUNT_WORD =
 function getLessonsCount(courseSlug: string): number {
   const course = courses.find((c) => c.slug === courseSlug);
   if (!course) return 0;
-  return course.modules.reduce((sum, m) => sum + m.lessonSlugs.length, 0);
+  return course.modules.reduce(
+    (sum, module) => sum + getLessonsForModule(module.id).length,
+    0,
+  );
+}
+
+function getModulesCount(courseSlug: string): number {
+  const course = courses.find((candidate) => candidate.slug === courseSlug);
+  if (!course) return 0;
+  return course.modules.filter(
+    (module) => getLessonsForModule(module.id).length > 0,
+  ).length;
 }
 
 export default function CoursesPage() {
@@ -61,13 +73,13 @@ export default function CoursesPage() {
             Continue with Investment Foundations to research investments and build a portfolio.
           </p>
 
-          {/* Quiet 3-step path — Finance → Investment → Studio */}
+          {/* Quiet 3-step path — Finance → Investment → your plan */}
           <div className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-4">
             <PathStep num="1" title="Finance Foundations" note="Build the financial language." />
             <PathConnector />
             <PathStep num="2" title="Investment Foundations" note="Apply it to investment decisions." />
             <PathConnector />
-            <PathStep num="3" title="Portfolio Studio" note="Research, value and construct." />
+            <PathStep num="3" title="Your portfolio plan" note="Gather the decisions and defend them." />
           </div>
         </div>
       </section>
@@ -91,7 +103,7 @@ export default function CoursesPage() {
                   "Understand risk and portfolio construction",
                 ]}
                 hours={financeFoundations.estimatedHours}
-                modules={financeFoundations.modules.length}
+                modules={getModulesCount(financeFoundations.slug)}
                 lessons={getLessonsCount(financeFoundations.slug)}
                 variant="cyan"
                 recommended
@@ -103,10 +115,10 @@ export default function CoursesPage() {
                 slug={investmentFoundations.slug}
                 title={investmentFoundations.title}
                 subtitle={`${MISSION_COUNT_WORD} decisions. One portfolio you can defend.`}
-                shortDescription={`Build a mandate, allocation, research process, holdings plan, and review policy in about ${investmentFoundations.estimatedHours} core hours. Use Damodaran labs when you want additional depth.`}
+                shortDescription={`Set a goal, an allocation, a research process, a holdings plan and review rules in about ${investmentFoundations.estimatedHours} core hours. Use Damodaran labs when you want additional depth.`}
                 outcomes={[
-                  "Set an allocation and risk budget",
-                  "Choose a passive core or defend an active sleeve",
+                  "Set an allocation and a loss budget",
+                  "Choose a passive core, or defend an active slice",
                   "Implement, rebalance, and monitor the portfolio",
                 ]}
                 hours={investmentFoundations.estimatedHours}
@@ -148,17 +160,17 @@ export default function CoursesPage() {
             />
             <SequenceStep
               num="3"
-              title="Portfolio Studio"
-              note="Research companies, value securities, and construct a defensible portfolio."
+              title="Your portfolio plan"
+              note="Review every saved decision, from your goal through your operating rules."
               accent="#555A61"
-              href="/studio"
+              href="/plan"
             />
           </div>
 
-          {/* Studio CTA at the end of the sequence */}
+          {/* Plan CTA at the end of the sequence */}
           <div className="mt-16 flex flex-wrap items-center gap-4">
-            <Button href="/studio" size="lg">
-              Enter the studio
+            <Button href="/plan" size="lg">
+              Open your plan
             </Button>
             <Link
               href="/filings"

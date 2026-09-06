@@ -16,7 +16,7 @@ const LESS_EFFICIENT = [
   "Leverage is reduced — banks pull credit lines and raise hurdles",
   "Forced selling dominates — price moves reflect position unwinds, not views",
   "Inexperienced participants enter rapidly and trade on sentiment",
-  "Institutional constraints become binding — risk limits, mandates, regulations",
+  "Institutional constraints become binding — risk limits, investment rules, regulations",
 ];
 
 export default function AdaptiveMarketsComparison() {

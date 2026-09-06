@@ -31,7 +31,7 @@ export const JOURNEY_GROUPS = [
   {
     lessons: IF_MISSION_1_LESSONS,
     missionLabel: "Mission 1",
-    title: "Define Your Investor Mandate",
+    title: "Set Your Goal and Limits",
   },
   {
     lessons: IF_MISSION_2_LESSONS,
@@ -56,7 +56,7 @@ export const JOURNEY_GROUPS = [
   {
     lessons: IF_MODULE_PB5_LESSONS,
     missionLabel: "Mission 5",
-    title: "Allocation and Risk Policy",
+    title: "Allocation and Risk Limits",
   },
   {
     lessons: IF_MODULE_4_LESSONS,
@@ -81,7 +81,7 @@ export const JOURNEY_GROUPS = [
   {
     lessons: IF_MODULE_8_LESSONS,
     missionLabel: "Mission 10",
-    title: "Passive or Edge",
+    title: "Index or Edge",
   },
   {
     lessons: IF_MODULE_11_LESSONS,
@@ -91,12 +91,12 @@ export const JOURNEY_GROUPS = [
   {
     lessons: IF_MODULE_12_LESSONS,
     missionLabel: "Mission 12",
-    title: "Holdings Slate",
+    title: "Holdings List",
   },
   {
     lessons: IF_MODULE_13_LESSONS,
     missionLabel: "Mission 13",
-    title: "Operating Plan",
+    title: "Operating Rules",
   },
 ] as const;
 
@@ -197,15 +197,15 @@ export default function IFProgressRail() {
       </ol>
       <div className="mt-5 space-y-3 border-t border-white/10 pt-4">
         <Link
-          href="/dossier"
+          href="/plan"
           className="group flex items-center justify-between gap-3 rounded-xl border border-white/10 px-3 py-2.5 transition-colors hover:border-accent-amber/40 hover:bg-accent-amber/[0.07]"
         >
           <span className="min-w-0">
             <span className="ops-caption block text-[12px] text-accent-amber">
-              Your dossier
+              Your plan
             </span>
             <span className="mt-0.5 block text-sm text-slate-300 group-hover:text-white">
-              {artifactCount} saved lesson artifacts
+              {artifactCount} saved {artifactCount === 1 ? "decision" : "decisions"}
             </span>
           </span>
           <span

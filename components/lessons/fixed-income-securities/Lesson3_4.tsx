@@ -616,7 +616,11 @@ export default function Lesson3_4() {
         <Panel>
           <p className="ops-body text-[16px] text-slate-200">
             The core idea of securitization is that loans can be pooled and
-            repackaged into new claims. Why securitize? To repack risks to yield
+            repackaged into new claims. Each of those claims is a{" "}
+            <strong className="text-white">tranche</strong> — a layer that takes
+            losses in a set order. The junior tranches absorb the first losses;
+            the senior tranches take losses only once the junior ones are wiped
+            out. Why securitize? To repack risks to yield
             more homogeneity within categories, achieve more efficient
             allocation of risk, create more risk-bearing capacity, provide
             greater transparency, support economic growth, and extend credit to

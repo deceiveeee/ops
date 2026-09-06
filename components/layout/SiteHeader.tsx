@@ -5,26 +5,19 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
-import OnboardingPrompt from "@/components/onboarding/OnboardingPrompt";
-import { useSession } from "@/lib/supabase/session";
-import { useProgressStore } from "@/lib/progress/store";
-import { syncStatusText } from "./sync-indicator";
 
 /**
- * `preview: true` marks a surface that is still a concept mock rather than a
- * working tool. Both were reachable as plain nav items while /dossier — the
- * artifact every mission writes into — was reachable from nowhere in the
- * global chrome. Label the mocks, promote the real thing.
- *
- * Filings lost the badge on 2026-08-26: it reads real documents from EDGAR and
- * sections them, so calling it a concept mock stopped being true. Studio keeps
- * it, because it still is one.
+ * The public beta exposes only complete learner surfaces. Accounts remain in
+ * the repository but are intentionally absent from discovery until their
+ * release gate closes. Studio joined the nav when it stopped being a preview
+ * and became a working workspace; the investments it cannot yet research are
+ * named inside it rather than hidden.
  */
 const nav = [
   { href: "/courses", label: "Courses" },
-  { href: "/dossier", label: "Your dossier" },
+  { href: "/plan", label: "Your plan" },
+  { href: "/studio", label: "Studio" },
   { href: "/filings", label: "Filings" },
-  { href: "/studio", label: "Studio", preview: true },
 ];
 
 export default function SiteHeader() {
@@ -32,9 +25,6 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const { user, status, client } = useSession();
-  const { syncStatus } = useProgressStore();
-  const signedIn = status === "authenticated" && !!user;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -56,7 +46,6 @@ export default function SiteHeader() {
           : "border-b border-transparent bg-transparent",
       )}
     >
-      <OnboardingPrompt />
       <div className="mx-auto flex h-[68px] max-w-[1400px] items-center justify-between px-6 sm:px-8">
         <Link href="/" className="group flex items-center gap-2.5" aria-label="Open Portfolio Studio home">
           <Logo />
@@ -83,24 +72,11 @@ export default function SiteHeader() {
               )}
             >
               {n.label}
-              {n.preview && (
-                <span className="ml-1.5 text-[12px] font-normal text-slate-400">
-                  preview
-                </span>
-              )}
             </Link>
           ))}
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <SyncChip status={syncStatus} />
-          {signedIn ? (
-            <AccountMenu email={user!.email ?? ""} onSignOut={() => void client.auth.signOut()} />
-          ) : (
-            <Button href="/login" variant="outline" size="md">Sign in</Button>
-          )}
-          {/* Was "Enter the studio" → /studio, a page of six empty placeholder
-              panels. The most-repeated CTA on the site now opens the course. */}
           <Button href="/courses/investment-foundations" size="md">
             Start building
           </Button>
@@ -129,11 +105,6 @@ export default function SiteHeader() {
                 className="rounded-lg px-3 py-2.5 text-[15px] font-medium text-slate-300 hover:bg-white/5 hover:text-white"
               >
                 {n.label}
-                {n.preview && (
-                  <span className="ml-1.5 text-[12px] font-normal text-slate-400">
-                    preview
-                  </span>
-                )}
               </Link>
             ))}
             <div className="mt-2 flex gap-2">
@@ -144,68 +115,10 @@ export default function SiteHeader() {
                 Start building
               </Button>
             </div>
-            <div className="mt-2">
-              {signedIn ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => void client.auth.signOut()}
-                >
-                  Sign out
-                </Button>
-              ) : (
-                <Button href="/login" variant="outline" size="sm" className="w-full">
-                  Sign in
-                </Button>
-              )}
-            </div>
           </div>
         </div>
       )}
     </header>
-  );
-}
-
-function SyncChip({ status }: { status: ReturnType<typeof useProgressStore>["syncStatus"] }) {
-  if (status === "guest") return null;
-  const { label, dot } = syncStatusText(status);
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[13px] text-slate-300">
-      <span className={dot} />
-      {label}
-    </span>
-  );
-}
-
-function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="rounded-full border border-white/10 px-3 py-1.5 text-[14px] text-slate-200 hover:bg-white/5"
-      >
-        {email}
-      </button>
-      {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-lg border border-white/10 bg-ink-950/95 p-1">
-          <Link
-            href="/start?retake=1"
-            onClick={() => setOpen(false)}
-            className="block w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
-          >
-            Update my starting point
-          </Link>
-          <button
-            onClick={onSignOut}
-            className="w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
-          >
-            Sign out
-          </button>
-        </div>
-      )}
-    </div>
   );
 }
 

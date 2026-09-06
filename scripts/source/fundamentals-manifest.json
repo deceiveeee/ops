@@ -1,0 +1,19 @@
+{
+  "purpose": "A sector spread wide enough to prove that one metric definition cannot span sectors. Each company is here because it breaks something a single definition would assume.",
+  "verifiedOn": "2026-09-05",
+  "note": "XOM is pinned to CIK 0000034088. The ticker resolves to ExxonMobil Holdings Corp (CIK 0002115436), a 2026 reorganisation entity with 94 concepts and zero annual revenue periods, whose entityName still reads 'Exxon Mobil Corporation'.",
+  "companies": [
+    { "ticker": "ATKR", "why": "Industrial with a loss year: exercises the non-positive pre-tax guard" },
+    { "ticker": "MSFT", "why": "Dropped CostOfRevenue after 2017; resolving by preference alone returns a nine-year-old figure" },
+    { "ticker": "NVDA", "why": "Migrated capex and revenue concepts; the old capex tag last appears in 2012" },
+    { "ticker": "COST", "why": "Stopped tagging GrossProfit after 2019, so gross profit must be derived" },
+    { "ticker": "XOM", "cik": "0000034088", "why": "No cost of revenue at all; also the ticker-to-entity trap" },
+    { "ticker": "PFE", "why": "Reports InterestIncomeExpenseNet, last in 2013, where it means nothing" },
+    { "ticker": "UNP", "why": "Railroad: reports CostsAndExpenses but no cost of revenue" },
+    { "ticker": "NEE", "why": "Utility: tags no cash capex under any standard concept" },
+    { "ticker": "VZ", "why": "Telecom in the 4800s that files like a general company, unlike transport in the 4000s" },
+    { "ticker": "FITB", "why": "Bank: contract revenue returns a fee subset fifteen times too small" },
+    { "ticker": "PGR", "why": "Insurance: no cost of revenue, and free cash flow is not meaningful" },
+    { "ticker": "PLD", "why": "REIT: tags PaymentsToAcquireRealEstate, which is buying buildings, not maintaining them" }
+  ]
+}

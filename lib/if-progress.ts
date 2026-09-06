@@ -429,7 +429,7 @@ export const EMPTY_TIMING_POLICY: TimingPolicy = {
 
 /**
  * A saved policy is complete only if its own mode's requirements are met.
- * Kept here rather than in the component so the dossier and the course rail
+ * Kept here rather than in the component so the plan page and the course rail
  * agree with the lesson about what "saved" means.
  */
 export function isTimingPolicyComplete(policy: TimingPolicy): boolean {
@@ -608,7 +608,7 @@ export function isHoldingsSlateComplete(slate: HoldingsSlate): boolean {
 
 /**
  * Reasons the slate cannot be marked "Products verified", in learner-facing
- * words. Kept here rather than in the component so the dossier and the course
+ * words. Kept here rather than in the component so the plan page and the course
  * rail give the same answer as the lesson.
  */
 export function holdingsSlateBlockers(
@@ -846,7 +846,7 @@ function writeObservationNote(note: MarketObservationNote) {
  * Reads the belief statement, adopting a pre-split draft where one exists.
  *
  * Migration is by derivation rather than by rewriting storage on read: a learner
- * who stated a belief before the split keeps seeing it, in the dossier and in
+ * who stated a belief before the split keeps seeing it, in the plan and in
  * the lesson, and the old fields are superseded the first time they save.
  */
 function readBeliefStatement(): BeliefStatement {

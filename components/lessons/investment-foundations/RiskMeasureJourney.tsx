@@ -35,15 +35,15 @@ const STEPS = [
     guide:
       "Accounting measures use company financial evidence. Proxy models use characteristics historically associated with returns; association does not prove causation.",
     instruction: "Correctly sort all six evidence signals.",
-    next: "Use the method switchboard",
+    next: "Compare the methods",
   },
   {
-    label: "Switchboard",
+    label: "Methods",
     title: "Begin with the investor's question",
     guide:
-      "Every risk method answers a different question. Open each question, method, and limitation before choosing a stack.",
+      "Every risk method answers a different question. Open each question, method, and limitation before choosing which ones you rely on.",
     instruction: "Inspect all seven method paths.",
-    next: "Choose the risk stack",
+    next: "Match method to decision",
   },
   {
     label: "Choose",

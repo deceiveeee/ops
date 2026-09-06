@@ -48,7 +48,7 @@ export interface AllocationRepairEvaluation {
   readyDollars: number | null;
   /** Positive means surplus; negative means the near-term need is not covered. */
   liquidityGapDollars: number | null;
-  /** Rounded sleeve contributions for display. */
+  /** Rounded slice contributions for display. */
   contributionsBps: Record<AllocationRepairSleeveId, number | null>;
   /** Calculated from the unrounded aggregate and rounded once. */
   totalStressLossBps: number | null;
@@ -343,7 +343,7 @@ function clampBps(value: number): number {
 
 function weightTotalFeedback(totalBps: number | null): string {
   if (totalBps === null) {
-    return "Enter a finite percentage from 0% to 100% for every sleeve.";
+    return "Enter a finite percentage from 0% to 100% for every slice.";
   }
   const difference = totalBps - BASIS_POINTS_TOTAL;
   if (difference === 0) {
@@ -389,7 +389,7 @@ function stressFeedback(
   }
   return `The supplied losses produce ${formatBps(stressLossBps)} of portfolio loss, about ${formatCurrency(
     stressLossDollars,
-  )}, exceeding the case budget by ${formatBps(difference)}. Moving weight away from a sleeve with a positive supplied loss reduces this result.`;
+  )}, exceeding the case budget by ${formatBps(difference)}. Moving weight away from a slice with a positive supplied loss reduces this result.`;
 }
 
 function WeightControl({
@@ -416,7 +416,7 @@ function WeightControl({
     <fieldset
       className={`min-w-0 rounded-2xl border p-4 sm:p-5 ${presentation.accentBorder} ${presentation.accentSurface}`}
     >
-      <legend className="sr-only">{presentation.label} sleeve</legend>
+      <legend className="sr-only">{presentation.label} slice</legend>
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className={`text-[15px] font-semibold ${presentation.accentText}`}>
@@ -545,7 +545,7 @@ export default function AllocationRepairLab({
   rationaleMinimumLength = 20,
   initialRationale = "",
   title = "Repair the allocation",
-  instruction = "Change the sleeve weights until the case facts and every required condition agree.",
+  instruction = "Change the slice weights until the case facts and every required condition agree.",
   submitLabel = "Lock this repair",
   onPass,
 }: AllocationRepairLabProps) {
@@ -696,7 +696,7 @@ export default function AllocationRepairLab({
               <div className="text-[13px] font-semibold text-white">OPS-supplied teaching stress</div>
               <p className="mt-1 text-[13px] leading-5 text-slate-400">
                 The three loss magnitudes are read-only and apply only to this exercise. Your
-                editable decision is how much of the portfolio each sleeve receives.
+                editable decision is how much of the portfolio each slice receives.
               </p>
             </div>
           </div>
@@ -729,7 +729,7 @@ export default function AllocationRepairLab({
                 See where the loss comes from.
               </h4>
               <p className="mt-2 max-w-2xl text-[13px] leading-5 text-slate-400">
-                Sleeve weight × OPS-supplied loss = contribution to portfolio loss.
+                Slice weight × OPS-supplied loss = contribution to portfolio loss.
               </p>
             </div>
             <div className="rounded-2xl border border-accent-red/30 bg-accent-red/[0.05] px-4 py-3 text-right">
@@ -746,11 +746,11 @@ export default function AllocationRepairLab({
           <div className="mt-5 hidden overflow-hidden rounded-2xl border border-white/10 md:block">
             <table className="w-full border-collapse text-left text-[13px]">
               <caption className="sr-only">
-                Sleeve weights, supplied teaching losses, and portfolio loss contributions
+                Slice weights, supplied teaching losses, and portfolio loss contributions
               </caption>
               <thead className="bg-white/[0.03] text-slate-500">
                 <tr>
-                  <th scope="col" className="px-4 py-3 font-medium">Sleeve</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Slice</th>
                   <th scope="col" className="px-3 py-3 text-right font-medium">Weight</th>
                   <th scope="col" className="px-3 py-3 text-right font-medium">Approx. dollars</th>
                   <th scope="col" className="px-3 py-3 text-right font-medium">OPS-supplied loss</th>
@@ -860,8 +860,8 @@ export default function AllocationRepairLab({
                   value={weightsPass ? "0%–100%" : "Check inputs"}
                   feedback={
                     weightsPass
-                      ? "Every sleeve contains a finite percentage inside the permitted input range."
-                      : "Each sleeve needs a finite percentage from 0% to 100%."
+                      ? "Every slice contains a finite percentage inside the permitted input range."
+                      : "Each slice needs a finite percentage from 0% to 100%."
                   }
                 />
               ) : null}
@@ -903,7 +903,7 @@ export default function AllocationRepairLab({
               Explain one trade-off in this repair
             </label>
             <p id={`${generatedId}-rationale-help`} className="mt-1 text-[12px] leading-5 text-slate-500">
-              In at least {minimumRationaleLength} characters, connect a changed sleeve to the
+              In at least {minimumRationaleLength} characters, connect a changed slice to the
               liquidity or stress consequence you accept.
             </p>
             <textarea

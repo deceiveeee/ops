@@ -389,7 +389,7 @@ const PROCESS_STAGES: ProcessStage[] = [
     title: "Investor & mandate",
     question: "Who is the portfolio for?",
     meaning:
-      "Set the objective and constraints: risk capacity, horizon, liquidity, taxes, and available resources.",
+      "The mandate is the job the money has to do. Set the objective and the constraints: risk capacity, horizon, liquidity, taxes, and available resources.",
     example: "Preserve five years of planned withdrawals while pursuing growth.",
   },
   {

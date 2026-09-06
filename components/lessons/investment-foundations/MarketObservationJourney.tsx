@@ -20,7 +20,7 @@ const LESSON_SLUG = "if-1-1-how-an-investor-builds-a-philosophy";
  * The previous lesson taught the shape of a market belief through other people's
  * reasoning for four stages and then handed the learner a blank field, with a
  * placeholder that stated a named anomaly in expert language. A novice either
- * froze or copied it, and the copy reached the dossier as though it were their
+ * froze or copied it, and the copy reached the plan as though it were their
  * own decision. The rebuild is recorded in
  * `docs/lesson-plans/if-1-1-real-market-cases-design-brief.md`, and the mission's
  * artifact was moved from a Market Belief Statement to a Market Observation Note
@@ -314,7 +314,7 @@ export default function MarketObservationJourney() {
   const [note, setNote] = useState<MarketObservationNote>(EMPTY_OBSERVATION_NOTE);
   const [saved, setSaved] = useState(false);
 
-  // Stage-local answers. None of these reach the dossier; only the note does.
+  // Stage-local answers. None of these reach the plan; only the note does.
   const [sourceKind, setSourceKind] = useState("");
   const [boundary, setBoundary] = useState("");
   const [factKinds, setFactKinds] = useState<Record<string, string>>({});

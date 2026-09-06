@@ -40,6 +40,12 @@ Read these files completely, in this order:
 9. the target component, its route/registry/progress wiring, the nearest neighboring
    lessons, and the shared shell before editing.
 
+The records in items 2-8 predate the plain-language decision recorded in `AGENTS.md` and
+still use the retired vocabulary - "dossier" for the learner's plan, "investor mandate"
+for their goal and limits, "holdings slate" for their holdings list. Read those records
+for curriculum and source truth, never for naming. `AGENTS.md` is authoritative on every
+learner-facing word.
+
 Also run `git status --short` and inspect relevant diffs. The working tree may contain
 valuable uncommitted work from another person or agent. Preserve it. Do not reset, revert,
 delete, commit, push, or merge unless the human explicitly asks.
@@ -63,7 +69,7 @@ Report the conflict explicitly. Do not resolve it by memory or convenience.
 
 Preserve all of the following:
 
-- 13 required missions, one Portfolio Workbench, one compiled Dossier/IPS.
+- 13 required missions, one Portfolio Workbench, one compiled plan and set of operating rules.
 - Two equal paths from Mission 1: **Build mine** and **Practice case**.
 - A learner who is a minor, lacks account authority, has high-interest debt, or has an
   emergency-reserve gap can still finish through the practice/paper path.
@@ -76,7 +82,7 @@ Preserve all of the following:
   falsifiable edge that clears evidence, friction, capacity, durability, and size gates.
 - The course never places a trade, connects to a brokerage, requests credentials, or
   represents an educational state as personalized investment advice.
-- Graduation requires the learner's complete Dossier plus an unfamiliar transfer case and
+- Graduation requires the learner’s complete plan plus an unfamiliar transfer case and
   no critical safety failure. Clicking through lessons is not competence.
 - Existing lesson slugs, completion keys, and saved learner data remain stable.
 - Default storage is local-only and versioned. Never request account numbers, tax IDs,

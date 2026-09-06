@@ -58,7 +58,7 @@ export default function LessonIF_PB_11() {
                 Six guided stages
               </span>
               <span className="rounded-full border border-white/10 px-3 py-1.5">
-                One saved Timing Policy
+                One saved timing policy
               </span>
             </div>
           </Reveal>

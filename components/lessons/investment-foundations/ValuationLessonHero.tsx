@@ -71,7 +71,7 @@ export default function ValuationLessonHero() {
             <div>
               <div className="ops-caption text-[12px] text-accent-amber">Your investigation</div>
               <p className="ops-body-strong mt-2 max-w-2xl text-[16px] text-white">
-                Match the claim and required return, expose the cost of growth, challenge a low-P/E shortcut, and save a Valuation Range to the Portfolio Dossier.
+                Match the claim and required return, expose the cost of growth, challenge a low-P/E shortcut, and save a valuation range to your plan.
               </p>
             </div>
             <a

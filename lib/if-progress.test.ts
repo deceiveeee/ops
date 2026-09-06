@@ -186,6 +186,47 @@ describe("Investment Foundations artifact persistence", () => {
   });
 });
 
+describe("frictionOneWayPct", () => {
+  it("converts Mission 8 decimal fractions to one leg in percentage points", () => {
+    expect(
+      frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: 0.019,
+      }),
+    ).toBeCloseTo(0.95, 10);
+    expect(
+      frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: 0.002,
+      }),
+    ).toBeCloseTo(0.1, 10);
+    expect(
+      frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: 0.039,
+      }),
+    ).toBeCloseTo(1.95, 10);
+  });
+
+  it("never rounds a reachable saved budget to 0.00%", () => {
+    for (const drag of [0.002, 0.008, 0.019, 0.039]) {
+      const shown = frictionOneWayPct({
+        ...EMPTY_FRICTION_BUDGET,
+        estimatedAnnualDrag: drag,
+      }).toFixed(2);
+      expect(shown).not.toBe("0.00");
+    }
+  });
+
+  it("uses the labelled fallback when Mission 8 has not been saved", () => {
+    expect(frictionOneWayPct(EMPTY_FRICTION_BUDGET)).toBe(
+      FRICTION_FALLBACK_ONE_WAY_PCT,
+    );
+    expect(frictionOneWayPct(null)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
+    expect(frictionOneWayPct(undefined)).toBe(FRICTION_FALLBACK_ONE_WAY_PCT);
+  });
+});
+
 describe("artifacts reach the Portfolio Workbench", () => {
   /**
    * This is the assertion whose absence let the spine ship disconnected.
@@ -276,7 +317,7 @@ describe("artifacts reach the Portfolio Workbench", () => {
 
   it("adopts a belief stated before the record was split out", async () => {
     // A learner who answered Mission 2 while the belief still lived inside the
-    // philosophy draft must not lose it, in the lesson or in the dossier.
+    // philosophy draft must not lose it, in the lesson or in the plan.
     window.localStorage.setItem(
       "ops-if-philosophy-draft-v1",
       JSON.stringify({

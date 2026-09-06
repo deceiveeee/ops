@@ -1,0 +1,1443 @@
+{
+  "builtOn": "2026-09-06",
+  "years": [
+    2019,
+    2024
+  ],
+  "source": "SEC registrant lists by SIC, and XBRL company frames. Public domain.",
+  "method": "Market share instability follows Measuring the Moat (Mauboussin and Callahan, Counterpoint Global, Morgan Stanley, 15 October 2024): the average absolute change in share between two periods, attributed there to Bruce Greenwald.",
+  "industries": [
+    {
+      "sic": "3674",
+      "label": "Semiconductors",
+      "registrants": 505,
+      "filersWithRevenue": 96,
+      "totalRevenue": 463663734426,
+      "hhi": 1194.4808396658732,
+      "c4": 0.5658152245285647,
+      "leaders": [
+        {
+          "name": "NVIDIA CORP",
+          "cik": 1045810,
+          "revenue": 130497000000,
+          "share": 0.28144750238349103,
+          "basisUncertain": false
+        },
+        {
+          "name": "INTEL CORPORATION",
+          "cik": 50863,
+          "revenue": 53101000000,
+          "share": 0.1145248076512545,
+          "basisUncertain": false
+        },
+        {
+          "name": "Broadcom Inc.",
+          "cik": 1730168,
+          "revenue": 51574000000,
+          "share": 0.11123147266164102,
+          "basisUncertain": false
+        },
+        {
+          "name": "APPLIED MATERIALS INC /DE",
+          "cik": 6951,
+          "revenue": 27176000000,
+          "share": 0.05861144183217816,
+          "basisUncertain": false
+        },
+        {
+          "name": "ADVANCED MICRO DEVICES, INC.",
+          "cik": 2488,
+          "revenue": 25785000000,
+          "share": 0.05561142285997622,
+          "basisUncertain": false
+        },
+        {
+          "name": "Micron Technology, Inc.",
+          "cik": 723125,
+          "revenue": 25111000000,
+          "share": 0.05415778318545134,
+          "basisUncertain": false
+        },
+        {
+          "name": "TEXAS INSTRUMENTS INC",
+          "cik": 97476,
+          "revenue": 15641000000,
+          "share": 0.03373349873775017,
+          "basisUncertain": false
+        },
+        {
+          "name": "STMicroelectronics N.V.",
+          "cik": 932787,
+          "revenue": 13269000000,
+          "share": 0.028617722316425228,
+          "basisUncertain": false
+        },
+        {
+          "name": "JinkoSolar Holding Co., Ltd.",
+          "cik": 1481513,
+          "revenue": 12639061000,
+          "share": 0.027259110561335426,
+          "basisUncertain": false
+        },
+        {
+          "name": "NXP Semiconductors N.V.",
+          "cik": 1413447,
+          "revenue": 12614000000,
+          "share": 0.02720506061492108,
+          "basisUncertain": false
+        }
+      ],
+      "unresolvable": [
+        {
+          "name": "Tigo Energy, Inc.",
+          "spread": 1000,
+          "revenue": 54014000000
+        }
+      ],
+      "roic": [
+        {
+          "cik": 1045810,
+          "name": "NVIDIA CORP",
+          "period": "2026-01-25",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 2572000000,
+          "roic": 0.7133233260959281,
+          "nopatMargin": 0.5125378302278424,
+          "capitalTurnover": 1.391747660419191,
+          "nopat": 110676393983.73982,
+          "investedCapital": 155156000000,
+          "advantage": "both",
+          "marginPercentile": 1,
+          "turnoverPercentile": 0.7777777777777778,
+          "medianMargin": 0.1993883696203398,
+          "medianTurnover": 0.6525686448184234
+        },
+        {
+          "cik": 50863,
+          "name": "INTEL CORPORATION",
+          "period": "2025-12-27",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": null,
+          "roic": -0.00025218858170064244,
+          "nopatMargin": -0.0006995080367414504,
+          "capitalTurnover": 0.3605227795171929,
+          "nopat": -36971098.26589588,
+          "investedCapital": 146601000000,
+          "advantageWithheld": "this explains how a company earns an attractive return, and a -0.0% return on capital is not one; the split is still shown above"
+        },
+        {
+          "cik": 1730168,
+          "name": "Broadcom Inc.",
+          "period": "2025-11-02",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 1181000000,
+          "roic": 0.19271896789025517,
+          "nopatMargin": 0.3988917933225852,
+          "capitalTurnover": 0.48313595595686437,
+          "nopat": 25484000000,
+          "investedCapital": 132234000000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.8888888888888888,
+          "turnoverPercentile": 0.1111111111111111,
+          "medianMargin": 0.1993883696203398,
+          "medianTurnover": 0.6667974882260597
+        },
+        {
+          "cik": 6951,
+          "name": "APPLIED MATERIALS INC /DE",
+          "period": "2025-10-26",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 404000000,
+          "roic": 0.31713518193089,
+          "nopatMargin": 0.22055696574712808,
+          "capitalTurnover": 1.4378833189720717,
+          "nopat": 6256760004.314529,
+          "investedCapital": 19729000000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0.5555555555555556,
+          "turnoverPercentile": 0.8888888888888888,
+          "medianMargin": 0.1993883696203398,
+          "medianTurnover": 0.6525686448184234
+        },
+        {
+          "cik": 2488,
+          "name": "ADVANCED MICRO DEVICES, INC.",
+          "period": "2025-12-27",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 625000000,
+          "roic": 0.0600103970368445,
+          "nopatMargin": 0.10664280146655504,
+          "capitalTurnover": 0.562723373838456,
+          "nopat": 3694000000,
+          "investedCapital": 61556000000,
+          "advantageWithheld": "this explains how a company earns an attractive return, and a 6.0% return on capital is not one; the split is still shown above"
+        },
+        {
+          "cik": 723125,
+          "name": "Micron Technology, Inc.",
+          "period": "2025-08-28",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 701000000,
+          "roic": 0.15399768629369978,
+          "nopatMargin": 0.23095120934452446,
+          "capitalTurnover": 0.6667974882260597,
+          "nopat": 8632494302.879635,
+          "investedCapital": 56056000000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.6666666666666666,
+          "turnoverPercentile": 0.5555555555555556,
+          "medianMargin": 0.1993883696203398,
+          "medianTurnover": 0.6525686448184234
+        },
+        {
+          "cik": 97476,
+          "name": "TEXAS INSTRUMENTS INC",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 612000000,
+          "roic": 0.19468317746281366,
+          "nopatMargin": 0.29833363740144775,
+          "capitalTurnover": 0.6525686448184234,
+          "nopat": 5275135376.532399,
+          "investedCapital": 27096000000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.7777777777777778,
+          "turnoverPercentile": 0.4444444444444444,
+          "medianMargin": 0.1993883696203398,
+          "medianTurnover": 0.6667974882260597
+        },
+        {
+          "cik": 932787,
+          "name": "STMicroelectronics N.V.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 169000000,
+          "roic": 0.004598808689558514,
+          "nopatMargin": 0.006673728813559321,
+          "capitalTurnover": 0.6890913338005139,
+          "nopat": 78749999.99999999,
+          "investedCapital": 17124000000,
+          "advantageWithheld": "this explains how a company earns an attractive return, and a 0.5% return on capital is not one; the split is still shown above"
+        },
+        {
+          "cik": 1481513,
+          "name": "JinkoSolar Holding Co., Ltd.",
+          "period": "2025-12-31",
+          "taxRateAssumed": true,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 190330000,
+          "roic": -0.6547759326491226,
+          "nopatMargin": -0.10741158483772073,
+          "capitalTurnover": 6.095952625951561,
+          "nopat": -7035205960,
+          "investedCapital": 10744448000,
+          "advantageWithheld": "this explains how a company earns an attractive return, and a -65.5% return on capital is not one; the split is still shown above"
+        },
+        {
+          "cik": 1413447,
+          "name": "NXP Semiconductors N.V.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 215000000,
+          "roic": 0.1233696054703691,
+          "nopatMargin": 0.1993883696203398,
+          "capitalTurnover": 0.6187402289575874,
+          "nopat": 2446295906.8719487,
+          "investedCapital": 19829000000,
+          "advantage": "neither",
+          "marginPercentile": 0.4444444444444444,
+          "turnoverPercentile": 0.3333333333333333,
+          "medianMargin": 0.22055696574712808,
+          "medianTurnover": 0.6667974882260597
+        }
+      ],
+      "instability": {
+        "average": 0.0518289101280433,
+        "years": 5,
+        "stableByRuleOfThumb": false,
+        "rows": [
+          {
+            "name": "NVIDIA CORP",
+            "earlierShare": 0.04121247135090042,
+            "laterShare": 0.28144750238349103,
+            "absoluteChange": 0.2402350310325906
+          },
+          {
+            "name": "INTEL CORPORATION",
+            "earlierShare": 0.27164824150646166,
+            "laterShare": 0.1145248076512545,
+            "absoluteChange": 0.15712343385520716
+          },
+          {
+            "name": "Other",
+            "earlierShare": 0.27032692155850463,
+            "laterShare": 0.18726829376356544,
+            "absoluteChange": 0.0830586277949392
+          },
+          {
+            "name": "Micron Technology, Inc.",
+            "earlierShare": 0.088351264374352,
+            "laterShare": 0.05415778318545134,
+            "absoluteChange": 0.034193481188900664
+          },
+          {
+            "name": "ADVANCED MICRO DEVICES, INC.",
+            "earlierShare": 0.025407688648370647,
+            "laterShare": 0.05561142285997622,
+            "absoluteChange": 0.030203734211605576
+          },
+          {
+            "name": "Broadcom Inc.",
+            "earlierShare": 0.08529751008575717,
+            "laterShare": 0.11123147266164102,
+            "absoluteChange": 0.025933962575883845
+          },
+          {
+            "name": "TEXAS INSTRUMENTS INC",
+            "earlierShare": 0.05429190102949265,
+            "laterShare": 0.03373349873775017,
+            "absoluteChange": 0.02055840229174248
+          },
+          {
+            "name": "JinkoSolar Holding Co., Ltd.",
+            "earlierShare": 0.01612860480034832,
+            "laterShare": 0.027259110561335426,
+            "absoluteChange": 0.011130505760987106
+          },
+          {
+            "name": "STMicroelectronics N.V.",
+            "earlierShare": 0.03607129293178278,
+            "laterShare": 0.028617722316425228,
+            "absoluteChange": 0.007453570615357553
+          },
+          {
+            "name": "NXP Semiconductors N.V.",
+            "earlierShare": 0.0335082531765839,
+            "laterShare": 0.02720506061492108,
+            "absoluteChange": 0.006303192561662823
+          },
+          {
+            "name": "APPLIED MATERIALS INC /DE",
+            "earlierShare": 0.05514121464498565,
+            "laterShare": 0.05861144183217816,
+            "absoluteChange": 0.003470227187192511
+          },
+          {
+            "name": "Analog Devices, Inc.",
+            "earlierShare": 0.02261463589246036,
+            "laterShare": 0.020331883432010273,
+            "absoluteChange": 0.002282752460450087
+          }
+        ]
+      },
+      "instabilityAllFilers": 0.0056990884252457975,
+      "uncertainBasis": [
+        "KOPIN CORPORATION",
+        "NVE CORP"
+      ]
+    },
+    {
+      "sic": "4011",
+      "label": "Railroads",
+      "registrants": 63,
+      "filersWithRevenue": 4,
+      "totalRevenue": 51244497000,
+      "hhi": 3604.537965545208,
+      "c4": 1,
+      "leaders": [
+        {
+          "name": "UNION PACIFIC CORP",
+          "cik": 100885,
+          "revenue": 24250000000,
+          "share": 0.4732215441591709,
+          "basisUncertain": false
+        },
+        {
+          "name": "CSX CORPORATION",
+          "cik": 277948,
+          "revenue": 14540000000,
+          "share": 0.2837377835906946,
+          "basisUncertain": false
+        },
+        {
+          "name": "NORFOLK SOUTHERN CORPORATION",
+          "cik": 702165,
+          "revenue": 12123000000,
+          "share": 0.23657174349862387,
+          "basisUncertain": false
+        },
+        {
+          "name": "FTAI INFRASTRUCTURE INC.",
+          "cik": 1899883,
+          "revenue": 331497000,
+          "share": 0.006468928751510626,
+          "basisUncertain": false
+        }
+      ],
+      "unresolvable": [
+        {
+          "name": "BURLINGTON NORTHERN SANTA FE, LLC",
+          "spread": 257.54945054945057,
+          "revenue": 23437000000
+        }
+      ],
+      "roic": [
+        {
+          "cik": 100885,
+          "name": "UNION PACIFIC CORP",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 738000000,
+          "roic": 0.15643269062098733,
+          "nopatMargin": 0.31283346922838406,
+          "capitalTurnover": 0.5000510047944506,
+          "nopat": 7667548330.787694,
+          "investedCapital": 49015000000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 2 given"
+        },
+        {
+          "cik": 277948,
+          "name": "CSX CORPORATION",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 479000000,
+          "roic": 0.11304584148193814,
+          "nopatMargin": 0.24591401295975118,
+          "capitalTurnover": 0.459696623715544,
+          "nopat": 3465420270.6288137,
+          "investedCapital": 30655000000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 2 given"
+        },
+        {
+          "cik": 702165,
+          "name": "NORFOLK SOUTHERN CORPORATION",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 148000000,
+          "roic": 0.11196760748636247,
+          "nopatMargin": 0.2803510776282099,
+          "capitalTurnover": 0.39938354592254977,
+          "nopat": 3414676125.511596,
+          "investedCapital": 30497000000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 2 given"
+        },
+        {
+          "cik": 1899883,
+          "name": "FTAI INFRASTRUCTURE INC.",
+          "reason": "needs operating profit"
+        }
+      ],
+      "instability": {
+        "average": 0.019887692266174862,
+        "years": 5,
+        "stableByRuleOfThumb": true,
+        "rows": [
+          {
+            "name": "KANSAS CITY SOUTHERN",
+            "earlierShare": 0.05966302090347532,
+            "laterShare": null,
+            "absoluteChange": 0.05966302090347532
+          },
+          {
+            "name": "CSX CORPORATION",
+            "earlierShare": 0.24849877199050416,
+            "laterShare": 0.2837377835906946,
+            "absoluteChange": 0.03523901160019047
+          },
+          {
+            "name": "UNION PACIFIC CORP",
+            "earlierShare": 0.4519067891739854,
+            "laterShare": 0.4732215441591709,
+            "absoluteChange": 0.02131475498518548
+          },
+          {
+            "name": "FTAI INFRASTRUCTURE INC.",
+            "earlierShare": 0.004776622286233154,
+            "laterShare": 0.006468928751510626,
+            "absoluteChange": 0.0016923064652774721
+          },
+          {
+            "name": "NORFOLK SOUTHERN CORPORATION",
+            "earlierShare": 0.23515473975075268,
+            "laterShare": 0.23657174349862387,
+            "absoluteChange": 0.0014170037478711817
+          },
+          {
+            "name": "MediXall Group, Inc.",
+            "earlierShare": 5.5895049241392615e-8,
+            "laterShare": null,
+            "absoluteChange": 5.5895049241392615e-8
+          }
+        ]
+      },
+      "instabilityAllFilers": 0.019887692266174862,
+      "uncertainBasis": []
+    },
+    {
+      "sic": "5331",
+      "label": "Variety stores",
+      "registrants": 94,
+      "filersWithRevenue": 9,
+      "totalRevenue": 1131758742000,
+      "hhi": 4233.551493140299,
+      "c4": 0.9565787016469983,
+      "leaders": [
+        {
+          "name": "Walmart Inc.",
+          "cik": 104169,
+          "revenue": 680985000000,
+          "share": 0.6017050937875592,
+          "basisUncertain": false
+        },
+        {
+          "name": "COSTCO WHOLESALE CORP /NEW",
+          "cik": 909832,
+          "revenue": 254453000000,
+          "share": 0.224829719053321,
+          "basisUncertain": false
+        },
+        {
+          "name": "TARGET CORPORATION",
+          "cik": 27419,
+          "revenue": 106566000000,
+          "share": 0.09415964378740359,
+          "basisUncertain": false
+        },
+        {
+          "name": "DOLLAR GENERAL CORPORATION",
+          "cik": 29534,
+          "revenue": 40612308000,
+          "share": 0.03588424501871442,
+          "basisUncertain": false
+        },
+        {
+          "name": "BJ’S WHOLESALE CLUB HOLDINGS, INC.",
+          "cik": 1531152,
+          "revenue": 20501804000,
+          "share": 0.01811499504193801,
+          "basisUncertain": false
+        },
+        {
+          "name": "DOLLAR TREE, INC.",
+          "cik": 935703,
+          "revenue": 17578500000,
+          "share": 0.015532020516082747,
+          "basisUncertain": false
+        },
+        {
+          "name": "PriceSmart, Inc.",
+          "cik": 1041803,
+          "revenue": 4913898000,
+          "share": 0.004341824646581789,
+          "basisUncertain": false
+        },
+        {
+          "name": "Five Below, Inc.",
+          "cik": 1177609,
+          "revenue": 3876527000,
+          "share": 0.0034252238185936627,
+          "basisUncertain": false
+        },
+        {
+          "name": "Ollie’s Bargain Outlet Holdings, Inc.",
+          "cik": 1639300,
+          "revenue": 2271705000,
+          "share": 0.002007234329805601,
+          "basisUncertain": false
+        }
+      ],
+      "unresolvable": [],
+      "roic": [
+        {
+          "cik": 104169,
+          "name": "Walmart Inc.",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 13941000000,
+          "roic": 0.16863969519851524,
+          "nopatMargin": 0.031906310533175296,
+          "capitalTurnover": 5.285465238080986,
+          "nopat": 22539032542.67196,
+          "investedCapital": 133652000000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0.375,
+          "turnoverPercentile": 0.75,
+          "medianMargin": 0.03883021239529022,
+          "medianTurnover": 3.878558286307447
+        },
+        {
+          "cik": 909832,
+          "name": "COSTCO WHOLESALE CORP /NEW",
+          "period": "2025-08-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 2460000000,
+          "roic": 0.3752333006380454,
+          "nopatMargin": 0.02824253113164295,
+          "capitalTurnover": 13.286107356632554,
+          "nopat": 7773333056.017748,
+          "investedCapital": 20716000000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0,
+          "turnoverPercentile": 1,
+          "medianMargin": 0.03883021239529022,
+          "medianTurnover": 3.878558286307447
+        },
+        {
+          "cik": 27419,
+          "name": "TARGET CORPORATION",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 3462000000,
+          "roic": 0.1586052415440902,
+          "nopatMargin": 0.03795596899902712,
+          "capitalTurnover": 4.178664007976072,
+          "nopat": 3977026431.7180614,
+          "investedCapital": 25075000000,
+          "advantage": "neither",
+          "marginPercentile": 0.5,
+          "turnoverPercentile": 0.5,
+          "medianMargin": 0.03580538316236431,
+          "medianTurnover": 3.9755681537117002
+        },
+        {
+          "cik": 29534,
+          "name": "DOLLAR GENERAL CORPORATION",
+          "period": "2026-01-30",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 9605885000,
+          "roic": 0.1420805116548727,
+          "nopatMargin": 0.03970445579155332,
+          "capitalTurnover": 3.578452564638822,
+          "nopat": 1696347820.182511,
+          "investedCapital": 11939342000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.625,
+          "turnoverPercentile": 0.375,
+          "medianMargin": 0.03493113976610121,
+          "medianTurnover": 4.275673875380325
+        },
+        {
+          "cik": 1531152,
+          "name": "BJ’S WHOLESALE CLUB HOLDINGS, INC.",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 1880383000,
+          "roic": 0.2391859351368593,
+          "nopatMargin": 0.028430770701987417,
+          "capitalTurnover": 8.412924772388926,
+          "nopat": 610046836.9837164,
+          "investedCapital": 2550513000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0.125,
+          "turnoverPercentile": 0.875,
+          "medianMargin": 0.03883021239529022,
+          "medianTurnover": 3.878558286307447
+        },
+        {
+          "cik": 935703,
+          "name": "DOLLAR TREE, INC.",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 3623700000,
+          "roic": 0.22729775881921085,
+          "nopatMargin": 0.06408874046466487,
+          "capitalTurnover": 3.546609859566998,
+          "nopat": 1243045983.4305003,
+          "investedCapital": 5468800000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.75,
+          "turnoverPercentile": 0.25,
+          "medianMargin": 0.03493113976610121,
+          "medianTurnover": 4.275673875380325
+        },
+        {
+          "cik": 1041803,
+          "name": "PriceSmart, Inc.",
+          "period": "2025-08-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 122244000,
+          "roic": 0.13815540216181882,
+          "nopatMargin": 0.031595105040420735,
+          "capitalTurnover": 4.372683742784578,
+          "nopat": 166509173.50289106,
+          "investedCapital": 1205231000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0.25,
+          "turnoverPercentile": 0.625,
+          "medianMargin": 0.03883021239529022,
+          "medianTurnover": 3.878558286307447
+        },
+        {
+          "cik": 1177609,
+          "name": "Five Below, Inc.",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": true,
+          "operatingLeaseLiability": 1731041000,
+          "roic": 0.2323709763739176,
+          "nopatMargin": 0.07167921047363189,
+          "capitalTurnover": 3.241818301826835,
+          "nopat": 341490295.54032195,
+          "investedCapital": 1469591000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.875,
+          "turnoverPercentile": 0.125,
+          "medianMargin": 0.03493113976610121,
+          "medianTurnover": 4.275673875380325
+        },
+        {
+          "cik": 1639300,
+          "name": "Ollie’s Bargain Outlet Holdings, Inc.",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 575531000,
+          "roic": 0.13892549311053815,
+          "nopatMargin": 0.08544511611042947,
+          "capitalTurnover": 1.6259032632244363,
+          "nopat": 226361030.70951754,
+          "investedCapital": 1629370000,
+          "advantage": "differentiation",
+          "marginPercentile": 1,
+          "turnoverPercentile": 0,
+          "medianMargin": 0.03493113976610121,
+          "medianTurnover": 4.275673875380325
+        }
+      ],
+      "instability": {
+        "average": 0.008800331098071738,
+        "years": 5,
+        "stableByRuleOfThumb": true,
+        "rows": [
+          {
+            "name": "COSTCO WHOLESALE CORP /NEW",
+            "earlierShare": 0.18350419766387097,
+            "laterShare": 0.224829719053321,
+            "absoluteChange": 0.04132552138945003
+          },
+          {
+            "name": "Walmart Inc.",
+            "earlierShare": 0.6296509788593052,
+            "laterShare": 0.6017050937875592,
+            "absoluteChange": 0.027945885071746
+          },
+          {
+            "name": "DOLLAR TREE, INC.",
+            "earlierShare": 0.028373253375520616,
+            "laterShare": 0.015532020516082747,
+            "absoluteChange": 0.012841232859437869
+          },
+          {
+            "name": "BIG LOTS, INC.",
+            "earlierShare": 0.006396900355070723,
+            "laterShare": null,
+            "absoluteChange": 0.006396900355070723
+          },
+          {
+            "name": "DOLLAR GENERAL CORPORATION",
+            "earlierShare": 0.033352131571414693,
+            "laterShare": 0.03588424501871442,
+            "absoluteChange": 0.0025321134472997275
+          },
+          {
+            "name": "BJ’S WHOLESALE CLUB HOLDINGS, INC.",
+            "earlierShare": 0.015851359204823785,
+            "laterShare": 0.01811499504193801,
+            "absoluteChange": 0.002263635837114225
+          },
+          {
+            "name": "Other",
+            "earlierShare": 0.0012178027531399645,
+            "laterShare": null,
+            "absoluteChange": 0.0012178027531399645
+          },
+          {
+            "name": "Five Below, Inc.",
+            "earlierShare": 0.00221922756561299,
+            "laterShare": 0.0034252238185936627,
+            "absoluteChange": 0.0012059962529806728
+          },
+          {
+            "name": "PriceSmart, Inc.",
+            "earlierShare": 0.0038742034270715805,
+            "laterShare": 0.004341824646581789,
+            "absoluteChange": 0.0004676212195102087
+          },
+          {
+            "name": "Ollie’s Bargain Outlet Holdings, Inc.",
+            "earlierShare": 0.001692241983759752,
+            "laterShare": 0.002007234329805601,
+            "absoluteChange": 0.0003149923460458489
+          },
+          {
+            "name": "TARGET CORPORATION",
+            "earlierShare": 0.09386770324040974,
+            "laterShare": 0.09415964378740359,
+            "absoluteChange": 0.00029194054699384353
+          }
+        ]
+      },
+      "instabilityAllFilers": 0.008066970173232426,
+      "uncertainBasis": []
+    },
+    {
+      "sic": "2834",
+      "label": "Pharmaceutical preparations",
+      "registrants": 1903,
+      "filersWithRevenue": 312,
+      "totalRevenue": 586131658324,
+      "hhi": 787.7373497036128,
+      "c4": 0.46568035717517847,
+      "leaders": [
+        {
+          "name": "Johnson & Johnson",
+          "cik": 200406,
+          "revenue": 88821000000,
+          "share": 0.15153762595587664,
+          "basisUncertain": false
+        },
+        {
+          "name": "Merck & Co., Inc.",
+          "cik": 310158,
+          "revenue": 64168000000,
+          "share": 0.10947710994400753,
+          "basisUncertain": false
+        },
+        {
+          "name": "PFIZER INC",
+          "cik": 78003,
+          "revenue": 63627000000,
+          "share": 0.10855410912615894,
+          "basisUncertain": false
+        },
+        {
+          "name": "AbbVie Inc.",
+          "cik": 1551152,
+          "revenue": 56334000000,
+          "share": 0.0961115121491354,
+          "basisUncertain": false
+        },
+        {
+          "name": "BRISTOL-MYERS SQUIBB COMPANY",
+          "cik": 14272,
+          "revenue": 48300000000,
+          "share": 0.08240469408888486,
+          "basisUncertain": false
+        },
+        {
+          "name": "ELI LILLY AND COMPANY",
+          "cik": 59478,
+          "revenue": 45043000000,
+          "share": 0.07684792206719752,
+          "basisUncertain": false
+        },
+        {
+          "name": "Abbott Laboratories",
+          "cik": 1800,
+          "revenue": 41950000000,
+          "share": 0.07157095066312048,
+          "basisUncertain": false
+        },
+        {
+          "name": "Universe Pharmaceuticals INC",
+          "cik": 1809616,
+          "revenue": 23024458000,
+          "share": 0.03928205834476972,
+          "basisUncertain": false
+        },
+        {
+          "name": "TEVA PHARMACEUTICAL INDUSTRIES LIMITED",
+          "cik": 818686,
+          "revenue": 16544000000,
+          "share": 0.028225740352101677,
+          "basisUncertain": false
+        },
+        {
+          "name": "VIATRIS INC.",
+          "cik": 1792044,
+          "revenue": 14739300000,
+          "share": 0.025146739287459637,
+          "basisUncertain": false
+        }
+      ],
+      "unresolvable": [
+        {
+          "name": "SPERO THERAPEUTICS, INC.",
+          "spread": 129.31805929919136,
+          "revenue": 47977000
+        }
+      ],
+      "roic": [
+        {
+          "cik": 200406,
+          "name": "Johnson & Johnson",
+          "reason": "needs operating profit"
+        },
+        {
+          "cik": 310158,
+          "name": "Merck & Co., Inc.",
+          "reason": "needs operating profit"
+        },
+        {
+          "cik": 78003,
+          "name": "PFIZER INC",
+          "reason": "needs operating profit"
+        },
+        {
+          "cik": 1551152,
+          "name": "AbbVie Inc.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 689000000,
+          "roic": 0.16534115541561412,
+          "nopatMargin": 0.15815816898756824,
+          "capitalTurnover": 1.045416474368836,
+          "nopat": 9672953615.279673,
+          "investedCapital": 58503000000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 4 given"
+        },
+        {
+          "cik": 14272,
+          "name": "BRISTOL-MYERS SQUIBB COMPANY",
+          "reason": "needs operating profit"
+        },
+        {
+          "cik": 59478,
+          "name": "ELI LILLY AND COMPANY",
+          "reason": "needs operating profit"
+        },
+        {
+          "cik": 1800,
+          "name": "Abbott Laboratories",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 931000000,
+          "roic": 0.10976417747934583,
+          "nopatMargin": 0.13999587850004006,
+          "capitalTurnover": 0.7840529210959195,
+          "nopat": 6205737302.1497755,
+          "investedCapital": 56537000000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 4 given"
+        },
+        {
+          "cik": 1809616,
+          "name": "Universe Pharmaceuticals INC",
+          "period": "2025-09-30",
+          "taxRateAssumed": true,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": null,
+          "roic": -0.0775944895212327,
+          "nopatMargin": -0.12898877759070465,
+          "capitalTurnover": 0.6015600036729429,
+          "nopat": -2303576010,
+          "investedCapital": 29687366000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 4 given"
+        },
+        {
+          "cik": 818686,
+          "name": "TEVA PHARMACEUTICAL INDUSTRIES LIMITED",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 288000000,
+          "roic": 0.11153050672182006,
+          "nopatMargin": 0.12498551396453819,
+          "capitalTurnover": 0.8923474663908997,
+          "nopat": 2157000000,
+          "investedCapital": 19340000000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 4 given"
+        },
+        {
+          "cik": 1792044,
+          "name": "VIATRIS INC.",
+          "period": "2025-12-31",
+          "taxRateAssumed": true,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 178100000,
+          "roic": -0.08132546048435416,
+          "nopatMargin": -0.14763438219278055,
+          "capitalTurnover": 0.5508571870349253,
+          "nopat": -2103849000,
+          "investedCapital": 25869500000,
+          "advantageWithheld": "needs at least 5 comparable companies to say what is high or low; 4 given"
+        }
+      ],
+      "instability": {
+        "average": 0.019906984381675895,
+        "years": 5,
+        "stableByRuleOfThumb": true,
+        "rows": [
+          {
+            "name": "Johnson & Johnson",
+            "earlierShare": 0.19439885563203127,
+            "laterShare": 0.15153762595587664,
+            "absoluteChange": 0.04286122967615463
+          },
+          {
+            "name": "Universe Pharmaceuticals INC",
+            "earlierShare": 0.00007872068881944876,
+            "laterShare": 0.03928205834476972,
+            "absoluteChange": 0.03920333765595027
+          },
+          {
+            "name": "ALLERGAN PLC",
+            "earlierShare": 0.038114816758407825,
+            "laterShare": null,
+            "absoluteChange": 0.038114816758407825
+          },
+          {
+            "name": "MYLAN II B.V.",
+            "earlierShare": 0.02724483651026914,
+            "laterShare": null,
+            "absoluteChange": 0.02724483651026914
+          },
+          {
+            "name": "ELI LILLY AND COMPANY",
+            "earlierShare": 0.052875190512669194,
+            "laterShare": 0.07684792206719752,
+            "absoluteChange": 0.02397273155452833
+          },
+          {
+            "name": "BRISTOL-MYERS SQUIBB COMPANY",
+            "earlierShare": 0.061937850577017235,
+            "laterShare": 0.08240469408888486,
+            "absoluteChange": 0.020466843511867623
+          },
+          {
+            "name": "AbbVie Inc.",
+            "earlierShare": 0.07880759370032722,
+            "laterShare": 0.0961115121491354,
+            "absoluteChange": 0.017303918448808173
+          },
+          {
+            "name": "Merck & Co., Inc.",
+            "earlierShare": 0.09267816609001688,
+            "laterShare": 0.10947710994400753,
+            "absoluteChange": 0.016798943853990653
+          },
+          {
+            "name": "TEVA PHARMACEUTICAL INDUSTRIES LIMITED",
+            "earlierShare": 0.040005526207461846,
+            "laterShare": 0.028225740352101677,
+            "absoluteChange": 0.011779785855360169
+          },
+          {
+            "name": "PFIZER INC",
+            "earlierShare": 0.09690448567041078,
+            "laterShare": 0.10855410912615894,
+            "absoluteChange": 0.01164962345574816
+          },
+          {
+            "name": "Abbott Laboratories",
+            "earlierShare": 0.07558099769780677,
+            "laterShare": 0.07157095066312048,
+            "absoluteChange": 0.004010047034686284
+          },
+          {
+            "name": "Other",
+            "earlierShare": 0.2141281234444934,
+            "laterShare": 0.2108415380212875,
+            "absoluteChange": 0.0032865854232058955
+          },
+          {
+            "name": "VIATRIS INC.",
+            "earlierShare": 0.02724483651026914,
+            "laterShare": 0.025146739287459637,
+            "absoluteChange": 0.0020980972228095036
+          }
+        ]
+      },
+      "instabilityAllFilers": 0.0008356544143183322,
+      "uncertainBasis": [
+        "Arcus Biosciences, Inc.",
+        "Lexicon Pharmaceuticals, Inc.",
+        "XOMA Royalty Corp",
+        "Sol-Gel Technologies Ltd.",
+        "VYOME HOLDINGS, INC.",
+        "ABVC BioPharma, Inc."
+      ]
+    },
+    {
+      "sic": "7372",
+      "label": "Prepackaged software",
+      "registrants": 1781,
+      "filersWithRevenue": 264,
+      "totalRevenue": 620734406793,
+      "hhi": 1739.4823557698433,
+      "c4": 0.5872673546217075,
+      "leaders": [
+        {
+          "name": "MICROSOFT CORPORATION",
+          "cik": 789019,
+          "revenue": 245122000000,
+          "share": 0.3948903062525778,
+          "basisUncertain": false
+        },
+        {
+          "name": "Oracle Corporation",
+          "cik": 1341439,
+          "revenue": 57399000000,
+          "share": 0.09246949963117025,
+          "basisUncertain": false
+        },
+        {
+          "name": "Salesforce, Inc.",
+          "cik": 1108524,
+          "revenue": 37895000000,
+          "share": 0.06104865395779015,
+          "basisUncertain": false
+        },
+        {
+          "name": "BLOCK, INC.",
+          "cik": 1512673,
+          "revenue": 24121053000,
+          "share": 0.03885889478016931,
+          "basisUncertain": false
+        },
+        {
+          "name": "ADOBE INC.",
+          "cik": 796343,
+          "revenue": 21505000000,
+          "share": 0.03464444658562547,
+          "basisUncertain": false
+        },
+        {
+          "name": "INTUIT INC.",
+          "cik": 896878,
+          "revenue": 16285000000,
+          "share": 0.026235052901507128,
+          "basisUncertain": false
+        },
+        {
+          "name": "NETEASE, INC.",
+          "cik": 1110646,
+          "revenue": 14425388000,
+          "share": 0.02323922734447443,
+          "basisUncertain": false
+        },
+        {
+          "name": "SERVICENOW, INC.",
+          "cik": 1373715,
+          "revenue": 10984000000,
+          "share": 0.017695168625738673,
+          "basisUncertain": false
+        },
+        {
+          "name": "Shopify Inc.",
+          "cik": 1594805,
+          "revenue": 8880000000,
+          "share": 0.014305635232753041,
+          "basisUncertain": false
+        },
+        {
+          "name": "ELECTRONIC ARTS INC.",
+          "cik": 712515,
+          "revenue": 7463000000,
+          "share": 0.0120228553763554,
+          "basisUncertain": false
+        }
+      ],
+      "unresolvable": [
+        {
+          "name": "XIAO-I CORPORATION",
+          "spread": 978.476711985639,
+          "revenue": 70314315
+        }
+      ],
+      "roic": [
+        {
+          "cik": 789019,
+          "name": "MICROSOFT CORPORATION",
+          "period": "2026-06-30",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 16532000000,
+          "roic": 0.2709862534216744,
+          "nopatMargin": 0.3770708644024496,
+          "capitalTurnover": 0.7186613419499032,
+          "nopat": 125126818572.44446,
+          "investedCapital": 461746000000,
+          "advantage": "differentiation",
+          "marginPercentile": 1,
+          "turnoverPercentile": 0.2222222222222222,
+          "medianMargin": 0.1571501095320729,
+          "medianTurnover": 0.9955589505235276
+        },
+        {
+          "cik": 1341439,
+          "name": "Oracle Corporation",
+          "period": "2026-05-31",
+          "taxRateAssumed": true,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 26648000000,
+          "roic": 0.11002196554450895,
+          "nopatMargin": 0.24167851893641343,
+          "capitalTurnover": 0.4552409789198359,
+          "nopat": 16278740000,
+          "investedCapital": 147959000000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.6666666666666666,
+          "turnoverPercentile": 0,
+          "medianMargin": 0.1571501095320729,
+          "medianTurnover": 0.9955589505235276
+        },
+        {
+          "cik": 1108524,
+          "name": "Salesforce, Inc.",
+          "period": "2026-01-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 2189000000,
+          "roic": 0.09849455577503739,
+          "nopatMargin": 0.1571501095320729,
+          "capitalTurnover": 0.6267546110423522,
+          "nopat": 6525658298.319327,
+          "investedCapital": 66254000000,
+          "advantage": "neither",
+          "marginPercentile": 0.4444444444444444,
+          "turnoverPercentile": 0.1111111111111111,
+          "medianMargin": 0.209241842719798,
+          "medianTurnover": 0.9955589505235276
+        },
+        {
+          "cik": 1512673,
+          "name": "BLOCK, INC.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": true,
+          "operatingLeaseLiability": 257126000,
+          "roic": 0.08430102737362238,
+          "nopatMargin": 0.05449702503395393,
+          "capitalTurnover": 1.5468922812043284,
+          "nopat": 1318483748.1145456,
+          "investedCapital": 15640186000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0,
+          "turnoverPercentile": 0.8888888888888888,
+          "medianMargin": 0.209241842719798,
+          "medianTurnover": 0.9688128772635815
+        },
+        {
+          "cik": 796343,
+          "name": "ADOBE INC.",
+          "period": "2025-11-28",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 361000000,
+          "roic": 0.5730641995553359,
+          "nopatMargin": 0.2990088856445486,
+          "capitalTurnover": 1.916545718432511,
+          "nopat": 7107142202.885276,
+          "investedCapital": 12402000000,
+          "advantage": "both",
+          "marginPercentile": 0.8888888888888888,
+          "turnoverPercentile": 1,
+          "medianMargin": 0.1571501095320729,
+          "medianTurnover": 0.9688128772635815
+        },
+        {
+          "cik": 896878,
+          "name": "INTUIT INC.",
+          "period": "2025-07-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 597000000,
+          "roic": 0.17282482302980465,
+          "nopatMargin": 0.209241842719798,
+          "capitalTurnover": 0.8259572788280187,
+          "nopat": 3940233140.2565165,
+          "investedCapital": 22799000000,
+          "advantage": "neither",
+          "marginPercentile": 0.5555555555555556,
+          "turnoverPercentile": 0.3333333333333333,
+          "medianMargin": 0.1571501095320729,
+          "medianTurnover": 0.9955589505235276
+        },
+        {
+          "cik": 1110646,
+          "name": "NETEASE, INC.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": true,
+          "operatingLeaseLiability": 232113000,
+          "roic": 0.26996164831812364,
+          "nopatMargin": 0.2711659095387177,
+          "capitalTurnover": 0.9955589505235276,
+          "nopat": 30540279392.68708,
+          "investedCapital": 113128215000,
+          "advantage": "differentiation",
+          "marginPercentile": 0.7777777777777778,
+          "turnoverPercentile": 0.5555555555555556,
+          "medianMargin": 0.1571501095320729,
+          "medianTurnover": 0.9688128772635815
+        },
+        {
+          "cik": 1373715,
+          "name": "SERVICENOW, INC.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": true,
+          "operatingLeaseLiability": 800000000,
+          "roic": 0.1526468132176014,
+          "nopatMargin": 0.10620208318302468,
+          "capitalTurnover": 1.4373240961247022,
+          "nopat": 1410151260.5042017,
+          "investedCapital": 9238000000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0.2222222222222222,
+          "turnoverPercentile": 0.7777777777777778,
+          "medianMargin": 0.209241842719798,
+          "medianTurnover": 0.9688128772635815
+        },
+        {
+          "cik": 1594805,
+          "name": "Shopify Inc.",
+          "period": "2025-12-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": true,
+          "operatingLeaseLiability": 171000000,
+          "roic": 0.10039850323500533,
+          "nopatMargin": 0.10363043843779367,
+          "capitalTurnover": 0.9688128772635815,
+          "nopat": 1197553346.5871437,
+          "investedCapital": 11928000000,
+          "advantage": "neither",
+          "marginPercentile": 0.1111111111111111,
+          "turnoverPercentile": 0.4444444444444444,
+          "medianMargin": 0.209241842719798,
+          "medianTurnover": 0.9955589505235276
+        },
+        {
+          "cik": 712515,
+          "name": "ELECTRONIC ARTS INC.",
+          "period": "2026-03-31",
+          "taxRateAssumed": false,
+          "debtAssumedZero": false,
+          "operatingLeaseLiability": 306000000,
+          "roic": 0.16220417669924303,
+          "nopatMargin": 0.11598320163662511,
+          "capitalTurnover": 1.3985143918291552,
+          "nopat": 873469491.5254236,
+          "investedCapital": 5385000000,
+          "advantage": "cost leadership",
+          "marginPercentile": 0.3333333333333333,
+          "turnoverPercentile": 0.6666666666666666,
+          "medianMargin": 0.209241842719798,
+          "medianTurnover": 0.9688128772635815
+        }
+      ],
+      "instability": {
+        "average": 0.014810005611540663,
+        "years": 5,
+        "stableByRuleOfThumb": true,
+        "rows": [
+          {
+            "name": "MICROSOFT CORPORATION",
+            "earlierShare": 0.36238936287383383,
+            "laterShare": 0.3948903062525778,
+            "absoluteChange": 0.032500943378743985
+          },
+          {
+            "name": "VMWARE, INC.",
+            "earlierShare": 0.031132374482720673,
+            "laterShare": null,
+            "absoluteChange": 0.031132374482720673
+          },
+          {
+            "name": "BLOCK, INC.",
+            "earlierShare": 0.013573438823818694,
+            "laterShare": 0.03885889478016931,
+            "absoluteChange": 0.025285455956350615
+          },
+          {
+            "name": "Other",
+            "earlierShare": 0.3058147686712911,
+            "laterShare": 0.28459025931183835,
+            "absoluteChange": 0.021224509359452748
+          },
+          {
+            "name": "Oracle Corporation",
+            "earlierShare": 0.11250389476375278,
+            "laterShare": 0.09246949963117025,
+            "absoluteChange": 0.020034395132582525
+          },
+          {
+            "name": "ACTIVISION BLIZZARD, INC.",
+            "earlierShare": 0.01868633595582041,
+            "laterShare": null,
+            "absoluteChange": 0.01868633595582041
+          },
+          {
+            "name": "Salesforce, Inc.",
+            "earlierShare": 0.0492370122010506,
+            "laterShare": 0.06104865395779015,
+            "absoluteChange": 0.011811641756739544
+          },
+          {
+            "name": "Shopify Inc.",
+            "earlierShare": 0.004544655705718133,
+            "laterShare": 0.014305635232753041,
+            "absoluteChange": 0.009760979527034908
+          },
+          {
+            "name": "SERVICENOW, INC.",
+            "earlierShare": 0.009963742087708217,
+            "laterShare": 0.017695168625738673,
+            "absoluteChange": 0.007731426538030457
+          },
+          {
+            "name": "INTUIT INC.",
+            "earlierShare": 0.01953584575809611,
+            "laterShare": 0.026235052901507128,
+            "absoluteChange": 0.006699207143411018
+          },
+          {
+            "name": "ELECTRONIC ARTS INC.",
+            "earlierShare": 0.015944867034578147,
+            "laterShare": 0.0120228553763554,
+            "absoluteChange": 0.003922011658222747
+          },
+          {
+            "name": "ADOBE INC.",
+            "earlierShare": 0.03216906441092153,
+            "laterShare": 0.03464444658562547,
+            "absoluteChange": 0.002475382174703937
+          },
+          {
+            "name": "NETEASE, INC.",
+            "earlierShare": 0.024504637230689418,
+            "laterShare": 0.02323922734447443,
+            "absoluteChange": 0.0012654098862149889
+          }
+        ]
+      },
+      "instabilityAllFilers": 0.0011230278537011785,
+      "uncertainBasis": [
+        "Roblox Corporation",
+        "PIXELWORKS, INC",
+        "TAOPING INC."
+      ]
+    }
+  ]
+}
