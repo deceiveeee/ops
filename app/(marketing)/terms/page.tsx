@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * The contact address is deliberately a single constant. Set it before the site
- * is advertised — a legal page with no way to reach anyone is worse than none.
+ * One constant, because both legal pages point at it and they must never
+ * disagree about how to reach someone.
  */
-const CONTACT = "SET-BEFORE-LAUNCH@example.com";
+const CONTACT = "e02.lu@outlook.com";
 
 export default function TermsPage() {
   return (
