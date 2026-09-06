@@ -2,7 +2,7 @@
  * Reading an industry the way Morgan Stanley's Counterpoint Global reads one.
  *
  * The measures here follow *Measuring the Moat* (Michael Mauboussin and Dan
- * Callahan, Counterpoint Global, Morgan Stanley Investment Management, 2025).
+ * Callahan, Counterpoint Global, Morgan Stanley Investment Management, 15 October 2024).
  * Definitions are the paper's; the code is OPS's, and where the paper leaves a
  * choice open this file says which choice was made and why.
  *

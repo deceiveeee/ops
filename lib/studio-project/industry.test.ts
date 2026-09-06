@@ -16,7 +16,7 @@ import {
  * The instability tests check this implementation against figures Morgan Stanley
  * published, which is a genuinely independent answer rather than one derived
  * from the code. Exhibits 13 and 14 of *Measuring the Moat* (Mauboussin and
- * Callahan, Counterpoint Global, 2025) give both the inputs and the answer.
+ * Callahan, Counterpoint Global, 15 October 2024) give both the inputs and the answer.
  *
  * Two of the paper's four exhibits are used. The web-browser and social-media
  * tables are not: their printed per-company changes do not reconcile with their

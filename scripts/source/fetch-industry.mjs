@@ -268,7 +268,8 @@ function writeReport(industries, years) {
     `Built ${new Date().toISOString().slice(0, 10)} from SEC registrant lists and XBRL frames, ${years[0]} against ${years[1]}.`,
     "",
     "Measures follow *Measuring the Moat* (Mauboussin and Callahan, Counterpoint",
-    "Global, Morgan Stanley, 2025). Market share instability is the average",
+    "Global, Morgan Stanley, 15 October 2024). Market share instability is the",
+    "average",
     "absolute change in share between two periods, the method the paper",
     "attributes to Bruce Greenwald; its rule of thumb is that a five-year average",
     "change of two points or less is relatively stable.",
@@ -445,7 +446,7 @@ const dataset = {
   years,
   source: "SEC registrant lists by SIC, and XBRL company frames. Public domain.",
   method:
-    "Market share instability follows Measuring the Moat (Mauboussin and Callahan, Counterpoint Global, Morgan Stanley, 2025): the average absolute change in share between two periods, attributed there to Bruce Greenwald.",
+    "Market share instability follows Measuring the Moat (Mauboussin and Callahan, Counterpoint Global, Morgan Stanley, 15 October 2024): the average absolute change in share between two periods, attributed there to Bruce Greenwald.",
   industries: built.map((ind) => {
     const total = ind.picture.shares.reduce((s, r) => s + r.revenue, 0);
     return {

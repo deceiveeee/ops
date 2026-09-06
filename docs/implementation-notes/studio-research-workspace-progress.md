@@ -460,3 +460,66 @@ M2 schema work is source-independent and proceeds in parallel with any of these.
 
 The user's PDFs and the Morgan Stanley papers are not redistributed in the repository. `tmp/`
 is gitignored.
+
+## 2026-09-06: cost of capital, the investigate loop, and a citation correction
+
+### A citation error, corrected at source
+
+Every reference to *Measuring the Moat* in committed code and generated audits dated the
+paper **2025**. It is dated **15 October 2024** on its own first page — "CONSILIENT OBSERVER |
+October 15, 2024". The 2025 came from the PDF's copyright footer, which is a copyright year
+and not a publication date. Caught by Codex's proposal, verified against the extracted text,
+and corrected in `industry.ts`, `roic.ts`, `industry.test.ts`, `fetch-industry.mjs` and both
+regenerated outputs. Commit messages `c10201e` and `66fa327` still carry the wrong year and
+cannot be edited; this note is the correction of record.
+
+### Direction settled with the user
+
+A long design conversation changed the product thesis. Studio is a **guideline**, not a data
+warehouse. The learner researches their own company's figures — on SEC, or a general finance
+site — and enters them. Studio's job is to show **which metrics matter and why**, to catch
+what is typed wrong, and to interpret the result against real peers. Precise numbers are
+obtainable elsewhere; the interpretation is not.
+
+Also settled: no generated portfolio suggestions ever; philosophy is a **companion** that
+blocks finalising rather than exploring; several contrasting philosophies are taught, with
+five having complete practical paths and trend-following deliberately excluded from those
+because month-end pricing cannot support it honestly; stocks, bonds, funds and cash only; one
+portfolio may hold several named strategies; finalising requires evidence review, a costed
+comparison and downside scenarios, with accepted trade-offs recorded rather than blocked;
+challenge is deterministic checks first, with a capped, citation-constrained AI critic later;
+market-implied expectations replace analyst consensus; and the end state is an **operating
+position**, not an export.
+
+### Built
+
+- **`lib/studio-project/investigate.ts`** with 23 tests. Seven figures, where each lives, what
+  other sites call it. Deterministic checks written for a person rather than a parser — profit
+  exceeding revenue, cash swallowing the capital base, a bank stopped before it starts with a
+  reason and an alternative, a margin four times the industry median questioned as possibly
+  gross profit. The hardest requirement is the inverse: Costco's real 13.29x capital turnover
+  must pass untouched, and a test pins it.
+- **`lib/studio-project/cost-of-capital.ts`** and `scripts/source/fetch-cost-of-capital.mjs`
+  with 13 tests. 96 industries from Damodaran. Audit:
+  [`studio-cost-of-capital.md`](../source-audits/studio-cost-of-capital.md).
+
+### The vintage problem, and what was done about it
+
+His page carries no date and the server sends no `Last-Modified`. The newest dated file in his
+archive is the January 2025 update. A risk-free rate from then, used now, is wrong by however
+much yields have moved — and it is the one component anyone can look up in seconds.
+
+He publishes cost of equity but not its inputs. Since every industry uses the same rate and
+premium with only beta varying, regressing cost of equity on beta recovers both: **risk-free
+3.96%, equity risk premium 4.45%**. Verified rather than assumed — worst residual across 96
+industries is **2.33bp against 2.23bp explicable by beta being published to two decimals
+alone**. A second check confirms cost of capital rebuilds from its weighted parts to 0.86bp.
+Both abort the run if they stop holding.
+
+So the surface shows the rate, says it is undated, and lets the learner replace it with
+today's Treasury yield. Accepting the default reproduces his published figure exactly; a test
+pins the step between the published and rebuilt paths at under a twentieth of a point.
+
+Permitted use confirmed from his stated rules: acknowledgement optional, no commercial or
+redistribution restriction, industry-level only, and he says explicitly not to use it for
+individual company analysis — which is exactly the split Studio makes.
