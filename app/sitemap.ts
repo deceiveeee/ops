@@ -12,13 +12,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/plan",
     "/filings",
     "/studio",
+    "/studio/industry",
+    "/studio/investigate",
     "/start",
+    "/privacy",
+    "/terms",
     ...getAllLessons().map(({ lesson }) => `/lessons/${lesson.slug}`),
   ];
 
+  // Legal pages belong in the sitemap so they are findable, but they are not
+  // what anyone comes here for.
+  const legal = new Set(["/privacy", "/terms"]);
+
   return paths.map((path) => ({
     url: new URL(path, base).toString(),
-    changeFrequency: path.startsWith("/lessons/") ? "monthly" : "weekly",
-    priority: path === "/" ? 1 : path.startsWith("/lessons/") ? 0.6 : 0.8,
+    changeFrequency: legal.has(path) ? "yearly" : path.startsWith("/lessons/") ? "monthly" : "weekly",
+    priority: path === "/" ? 1 : legal.has(path) ? 0.3 : path.startsWith("/lessons/") ? 0.6 : 0.8,
   }));
 }

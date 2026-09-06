@@ -41,6 +41,8 @@ export default function SiteFooter() {
                 { href: "/", label: "Homepage" },
                 { href: "/courses", label: "Course map" },
                 { href: "/filings", label: "Filing reader" },
+                { href: "/privacy", label: "Privacy" },
+                { href: "/terms", label: "Terms" },
               ]}
             />
           </nav>
