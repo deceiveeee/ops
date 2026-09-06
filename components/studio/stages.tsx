@@ -179,6 +179,19 @@ export function ResearchStage({ plan, update }: StageProps) {
         <span className="mt-2 inline-block text-[13px] text-accent-cyan">Open the industry view →</span>
       </Link>
 
+      <Link
+        href="/studio/investigate"
+        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 transition-colors hover:border-accent-cyan/50"
+      >
+        <div className="text-[15px] font-semibold text-white">Investigate a company you care about</div>
+        <p className="mt-1 text-[13px] leading-6 text-slate-400">
+          Look up seven figures from its annual report and find out whether it earns more than its
+          capital costs, how it earns it, and what one year cannot tell you. Works for any company,
+          not only the ones listed below.
+        </p>
+        <span className="mt-2 inline-block text-[13px] text-accent-cyan">Start an investigation →</span>
+      </Link>
+
       <div className="space-y-3">
         {STUDIO_CATALOG.map((instrument) => {
           const open = openId === instrument.id;

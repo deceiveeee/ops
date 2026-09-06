@@ -206,9 +206,14 @@ export function readAdvantage(
   // explain a good return; they do not classify a bad one. Atkore's loss year
   // came out as cost leadership on a 0.6% margin, because its capital happened
   // to turn over quickly — which describes failure as a strategy.
+  //
+  // The hurdle should be the company's own cost of capital, which is what
+  // "attractive" means for the business it is in — a 9% return is good for a
+  // utility and poor for a software company. The 8% default is a fallback for
+  // callers that have none, not a classification threshold.
   if (!(company.roic > hurdle)) {
     return {
-      reason: `this explains how a company earns an attractive return, and a ${(company.roic * 100).toFixed(1)}% return on capital is not one; the split is still shown above`,
+      reason: `this explains how a company earns an attractive return, and a ${(company.roic * 100).toFixed(1)}% return does not clear the ${(hurdle * 100).toFixed(1)}% this capital costs; the split is still shown above`,
     };
   }
 

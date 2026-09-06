@@ -240,12 +240,15 @@ export interface Reading {
   cannotTell: string[];
 }
 
-const money = (value: number): string => {
-  const abs = Math.abs(value);
-  if (abs >= 1e9) return `$${(value / 1e9).toFixed(1)}bn`;
-  if (abs >= 1e6) return `$${(value / 1e6).toFixed(0)}m`;
-  return `$${Math.round(value).toLocaleString()}`;
-};
+/**
+ * Amounts stay in whatever units the learner typed.
+ *
+ * They were asked to keep the seven figures consistent with each other, not to
+ * use any particular scale, so a currency symbol and a "bn" suffix would be an
+ * invention. Everything else this module returns is a ratio, which needs none.
+ */
+const inTheirUnits = (value: number): string =>
+  Math.abs(value) >= 1000 ? Math.round(value).toLocaleString() : value.toFixed(1);
 
 /**
  * The interpretation, which is the part a learner cannot get elsewhere.
@@ -285,14 +288,16 @@ export function read(
 
   const says: string[] = [
     createsValue
-      ? `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. Every pound put in comes back worth more than it cost, and over a year that gap is worth about ${money(profit)}.`
-      : `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. It is not covering what that money costs, which over a year is about ${money(Math.abs(profit))} of value going the wrong way.`,
-    `The return is those two things multiplied: it keeps ${(result.nopatMargin * 100).toFixed(1)}p of after-tax profit on every pound of sales, and gets ${result.capitalTurnover.toFixed(2)} pounds of sales from every pound of capital.`,
+      ? `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. Every dollar put in comes back worth more than it cost, and over a year that gap is worth about ${inTheirUnits(profit)} — in the units you entered.`
+      : `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. It is not covering what that money costs, which over a year is about ${inTheirUnits(Math.abs(profit))} of value going the wrong way — in the units you entered.`,
+    `The return is those two things multiplied: it keeps ${(result.nopatMargin * 100).toFixed(1)} cents of after-tax profit on every dollar of sales, and gets ${result.capitalTurnover.toFixed(2)} dollars of sales from every dollar of capital.`,
   ];
 
   let howEarned: string | null = null;
   if (peers) {
-    const advantage = readAdvantage(result, peers.peers);
+    // The hurdle is this industry's own cost of capital, not a fixed number:
+    // a 9% return is good for a utility and poor for a software company.
+    const advantage = readAdvantage(result, peers.peers, { hurdle: costOfCapital });
     if ("advantage" in advantage) {
       howEarned = advantage.advantage;
       const margin = advantage.marginPercentile >= 0.6 ? "higher" : "lower";

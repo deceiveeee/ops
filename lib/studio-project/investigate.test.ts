@@ -191,6 +191,27 @@ describe("the reading", () => {
     expect(result.says.some((s) => s.includes("charges more"))).toBe(true);
   });
 
+  it("judges the return against what this industry's capital costs, not a fixed number", () => {
+    // A 9% return is good for a utility and poor for a software company. An
+    // earlier version withheld the advantage read below a hardcoded 8%, which
+    // is a classification threshold rather than a financing hurdle.
+    const modest: Entries = { ...sound, operatingProfit: 1_100, pretaxProfit: 1_000, taxExpense: 200 };
+
+    const cheapCapital = read(modest, "general", 0.06, peers());
+    const dearCapital = read(modest, "general", 0.12, peers());
+    if ("blocked" in cheapCapital || "blocked" in dearCapital) throw new Error("expected readings");
+
+    // Same company, same figures — only the cost of the money differs.
+    expect(cheapCapital.decomposition.roic).toBeCloseTo(dearCapital.decomposition.roic, 12);
+    expect(cheapCapital.createsValue).toBe(true);
+    expect(dearCapital.createsValue).toBe(false);
+
+    // And the advantage is only described where the return is worth explaining.
+    expect(cheapCapital.howEarned).not.toBeNull();
+    expect(dearCapital.howEarned).toBeNull();
+    expect(dearCapital.says.join(" ")).toContain("this capital costs");
+  });
+
   it("always states what a single year cannot settle", () => {
     const result = read(sound, "general", 0.08, peers());
     if ("blocked" in result) throw new Error("expected a reading");
