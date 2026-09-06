@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { CATALOG_GAPS, STUDIO_CATALOG, findStudioInstrument } from "@/lib/studio-catalog";
@@ -160,6 +161,23 @@ export function ResearchStage({ plan, update }: StageProps) {
       <StageHeading eyebrow="Step 2" title="Research what you might buy">
         Read what each investment actually is and what it holds, then write down why it belongs in your plan.
       </StageHeading>
+
+      {/* The way into the industry view. It sits before the catalogue because
+          that is the order the research is meant to run in: work out what an
+          industry looks like before deciding whether one company inside it is
+          worth your time. */}
+      <Link
+        href="/studio/industry"
+        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 transition-colors hover:border-accent-cyan/50"
+      >
+        <div className="text-[15px] font-semibold text-white">Start with the industry</div>
+        <p className="mt-1 text-[13px] leading-6 text-slate-400">
+          Before picking a company, see who competes with it, how the revenue is split between
+          them, how much of that split has moved in five years, and how each one earns its return
+          on capital. Built from public filings.
+        </p>
+        <span className="mt-2 inline-block text-[13px] text-accent-cyan">Open the industry view →</span>
+      </Link>
 
       <div className="space-y-3">
         {STUDIO_CATALOG.map((instrument) => {

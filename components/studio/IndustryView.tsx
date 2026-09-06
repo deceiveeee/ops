@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
@@ -178,6 +179,10 @@ export default function IndustryView() {
 
   return (
     <div className="space-y-4">
+      <Link href="/studio" className="inline-block text-[13px] text-slate-500 hover:text-slate-300">
+        ← Back to your plan
+      </Link>
+
       <StageHeading eyebrow="Industry" title="Who is in this industry, and what has moved">
         Look at who competes and how much of the split has changed, before deciding whether any
         one of them is worth your time.
