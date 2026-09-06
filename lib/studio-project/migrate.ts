@@ -1,4 +1,5 @@
 import { validateStudioPlan, type StudioPlan } from "@/lib/studio";
+import { MAX_PROJECT_BYTES, validateStudioProject } from "./validate";
 import {
   STUDIO_PROJECT_SCHEMA_VERSION,
   type CandidateInvestigation,
@@ -140,6 +141,9 @@ export type ReadResult =
  * overwritten.
  */
 export function readStudioRecord(raw: string, now = new Date().toISOString()): ReadResult {
+  if (new TextEncoder().encode(raw).byteLength > MAX_PROJECT_BYTES) {
+    return { ok: false, error: "Studio project backups support up to 10 MiB. The original has been kept.", preserved: raw };
+  }
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
@@ -150,6 +154,8 @@ export function readStudioRecord(raw: string, now = new Date().toISOString()): R
   const version = (parsed as { schemaVersion?: unknown })?.schemaVersion;
 
   if (version === STUDIO_PROJECT_SCHEMA_VERSION) {
+    const issues = validateStudioProject(parsed);
+    if (issues.length) return { ok: false, error: issues.join(" "), preserved: raw };
     return { ok: true, project: parsed as StudioProject, migrated: false, notes: [] };
   }
 

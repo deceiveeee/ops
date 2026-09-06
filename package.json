@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:studio-storage": "playwright test --config playwright.storage.config.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

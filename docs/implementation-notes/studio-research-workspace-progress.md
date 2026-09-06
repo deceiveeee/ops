@@ -11,7 +11,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | --- | --- | --- |
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
-| M2 project state and recovery | **In progress** | v2 schema, migration and operations in `lib/studio-project/`; 16 tests. Storage adapter and conflict handling still to do |
+| M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented. Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. Dependency graph and workspace UI integration remain |
 | M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Five forces, value stick and industry map not started |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
@@ -385,10 +385,50 @@ actually switches the UI over.
 
 ### Still to do in M2
 
-- Storage adapter, with IndexedDB for the larger research state.
-- Multi-tab conflict detection and failed-save reporting carried over from `use-studio-plan.ts`.
-- Backup import and export round trips on the v2 record.
 - The dependency graph that marks downstream work `needs review` when an input changes.
+- Connect the v2 workspace adapter to the rebuilt Studio interface, including visible save/conflict/recovery actions. The current wizard remains on v1; do not claim its storage was switched by this milestone.
+
+### 2026-09-05 continuation: storage, backups, and conflicts
+
+The user selected **durable saving, backups, and conflict handling** as the next task.
+The previously pending navigation-only changes in `components/studio/stages.tsx` and
+`components/studio/IndustryView.tsx` were committed as explicitly requested:
+`4a64cac` (`Connect Studio research to the industry view`). Nothing was pushed.
+The storage work described here is left uncommitted for review; local settings remain untouched.
+
+Implemented:
+
+- Full v2 validation before reading/saving/importing. The old reader trusted any object
+  declaring `schemaVersion: 2`; malformed objects and unknown nested fields now fail and retain
+  the original. No coercion of missing numeric data into zero.
+- Native IndexedDB storage with separate practice/personal slots. Revision comparison and
+  write are in one transaction, so competing tabs cannot both overwrite the same revision.
+- Import/reset archive the previous saved project in that same transaction. Failed retries
+  preserve the archive requirement; unknown future schemas cannot be replaced by reset.
+- Serialized session edits, failed-save draft retention, export/retry, explicit conflict
+  reload, cross-tab notification and focus/visibility recheck. Notifications do not replace drafts.
+- Non-destructive legacy adoption: leave v1 localStorage intact and retain its exact raw text
+  in migrated history. Simultaneous first opens converge on the committed winner.
+- Validated v2 backup round trips and the `useStudioProject(mode)` integration adapter.
+  Research remains independent of holdings and alternatives across save/reload/import.
+
+Design and API contract: [`studio-project-storage.md`](studio-project-storage.md).
+
+Verification in this continuation:
+
+- `npm run typecheck`: passed after implementation.
+- `npm test`: **523 passing across 40 files**, including 11 additional backup/validation cases.
+- `npm run test:studio-storage`: **13 passing** in real Chromium. No Next server needed.
+  Includes a forced native transaction abort after the put-success event, independent-tab
+  conflict without notifications, quota-error injection, import/reset recovery, and future records.
+- `npm run lint`: passed with the same two pre-existing onboarding hook warnings.
+- Full `npm run test:e2e -- --workers=2`: **66 passed, 3 skipped**, including all 13 new storage journeys. Reused the existing dev server; no server was started by this task.
+- Build not run while the existing dev server owns `.next`; port 3000 responds successfully.
+  This task adds no visible surface or finance content and does not claim a fresh visual release audit.
+
+The first native-browser launch was denied by the process sandbox before tests ran. Re-running
+with approved browser-process access passed. No expectation was loosened. Storage tests use an
+isolated synthetic origin, not the user's actual browser profile or saved project.
 
 ### Next concrete action
 
