@@ -44,7 +44,7 @@ export function GoalStage({ plan, update }: StageProps) {
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 1" title="Give the money a job">
+      <StageHeading title="Give the money a job">
         Every later choice is judged against what you write here.
       </StageHeading>
 
@@ -158,7 +158,7 @@ export function ResearchStage({ plan, update }: StageProps) {
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 2" title="Research what you might buy">
+      <StageHeading title="Research what you might buy">
         Read what each investment actually is and what it holds, then write down why it belongs in your plan.
       </StageHeading>
 
@@ -385,7 +385,7 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
   if (plan.holdings.length === 0) {
     return (
       <div className="space-y-5">
-        <StageHeading eyebrow="Step 3" title="Decide how much goes where" />
+        <StageHeading title="Decide how much goes where" />
         <Notice tone="amber" title="Nothing to weight yet">
           Add at least one investment in step 2, then come back to set how much of the money each one takes.
         </Notice>
@@ -396,7 +396,7 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
   const total = calculation.totalWeightPct;
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 3" title="Decide how much goes where">
+      <StageHeading title="Decide how much goes where">
         Percentages apply to the {usdWhole(calculation.investableBudget)} left after your cash reserve. They need to
         total 100%.
       </StageHeading>
@@ -488,7 +488,7 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 4" title="Check the risk and the cost">
+      <StageHeading title="Check the risk and the cost">
         These are assumptions you choose, not forecasts. Nothing here predicts what markets will do.
       </StageHeading>
 
@@ -595,7 +595,7 @@ export function BuyStage({ plan, calculation, update }: StageProps) {
   if (calculation.orders.length === 0) {
     return (
       <div className="space-y-5">
-        <StageHeading eyebrow="Step 5" title="Work out what to buy" />
+        <StageHeading title="Work out what to buy" />
         <Notice tone="amber" title="Set your weights first">
           Step 3 needs valid percentages before Studio can work out amounts.
         </Notice>
@@ -605,7 +605,7 @@ export function BuyStage({ plan, calculation, update }: StageProps) {
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 5" title="Work out what to buy">
+      <StageHeading title="Work out what to buy">
         Studio holds no market prices. Enter the quote your broker shows and the date you saw it, and this works out a
         quantity that stays inside your dollar target.
       </StageHeading>
@@ -702,7 +702,7 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 6" title="Write the rules and keep a copy">
+      <StageHeading title="Write the rules and keep a copy">
         Decide now what you will do later, while nothing is happening and you can think clearly.
       </StageHeading>
 

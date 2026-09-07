@@ -244,7 +244,7 @@ export default function InvestigateView() {
         ← Back to your plan
       </Link>
 
-      <StageHeading eyebrow="Investigate" title="Is this business creating value?">
+      <StageHeading title="Is this business creating value?">
         Look up seven figures for a company you care about. Studio says which ones matter, checks
         what you typed, and tells you what the answer means against real competitors.
       </StageHeading>

@@ -20,11 +20,15 @@ export function Panel({ children, className }: { children: ReactNode; className?
   );
 }
 
-export function StageHeading({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
+/**
+ * The stage title. No eyebrow: the toolbar above already names the destination
+ * and its position, and printing "Step 1" a second time 40px lower was the same
+ * fact twice.
+ */
+export function StageHeading({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div>
-      <div className="ops-caption text-[12px] text-st-warn">{eyebrow}</div>
-      <h2 className="ops-display mt-2 text-2xl leading-tight text-st-ink sm:text-3xl">{title}</h2>
+      <h2 className="ops-display text-2xl leading-tight text-st-ink sm:text-3xl">{title}</h2>
       {children ? <p className="ops-body mt-3 max-w-2xl text-[15px] leading-7 text-st-sub">{children}</p> : null}
     </div>
   );

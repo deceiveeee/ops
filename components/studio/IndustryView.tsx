@@ -183,7 +183,7 @@ export default function IndustryView() {
         ← Back to your plan
       </Link>
 
-      <StageHeading eyebrow="Industry" title="Who is in this industry, and what has moved">
+      <StageHeading title="Who is in this industry, and what has moved">
         Look at who competes and how much of the split has changed, before deciding whether any
         one of them is worth your time.
       </StageHeading>
