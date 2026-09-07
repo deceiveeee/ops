@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 
 /**
  * The lesson radiogroup follows the ARIA authoring practice, and these tests
@@ -15,15 +15,74 @@ import { expect, test, type Page } from "@playwright/test";
 
 const MISSION_12 = "/lessons/if-pb-12-choose-the-actual-holdings";
 
+const button = (page: Page, name: RegExp) =>
+  page.getByRole("button", { name }).first();
+
+/** Present and rendered. Immediate, because it is called inside a retry loop. */
+const appears = (target: Locator) => () => target.isVisible().catch(() => false);
+
+/** Present and not disabled — the shell renders its advance button either way. */
+const enables = (target: Locator) => () => target.isEnabled().catch(() => false);
+
+/**
+ * Click a control and confirm it did something, clicking again if it did not.
+ *
+ * Playwright's actionability check passes as soon as a button is rendered and
+ * stable, which on a freshly navigated lesson can be before React has attached
+ * its handler. The click is swallowed, the stage never advances, and the run
+ * fails thirty seconds later pointing at the *next* control. That is what three
+ * of these four tests did on 2026-09-06 under seven parallel workers, while
+ * passing every time the file ran alone.
+ *
+ * Re-clicking is safe only because every control on this walk is one-way:
+ * `setLooked(true)`, and a `completeStage` that returns the current state
+ * untouched once the stage is done. A toggle would need a different helper.
+ *
+ * The consequence is re-checked before each click so a second one is never sent
+ * into a stage that has already moved on, and `landed` is always a state change
+ * rather than mere presence — see `enables`. Waiting on the advance button
+ * merely existing would be satisfied before the stage was answered, which would
+ * turn this walk back into the guessing it replaces.
+ */
+async function step(page: Page, control: RegExp, landed: () => Promise<boolean>) {
+  await expect(async () => {
+    if (!(await landed())) await button(page, control).click({ timeout: 2_000 });
+    expect(await landed(), `clicking ${control} changed nothing`).toBe(true);
+  }).toPass({ timeout: 20_000 });
+}
+
 /** Reach the Filing stage, whose radiogroup has three options. */
 async function openFilingStage(page: Page) {
   await page.goto(MISSION_12);
-  await page.getByRole("button", { name: /Look up/ }).click();
-  await page.getByRole("button", { name: /I can tell a filer/ }).click();
-  await page.getByRole("button", { name: /Continue to the fund identity/ }).click();
-  await page.getByRole("button", { name: /Now let me fill one in/ }).click();
-  await page.getByRole("button", { name: /Continue to the filing/ }).click();
-  await expect(page.getByRole("radiogroup")).toBeVisible();
+
+  // Identity. The lookup result — and the answer button inside it — are
+  // rendered only once the search has been run.
+  await step(page, /Look up/, appears(button(page, /I can tell a filer/)));
+  await step(
+    page,
+    /I can tell a filer/,
+    enables(button(page, /Continue to the fund identity/)),
+  );
+
+  // Fund identity.
+  await step(
+    page,
+    /Continue to the fund identity/,
+    appears(button(page, /Now let me fill one in/)),
+  );
+  await step(
+    page,
+    /Now let me fill one in/,
+    enables(button(page, /Continue to the filing/)),
+  );
+
+  // Filing — the stage these tests are about.
+  await step(
+    page,
+    /Continue to the filing/,
+    appears(page.getByRole("radiogroup").first()),
+  );
+  await expect(page.getByRole("radiogroup").first()).toBeVisible();
 }
 
 const tabIndexes = (page: Page) =>
