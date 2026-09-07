@@ -1,4 +1,8 @@
 import { validateStudioPlan } from "@/lib/studio";
+import { FIGURES } from "./investigate";
+
+/** The seven figures Studio asks for. Anything else in a stored record is junk. */
+const FIGURE_KEYS = new Set<string>(FIGURES.map((figure) => figure.key));
 
 /** Limits apply to user projects, not to the separately stored source library. */
 export const MAX_PROJECT_BYTES = 10 * 1024 * 1024;
@@ -21,7 +25,7 @@ const emptyResearch = { why: "", mainRisk: "", whatWouldChangeMyMind: "", review
 export function validateStudioProject(value: unknown): string[] {
   if (!object(value) || value.schemaVersion !== 2) return ["This is not a supported Studio project."];
   const issues: string[] = [];
-  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom"])) {
+  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom"])) {
     issues.push("This project contains fields this version does not understand. Keep the original backup.");
   }
   // Goal/rule/position units are unchanged from v1. Reuse that validator rather
@@ -59,6 +63,37 @@ export function validateStudioProject(value: unknown): string[] {
         || !uniqueId(evidence.id) || !id(evidence.sourceId) || !text(evidence.locator) || !text(evidence.note)
         || !choice(evidence.role, ["supports", "challenges", "context"]) || !timestamp(evidence.savedAt)) {
         issues.push("An evidence reference contains missing, repeated, or invalid fields.");
+      }
+    }
+  }
+
+  /*
+   * Absent on any project saved before figure investigations existed, and that
+   * is not an error -- `readStudioRecord` fills the empty list. Present means it
+   * must be well formed.
+   */
+  if (value.investigations !== undefined) {
+    if (!list(value.investigations, 10_000)) issues.push("The project needs an investigation list with at most 10,000 companies.");
+    else for (const investigation of value.investigations) {
+      if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct"])
+        || !uniqueId(investigation.id) || !dated(investigation)
+        || !text(investigation.company, 300) || !text(investigation.sic, 20)
+        // null means "use the published rate", which is different from zero.
+        || !(investigation.riskFreePct === null
+          || (typeof investigation.riskFreePct === "number" && Number.isFinite(investigation.riskFreePct)))) {
+        issues.push("A company investigation contains missing, repeated, or invalid fields.");
+      }
+      /*
+       * Figure keys are checked against the seven Studio actually asks for. A
+       * stored key it does not recognise would be silently ignored on read,
+       * which is the kind of quiet data loss this schema exists to prevent.
+       */
+      if (!object(investigation.figures)) issues.push("A company investigation needs its figures recorded as an object.");
+      else if (!Object.entries(investigation.figures).every(
+        ([key, entry]) => FIGURE_KEYS.has(key) && typeof entry === "number" && Number.isFinite(entry),
+      )) {
+        issues.push("A company investigation contains an unrecognised or non-numeric figure.");
       }
     }
   }

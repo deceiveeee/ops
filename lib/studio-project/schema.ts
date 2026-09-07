@@ -53,6 +53,45 @@ export interface CandidateInvestigation {
   reviewedSources: boolean;
 }
 
+/**
+ * One company the learner looked up the figures for themselves.
+ *
+ * Deliberately not a `CandidateInvestigation`. That record is qualitative — why
+ * it is worth owning, what would change my mind — and it points at a catalog
+ * instrument. This one is quantitative, and the whole premise is that the
+ * business need *not* be one Studio holds data for: the learner reads seven
+ * figures out of an annual report and Studio says what they mean. Forcing an
+ * `instrumentId` onto it would be inventing a fact, and the uniqueness rule on
+ * that field would stop two learners investigating the same company twice.
+ *
+ * The two are meant to meet eventually — a figure investigation is evidence for
+ * a candidate — but nothing here assumes that has happened.
+ */
+export interface FigureInvestigation {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  /** The learner's own name for the business. Free text, and never resolved. */
+  company: string;
+  /** The researched industry it is being read against, by SIC code. */
+  sic: string;
+  /**
+   * The figures entered so far, keyed by figure name.
+   *
+   * Partial by design: a half-finished investigation is a real state, and the
+   * reading surface already says what it cannot tell you yet. Values are stored
+   * exactly as typed — Studio never normalises the learner's units, because it
+   * cannot know them.
+   */
+  figures: Record<string, number>;
+  /**
+   * A risk-free rate the learner supplied, in percent, or null to use the
+   * published one. Stored as typed rather than as a fraction, so what comes
+   * back is what they entered.
+   */
+  riskFreePct: number | null;
+}
+
 /** A pointer back to something the learner actually read. */
 export interface EvidenceReference {
   id: string;
@@ -160,6 +199,13 @@ export interface StudioProject {
   goal: StudioGoal;
   /** Every investigation, held or not, rejected or not. */
   candidates: CandidateInvestigation[];
+  /**
+   * Companies the learner looked the figures up for.
+   *
+   * Added after v2 shipped, so a record saved before it simply has none;
+   * `readStudioRecord` fills the empty list rather than rejecting the project.
+   */
+  investigations: FigureInvestigation[];
   /** Named alternatives. The first is the working portfolio. */
   alternatives: PortfolioAlternative[];
   /** Which alternative the learner has actually chosen, by id. */
@@ -183,6 +229,21 @@ export function findCandidate(
   instrumentId: string,
 ): CandidateInvestigation | undefined {
   return project.candidates.find((candidate) => candidate.instrumentId === instrumentId);
+}
+
+/**
+ * The investigation to reopen when the learner returns.
+ *
+ * Most recently touched rather than most recently created, because coming back
+ * to an earlier company and adding a figure makes it the one in hand.
+ */
+export function latestInvestigation(
+  project: StudioProject,
+): FigureInvestigation | undefined {
+  return project.investigations.reduce<FigureInvestigation | undefined>(
+    (latest, item) => (!latest || item.updatedAt > latest.updatedAt ? item : latest),
+    undefined,
+  );
 }
 
 /** The alternative currently being worked on. */
