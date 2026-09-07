@@ -118,6 +118,9 @@ export function migrateV1ToV2(plan: StudioPlan, raw: string, now = new Date().to
       name: plan.name,
       goal: { ...plan.goal },
       candidates,
+      // v1 had no way to record figures the learner looked up, so this starts
+      // empty rather than being back-filled with something plausible-looking.
+      investigations: [],
       alternatives: [alternative],
       selectedAlternativeId: alternative.id,
       rules: { ...plan.rules },
@@ -156,7 +159,20 @@ export function readStudioRecord(raw: string, now = new Date().toISOString()): R
   if (version === STUDIO_PROJECT_SCHEMA_VERSION) {
     const issues = validateStudioProject(parsed);
     if (issues.length) return { ok: false, error: issues.join(" "), preserved: raw };
-    return { ok: true, project: parsed as StudioProject, migrated: false, notes: [] };
+    /*
+     * Figure investigations were added after v2 shipped. A record saved before
+     * that simply has none, so the empty list is filled here rather than the
+     * project being refused -- the version did not change, so there is nothing
+     * to migrate, only a field to default. Every later reader can then assume
+     * the array exists.
+     */
+    const project = parsed as StudioProject;
+    return {
+      ok: true,
+      project: project.investigations ? project : { ...project, investigations: [] },
+      migrated: false,
+      notes: [],
+    };
   }
 
   if (version === 1) {

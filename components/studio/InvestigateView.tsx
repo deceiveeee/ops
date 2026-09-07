@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
 import { COST_OF_CAPITAL_SOURCE, estimate, forSic, industryNames, forIndustry } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
+import { useStudioProject } from "@/lib/use-studio-project";
+import { newInvestigationId, saveInvestigation } from "@/lib/studio-project/operations";
+import { latestInvestigation } from "@/lib/studio-project/schema";
 import { Panel, StageHeading } from "./shared";
+
+/** What the learner is told about their work being kept. */
+type SaveNote =
+  | { kind: "idle" }
+  | { kind: "saving" }
+  | { kind: "saved" }
+  | { kind: "error"; message: string };
 
 /**
  * One company, seven figures the learner looked up, and what they mean.
@@ -43,12 +53,87 @@ const median = (values: number[]): number => {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 };
 
+/** How long typing settles before a save. Short enough to survive a stray click. */
+const SAVE_DELAY_MS = 600;
+
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
   const [sic, setSic] = useState(RESEARCHED[0].sic);
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
   const [openHint, setOpenHint] = useState<FigureKey | null>(null);
+
+  /*
+   * The work is saved as it is typed.
+   *
+   * There is no save button on purpose. This surface is where a learner copies
+   * seven numbers out of an annual report, and asking them to press something
+   * afterwards is how the numbers get lost -- which is the failure this exists
+   * to remove. Storage is the same versioned, conflict-checked project record
+   * the rest of Studio uses; nothing here writes its own store.
+   */
+  const project = useStudioProject("personal");
+  const [investigationId, setInvestigationId] = useState<string | null>(null);
+  const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
+  const hydrated = useRef(false);
+  /*
+   * The latest edit and the latest session, readable from a timer that captured
+   * an older render.
+   *
+   * Both are refs so `flush` can stay identity-stable. Depending on the session
+   * directly would rebuild `flush` on every render -- and the debounce effect
+   * depends on `flush`, so its timer would be cleared and restarted each time,
+   * which is the one way to make an autosave that never fires.
+   */
+  const editRef = useRef({ company, sic, entries, riskFree, investigationId });
+  editRef.current = { company, sic, entries, riskFree, investigationId };
+  const sessionRef = useRef(project);
+  sessionRef.current = project;
+
+  // Reopen what the learner last worked on, once, when the project opens.
+  useEffect(() => {
+    if (hydrated.current || project.status !== "ready" || !project.project) return;
+    hydrated.current = true;
+    const saved = latestInvestigation(project.project);
+    if (!saved) return;
+    setInvestigationId(saved.id);
+    setCompany(saved.company);
+    // An industry Studio no longer researches would leave the select showing
+    // one thing and reading against another, so it falls back rather than lies.
+    if (RESEARCHED.some((entry) => entry.sic === saved.sic)) setSic(saved.sic);
+    setEntries(saved.figures as Entries);
+    setRiskFree(saved.riskFreePct === null ? "" : String(saved.riskFreePct));
+    setSaveNote({ kind: "saved" });
+  }, [project.status, project.project]);
+
+  const flush = useCallback(async () => {
+    const edit = editRef.current;
+    const session = sessionRef.current;
+    // An empty visit is not work. Saving it would leave a nameless, figureless
+    // record behind for anyone who merely opened the page.
+    if (edit.company.trim() === "" && Object.keys(edit.entries).length === 0) return;
+    if (session.status !== "ready") return;
+    const id = edit.investigationId ?? newInvestigationId();
+    if (!edit.investigationId) setInvestigationId(id);
+    setSaveNote({ kind: "saving" });
+    const rate = edit.riskFree.trim() === "" ? null : Number(edit.riskFree);
+    const result = await session.update((current) =>
+      saveInvestigation(current, {
+        company: edit.company,
+        sic: edit.sic,
+        figures: edit.entries as Record<string, number>,
+        riskFreePct: rate !== null && Number.isFinite(rate) ? rate : null,
+      }, id),
+    );
+    setSaveNote(result.ok ? { kind: "saved" } : { kind: "error", message: result.error });
+  }, []);
+
+  // Save after typing settles. Hydration must not trigger one of its own.
+  useEffect(() => {
+    if (!hydrated.current) return;
+    const timer = setTimeout(() => void flush(), SAVE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [company, sic, entries, riskFree, flush]);
 
   const researched = RESEARCHED.find((entry) => entry.sic === sic)!;
   const sector = SECTOR_BY_SIC[sic] ?? "general";
@@ -102,6 +187,7 @@ export default function InvestigateView() {
               <input
                 value={company}
                 onChange={(event) => setCompany(event.target.value)}
+                onBlur={() => void flush()}
                 placeholder="The one you want to understand"
                 className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
@@ -147,6 +233,7 @@ export default function InvestigateView() {
                       inputMode="decimal"
                       value={entries[figure.key] ?? ""}
                       onChange={(event) => set(figure.key, event.target.value)}
+                      onBlur={() => void flush()}
                       placeholder="0"
                       aria-label={figure.label}
                       className={cn(
@@ -208,6 +295,7 @@ export default function InvestigateView() {
                 inputMode="decimal"
                 value={riskFree}
                 onChange={(event) => setRiskFree(event.target.value)}
+                onBlur={() => void flush()}
                 placeholder={(COST_OF_CAPITAL_SOURCE.impliedRiskFreeRate * 100).toFixed(2)}
                 className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
@@ -271,10 +359,28 @@ export default function InvestigateView() {
         </div>
       </div>
 
-      <p className="text-[12px] leading-5 text-slate-600">
-        Nothing here is saved yet — that arrives with the workspace. Peer figures come from company
-        filings; the cost of capital from Aswath Damodaran, NYU Stern.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <p className="text-[12px] leading-5 text-slate-600">
+          Peer figures come from company filings; the cost of capital from Aswath Damodaran, NYU
+          Stern.
+        </p>
+        {/*
+          * Polite, because a save is not news the learner asked for. It becomes
+          * assertive only on failure, which is the one case worth interrupting
+          * for -- work they can still see on screen is not yet kept.
+          */}
+        <p
+          aria-live={saveNote.kind === "error" ? "assertive" : "polite"}
+          className={cn(
+            "text-[12px] leading-5",
+            saveNote.kind === "error" ? "text-accent-amber" : "text-slate-600",
+          )}
+        >
+          {saveNote.kind === "saving" && "Saving…"}
+          {saveNote.kind === "saved" && "Saved in this browser"}
+          {saveNote.kind === "error" && `Not saved — ${saveNote.message}`}
+        </p>
+      </div>
     </div>
   );
 }

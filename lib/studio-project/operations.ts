@@ -2,6 +2,7 @@ import {
   workingAlternative,
   type CandidateInvestigation,
   type CandidateStatus,
+  type FigureInvestigation,
   type PortfolioAlternative,
   type StudioProject,
 } from "./schema";
@@ -45,6 +46,73 @@ export function startCandidate(
     reviewedSources: false,
   };
   return { ...project, candidates: [...project.candidates, candidate], updatedAt: now };
+}
+
+/**
+ * An id for an investigation the caller is about to start.
+ *
+ * The view needs one *before* the first save so that a debounced autosave
+ * addresses the same record every time. Without it the second keystroke would
+ * create a second company.
+ */
+export function newInvestigationId(): string {
+  return makeId("inv");
+}
+
+/** What a caller may set on a figure investigation. Identity and dates are ours. */
+export type InvestigationEdit = {
+  company: string;
+  sic: string;
+  figures: Record<string, number>;
+  riskFreePct: number | null;
+};
+
+/**
+ * Save the company figures the learner has entered, creating the record the
+ * first time and replacing its contents afterwards.
+ *
+ * `figures` is replaced wholesale rather than merged, because clearing a field
+ * is an edit like any other: merging would make a deleted figure impossible to
+ * delete, and a learner who realises they read the wrong line needs the number
+ * to actually go away.
+ *
+ * `createdAt` survives a rewrite. When the investigation began is a fact about
+ * the learner's work, not about the last keystroke.
+ */
+export function saveInvestigation(
+  project: StudioProject,
+  edit: InvestigationEdit,
+  id?: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const existing = id ? project.investigations.find((item) => item.id === id) : undefined;
+  const record: FigureInvestigation = {
+    id: existing?.id ?? id ?? makeId("inv"),
+    createdAt: existing?.createdAt ?? now,
+    updatedAt: now,
+    company: edit.company,
+    sic: edit.sic,
+    figures: { ...edit.figures },
+    riskFreePct: edit.riskFreePct,
+  };
+  const investigations = existing
+    ? project.investigations.map((item) => (item.id === existing.id ? record : item))
+    : [...project.investigations, record];
+  return { ...project, investigations, updatedAt: now };
+}
+
+/** Forget one company entirely. Nothing else refers to it, so nothing else changes. */
+export function removeInvestigation(
+  project: StudioProject,
+  id: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  if (!project.investigations.some((item) => item.id === id)) return project;
+  return {
+    ...project,
+    investigations: project.investigations.filter((item) => item.id !== id),
+    updatedAt: now,
+  };
 }
 
 export function updateCandidate(
