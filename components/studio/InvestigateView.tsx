@@ -240,7 +240,7 @@ export default function InvestigateView() {
 
   return (
     <div className="space-y-4">
-      <Link href="/studio" className="inline-block text-[13px] text-slate-500 hover:text-slate-300">
+      <Link href="/studio" className="inline-block text-[13px] text-st-faint hover:text-st-sub">
         ← Back to your plan
       </Link>
 
@@ -268,18 +268,18 @@ export default function InvestigateView() {
                     className={cn(
                       "inline-flex items-center rounded-full border text-[13px] transition-colors",
                       active
-                        ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
-                        : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:text-white",
+                        ? "border-st-blue-edge bg-st-blue-soft text-st-ink"
+                        : "border-st-hair bg-st-paper text-st-sub hover:border-st-bound hover:text-st-ink",
                     )}
                   >
                     <button
                       type="button"
                       onClick={() => void open(item.id)}
                       aria-current={active ? "true" : undefined}
-                      className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                      className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
                     >
                       {label}
-                      <span className="ml-2 text-[11px] text-slate-500">
+                      <span className="ml-2 text-[11px] text-st-faint">
                         {Object.keys(item.figures).length}/{FIGURES.length}
                       </span>
                     </button>
@@ -293,7 +293,7 @@ export default function InvestigateView() {
                         type="button"
                         onClick={() => void forget(item.id, label)}
                         aria-label={`Delete ${label}`}
-                        className="min-h-11 rounded-full pl-1 pr-3 text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+                        className="min-h-11 rounded-full pl-1 pr-3 text-st-muted hover:text-st-warn focus:outline-none focus-visible:ring-2 focus-visible:ring-st-warn-edge"
                       >
                         ×
                       </button>
@@ -306,7 +306,7 @@ export default function InvestigateView() {
               <button
                 type="button"
                 onClick={() => void startNew()}
-                className="min-h-11 rounded-full border border-dashed border-white/15 px-3.5 text-[13px] text-slate-400 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                className="min-h-11 rounded-full border border-dashed border-st-bound px-3.5 text-[13px] text-st-muted transition-colors hover:border-st-bound hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
               >
                 + Another company
               </button>
@@ -320,21 +320,21 @@ export default function InvestigateView() {
         <Panel>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block">
-              <span className="ops-caption text-[11px] text-slate-500">Company</span>
+              <span className="ops-caption text-[11px] text-st-faint">Company</span>
               <input
                 value={company}
                 onChange={(event) => setCompany(event.target.value)}
                 onBlur={() => void flush()}
                 placeholder="The one you want to understand"
-                className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-st-hair bg-st-paper px-3 py-2 text-[14px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none"
               />
             </label>
             <label className="block">
-              <span className="ops-caption text-[11px] text-slate-500">Industry</span>
+              <span className="ops-caption text-[11px] text-st-faint">Industry</span>
               <select
                 value={sic}
                 onChange={(event) => setSic(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white focus:border-accent-cyan/50 focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-st-hair bg-st-paper px-3 py-2 text-[14px] text-st-ink focus:border-st-blue-edge focus:outline-none"
               >
                 {RESEARCHED.map((entry) => (
                   <option key={entry.sic} value={entry.sic} className="bg-slate-900">
@@ -345,7 +345,7 @@ export default function InvestigateView() {
             </label>
           </div>
 
-          <p className="mt-4 text-[13px] leading-6 text-slate-400">
+          <p className="mt-4 text-[13px] leading-6 text-st-muted">
             All seven come from one annual report. Click a name to see where it sits and what other
             sites call it.
           </p>
@@ -361,10 +361,10 @@ export default function InvestigateView() {
                       type="button"
                       onClick={() => setOpenHint(open ? null : figure.key)}
                       aria-expanded={open}
-                      className="min-w-[150px] shrink-0 text-left text-[13px] text-slate-300 hover:text-white"
+                      className="min-w-[150px] shrink-0 text-left text-[13px] text-st-sub hover:text-st-ink"
                     >
                       {figure.label}
-                      <span className="ml-1 text-slate-600">?</span>
+                      <span className="ml-1 text-st-faint">?</span>
                     </button>
                     <input
                       inputMode="decimal"
@@ -374,13 +374,13 @@ export default function InvestigateView() {
                       placeholder="0"
                       aria-label={figure.label}
                       className={cn(
-                        "w-full rounded-lg border bg-white/[0.03] px-3 py-1.5 text-right text-[14px] tabular-nums text-white placeholder:text-slate-700 focus:outline-none",
-                        marked ? "border-accent-amber/50" : "border-white/10 focus:border-accent-cyan/50",
+                        "w-full rounded-lg border bg-st-paper px-3 py-1.5 text-right text-[14px] tabular-nums text-st-ink placeholder:text-st-faint focus:outline-none",
+                        marked ? "border-st-warn-edge" : "border-st-hair focus:border-st-blue-edge",
                       )}
                     />
                   </div>
                   {open ? (
-                    <p className="mt-1 pl-[158px] text-[12px] leading-5 text-slate-500">
+                    <p className="mt-1 pl-[158px] text-[12px] leading-5 text-st-faint">
                       {figure.whatItIs} On the {figure.statement}. Also called{" "}
                       {figure.alsoCalled.join(", ")}.
                     </p>
@@ -390,7 +390,7 @@ export default function InvestigateView() {
             })}
           </div>
 
-          <p className="mt-3 text-[12px] leading-5 text-slate-600">
+          <p className="mt-3 text-[12px] leading-5 text-st-faint">
             Use the same units throughout — all millions, or all billions. Studio only compares them
             with each other.
           </p>
@@ -403,8 +403,8 @@ export default function InvestigateView() {
                   className={cn(
                     "rounded-lg border p-3 text-[13px] leading-6",
                     check.severity === "stop"
-                      ? "border-accent-red/30 bg-accent-red/[0.06] text-slate-200"
-                      : "border-accent-amber/30 bg-accent-amber/[0.05] text-slate-300",
+                      ? "border-st-bad-edge bg-st-bad-soft text-st-body"
+                      : "border-st-warn-edge bg-st-warn-soft text-st-sub",
                   )}
                 >
                   {check.message}
@@ -418,15 +418,15 @@ export default function InvestigateView() {
         <div className="space-y-4">
           <Panel>
             <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-[15px] font-semibold text-white">What the money costs</h3>
-              <span className="text-[20px] font-semibold tabular-nums text-white">{pct(cost.costOfCapital, 2)}</span>
+              <h3 className="text-[15px] font-semibold text-st-ink">What the money costs</h3>
+              <span className="text-[20px] font-semibold tabular-nums text-st-ink">{pct(cost.costOfCapital, 2)}</span>
             </div>
-            <p className="mt-2 text-[13px] leading-6 text-slate-400">
+            <p className="mt-2 text-[13px] leading-6 text-st-muted">
               No company reports this — it has to be estimated. A return above it means the business
               creates value; below it, the money would do better elsewhere.
             </p>
 
-            <label className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-slate-400">
+            <label className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-st-muted">
               <span>Government borrowing rate</span>
               <input
                 inputMode="decimal"
@@ -434,14 +434,14 @@ export default function InvestigateView() {
                 onChange={(event) => setRiskFree(event.target.value)}
                 onBlur={() => void flush()}
                 placeholder={(COST_OF_CAPITAL_SOURCE.impliedRiskFreeRate * 100).toFixed(2)}
-                className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
+                className="w-20 rounded-lg border border-st-hair bg-st-paper px-2 py-1 text-right text-[13px] tabular-nums text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none"
               />
               <span>%</span>
             </label>
 
             <details className="mt-3">
-              <summary className="cursor-pointer text-[12px] text-slate-500">Where this number comes from</summary>
-              <ul className="mt-2 space-y-1 text-[12px] leading-5 text-slate-500">
+              <summary className="cursor-pointer text-[12px] text-st-faint">Where this number comes from</summary>
+              <ul className="mt-2 space-y-1 text-[12px] leading-5 text-st-faint">
                 {cost.provenance.map((line, index) => (
                   <li key={index}>{line}</li>
                 ))}
@@ -451,19 +451,19 @@ export default function InvestigateView() {
 
           {"blocked" in reading ? (
             <Panel>
-              <p className="text-[13px] leading-6 text-slate-500">{reading.blocked}</p>
+              <p className="text-[13px] leading-6 text-st-faint">{reading.blocked}</p>
             </Panel>
           ) : (
             <>
               <Panel>
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-[15px] font-semibold text-white">
+                  <h3 className="text-[15px] font-semibold text-st-ink">
                     {company.trim() || "This business"} earns
                   </h3>
                   <span
                     className={cn(
                       "text-[24px] font-semibold tabular-nums",
-                      reading.createsValue ? "text-accent-green" : "text-accent-red",
+                      reading.createsValue ? "text-st-good" : "text-st-bad",
                     )}
                   >
                     {pct(reading.decomposition.roic)}
@@ -471,21 +471,21 @@ export default function InvestigateView() {
                 </div>
                 <div className="mt-3 space-y-3">
                   {reading.says.map((line, index) => (
-                    <p key={index} className="text-[13px] leading-6 text-slate-300">
+                    <p key={index} className="text-[13px] leading-6 text-st-sub">
                       {line}
                     </p>
                   ))}
                 </div>
-                <p className="mt-3 text-[12px] leading-5 text-slate-600">
+                <p className="mt-3 text-[12px] leading-5 text-st-faint">
                   Calculated from what you entered — not a figure any company reports.
                 </p>
               </Panel>
 
               <Panel>
-                <h3 className="text-[14px] font-semibold text-white">What this cannot tell you</h3>
+                <h3 className="text-[14px] font-semibold text-st-ink">What this cannot tell you</h3>
                 <ul className="mt-2 space-y-2">
                   {reading.cannotTell.map((line, index) => (
-                    <li key={index} className="text-[12px] leading-5 text-slate-500">
+                    <li key={index} className="text-[12px] leading-5 text-st-faint">
                       {line}
                     </li>
                   ))}
@@ -497,7 +497,7 @@ export default function InvestigateView() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <p className="text-[12px] leading-5 text-slate-600">
+        <p className="text-[12px] leading-5 text-st-faint">
           Peer figures come from company filings; the cost of capital from Aswath Damodaran, NYU
           Stern.
         </p>
@@ -510,7 +510,7 @@ export default function InvestigateView() {
           aria-live={saveNote.kind === "error" ? "assertive" : "polite"}
           className={cn(
             "text-[12px] leading-5",
-            saveNote.kind === "error" ? "text-accent-amber" : "text-slate-600",
+            saveNote.kind === "error" ? "text-st-warn" : "text-st-faint",
           )}
         >
           {saveNote.kind === "saving" && "Saving…"}

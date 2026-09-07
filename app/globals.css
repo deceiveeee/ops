@@ -496,6 +496,111 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   STUDIO SEMANTIC TOKENS
+
+   One set of class names, three appearances. Components say what a colour
+   means — text-st-muted, border-st-hair — and never which colour it is, so
+   the same markup renders dark today and light the moment /studio joins the
+   light route set.
+
+   The dark values below are not new choices. Each one reproduces the literal
+   it replaces, so retokening the components changes no pixel: ink was
+   text-white, body was slate-300, muted was slate-400, faint was slate-500,
+   hair was border-white/10 and bound was border-white/12.
+
+   hair and bound are two tokens on purpose. A hairline groups and carries no
+   contrast duty. A boundary is what tells someone an input is an input, and
+   has to clear 3:1 — in light that is #85858c at 3.66:1, where the hairline
+   sits at 1.34:1 and would fail if it ever did that job.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+    --st-canvas: transparent;
+    --st-paper: rgba(255,255,255,0.03);
+    --st-side: rgba(255,255,255,0.04);
+    --st-select: rgba(34,211,238,0.10);
+
+    --st-ink: #ffffff;
+    --st-body: #e2e8f0;
+    --st-sub: #cbd5e1;
+    --st-muted: #94a3b8;
+    --st-faint: #64748b;
+
+    --st-blue: #22d3ee;
+    --st-hair: rgba(255,255,255,0.10);
+    --st-bound: rgba(255,255,255,0.12);
+
+    --st-good: #34d399;
+    --st-warn: #fbbf24;
+    --st-bad: #f87171;
+
+    --st-blue-soft: rgba(34,211,238,0.10);
+    --st-blue-edge: rgba(34,211,238,0.40);
+    --st-good-soft: rgba(52,211,153,0.10);
+    --st-good-edge: rgba(52,211,153,0.35);
+    --st-warn-soft: rgba(251,191,36,0.10);
+    --st-warn-edge: rgba(251,191,36,0.35);
+    --st-bad-soft: rgba(248,113,113,0.10);
+    --st-bad-edge: rgba(248,113,113,0.35);
+}
+
+.ops-theme-light {
+    --st-canvas: #f5f5f7;
+    --st-paper: #ffffff;
+    --st-side: #f0f1f3;
+    --st-select: #e8f1fc;
+
+    --st-ink: #1d1d1f;
+    --st-body: #2c2d33;
+    --st-sub: #3f4046;
+    --st-muted: #62646c;
+    --st-faint: #68686d;
+
+    --st-blue: #0066cc;
+    --st-hair: #dedee3;
+    --st-bound: #85858c;
+
+    --st-good: #236847;
+    --st-warn: #865500;
+    --st-bad: #b42318;
+
+    /* Edges are the full state colour in light, not a wash of it: an edge is
+       what identifies a control, so it has to clear 3:1 rather than tint. */
+    --st-blue-soft: #e8f1fc;
+    --st-blue-edge: #0066cc;
+    --st-good-soft: #e6f2ec;
+    --st-good-edge: #236847;
+    --st-warn-soft: #f8f0e2;
+    --st-warn-edge: #865500;
+    --st-bad-soft: #fbebe9;
+    --st-bad-edge: #b42318;
+}
+
+/* Apple asks for an increased-contrast option for every custom colour, and
+   the two thinnest pairs — action blue on the sidebar at 4.93:1 and on a
+   selected row at 4.88:1 — are exactly what it is for. Here they become
+   8.27:1 and 7.65:1. Grounds are left alone so nothing reflows. */
+@media (prefers-contrast: more) {
+    :root {
+        --st-body: #f1f5f9;
+        --st-sub: #e2e8f0;
+        --st-muted: #cbd5e1;
+        --st-faint: #a8b4c4;
+        --st-hair: rgba(255,255,255,0.20);
+        --st-bound: rgba(255,255,255,0.38);
+    }
+    .ops-theme-light {
+        --st-body: #2c2d33;
+        --st-sub: #34353b;
+        --st-muted: #4a4c54;
+        --st-faint: #55565d;
+        --st-blue: #00458f;
+        --st-hair: #b9b9c0;
+        --st-bound: #5c5d65;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    LIGHT LEARNING THEME
    Scoped to `.ops-theme-light` (applied by SiteShell on /courses,
    course-detail, and every lesson page). Homepage, /studio and /filings

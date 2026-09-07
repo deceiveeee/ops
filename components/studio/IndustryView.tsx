@@ -111,10 +111,10 @@ function AdvantagePlane({ earners }: { earners: Earner[] }) {
   return (
     <div className="mt-4 overflow-x-auto">
       <svg viewBox={`0 0 ${width} ${height}`} className="w-full min-w-[520px]" role="img" aria-label="Profit margin against capital turnover for this industry's leaders">
-        <line x1={x(medianMargin)} y1={pad.top} x2={x(medianMargin)} y2={height - pad.bottom} stroke="currentColor" className="text-white/15" strokeDasharray="3 4" />
-        <line x1={pad.left} y1={y(medianTurnover)} x2={width - pad.right} y2={y(medianTurnover)} stroke="currentColor" className="text-white/15" strokeDasharray="3 4" />
-        <line x1={pad.left} y1={height - pad.bottom} x2={width - pad.right} y2={height - pad.bottom} stroke="currentColor" className="text-white/25" />
-        <line x1={pad.left} y1={pad.top} x2={pad.left} y2={height - pad.bottom} stroke="currentColor" className="text-white/25" />
+        <line x1={x(medianMargin)} y1={pad.top} x2={x(medianMargin)} y2={height - pad.bottom} stroke="currentColor" className="text-st-hair" strokeDasharray="3 4" />
+        <line x1={pad.left} y1={y(medianTurnover)} x2={width - pad.right} y2={y(medianTurnover)} stroke="currentColor" className="text-st-hair" strokeDasharray="3 4" />
+        <line x1={pad.left} y1={height - pad.bottom} x2={width - pad.right} y2={height - pad.bottom} stroke="currentColor" className="text-st-bound" />
+        <line x1={pad.left} y1={pad.top} x2={pad.left} y2={height - pad.bottom} stroke="currentColor" className="text-st-bound" />
 
         <text x={width - pad.right} y={height - pad.bottom - 8} textAnchor="end" className="fill-slate-600 text-[10px]">
           charges more →
@@ -125,7 +125,7 @@ function AdvantagePlane({ earners }: { earners: Earner[] }) {
 
         {points.map((point) => (
           <g key={point.cik}>
-            <circle cx={x(point.nopatMargin)} cy={y(point.capitalTurnover)} r={5} className="fill-accent-amber/70" />
+            <circle cx={x(point.nopatMargin)} cy={y(point.capitalTurnover)} r={5} className="fill-st-warn" />
             <text
               x={x(point.nopatMargin)}
               y={y(point.capitalTurnover) - 9}
@@ -151,7 +151,7 @@ function AdvantagePlane({ earners }: { earners: Earner[] }) {
         </text>
       </svg>
       {offChart.length ? (
-        <p className="mt-2 text-[12px] leading-5 text-slate-500">
+        <p className="mt-2 text-[12px] leading-5 text-st-faint">
           Not on the chart: {offChart.map((e) => readableName(e.name)).join(", ")} — {offChart.length === 1 ? "it is" : "they are"} losing money, so
           there is no return to explain. {offChart.length === 1 ? "It is" : "They are"} in the table below.
         </p>
@@ -179,7 +179,7 @@ export default function IndustryView() {
 
   return (
     <div className="space-y-4">
-      <Link href="/studio" className="inline-block text-[13px] text-slate-500 hover:text-slate-300">
+      <Link href="/studio" className="inline-block text-[13px] text-st-faint hover:text-st-sub">
         ← Back to your plan
       </Link>
 
@@ -198,8 +198,8 @@ export default function IndustryView() {
             className={cn(
               "rounded-full border px-4 py-2 text-[13px] transition-colors",
               entry.sic === sic
-                ? "border-accent-amber/60 bg-accent-amber/10 text-white"
-                : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/25 hover:text-slate-200",
+                ? "border-st-warn-edge bg-st-warn-soft text-st-ink"
+                : "border-st-hair bg-st-paper text-st-muted hover:border-st-bound hover:text-st-body",
             )}
           >
             {entry.label}
@@ -249,7 +249,7 @@ export default function IndustryView() {
             aria-pressed={view === key}
             className={cn(
               "rounded-lg border px-3 py-1.5 text-[13px]",
-              view === key ? "border-white/25 bg-white/10 text-white" : "border-white/10 text-slate-400 hover:text-slate-200",
+              view === key ? "border-st-bound bg-st-select text-st-ink" : "border-st-hair text-st-muted hover:text-st-body",
             )}
           >
             {label}
@@ -258,7 +258,7 @@ export default function IndustryView() {
         <button
           type="button"
           onClick={() => setShowAll((current) => !current)}
-          className="ml-auto rounded-lg border border-white/10 px-3 py-1.5 text-[13px] text-slate-400 hover:text-slate-200"
+          className="ml-auto rounded-lg border border-st-hair px-3 py-1.5 text-[13px] text-st-muted hover:text-st-body"
         >
           {showAll ? "Show fewer" : "Show all"}
         </button>
@@ -267,7 +267,7 @@ export default function IndustryView() {
       <Panel>
         {view === "returns" ? (
           <>
-            <p className="text-[13px] leading-6 text-slate-400">
+            <p className="text-[13px] leading-6 text-st-muted">
               Return on the money each company has put into its business, split into the two things
               that produce it: the profit it keeps on each pound of sales, and how many pounds of
               sales it gets from each pound of capital. Multiply the two and you have the return.
@@ -275,7 +275,7 @@ export default function IndustryView() {
             <AdvantagePlane earners={earners} />
             <TableScroll>
               <table className="mt-4 w-full min-w-[520px] text-left text-[13px]">
-                <thead className="text-[11px] uppercase tracking-wide text-slate-500">
+                <thead className="text-[11px] uppercase tracking-wide text-st-faint">
                   <tr>
                     <th className="pb-2 font-medium">Company</th>
                     <th className="pb-2 text-right font-medium">Return</th>
@@ -290,12 +290,12 @@ export default function IndustryView() {
                     .sort((a, b) => (b.roic ?? 0) - (a.roic ?? 0))
                     .slice(0, showAll ? undefined : 6)
                     .map((earner) => (
-                      <tr key={earner.cik} className="border-t border-white/5">
-                        <td className="py-2 pr-3 text-slate-200">{readableName(earner.name)}</td>
-                        <td className="py-2 text-right tabular-nums text-slate-300">{pct(earner.roic!)}</td>
-                        <td className="py-2 text-right tabular-nums text-slate-400">{pct(earner.nopatMargin!)}</td>
-                        <td className="py-2 text-right tabular-nums text-slate-400">{earner.capitalTurnover!.toFixed(2)}x</td>
-                        <td className="py-2 pl-4 text-slate-400">
+                      <tr key={earner.cik} className="border-t border-st-hair">
+                        <td className="py-2 pr-3 text-st-body">{readableName(earner.name)}</td>
+                        <td className="py-2 text-right tabular-nums text-st-sub">{pct(earner.roic!)}</td>
+                        <td className="py-2 text-right tabular-nums text-st-muted">{pct(earner.nopatMargin!)}</td>
+                        <td className="py-2 text-right tabular-nums text-st-muted">{earner.capitalTurnover!.toFixed(2)}x</td>
+                        <td className="py-2 pl-4 text-st-muted">
                           {earner.advantage === "differentiation"
                             ? "charges more"
                             : earner.advantage === "cost leadership"
@@ -312,7 +312,7 @@ export default function IndustryView() {
               </table>
             </TableScroll>
             {earners.length > earning.length ? (
-              <p className="mt-3 text-[12px] leading-5 text-slate-500">
+              <p className="mt-3 text-[12px] leading-5 text-st-faint">
                 Not shown: {earners.filter((e) => e.roic === undefined).map((e) => readableName(e.name)).join(", ")}.
                 Their filings do not carry what this needs — {earners.find((e) => e.reason)?.reason}.
               </p>
@@ -320,12 +320,12 @@ export default function IndustryView() {
           </>
         ) : view === "shares" ? (
           <>
-            <p className="text-[13px] leading-6 text-slate-400">
+            <p className="text-[13px] leading-6 text-st-muted">
               The largest by revenue. All ten together are {pct(shown)} of everything filed here.
             </p>
             <TableScroll>
               <table className="mt-4 w-full min-w-[520px] text-left text-[13px]">
-                <thead className="text-[11px] uppercase tracking-wide text-slate-500">
+                <thead className="text-[11px] uppercase tracking-wide text-st-faint">
                   <tr>
                     <th className="pb-2 font-medium">Company</th>
                     <th className="pb-2 text-right font-medium">Revenue</th>
@@ -334,25 +334,25 @@ export default function IndustryView() {
                 </thead>
                 <tbody>
                   {(showAll ? industry.leaders : industry.leaders.slice(0, 6)).map((leader) => (
-                    <tr key={leader.cik} className="border-t border-white/5">
-                      <td className="py-2 pr-3 text-slate-200">
+                    <tr key={leader.cik} className="border-t border-st-hair">
+                      <td className="py-2 pr-3 text-st-body">
                         {readableName(leader.name)}
                         {leader.basisUncertain ? (
-                          <span className="ml-2 text-[11px] text-accent-amber" title="This company files more than one revenue figure. Check it before relying on it.">
+                          <span className="ml-2 text-[11px] text-st-warn" title="This company files more than one revenue figure. Check it before relying on it.">
                             check revenue
                           </span>
                         ) : null}
                       </td>
-                      <td className="py-2 text-right tabular-nums text-slate-300">{money(leader.revenue)}</td>
+                      <td className="py-2 text-right tabular-nums text-st-sub">{money(leader.revenue)}</td>
                       <td className="py-2 pl-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-2 w-full max-w-[180px] overflow-hidden rounded-full bg-white/[0.06]">
+                          <div className="h-2 w-full max-w-[180px] overflow-hidden rounded-full bg-st-side">
                             <div
-                              className="h-full rounded-full bg-accent-amber/70"
+                              className="h-full rounded-full bg-st-warn-soft"
                               style={{ width: `${(leader.share / widest) * 100}%` }}
                             />
                           </div>
-                          <span className="w-12 shrink-0 text-right tabular-nums text-slate-300">{pct(leader.share)}</span>
+                          <span className="w-12 shrink-0 text-right tabular-nums text-st-sub">{pct(leader.share)}</span>
                         </div>
                       </td>
                     </tr>
@@ -363,14 +363,14 @@ export default function IndustryView() {
           </>
         ) : (
           <>
-            <p className="text-[13px] leading-6 text-slate-400">
+            <p className="text-[13px] leading-6 text-st-muted">
               How each company&rsquo;s share changed between {industries.years[0]} and {industries.years[1]}. Averaging
               those changes gives {industry.instability ? pct(industry.instability.average) : "—"}. A five-year average
               of two points or less is usually called steady.
             </p>
             <TableScroll>
               <table className="mt-4 w-full min-w-[520px] text-left text-[13px]">
-                <thead className="text-[11px] uppercase tracking-wide text-slate-500">
+                <thead className="text-[11px] uppercase tracking-wide text-st-faint">
                   <tr>
                     <th className="pb-2 font-medium">Company</th>
                     <th className="pb-2 text-right font-medium">{industries.years[0]}</th>
@@ -380,23 +380,23 @@ export default function IndustryView() {
                 </thead>
                 <tbody>
                   {(showAll ? movers : movers.slice(0, 6)).map((row) => (
-                    <tr key={row.name} className="border-t border-white/5">
-                      <td className="py-2 pr-3 text-slate-200">{readableName(row.name)}</td>
-                      <td className="py-2 text-right tabular-nums text-slate-400">
+                    <tr key={row.name} className="border-t border-st-hair">
+                      <td className="py-2 pr-3 text-st-body">{readableName(row.name)}</td>
+                      <td className="py-2 text-right tabular-nums text-st-muted">
                         {row.earlierShare === null ? "not yet filing" : pct(row.earlierShare)}
                       </td>
-                      <td className="py-2 text-right tabular-nums text-slate-300">
+                      <td className="py-2 text-right tabular-nums text-st-sub">
                         {row.laterShare === null ? "no longer filing" : pct(row.laterShare)}
                       </td>
                       <td className="py-2 pl-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-2 w-full max-w-[140px] overflow-hidden rounded-full bg-white/[0.06]">
+                          <div className="h-2 w-full max-w-[140px] overflow-hidden rounded-full bg-st-side">
                             <div
                               className="h-full rounded-full bg-sky-400/70"
                               style={{ width: `${(row.absoluteChange / widestMove) * 100}%` }}
                             />
                           </div>
-                          <span className="w-12 shrink-0 text-right tabular-nums text-slate-300">
+                          <span className="w-12 shrink-0 text-right tabular-nums text-st-sub">
                             {pct(row.absoluteChange)}
                           </span>
                         </div>
@@ -411,20 +411,20 @@ export default function IndustryView() {
       </Panel>
 
       <Panel>
-        <h3 className="text-[15px] font-semibold text-white">Two things this cannot tell you</h3>
-        <p className="mt-2 text-[13px] leading-6 text-slate-400">
+        <h3 className="text-[15px] font-semibold text-st-ink">Two things this cannot tell you</h3>
+        <p className="mt-2 text-[13px] leading-6 text-st-muted">
           Companies in one industry differ from each other more than industries differ from one
           another. This narrows your search; it does not make the choice for you.
         </p>
-        <p className="mt-2 text-[13px] leading-6 text-slate-400">
+        <p className="mt-2 text-[13px] leading-6 text-st-muted">
           A concentrated industry is not automatically a profitable one. A company&rsquo;s own share
           tracks its profits better than its industry&rsquo;s concentration does.
         </p>
       </Panel>
 
-      <details className="group rounded-xl border border-white/12 bg-white/[0.03] p-4">
-        <summary className="cursor-pointer text-[13px] text-slate-300">Where these numbers come from</summary>
-        <div className="mt-2 text-[13px] leading-6 text-slate-400">
+      <details className="group rounded-xl border border-st-bound bg-st-paper p-4">
+        <summary className="cursor-pointer text-[13px] text-st-sub">Where these numbers come from</summary>
+        <div className="mt-2 text-[13px] leading-6 text-st-muted">
         <p>
           Shares are each company&rsquo;s revenue as a fraction of what every company filing under
           this industry code reported. Revenue is a stand-in for the market: it moves with prices,

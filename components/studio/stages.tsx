@@ -168,28 +168,28 @@ export function ResearchStage({ plan, update }: StageProps) {
           worth your time. */}
       <Link
         href="/studio/industry"
-        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 transition-colors hover:border-accent-cyan/50"
+        className="block rounded-2xl border border-st-blue-edge bg-st-blue-soft p-5 transition-colors hover:border-st-blue-edge"
       >
-        <div className="text-[15px] font-semibold text-white">Start with the industry</div>
-        <p className="mt-1 text-[13px] leading-6 text-slate-400">
+        <div className="text-[15px] font-semibold text-st-ink">Start with the industry</div>
+        <p className="mt-1 text-[13px] leading-6 text-st-muted">
           Before picking a company, see who competes with it, how the revenue is split between
           them, how much of that split has moved in five years, and how each one earns its return
           on capital. Built from public filings.
         </p>
-        <span className="mt-2 inline-block text-[13px] text-accent-cyan">Open the industry view →</span>
+        <span className="mt-2 inline-block text-[13px] text-st-blue">Open the industry view →</span>
       </Link>
 
       <Link
         href="/studio/investigate"
-        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 transition-colors hover:border-accent-cyan/50"
+        className="block rounded-2xl border border-st-blue-edge bg-st-blue-soft p-5 transition-colors hover:border-st-blue-edge"
       >
-        <div className="text-[15px] font-semibold text-white">Investigate a company you care about</div>
-        <p className="mt-1 text-[13px] leading-6 text-slate-400">
+        <div className="text-[15px] font-semibold text-st-ink">Investigate a company you care about</div>
+        <p className="mt-1 text-[13px] leading-6 text-st-muted">
           Look up seven figures from its annual report and find out whether it earns more than its
           capital costs, how it earns it, and what one year cannot tell you. Works for any company,
           not only the ones listed below.
         </p>
-        <span className="mt-2 inline-block text-[13px] text-accent-cyan">Start an investigation →</span>
+        <span className="mt-2 inline-block text-[13px] text-st-blue">Start an investigation →</span>
       </Link>
 
       <div className="space-y-3">
@@ -197,7 +197,7 @@ export function ResearchStage({ plan, update }: StageProps) {
           const open = openId === instrument.id;
           const holding = plan.holdings.find((item) => item.instrumentId === instrument.id);
           return (
-            <Panel key={instrument.id} className={cn(open && "border-accent-cyan/30")}>
+            <Panel key={instrument.id} className={cn(open && "border-st-blue-edge")}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <button
                   type="button"
@@ -206,15 +206,15 @@ export function ResearchStage({ plan, update }: StageProps) {
                   className="min-h-11 flex-1 text-left"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[16px] font-semibold text-white">{instrument.symbol}</span>
+                    <span className="text-[16px] font-semibold text-st-ink">{instrument.symbol}</span>
                     {held.has(instrument.id) ? (
-                      <span className="rounded-full border border-accent-green/40 bg-accent-green/10 px-2 py-0.5 text-[11px] text-accent-green">
+                      <span className="rounded-full border border-st-good-edge bg-st-good-soft px-2 py-0.5 text-[11px] text-st-good">
                         In your portfolio
                       </span>
                     ) : null}
                   </div>
-                  <div className="mt-0.5 text-[14px] leading-6 text-slate-300">{instrument.name}</div>
-                  <div className="mt-1 text-[13px] text-slate-500">
+                  <div className="mt-0.5 text-[14px] leading-6 text-st-sub">{instrument.name}</div>
+                  <div className="mt-1 text-[13px] text-st-faint">
                     {instrument.expenseRatioPct === null
                       ? "Annual cost not stated in a reviewed filing"
                       : `${instrument.expenseRatioPct}% a year in fund costs`}
@@ -232,8 +232,8 @@ export function ResearchStage({ plan, update }: StageProps) {
                   className={cn(
                     "min-h-11 rounded-full border px-4 text-[14px] font-semibold transition-colors",
                     held.has(instrument.id)
-                      ? "border-white/15 text-slate-300 hover:border-white/30 hover:text-white"
-                      : "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20",
+                      ? "border-st-bound text-st-sub hover:border-st-bound hover:text-st-ink"
+                      : "border-st-blue-edge bg-st-blue-soft text-st-blue hover:bg-st-blue-soft",
                   )}
                 >
                   {held.has(instrument.id) ? "Remove" : "Add to portfolio"}
@@ -241,15 +241,15 @@ export function ResearchStage({ plan, update }: StageProps) {
               </div>
 
               {open ? (
-                <div className="mt-4 space-y-4 border-t border-white/10 pt-4">
-                  <p className="ops-body text-[14px] leading-6 text-slate-300">{instrument.whatItIs}</p>
+                <div className="mt-4 space-y-4 border-t border-st-hair pt-4">
+                  <p className="ops-body text-[14px] leading-6 text-st-sub">{instrument.whatItIs}</p>
 
                   <div>
-                    <div className="ops-caption text-[11px] text-slate-500">What the filing calls its main risks</div>
+                    <div className="ops-caption text-[11px] text-st-faint">What the filing calls its main risks</div>
                     <ul className="mt-2 space-y-1">
                       {instrument.mainRisks.map((risk) => (
-                        <li key={risk} className="flex gap-2 text-[14px] leading-6 text-slate-300">
-                          <span className="text-accent-amber">·</span>
+                        <li key={risk} className="flex gap-2 text-[14px] leading-6 text-st-sub">
+                          <span className="text-st-warn">·</span>
                           {risk}
                         </li>
                       ))}
@@ -267,7 +267,7 @@ export function ResearchStage({ plan, update }: StageProps) {
                   */}
                   {instrument.stock ? (
                     <div>
-                      <div className="ops-caption text-[11px] text-slate-500">How you would hold it</div>
+                      <div className="ops-caption text-[11px] text-st-faint">How you would hold it</div>
                       <dl className="mt-2 grid gap-x-6 gap-y-1 sm:grid-cols-2">
                         <Fact label="Incorporated in" value={instrument.stock.incorporatedIn} />
                         <Fact label="Trades on" value={`${instrument.stock.exchange}, in US dollars`} />
@@ -291,12 +291,12 @@ export function ResearchStage({ plan, update }: StageProps) {
                   */}
                   {instrument.kind === "fund" ? (
                     <div>
-                      <div className="ops-caption text-[11px] text-slate-500">
+                      <div className="ops-caption text-[11px] text-st-faint">
                         Largest holdings, {pct(instrument.exposureCoveragePct ?? 0)} of the fund documented
                       </div>
                       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
                         {instrument.exposures.slice(0, 6).map((exposure) => (
-                          <li key={exposure.label} className="text-[13px] tabular-nums text-slate-400">
+                          <li key={exposure.label} className="text-[13px] tabular-nums text-st-muted">
                             {exposure.label} {exposure.weightPct.toFixed(2)}%
                           </li>
                         ))}
@@ -305,7 +305,7 @@ export function ResearchStage({ plan, update }: StageProps) {
                   ) : null}
 
                   <div>
-                    <div className="ops-caption text-[11px] text-slate-500">Where these facts come from</div>
+                    <div className="ops-caption text-[11px] text-st-faint">Where these facts come from</div>
                     <ul className="mt-2 space-y-1">
                       {instrument.sources.map((source) => (
                         <li key={source.url}>
@@ -313,11 +313,11 @@ export function ResearchStage({ plan, update }: StageProps) {
                             href={source.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[13px] text-slate-400 underline decoration-white/20 underline-offset-2 hover:text-accent-cyan"
+                            className="text-[13px] text-st-muted underline decoration-white/20 underline-offset-2 hover:text-st-blue"
                           >
                             {source.label}
                           </a>
-                          <span className="text-[13px] text-slate-500"> · as of {source.asOf}</span>
+                          <span className="text-[13px] text-st-faint"> · as of {source.asOf}</span>
                         </li>
                       ))}
                     </ul>
@@ -368,7 +368,7 @@ export function ResearchStage({ plan, update }: StageProps) {
         <ul className="mt-2 space-y-2">
           {CATALOG_GAPS.map((gap) => (
             <li key={gap.missing}>
-              <span className="font-semibold text-white">{gap.missing}.</span> {gap.whyItMatters}
+              <span className="font-semibold text-st-ink">{gap.missing}.</span> {gap.whyItMatters}
             </li>
           ))}
         </ul>
@@ -405,7 +405,7 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
         <TableScroll>
           <table className="w-full min-w-[34rem] text-left text-[14px]">
             <caption className="sr-only">Target weight and dollar amount for each investment</caption>
-            <thead className="text-slate-400">
+            <thead className="text-st-muted">
               <tr>
                 <th scope="col" className="py-2 pr-3 font-normal">Investment</th>
                 <th scope="col" className="py-2 pr-3 text-right font-normal">Share of the investable money</th>
@@ -415,10 +415,10 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
             </thead>
             <tbody>
               {calculation.rows.map((row) => (
-                <tr key={row.holding.instrumentId} className="border-t border-white/8">
+                <tr key={row.holding.instrumentId} className="border-t border-st-hair">
                   <td className="py-3 pr-3">
-                    <div className="font-semibold text-white">{row.instrument?.symbol ?? row.holding.instrumentId}</div>
-                    <div className="text-[13px] text-slate-500">{row.instrument?.name ?? "Not in the research library"}</div>
+                    <div className="font-semibold text-st-ink">{row.instrument?.symbol ?? row.holding.instrumentId}</div>
+                    <div className="text-[13px] text-st-faint">{row.instrument?.name ?? "Not in the research library"}</div>
                   </td>
                   <td className="py-3 pr-3 text-right">
                     <label className="sr-only" htmlFor={`weight-${row.holding.instrumentId}`}>
@@ -438,22 +438,22 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
                           }),
                         )
                       }
-                      className="min-h-11 w-24 rounded-lg border border-white/12 bg-white/[0.03] px-3 text-right text-[15px] tabular-nums text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                      className="min-h-11 w-24 rounded-lg border border-st-bound bg-st-paper px-3 text-right text-[15px] tabular-nums text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
                     />
                   </td>
-                  <td className="py-3 pr-3 text-right tabular-nums text-slate-300">
+                  <td className="py-3 pr-3 text-right tabular-nums text-st-sub">
                     {pct(row.targetPortfolioWeightPct)}
                   </td>
-                  <td className="py-3 text-right tabular-nums text-white">{usd(row.targetValue)}</td>
+                  <td className="py-3 text-right tabular-nums text-st-ink">{usd(row.targetValue)}</td>
                 </tr>
               ))}
-              <tr className="border-t border-white/15">
-                <td className="py-3 pr-3 text-slate-300">Cash reserve and anything unassigned</td>
+              <tr className="border-t border-st-bound">
+                <td className="py-3 pr-3 text-st-sub">Cash reserve and anything unassigned</td>
                 <td className="py-3 pr-3" />
-                <td className="py-3 pr-3 text-right tabular-nums text-slate-300">
+                <td className="py-3 pr-3 text-right tabular-nums text-st-sub">
                   {pct(calculation.targetCashWeightPct)}
                 </td>
-                <td className="py-3 text-right tabular-nums text-white">{usd(calculation.targetCash)}</td>
+                <td className="py-3 text-right tabular-nums text-st-ink">{usd(calculation.targetCash)}</td>
               </tr>
             </tbody>
           </table>
@@ -493,7 +493,7 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
       </StageHeading>
 
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Assume prices change by</div>
+        <div className="ops-caption text-[11px] text-st-faint">Assume prices change by</div>
         {/*
           One field per asset class the catalog can actually hold. International
           was missing while every reviewed fund tracked a US index; adding VXUS
@@ -540,7 +540,7 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
       ) : null}
 
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Yearly cost of the funds you hold</div>
+        <div className="ops-caption text-[11px] text-st-faint">Yearly cost of the funds you hold</div>
         <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Stat
             label="At today's amounts"
@@ -554,15 +554,15 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
             detail={calculation.fees.coveragePct < 100 ? "Some funds have no filed cost" : "Every fund has a filed cost"}
           />
         </div>
-        <p className="mt-3 text-[13px] leading-6 text-slate-500">
+        <p className="mt-3 text-[13px] leading-6 text-st-faint">
           Trading charges, spreads and taxes are separate and are not included here.
         </p>
       </Panel>
 
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Companies you own more than once</div>
+        <div className="ops-caption text-[11px] text-st-faint">Companies you own more than once</div>
         {calculation.overlaps.length === 0 ? (
-          <p className="mt-2 text-[14px] leading-6 text-slate-300">
+          <p className="mt-2 text-[14px] leading-6 text-st-sub">
             No repeated company appears in the holdings that have been documented. That is not proof there is none —
             only {pct(calculation.exposureCoveragePct)} of the portfolio&rsquo;s holdings are documented.
           </p>
@@ -570,13 +570,13 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
           <>
             <ul className="mt-2 space-y-1">
               {calculation.overlaps.slice(0, 8).map((overlap) => (
-                <li key={overlap.label} className="text-[14px] leading-6 text-slate-300">
-                  <span className="tabular-nums text-white">{pct(overlap.portfolioWeightPct, 2)}</span> {overlap.label},
+                <li key={overlap.label} className="text-[14px] leading-6 text-st-sub">
+                  <span className="tabular-nums text-st-ink">{pct(overlap.portfolioWeightPct, 2)}</span> {overlap.label},
                   held through {overlap.instrumentIds.map((id) => findStudioInstrument(id)?.symbol ?? id).join(" and ")}
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-[13px] leading-6 text-slate-500">
+            <p className="mt-3 text-[13px] leading-6 text-st-faint">
               Based on {pct(calculation.exposureCoveragePct)} of the portfolio. Holdings the filings do not list stay
               unknown, so the real overlap can only be larger.
             </p>
@@ -621,10 +621,10 @@ export function BuyStage({ plan, calculation, update }: StageProps) {
           return (
             <Panel key={row.holding.instrumentId}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <div className="text-[16px] font-semibold text-white">
+                <div className="text-[16px] font-semibold text-st-ink">
                   {row.instrument?.symbol ?? row.holding.instrumentId}
                 </div>
-                <div className="text-[14px] tabular-nums text-slate-300">Target {usd(row.targetValue)}</div>
+                <div className="text-[14px] tabular-nums text-st-sub">Target {usd(row.targetValue)}</div>
               </div>
 
               <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -669,7 +669,7 @@ export function BuyStage({ plan, calculation, update }: StageProps) {
               {order && order.warnings.length > 0 ? (
                 <ul className="mt-3 space-y-1">
                   {order.warnings.map((warning) => (
-                    <li key={warning} className="text-[13px] leading-6 text-accent-amber">
+                    <li key={warning} className="text-[13px] leading-6 text-st-warn">
                       {warning}
                     </li>
                   ))}
@@ -752,7 +752,7 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
       </Panel>
 
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Where you are against the plan</div>
+        <div className="ops-caption text-[11px] text-st-faint">Where you are against the plan</div>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <Field
             label="What the investments are worth now"
@@ -773,12 +773,12 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
             {calculation.contributions.rows
               .filter((row) => row.amount > 0)
               .map((row) => (
-                <li key={row.instrumentId} className="text-[14px] leading-6 text-slate-300">
-                  <span className="tabular-nums text-white">{usd(row.amount)}</span> toward{" "}
+                <li key={row.instrumentId} className="text-[14px] leading-6 text-st-sub">
+                  <span className="tabular-nums text-st-ink">{usd(row.amount)}</span> toward{" "}
                   {findStudioInstrument(row.instrumentId)?.symbol ?? row.instrumentId}
                 </li>
               ))}
-            <li className="text-[14px] leading-6 text-slate-400">
+            <li className="text-[14px] leading-6 text-st-muted">
               <span className="tabular-nums">{usd(calculation.contributions.cash)}</span> stays in cash
             </li>
           </ul>
@@ -786,36 +786,36 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
       </Panel>
 
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Take your work with you</div>
-        <p className="mt-2 text-[14px] leading-6 text-slate-400">
+        <div className="ops-caption text-[11px] text-st-faint">Take your work with you</div>
+        <p className="mt-2 text-[14px] leading-6 text-st-muted">
           Studio saves in this browser only. Clearing site data erases it, so keep a backup.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() => download(`${plan.name}.json`, exportStudioJson(plan), "application/json")}
-            className="min-h-11 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-5 text-[14px] font-semibold text-accent-cyan hover:bg-accent-cyan/20"
+            className="min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-[14px] font-semibold text-st-blue hover:bg-st-blue-soft"
           >
             Download a backup
           </button>
           <button
             type="button"
             onClick={() => download(`${plan.name}.txt`, exportStudioText(plan, STUDIO_CATALOG), "text/plain")}
-            className="min-h-11 rounded-full border border-white/15 px-5 text-[14px] font-semibold text-slate-200 hover:border-white/30"
+            className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-semibold text-st-body hover:border-st-bound"
           >
             Download the readable plan
           </button>
           <button
             type="button"
             onClick={() => download(`${plan.name}.csv`, exportStudioCsv(plan, STUDIO_CATALOG), "text/csv")}
-            className="min-h-11 rounded-full border border-white/15 px-5 text-[14px] font-semibold text-slate-200 hover:border-white/30"
+            className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-semibold text-st-body hover:border-st-bound"
           >
             Download a spreadsheet
           </button>
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
-          <label className="min-h-11 cursor-pointer rounded-full border border-white/15 px-5 text-[14px] font-medium leading-[2.75rem] text-slate-200 hover:border-white/30">
+        <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-st-hair pt-4">
+          <label className="min-h-11 cursor-pointer rounded-full border border-st-bound px-5 text-[14px] font-medium leading-[2.75rem] text-st-body hover:border-st-bound">
             Restore from a backup
             <input
               type="file"
@@ -839,7 +839,7 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
                 reset();
               }
             }}
-            className="min-h-11 rounded-full border border-white/15 px-5 text-[14px] font-medium text-slate-400 hover:border-accent-red/40 hover:text-accent-red"
+            className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-medium text-st-muted hover:border-st-bad-edge hover:text-st-bad"
           >
             Start again
           </button>
