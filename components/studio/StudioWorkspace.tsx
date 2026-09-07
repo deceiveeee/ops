@@ -5,29 +5,49 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import { useStudioPlan, type StudioMutationResult } from "@/lib/use-studio-plan";
-import { BuildStage, BuyStage, GoalStage, ResearchStage, ReviewStage, RiskStage, type StageProps } from "./stages";
+import {
+  BuildStage,
+  BuyStage,
+  GoalStage,
+  OverviewStage,
+  ResearchStage,
+  ReviewStage,
+  RiskStage,
+  type StageProps,
+  type StudioDestination,
+} from "./stages";
 import { GuidancePanel, Notice, Panel, Stat, pct, usdWhole } from "./shared";
 
 /**
- * The six destinations.
+ * The seven destinations.
  *
  * `label` is what the sidebar says and `short` is what fits a phone tab bar;
  * the page's own heading carries the full sentence either way, so shortening
  * "Risk and cost" to "Risk" in the bar loses nothing a learner needs.
+ *
+ * `guidance` is optional. Overview is a place you read rather than a step you
+ * work, so it has no "before you start" definition to show -- and it is not
+ * numbered for the same reason: it is not part of the sequence, it is where the
+ * sequence is picked up.
  */
 const STAGES: {
-  key: StudioGuidanceKey;
+  key: StudioDestination;
   label: string;
   short: string;
-  render: (props: StageProps) => JSX.Element;
+  guidance?: StudioGuidanceKey;
+  step?: number;
+  render: (props: StageProps & { goTo: (key: StudioDestination) => void }) => JSX.Element;
 }[] = [
-  { key: "goal", label: "Goal", short: "Goal", render: (props) => <GoalStage {...props} /> },
-  { key: "research", label: "Research", short: "Research", render: (props) => <ResearchStage {...props} /> },
-  { key: "build", label: "Build", short: "Build", render: (props) => <BuildStage {...props} /> },
-  { key: "risk", label: "Risk and cost", short: "Risk", render: (props) => <RiskStage {...props} /> },
-  { key: "buy", label: "Buying", short: "Buying", render: (props) => <BuyStage {...props} /> },
-  { key: "review", label: "Rules", short: "Rules", render: (props) => <ReviewStage {...props} /> },
+  { key: "overview", label: "Overview", short: "Overview", render: (props) => <OverviewStage {...props} /> },
+  { key: "goal", label: "Goal", short: "Goal", guidance: "goal", step: 1, render: (props) => <GoalStage {...props} /> },
+  { key: "research", label: "Research", short: "Research", guidance: "research", step: 2, render: (props) => <ResearchStage {...props} /> },
+  { key: "build", label: "Build", short: "Build", guidance: "build", step: 3, render: (props) => <BuildStage {...props} /> },
+  { key: "risk", label: "Risk and cost", short: "Risk", guidance: "risk", step: 4, render: (props) => <RiskStage {...props} /> },
+  { key: "buy", label: "Buying", short: "Buying", guidance: "buy", step: 5, render: (props) => <BuyStage {...props} /> },
+  { key: "review", label: "Rules", short: "Rules", guidance: "review", step: 6, render: (props) => <ReviewStage {...props} /> },
 ];
+
+const STEP_COUNT = STAGES.filter((item) => item.step).length;
 
 export default function StudioWorkspace() {
   const { ready, loadState, plan, calculation, update, importBackup, reset } = useStudioPlan();
@@ -50,12 +70,19 @@ export default function StudioWorkspace() {
     return found === -1 ? 0 : found;
   }, [params]);
 
-  const goTo = useCallback(
+  const goToIndex = useCallback(
     (index: number) => {
       const next = STAGES[Math.max(0, Math.min(STAGES.length - 1, index))];
       // `scroll: false` because the work is already on screen; jumping to the
       // top on every move would lose the reader's place in a long step.
       router.push(`${pathname}?view=${next.key}`, { scroll: false });
+    },
+    [pathname, router],
+  );
+
+  const goTo = useCallback(
+    (key: StudioDestination) => {
+      router.push(`${pathname}?view=${key}`, { scroll: false });
     },
     [pathname, router],
   );
@@ -74,7 +101,7 @@ export default function StudioWorkspace() {
     importBackup: (text) => report(importBackup(text)),
     reset: () => {
       const result = report(reset());
-      if (result.ok) goTo(0);
+      if (result.ok) goTo("overview");
       return result;
     },
   };
@@ -134,7 +161,12 @@ export default function StudioWorkspace() {
       {/* Narrow screens get the portfolio as one line above the work. The full
           panel stacked underneath added a screen of scroll on its own, which is
           what the screen budget forbids. */}
-      <div className="mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-1 rounded-xl border border-st-hair bg-st-paper px-4 py-3 text-[13px] xl:hidden">
+      <div
+        className={cn(
+          "mt-4 flex-wrap items-baseline gap-x-5 gap-y-1 rounded-xl border border-st-hair bg-st-paper px-4 py-3 text-[13px] xl:hidden",
+          stage.step ? "flex" : "hidden",
+        )}
+      >
         <span className="text-st-faint">
           To invest <span className="tabular-nums text-st-ink">{usdWhole(calculation.investableBudget)}</span>
         </span>
@@ -166,7 +198,7 @@ export default function StudioWorkspace() {
               <li key={item.key}>
                 <button
                   type="button"
-                  onClick={() => goTo(index)}
+                  onClick={() => goToIndex(index)}
                   aria-current={index === stageIndex ? "page" : undefined}
                   className={cn(
                     "flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-[14px] font-medium transition-colors",
@@ -175,7 +207,7 @@ export default function StudioWorkspace() {
                       : "text-st-muted hover:bg-st-paper hover:text-st-ink",
                   )}
                 >
-                  <span className="tabular-nums text-[12px] opacity-70">{index + 1}</span>
+                  <span className="w-3 tabular-nums text-[12px] opacity-70">{item.step ?? ""}</span>
                   <span>{item.label}</span>
                 </button>
               </li>
@@ -197,23 +229,30 @@ export default function StudioWorkspace() {
            */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-st-hair pb-3">
             <span className="text-[15px] font-semibold text-st-ink">{stage.label}</span>
-            <span className="text-[13px] text-st-faint">
-              Step {stageIndex + 1} of {STAGES.length}
-            </span>
+            {stage.step ? (
+              <span className="text-[13px] text-st-faint">
+                Step {stage.step} of {STEP_COUNT}
+              </span>
+            ) : null}
             {/* The step number is printed once, here. Repeating it as an eyebrow
                 over the heading below was the same fact twice in 40px. */}
             <span className="ml-auto text-[13px] text-st-faint">
               {loadState.status === "memory" ? "Not saving" : "Saved in this browser"}
             </span>
           </div>
-          <GuidancePanel guidance={STUDIO_GUIDANCE[stage.key]} />
-          {stage.render(stageProps)}
+          {stage.guidance ? <GuidancePanel guidance={STUDIO_GUIDANCE[stage.guidance]} /> : null}
+          {stage.render({ ...stageProps, goTo })}
 
-          <div className="flex items-center justify-between gap-3 border-t border-st-hair pt-5">
+          <div
+            className={cn(
+              "items-center justify-between gap-3 border-t border-st-hair pt-5",
+              stage.step ? "flex" : "hidden",
+            )}
+          >
             <button
               type="button"
               disabled={stageIndex === 0}
-              onClick={() => goTo(stageIndex - 1)}
+              onClick={() => goToIndex(stageIndex - 1)}
               className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-medium text-st-sub disabled:cursor-not-allowed disabled:opacity-40"
             >
               ← Back
@@ -221,7 +260,7 @@ export default function StudioWorkspace() {
             <button
               type="button"
               disabled={stageIndex === STAGES.length - 1}
-              onClick={() => goTo(stageIndex + 1)}
+              onClick={() => goToIndex(stageIndex + 1)}
               className="min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-[14px] font-semibold text-st-blue disabled:cursor-not-allowed disabled:opacity-40"
             >
               {stageIndex === STAGES.length - 1 ? "Finished" : `Next: ${STAGES[stageIndex + 1]?.label}`} →
@@ -230,8 +269,9 @@ export default function StudioWorkspace() {
         </div>
 
         {/* Beside the work, never under it: a weight change is never made
-            without its consequence on screen. */}
-        <aside className="hidden xl:sticky xl:top-24 xl:block">
+            without its consequence on screen. Overview is excluded: it edits
+            nothing and reports the same figures itself, with more detail. */}
+        <aside className={cn("hidden xl:sticky xl:top-24", stage.step ? "xl:block" : "xl:hidden")}>
           <Panel>
             <div className="ops-caption text-[11px] text-st-faint">Your portfolio</div>
             <div className="mt-3 space-y-3">
@@ -278,14 +318,14 @@ export default function StudioWorkspace() {
             <li key={item.key} className="flex-1">
               <button
                 type="button"
-                onClick={() => goTo(index)}
+                onClick={() => goToIndex(index)}
                 aria-current={index === stageIndex ? "page" : undefined}
                 className={cn(
                   "flex min-h-11 w-full flex-col items-center justify-center gap-0.5 px-1 py-2 text-[11px] font-medium transition-colors",
                   index === stageIndex ? "text-st-blue" : "text-st-faint hover:text-st-ink",
                 )}
               >
-                <span className="tabular-nums text-[10px] opacity-70">{index + 1}</span>
+                <span className="tabular-nums text-[10px] opacity-70">{item.step ?? "·"}</span>
                 <span>{item.short}</span>
               </button>
             </li>

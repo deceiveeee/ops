@@ -17,6 +17,9 @@ import {
 import type { StudioMutationResult } from "@/lib/use-studio-plan";
 import { Choice, Fact, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole } from "./shared";
 
+/** The six places you can be. Overview is where returning learners land. */
+export type StudioDestination = "overview" | "goal" | "research" | "build" | "risk" | "buy" | "review";
+
 export type StageProps = {
   plan: StudioPlan;
   calculation: StudioCalculation;
@@ -33,6 +36,144 @@ const num = (raw: string, fallback = 0): number => {
   const parsed = Number(raw);
   return Number.isFinite(parsed) ? parsed : fallback;
 };
+
+// ---------------------------------------------------------------------------
+// 0. Overview
+// ---------------------------------------------------------------------------
+
+/**
+ * What to do next, worked out from the portfolio rather than from a step number.
+ *
+ * Returns exactly one thing. A list of everything outstanding is a to-do list,
+ * and the point of this destination is that someone returning after a week
+ * should not have to reconstruct where they were: they should be able to read
+ * one sentence and press one button.
+ *
+ * Order matters and is the order the work actually depends on -- there is no
+ * use assigning weights before there is anything to weigh, and no use writing
+ * rules for a portfolio that does not add up.
+ */
+export function nextAction(
+  plan: StudioPlan,
+  calculation: StudioCalculation,
+): { label: string; where: StudioDestination; why: string } {
+  if (!plan.goal.purpose.trim()) {
+    return { label: "Give the money a job", where: "goal", why: "Every later choice is judged against it." };
+  }
+  if (plan.goal.budget <= 0) {
+    return { label: "Say how much you have", where: "goal", why: "Weights are a share of it, so nothing can be sized yet." };
+  }
+  if (plan.holdings.length === 0) {
+    return { label: "Find something to buy", where: "research", why: "Nothing is in the portfolio yet." };
+  }
+  const unassigned = 100 - calculation.totalWeightPct;
+  if (Math.abs(unassigned) > 0.01) {
+    return {
+      label: unassigned > 0 ? `Assign the last ${unassigned.toFixed(1)} points` : `Take back ${Math.abs(unassigned).toFixed(1)} points`,
+      where: "build",
+      why: "Weights have to total 100% before the rest means anything.",
+    };
+  }
+  const unexplained = plan.holdings.find((holding) => !holding.research.why.trim());
+  if (unexplained) {
+    return {
+      label: "Say why you would own it",
+      where: "research",
+      why: "One holding has no reason written against it.",
+    };
+  }
+  if (!plan.rules.contributionRule.trim() && !plan.rules.sellRule.trim()) {
+    return { label: "Write the rules you will follow", where: "review", why: "A portfolio without rules is a list." };
+  }
+  return { label: "Read it back", where: "review", why: "Everything is written down. The last job is to check it still holds." };
+}
+
+export function OverviewStage({ plan, calculation, goTo }: StageProps & { goTo: (key: StudioDestination) => void }) {
+  const next = nextAction(plan, calculation);
+  const assigned = calculation.totalWeightPct;
+  const explained = plan.holdings.filter((holding) => holding.research.why.trim()).length;
+
+  return (
+    <div className="space-y-5">
+      <StageHeading title={plan.goal.purpose.trim() || "Your portfolio"}>
+        {plan.goal.purpose.trim()
+          ? `${usdWhole(calculation.investableBudget)} to invest, ${plan.goal.horizonYears} years away.`
+          : "Nothing is set yet. The first job is to say what the money is for."}
+      </StageHeading>
+
+      {/* One action, not a to-do list. */}
+      <Panel className="border-st-blue-edge bg-st-blue-soft">
+        <div className="text-[12px] font-semibold text-st-blue">Pick up where you left off</div>
+        <div className="mt-2 text-[17px] font-semibold text-st-ink">{next.label}</div>
+        <p className="mt-1 text-[14px] leading-6 text-st-muted">{next.why}</p>
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => goTo(next.where)}
+            className="min-h-11 rounded-full border border-st-blue-edge bg-st-paper px-5 text-[14px] font-semibold text-st-blue"
+          >
+            {next.label} →
+          </button>
+        </div>
+      </Panel>
+
+      {calculation.issues.length > 0 ? (
+        <Notice tone="amber" title="Worth another look">
+          <ul className="space-y-1">
+            {calculation.issues.slice(0, 4).map((issue) => (
+              <li key={issue}>{issue}</li>
+            ))}
+          </ul>
+        </Notice>
+      ) : null}
+
+      <Panel>
+        <div className="text-[12px] font-semibold text-st-faint">Where the portfolio stands</div>
+        {/* Counts of real things, not a completion percentage. A bar reading
+            "60% researched" would be a judgement about work nobody has read. */}
+        <div className="mt-3 grid gap-4 sm:grid-cols-3">
+          <Stat label="To invest" value={usdWhole(calculation.investableBudget)} />
+          <Stat
+            label="Assigned"
+            value={pct(assigned)}
+            detail={Math.abs(assigned - 100) <= 0.01 ? "Fully assigned" : "Needs to total 100%"}
+          />
+          <Stat
+            label="Investments"
+            value={String(plan.holdings.length)}
+            detail={
+              plan.holdings.length === 0
+                ? "None yet"
+                : `${explained} of ${plan.holdings.length} with a reason written`
+            }
+          />
+        </div>
+      </Panel>
+
+      <Panel>
+        <div className="text-[12px] font-semibold text-st-faint">Research you have open</div>
+        <p className="mt-2 text-[14px] leading-6 text-st-muted">
+          Company figures and industry comparisons are kept separately from this portfolio, so a
+          business you decided against stays on file with the reason.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link
+            href="/studio/investigate"
+            className="min-h-11 inline-flex items-center rounded-full border border-st-bound px-4 text-[14px] text-st-blue"
+          >
+            Open a company investigation →
+          </Link>
+          <Link
+            href="/studio/industry"
+            className="min-h-11 inline-flex items-center rounded-full border border-st-bound px-4 text-[14px] text-st-blue"
+          >
+            Compare an industry →
+          </Link>
+        </div>
+      </Panel>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 1. Goal
