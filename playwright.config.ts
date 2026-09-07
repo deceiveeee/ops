@@ -17,6 +17,19 @@ export default defineConfig({
   globalSetup: "./e2e/global-setup",
   testDir: "./e2e",
   fullyParallel: true,
+  /*
+   * Capped, because the suite runs against `next dev` and the bottleneck is the
+   * single dev server, not the machine's cores. Playwright's default is half the
+   * logical cores -- seven here -- and at seven the server starts aborting
+   * navigations outright: a full run on 2026-09-06 failed ten tests, every one
+   * of them `page.goto: net::ERR_ABORTED` or a timeout rather than a failed
+   * assertion, and the same commit passed 32/32 in isolation and 66/66 at four.
+   *
+   * Four is also faster in wall-clock -- 2.6 minutes against 4.1 -- so this
+   * costs nothing. Raise it only against a prebuilt server, where there is no
+   * on-demand compilation to serialise behind.
+   */
+  workers: process.env.CI ? undefined : 4,
   use: { baseURL, trace: "on-first-retry" },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
