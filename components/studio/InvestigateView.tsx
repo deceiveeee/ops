@@ -8,7 +8,7 @@ import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerCon
 import { COST_OF_CAPITAL_SOURCE, estimate, forSic, industryNames, forIndustry } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
 import { useStudioProject } from "@/lib/use-studio-project";
-import { newInvestigationId, saveInvestigation } from "@/lib/studio-project/operations";
+import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
 import { latestInvestigation } from "@/lib/studio-project/schema";
 import { Panel, StageHeading } from "./shared";
 
@@ -85,10 +85,21 @@ export default function InvestigateView() {
    * depends on `flush`, so its timer would be cleared and restarted each time,
    * which is the one way to make an autosave that never fires.
    */
-  const editRef = useRef({ company, sic, entries, riskFree, investigationId });
-  editRef.current = { company, sic, entries, riskFree, investigationId };
+  const editRef = useRef({ company, sic, entries, riskFree });
+  editRef.current = { company, sic, entries, riskFree };
   const sessionRef = useRef(project);
   sessionRef.current = project;
+  /*
+   * Which record is being written, held synchronously.
+   *
+   * This cannot come from state. `setInvestigationId` does not take effect
+   * until React re-renders, so two saves firing before that -- a debounce and a
+   * blur landing together, say -- would both read null, both mint an id, and
+   * write the same company twice. That is not hypothetical: it produced a
+   * duplicate for every company entered during browser testing. The ref is
+   * assigned before any await, so the second save sees the first one's id.
+   */
+  const idRef = useRef<string | null>(null);
 
   // Reopen what the learner last worked on, once, when the project opens.
   useEffect(() => {
@@ -96,6 +107,7 @@ export default function InvestigateView() {
     hydrated.current = true;
     const saved = latestInvestigation(project.project);
     if (!saved) return;
+    idRef.current = saved.id;
     setInvestigationId(saved.id);
     setCompany(saved.company);
     // An industry Studio no longer researches would leave the select showing
@@ -113,8 +125,9 @@ export default function InvestigateView() {
     // record behind for anyone who merely opened the page.
     if (edit.company.trim() === "" && Object.keys(edit.entries).length === 0) return;
     if (session.status !== "ready") return;
-    const id = edit.investigationId ?? newInvestigationId();
-    if (!edit.investigationId) setInvestigationId(id);
+    const id = idRef.current ?? newInvestigationId();
+    idRef.current = id;
+    setInvestigationId(id);
     setSaveNote({ kind: "saving" });
     const rate = edit.riskFree.trim() === "" ? null : Number(edit.riskFree);
     const result = await session.update((current) =>
@@ -134,6 +147,64 @@ export default function InvestigateView() {
     const timer = setTimeout(() => void flush(), SAVE_DELAY_MS);
     return () => clearTimeout(timer);
   }, [company, sic, entries, riskFree, flush]);
+
+  /* Most recently touched first, which is the order they were last cared about. */
+  const saved = useMemo(
+    () => [...(project.project?.investigations ?? [])].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
+    [project.project],
+  );
+
+  /**
+   * Put one company on screen.
+   *
+   * The outgoing one is written first. Switching is exactly the moment a
+   * half-typed figure would otherwise be dropped, and losing it here would be a
+   * worse version of the bug this whole surface exists to fix.
+   */
+  const open = useCallback(async (id: string) => {
+    await flush();
+    const target = sessionRef.current.project?.investigations.find((item) => item.id === id);
+    if (!target) return;
+    idRef.current = target.id;
+    setInvestigationId(target.id);
+    setCompany(target.company);
+    if (RESEARCHED.some((entry) => entry.sic === target.sic)) setSic(target.sic);
+    setEntries(target.figures as Entries);
+    setRiskFree(target.riskFreePct === null ? "" : String(target.riskFreePct));
+    setOpenHint(null);
+    setSaveNote({ kind: "saved" });
+  }, [flush]);
+
+  /** A blank sheet. Nothing is written until something is actually entered. */
+  const startNew = useCallback(async () => {
+    await flush();
+    idRef.current = null;
+    setInvestigationId(null);
+    setCompany("");
+    setEntries({});
+    setRiskFree("");
+    setOpenHint(null);
+    setSaveNote({ kind: "idle" });
+  }, [flush]);
+
+  /**
+   * Forget one company, on purpose and with a confirmation.
+   *
+   * Everything else on this page saves silently, so deletion is the one action
+   * that cannot be undone by carrying on typing. It asks first.
+   */
+  const forget = useCallback(async (id: string, label: string) => {
+    if (!window.confirm(`Delete ${label}? The figures you entered for it will be gone.`)) return;
+    const result = await sessionRef.current.update((current) => removeInvestigation(current, id));
+    if (!result.ok) { setSaveNote({ kind: "error", message: result.error }); return; }
+    if (idRef.current !== id) return;
+    // The open one just went. Show the next most recent, or a blank sheet.
+    const next = sessionRef.current.project?.investigations
+      .filter((item) => item.id !== id)
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+    if (next) await open(next.id);
+    else await startNew();
+  }, [open, startNew]);
 
   const researched = RESEARCHED.find((entry) => entry.sic === sic)!;
   const sector = SECTOR_BY_SIC[sic] ?? "general";
@@ -177,6 +248,72 @@ export default function InvestigateView() {
         Look up seven figures for a company you care about. Studio says which ones matter, checks
         what you typed, and tells you what the answer means against real competitors.
       </StageHeading>
+
+      {/*
+        * One row, and it scrolls sideways rather than wrapping.
+        *
+        * This page is already over the screen budget, so a list of companies
+        * cannot cost vertical space that grows with how much work you have
+        * done -- the more you use it, the worse that would get.
+        */}
+      {saved.length > 0 && (
+        <nav aria-label="Companies you have looked at" className="-mx-1 overflow-x-auto px-1 pb-1">
+          <ul className="flex items-center gap-2">
+            {saved.map((item) => {
+              const active = item.id === investigationId;
+              const label = item.company.trim() || "Unnamed company";
+              return (
+                <li key={item.id} className="flex-shrink-0">
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded-full border text-[13px] transition-colors",
+                      active
+                        ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
+                        : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:text-white",
+                    )}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => void open(item.id)}
+                      aria-current={active ? "true" : undefined}
+                      className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                    >
+                      {label}
+                      <span className="ml-2 text-[11px] text-slate-500">
+                        {Object.keys(item.figures).length}/{FIGURES.length}
+                      </span>
+                    </button>
+                    {/*
+                      * Only on the company in hand. On every chip it would be a
+                      * row of delete buttons a thumb can hit by accident, and
+                      * hiding them until hover fails on touch entirely.
+                      */}
+                    {active && (
+                      <button
+                        type="button"
+                        onClick={() => void forget(item.id, label)}
+                        aria-label={`Delete ${label}`}
+                        className="min-h-11 rounded-full pl-1 pr-3 text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+            <li className="flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => void startNew()}
+                className="min-h-11 rounded-full border border-dashed border-white/15 px-3.5 text-[13px] text-slate-400 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+              >
+                + Another company
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {/* ---------------------------------------------------------- entry */}
