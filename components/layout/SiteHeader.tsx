@@ -5,13 +5,21 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/ui/Button";
+import { useSession } from "@/lib/supabase/session";
+import { useProgressStore } from "@/lib/progress/store";
+import { syncStatusText } from "./sync-indicator";
+import { GUEST_ONLY_BETA } from "@/lib/beta";
 
 /**
- * The public beta exposes only complete learner surfaces. Accounts remain in
- * the repository but are intentionally absent from discovery until their
- * release gate closes. Studio joined the nav when it stopped being a preview
- * and became a working workspace; the investments it cannot yet research are
- * named inside it rather than hidden.
+ * Accounts are offered, never required. Every learner surface works signed out
+ * and saves to the browser, so signing in adds carrying your work between
+ * devices and takes nothing away from someone who never does. That is why the
+ * sign-in control sits beside the primary action rather than in front of it,
+ * and why no route redirects an anonymous visitor to it.
+ *
+ * Studio joined the nav when it stopped being a preview and became a working
+ * workspace; the investments it cannot yet research are named inside it rather
+ * than hidden.
  */
 const nav = [
   { href: "/courses", label: "Courses" },
@@ -25,6 +33,16 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const { user, status, client } = useSession();
+  const { syncStatus } = useProgressStore();
+  const signedIn = status === "authenticated" && !!user;
+  /**
+   * The same flag the middleware reads. Without this the control would survive
+   * a decision to close accounts again and send people to a route that
+   * redirects them straight back out -- the flag has to govern what is offered,
+   * not only what is reachable.
+   */
+  const accountsOffered = !GUEST_ONLY_BETA;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -77,6 +95,15 @@ export default function SiteHeader() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
+          {accountsOffered && <SyncChip status={syncStatus} />}
+          {accountsOffered &&
+            (signedIn ? (
+              <AccountMenu email={user!.email ?? ""} onSignOut={() => void client.auth.signOut()} />
+            ) : (
+              <Button href="/login" variant="outline" size="md">
+                Sign in
+              </Button>
+            ))}
           <Button href="/courses/investment-foundations" size="md">
             Start building
           </Button>
@@ -115,10 +142,71 @@ export default function SiteHeader() {
                 Start building
               </Button>
             </div>
+            {accountsOffered && (
+              <div className="mt-2">
+                {signedIn ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => void client.auth.signOut()}
+                  >
+                    Sign out
+                  </Button>
+                ) : (
+                  <Button href="/login" variant="outline" size="sm" className="w-full">
+                    Sign in
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
     </header>
+  );
+}
+
+function SyncChip({ status }: { status: ReturnType<typeof useProgressStore>["syncStatus"] }) {
+  // A guest has nothing syncing, so the chip would only be noise.
+  if (status === "guest") return null;
+  const { label, dot } = syncStatusText(status);
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[13px] text-slate-300">
+      <span className={dot} />
+      {label}
+    </span>
+  );
+}
+
+function AccountMenu({ email, onSignOut }: { email: string; onSignOut: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="rounded-full border border-white/10 px-3 py-1.5 text-[14px] text-slate-200 hover:bg-white/5"
+      >
+        {email}
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-56 rounded-lg border border-white/10 bg-ink-950/95 p-1">
+          <Link
+            href="/start?retake=1"
+            onClick={() => setOpen(false)}
+            className="block w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
+          >
+            Update my starting point
+          </Link>
+          <button
+            onClick={onSignOut}
+            className="w-full rounded-md px-3 py-2 text-left text-[14px] text-slate-200 hover:bg-white/5"
+          >
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 

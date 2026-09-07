@@ -4,8 +4,13 @@ import { hasLessonComponent } from "@/lib/lessonSlugs";
 import { BETA_HIDDEN_LESSON_SLUGS, GUEST_ONLY_BETA } from "./beta";
 
 describe("public beta boundary", () => {
-  it("runs as a guest-only release", () => {
-    expect(GUEST_ONLY_BETA).toBe(true);
+  /**
+   * Accounts are optional, not absent. The guard is kept and inverted rather
+   * than deleted, because the privacy policy's claims depend on this value and
+   * flipping it silently is exactly what this test exists to prevent.
+   */
+  it("offers accounts rather than running guest-only", () => {
+    expect(GUEST_ONLY_BETA).toBe(false);
   });
 
   it("hides every catalog record that lacks an implemented lesson", () => {

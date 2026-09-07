@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { SessionProvider } from "@/lib/supabase/session";
@@ -20,10 +20,10 @@ function baseClient() {
   } as unknown as SupabaseClient;
 }
 
-function renderHeader() {
+function renderHeader({ guestOnly = false } = {}) {
   const client = baseClient();
   return render(
-    <SessionProvider client={client} guestOnly>
+    <SessionProvider client={client} guestOnly={guestOnly}>
       <OnboardingProvider>
         <ProgressProvider>
           <SiteHeader />
@@ -44,9 +44,53 @@ describe("SiteHeader public beta navigation", () => {
     expect(screen.getAllByText("Studio").length).toBeGreaterThan(0);
   });
 
-  it("keeps account entry points out of the guest-only beta", () => {
+  /**
+   * Accounts are offered and optional. Signing in has to be reachable, and it
+   * has to stay beside the primary action rather than in front of it -- a
+   * learner who never makes an account loses no surface, so "Start building"
+   * is still the call this header makes.
+   */
+  it("offers a way in without demanding one", () => {
     renderHeader();
-    expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Sign in").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Start building").length).toBeGreaterThan(0);
+  });
+
+  /**
+   * Closing accounts again has to remove the offer, not just the destination.
+   * The middleware sends /login back to /courses under the guest-only flag, so
+   * a header that still advertised it would hand every visitor a control that
+   * bounces them somewhere else.
+   */
+  it("withdraws the offer when accounts are closed, not just the route", async () => {
+    vi.resetModules();
+    vi.doMock("@/lib/beta", () => ({
+      GUEST_ONLY_BETA: true,
+      BETA_HIDDEN_LESSON_SLUGS: new Set<string>(),
+      isPublicBetaLesson: () => true,
+    }));
+    /*
+     * Every provider is re-imported through the reset registry alongside the
+     * header. Importing only the header leaves it reading a second copy of the
+     * session module, whose context the provider above it never populates.
+     */
+    const [{ default: GuestHeader }, session, progress, onboarding] = await Promise.all([
+      import("./SiteHeader"),
+      import("@/lib/supabase/session"),
+      import("@/lib/progress/store"),
+      import("@/lib/onboarding/store"),
+    ]);
+    render(
+      <session.SessionProvider client={baseClient()} guestOnly>
+        <onboarding.OnboardingProvider>
+          <progress.ProgressProvider>
+            <GuestHeader />
+          </progress.ProgressProvider>
+        </onboarding.OnboardingProvider>
+      </session.SessionProvider>,
+    );
+    expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
+    vi.doUnmock("@/lib/beta");
+    vi.resetModules();
   });
 });
