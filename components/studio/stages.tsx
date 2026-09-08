@@ -15,7 +15,7 @@ import {
   type StudioPlan,
 } from "@/lib/studio";
 import type { StudioMutationResult } from "@/lib/use-studio-plan";
-import { Choice, Fact, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole } from "./shared";
+import { Choice, Fact, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole, useBufferedInput } from "./shared";
 
 /** The six places you can be. Overview is where returning learners land. */
 export type StudioDestination = "overview" | "goal" | "research" | "build" | "risk" | "buy" | "review";
@@ -522,6 +522,47 @@ export function ResearchStage({ plan, update }: StageProps) {
 // 3. Build
 // ---------------------------------------------------------------------------
 
+/**
+ * One holding's target weight.
+ *
+ * A component of its own for two reasons. The buffering it needs is a hook, and
+ * a hook cannot be called from inside the row loop; and this is the only
+ * control in Studio that does not go through `Field`, because it is a bare
+ * number in a table cell rather than a labelled field in a form grid -- an
+ * `sr-only` label and a 6rem width are exactly what `Field` is not for.
+ *
+ * It was also the only control still bound straight to the saved value, which
+ * is safe only while writes resolve synchronously. Sharing the buffer keeps it
+ * correct when they stop.
+ */
+function WeightInput({
+  instrumentId, name, value, onChange,
+}: {
+  instrumentId: string;
+  name: string;
+  value: number;
+  onChange: (value: string) => unknown;
+}) {
+  const id = `weight-${instrumentId}`;
+  const buffered = useBufferedInput(value, onChange);
+  return (
+    <>
+      <label className="sr-only" htmlFor={id}>
+        {name} target percentage
+      </label>
+      <input
+        id={id}
+        type="number"
+        inputMode="decimal"
+        min={0}
+        max={100}
+        {...buffered}
+        className="min-h-11 w-24 rounded-lg border border-st-bound bg-st-paper px-3 text-right text-[15px] tabular-nums text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
+      />
+    </>
+  );
+}
+
 export function BuildStage({ plan, calculation, update }: StageProps) {
   if (plan.holdings.length === 0) {
     return (
@@ -562,24 +603,17 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
                     <div className="text-[13px] text-st-faint">{row.instrument?.name ?? "Not in the research library"}</div>
                   </td>
                   <td className="py-3 pr-3 text-right">
-                    <label className="sr-only" htmlFor={`weight-${row.holding.instrumentId}`}>
-                      {row.instrument?.symbol ?? row.holding.instrumentId} target percentage
-                    </label>
-                    <input
-                      id={`weight-${row.holding.instrumentId}`}
-                      type="number"
-                      inputMode="decimal"
-                      min={0}
-                      max={100}
+                    <WeightInput
+                      instrumentId={row.holding.instrumentId}
+                      name={row.instrument?.symbol ?? row.holding.instrumentId}
                       value={row.holding.targetWeightPct}
-                      onChange={(event) =>
+                      onChange={(raw) =>
                         update((current) =>
                           updateStudioHolding(current, row.holding.instrumentId, {
-                            targetWeightPct: num(event.currentTarget.value),
+                            targetWeightPct: num(raw),
                           }),
                         )
                       }
-                      className="min-h-11 w-24 rounded-lg border border-st-bound bg-st-paper px-3 text-right text-[15px] tabular-nums text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
                     />
                   </td>
                   <td className="py-3 pr-3 text-right tabular-nums text-st-sub">

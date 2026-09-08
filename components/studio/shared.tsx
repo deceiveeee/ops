@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { StudioGuidance } from "@/lib/studio-guidance";
 
@@ -89,6 +89,50 @@ export function GuidancePanel({ guidance }: { guidance: StudioGuidance }) {
   );
 }
 
+/**
+ * Keystrokes stay local until the saves they queued have settled.
+ *
+ * Browser storage acknowledges an edit asynchronously, so a control bound
+ * straight to the saved value fights the person typing: the second character
+ * of "60" arrives while the write for "6" is still in flight, and when that
+ * write lands it re-renders the input back to the older value. Holding the
+ * text locally while anything is pending, and while the control has focus,
+ * means a save can never move the cursor or overwrite what is being typed.
+ *
+ * Returned as props to spread onto an input or textarea, so there is one
+ * implementation of this rather than one per control that needs it. Nothing
+ * here is specific to a schema; it is the same shape whether the write
+ * underneath resolves immediately or after a round trip to a database.
+ */
+export function useBufferedInput(value: string | number, onChange: (value: string) => unknown) {
+  const [input, setInput] = useState(String(value));
+  const [settled, setSettled] = useState(0);
+  const focused = useRef(false);
+  const pending = useRef(0);
+  useEffect(() => {
+    if (!focused.current && pending.current === 0) setInput(String(value));
+  }, [value, settled]);
+  return {
+    value: input,
+    onFocus: () => {
+      focused.current = true;
+    },
+    onBlur: () => {
+      focused.current = false;
+      setSettled((count) => count + 1);
+    },
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const raw = event.currentTarget.value;
+      setInput(raw);
+      pending.current += 1;
+      void Promise.resolve(onChange(raw)).finally(() => {
+        pending.current -= 1;
+        setSettled((count) => count + 1);
+      });
+    },
+  };
+}
+
 type FieldProps = {
   label: string;
   hint?: string;
@@ -109,24 +153,7 @@ export function Field({
 }: FieldProps) {
   const id = useId();
   const hintId = `${id}-hint`;
-  // Browser storage acknowledges edits asynchronously. Keep keystrokes local
-  // until the queued edits settle, so an earlier save cannot move the cursor
-  // or replace the text being typed with an older value.
-  const [input, setInput] = useState(String(value));
-  const [settled, setSettled] = useState(0);
-  const focused = useRef(false);
-  const pending = useRef(0);
-  useEffect(() => {
-    if (!focused.current && pending.current === 0) setInput(String(value));
-  }, [value, settled]);
-  const edit = (raw: string) => {
-    setInput(raw); pending.current += 1;
-    void Promise.resolve(onChange(raw)).finally(() => {
-      pending.current -= 1; setSettled((count) => count + 1);
-    });
-  };
-  const focus = () => { focused.current = true; };
-  const blur = () => { focused.current = false; setSettled((count) => count + 1); };
+  const buffered = useBufferedInput(value, onChange);
   const inputClass =
     "min-h-11 w-full rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge";
   /*
@@ -175,12 +202,9 @@ export function Field({
           <textarea
             id={id}
             rows={3}
-            value={input}
-            onFocus={focus}
-            onBlur={blur}
+            {...buffered}
             placeholder={placeholder}
             aria-describedby={hint ? hintId : undefined}
-            onChange={(event) => edit(event.currentTarget.value)}
             className={cn(inputClass, "resize-y")}
           />
         ) : (
@@ -188,15 +212,12 @@ export function Field({
             id={id}
             type={type}
             inputMode={type === "number" ? "decimal" : undefined}
-            value={input}
-            onFocus={focus}
-            onBlur={blur}
+            {...buffered}
             min={min}
             max={max}
             step={step}
             placeholder={placeholder}
             aria-describedby={hint ? hintId : undefined}
-            onChange={(event) => edit(event.currentTarget.value)}
             className={cn(
               inputClass,
               type === "number" && "tabular-nums",
