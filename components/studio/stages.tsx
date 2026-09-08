@@ -7,8 +7,6 @@ import { CATALOG_GAPS, STUDIO_CATALOG, findStudioInstrument } from "@/lib/studio
 import {
   addStudioHolding,
   exportStudioCsv,
-  exportStudioJson,
-  exportStudioText,
   removeStudioHolding,
   updateStudioHolding,
   type StudioCalculation,
@@ -43,6 +41,17 @@ export type StageProps = {
    *  than in a panel stacked under every other step. */
   importBackup: (text: string) => Promise<StageResult>;
   reset: () => Promise<StageResult>;
+  /*
+   * Backups come from the stored record, not from this view of it.
+   *
+   * A plan is what the six steps need: a goal, holdings, weights, rules. The
+   * record behind it also holds research for investments that were considered
+   * and not bought, company figures looked up, and decisions taken. Serialising
+   * the plan would hand back a file missing all of it, and restoring that file
+   * would then be the thing that deleted it.
+   */
+  exportBackup: () => { ok: true; raw: string } | { ok: false; error: string };
+  exportReadable: () => string;
 };
 
 /** Blank and partial entries stay blank rather than silently becoming zero. */
@@ -886,7 +895,10 @@ function download(name: string, text: string, type: string) {
   URL.revokeObjectURL(url);
 }
 
-export function ReviewStage({ plan, calculation, update, importBackup, reset }: StageProps) {
+export function ReviewStage({
+  plan, calculation, update, importBackup, reset, exportBackup, exportReadable,
+}: StageProps) {
+  const [backupError, setBackupError] = useState<string | null>(null);
   const setRules = (patch: Partial<StudioPlan["rules"]>) =>
     update((current) => ({ ...current, rules: { ...current.rules, ...patch }, updatedAt: new Date().toISOString() }));
 
@@ -978,19 +990,33 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
       <Panel>
         <div className="ops-caption text-[11px] text-st-faint">Take your work with you</div>
         <p className="mt-2 text-[14px] leading-6 text-st-muted">
-          Studio saves in this browser only. Clearing site data erases it, so keep a backup.
+          Studio saves in this browser only. Clearing site data erases it, so keep a backup. A backup
+          carries your research too, including investments you looked at and decided against.
         </p>
+        {backupError ? (
+          <div className="mt-4">
+            <Notice tone="red" title="That backup could not be written">
+              {backupError}
+            </Notice>
+          </div>
+        ) : null}
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={() => download(`${plan.name}.json`, exportStudioJson(plan), "application/json")}
+            onClick={() => {
+              const backup = exportBackup();
+              // A backup that could not be written must not download an empty
+              // file that looks like one. Saying so is the whole point.
+              if (backup.ok) download(`${plan.name}.json`, backup.raw, "application/json");
+              else setBackupError(backup.error);
+            }}
             className="min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-[14px] font-semibold text-st-blue hover:bg-st-blue-soft"
           >
             Download a backup
           </button>
           <button
             type="button"
-            onClick={() => download(`${plan.name}.txt`, exportStudioText(plan, STUDIO_CATALOG), "text/plain")}
+            onClick={() => download(`${plan.name}.txt`, exportReadable(), "text/plain")}
             className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-semibold text-st-body hover:border-st-bound"
           >
             Download the readable plan

@@ -8,6 +8,7 @@ import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerCon
 import { COST_OF_CAPITAL_SOURCE, estimate, forSic, industryNames, forIndustry } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
 import { useStudioProject } from "@/lib/use-studio-project";
+import { useStudioMode } from "@/lib/studio-mode";
 import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
 import { latestInvestigation } from "@/lib/studio-project/schema";
 import { Panel, StageHeading } from "./shared";
@@ -72,7 +73,16 @@ export default function InvestigateView() {
    * to remove. Storage is the same versioned, conflict-checked project record
    * the rest of Studio uses; nothing here writes its own store.
    */
-  const project = useStudioProject("personal");
+  /*
+   * The same portfolio the workspace has open, not a second one.
+   *
+   * This asked for `personal` while the workspace read `practice`, so a company
+   * investigated here was filed against a record the rest of Studio could not
+   * see -- and the workspace's overview linked to this page directly beneath a
+   * summary of holdings it would never show.
+   */
+  const { mode } = useStudioMode();
+  const project = useStudioProject(mode);
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
   const hydrated = useRef(false);

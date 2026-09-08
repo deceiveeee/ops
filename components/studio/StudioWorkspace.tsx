@@ -7,8 +7,10 @@ import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import { calculateStudio } from "@/lib/studio";
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { useStudioProject } from "@/lib/use-studio-project";
+import { STUDIO_MODES, useStudioMode } from "@/lib/studio-mode";
 import type { ProjectSessionState } from "@/lib/studio-project/session";
-import { applyPlanChange, projectToPlan } from "@/lib/studio-project/workspace";
+import type { StudioMode } from "@/lib/studio-project/schema";
+import { applyPlanChange, exportProjectText, projectToPlan } from "@/lib/studio-project/workspace";
 import {
   BuildStage,
   BuyStage,
@@ -22,21 +24,6 @@ import {
   type StudioDestination,
 } from "./stages";
 import { GuidancePanel, Notice, Panel, Stat, pct, usdWhole } from "./shared";
-
-/**
- * Which portfolio the workspace opens.
- *
- * Practice, because that is what every portfolio saved by the previous version
- * already is: `createStudioPlan` defaulted to it and this screen never offered
- * a way to change it, so every learner who has ever used Studio has a practice
- * portfolio whether or not they meant to. Opening anything else here would
- * leave all of that work behind a mode nobody chose.
- *
- * The investigation view still opens `personal`, so the two surfaces remain
- * separate portfolios. Reconciling them is a product decision about what the
- * words should mean, not a storage one, and it is deliberately not made here.
- */
-const STUDIO_MODE = "practice" as const;
 
 /**
  * What the workspace says about the state of the work.
@@ -91,12 +78,57 @@ const STAGES: {
 
 const STEP_COUNT = STAGES.filter((item) => item.step).length;
 
+/**
+ * Which portfolio you are working on.
+ *
+ * This label has sat in the header since Studio shipped, saying "Practice
+ * portfolio" over work that was practice only because nothing offered an
+ * alternative. Making it a control is the smaller half of the change; the
+ * larger half is that both Studio surfaces now read the same choice, so a
+ * company investigated on one is a company the other can see.
+ *
+ * A segmented control rather than a menu: there are two options, both worth
+ * naming on screen, and hiding one behind a tap would make the second
+ * portfolio as undiscoverable as it was when it did not exist.
+ */
+function ModeSwitch({ mode, onChange }: { mode: StudioMode; onChange: (mode: StudioMode) => void }) {
+  return (
+    <div
+      role="group"
+      aria-label="Which portfolio you are working on"
+      className="inline-flex rounded-full border border-st-hair bg-st-side p-0.5"
+    >
+      {STUDIO_MODES.map((item) => {
+        const active = item.value === mode;
+        return (
+          <button
+            key={item.value}
+            type="button"
+            onClick={() => onChange(item.value)}
+            aria-pressed={active}
+            className={cn(
+              "min-h-11 rounded-full px-4 text-[13px] font-medium transition-colors",
+              active ? "bg-st-paper text-st-ink" : "text-st-muted hover:text-st-ink",
+            )}
+          >
+            {item.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function StudioWorkspace() {
-  const session = useStudioProject(STUDIO_MODE);
+  const { mode, setMode } = useStudioMode();
+  const session = useStudioProject(mode);
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
-  const [message, setMessage] = useState<string | null>(null);
+  // Carries its own title: a refused mode switch is not a failed save, and
+  // saying so under "That change was not saved" would be a lie about which.
+  const [message, setMessage] = useState<{ tone: "red" | "amber"; title: string; body: string } | null>(null);
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
 
   /*
    * The open destination lives in the URL rather than in component state.
@@ -145,9 +177,37 @@ export default function StudioWorkspace() {
   // result is surfaced rather than assumed. Awaited now: storage answers later.
   const report = useCallback(async (pending: Promise<StageResult>): Promise<StageResult> => {
     const result = await pending;
-    setMessage(result.ok ? null : result.error);
+    setMessage(result.ok ? null : { tone: "red", title: "That change was not saved", body: result.error });
     return result;
   }, []);
+
+  /*
+   * Switching portfolios abandons nothing — but only once this one is safe.
+   *
+   * Each mode is its own stored record, so the one being left stays exactly
+   * where it is. The exception is an edit still in flight: switching closes the
+   * session carrying it. That window is milliseconds wide, and being told to
+   * wait a moment costs a second, where losing the last thing someone typed
+   * costs them their trust that anything here is kept at all.
+   */
+  const chooseMode = useCallback(
+    (next: StudioMode) => {
+      if (next === mode) return;
+      if (session.dirty || session.pending) {
+        setMessage({
+          tone: "amber",
+          title: "Still saving",
+          body: "Wait for the current change to finish saving, then switch.",
+        });
+        return;
+      }
+      setMessage(null);
+      setNoticeDismissed(false);
+      setMode(next);
+      goTo("overview");
+    },
+    [goTo, mode, session.dirty, session.pending, setMode],
+  );
 
   const stage = STAGES[stageIndex];
   const save = SAVE_STATE[session.status];
@@ -197,6 +257,10 @@ export default function StudioWorkspace() {
       if (result.ok) goTo("overview");
       return result;
     },
+    // Both read the stored record rather than the plan rendered from it, so a
+    // backup carries the research and decisions the six steps never show.
+    exportBackup: () => session.exportBackup(),
+    exportReadable: () => (session.project ? exportProjectText(session.project) : ""),
   };
 
   const assigned = pct(calculation.totalWeightPct);
@@ -204,19 +268,42 @@ export default function StudioWorkspace() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-8 sm:pt-8 lg:pb-8">
-      <header>
-        <div className="ops-eyebrow flex flex-wrap items-center gap-3 text-xs">
-          <span>Studio</span>
-          <span className="h-px w-8 bg-st-bound" />
-          <span className="text-st-blue">
-            {plan.mode === "practice" ? "Practice portfolio" : "Your own portfolio"}
-          </span>
+      {/* The switch sits beside the title rather than above it. A 44px control
+          on its own row pushed the whole page down by its full height; next to
+          a heading that is already taller than that, it costs nothing. */}
+      <header className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <div className="ops-eyebrow text-xs">Studio</div>
+          <h1 className="ops-display mt-2 text-3xl leading-[1.05] sm:text-4xl">Build a portfolio you can explain</h1>
+          <p className="ops-body mt-2 max-w-2xl text-[15px] leading-6 text-st-sub">
+            Six steps. Practise on an example or build your own; neither leaves this browser.
+          </p>
         </div>
-        <h1 className="ops-display mt-3 text-3xl leading-[1.05] sm:text-4xl">Build a portfolio you can explain</h1>
-        <p className="ops-body mt-2 max-w-2xl text-[15px] leading-6 text-st-sub">
-          Six steps, one saved portfolio. No course required; nothing leaves this browser.
-        </p>
+        <ModeSwitch mode={plan.mode} onChange={chooseMode} />
       </header>
+
+      {/* What the migration did to their work, said once, by the screen that
+          caused it. A portfolio that quietly comes back in a different shape is
+          how someone stops trusting that it came back at all. */}
+      {session.migrationNotes.length > 0 && !noticeDismissed ? (
+        <div className="mt-5">
+          <Notice tone="slate" title="This portfolio was brought forward from an older version of Studio">
+            <ul className="space-y-1">
+              {session.migrationNotes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+            <p className="mt-2">Nothing was lost: the original is still saved exactly as it was.</p>
+            <button
+              type="button"
+              onClick={() => setNoticeDismissed(true)}
+              className="mt-2 min-h-11 text-[14px] font-semibold text-st-blue underline underline-offset-2"
+            >
+              Got it
+            </button>
+          </Notice>
+        </div>
+      ) : null}
 
       {/* Another tab wrote a newer version. It is announced rather than adopted:
           taking it silently would replace work this tab may be in the middle of,
@@ -237,8 +324,8 @@ export default function StudioWorkspace() {
       ) : null}
       {message ? (
         <div className="mt-5">
-          <Notice tone="red" title="That change was not saved">
-            {message}
+          <Notice tone={message.tone} title={message.title}>
+            {message.body}
           </Notice>
         </div>
       ) : null}
@@ -298,9 +385,9 @@ export default function StudioWorkspace() {
               </li>
             ))}
           </ol>
+          {/* Which portfolio this is now has a control of its own in the header,
+              and the toolbar already carries the save state. One line here. */}
           <p className="mt-4 border-t border-st-hair px-3 pt-3 text-[12px] leading-5 text-st-faint">
-            {plan.mode === "practice" ? "Practice portfolio" : "Your own portfolio"}
-            <br />
             <span className={cn(save.warn && "text-st-warn")}>{save.label}</span>
           </p>
         </nav>

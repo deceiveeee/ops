@@ -68,6 +68,8 @@ function SlowBuild({ queue }: { queue: (() => void)[] }) {
       }}
       importBackup={() => Promise.resolve<StageResult>({ ok: true })}
       reset={() => Promise.resolve<StageResult>({ ok: true })}
+      exportBackup={() => ({ ok: true, raw: "" })}
+      exportReadable={() => ""}
     />
   );
 }

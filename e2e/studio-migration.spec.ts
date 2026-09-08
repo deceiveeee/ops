@@ -95,6 +95,39 @@ const LEGACY_PLAN = {
 /** Exactly the bytes the previous version would have left behind. */
 const LEGACY_RAW = JSON.stringify(LEGACY_PLAN, null, 2);
 
+/**
+ * A browser holding the previous version's portfolio and nothing else.
+ *
+ * The database is cleared from another route so no Studio session is holding it
+ * open: deleting a database a live page still has a connection to blocks rather
+ * than completing, which would leave the last test's project in place and make
+ * "the work came across" true before this test seeded anything.
+ */
+async function seedLegacyOnly(page: Page) {
+  await page.goto("/");
+  await page.evaluate(
+    async ([key, raw, database]) => {
+      localStorage.clear();
+      const databases = (await indexedDB.databases?.()) ?? [];
+      await Promise.all(
+        databases
+          .filter((item) => item.name === database)
+          .map(
+            () =>
+              new Promise<void>((resolve) => {
+                const request = indexedDB.deleteDatabase(database);
+                request.onsuccess = () => resolve();
+                request.onerror = () => resolve();
+                request.onblocked = () => resolve();
+              }),
+          ),
+      );
+      localStorage.setItem(key, raw);
+    },
+    [LEGACY_KEY, LEGACY_RAW, DATABASE] as const,
+  );
+}
+
 const summary = (page: Page) => page.getByRole("complementary");
 const stat = (page: Page, label: string) =>
   summary(page).getByText(label, { exact: true }).locator("xpath=following-sibling::div[1]");
@@ -128,29 +161,7 @@ async function storedProject(page: Page): Promise<Record<string, unknown> | null
 test.use({ viewport: { width: 1440, height: 900 } });
 
 test("a portfolio saved by the previous version opens with its work intact", async ({ page }) => {
-  await page.goto("/");
-  await page.evaluate(
-    async ([key, raw, database]) => {
-      localStorage.clear();
-      const databases = (await indexedDB.databases?.()) ?? [];
-      await Promise.all(
-        databases
-          .filter((item) => item.name === database)
-          .map(
-            () =>
-              new Promise<void>((resolve) => {
-                const request = indexedDB.deleteDatabase(database);
-                request.onsuccess = () => resolve();
-                request.onerror = () => resolve();
-                request.onblocked = () => resolve();
-              }),
-          ),
-      );
-      localStorage.setItem(key, raw);
-    },
-    [LEGACY_KEY, LEGACY_RAW, DATABASE] as const,
-  );
-
+  await seedLegacyOnly(page);
   await page.goto(STUDIO);
 
   // The overview is what a returning learner lands on, and it is titled with
@@ -183,29 +194,7 @@ test("a portfolio saved by the previous version opens with its work intact", asy
 });
 
 test("migrating keeps the original record and says where it came from", async ({ page }) => {
-  await page.goto("/");
-  await page.evaluate(
-    async ([key, raw, database]) => {
-      localStorage.clear();
-      const databases = (await indexedDB.databases?.()) ?? [];
-      await Promise.all(
-        databases
-          .filter((item) => item.name === database)
-          .map(
-            () =>
-              new Promise<void>((resolve) => {
-                const request = indexedDB.deleteDatabase(database);
-                request.onsuccess = () => resolve();
-                request.onerror = () => resolve();
-                request.onblocked = () => resolve();
-              }),
-          ),
-      );
-      localStorage.setItem(key, raw);
-    },
-    [LEGACY_KEY, LEGACY_RAW, DATABASE] as const,
-  );
-
+  await seedLegacyOnly(page);
   await page.goto(STUDIO);
   await expect(page.getByRole("heading", { level: 2, name: PURPOSE })).toBeVisible();
 
@@ -241,4 +230,31 @@ test("migrating keeps the original record and says where it came from", async ({
   // with something plausible-looking.
   expect(project?.investigations).toEqual([]);
   expect(project?.decisions).toEqual([]);
+});
+
+test("the migration says what it did to the work, once", async ({ page }) => {
+  await seedLegacyOnly(page);
+  await page.goto(STUDIO);
+
+  /*
+   * These sentences have existed in `migrate.ts` all along and were written to
+   * nobody. A portfolio that quietly comes back in a different shape is how
+   * someone stops trusting that it came back at all -- particularly the second
+   * line, which explains a status the learner never chose and would otherwise
+   * find attached to every holding they own.
+   */
+  const notice = page.getByText("This portfolio was brought forward from an older version of Studio");
+  await expect(notice).toBeVisible();
+  await expect(page.getByText("2 holdings became candidates, 2 carrying written research.")).toBeVisible();
+  await expect(
+    page.getByText("Every migrated candidate is marked selected: the previous version could not record a rejection."),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Got it" }).click();
+  await expect(notice).toBeHidden();
+
+  // Said once. The next load migrates nothing, so it has nothing to announce.
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 2, name: PURPOSE })).toBeVisible();
+  await expect(notice).toBeHidden();
 });

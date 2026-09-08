@@ -15,6 +15,20 @@ export interface ProjectSessionState {
   error: string | null;
   /** Unreadable legacy/future content remains available verbatim for recovery. */
   recoveryRaw: string | null;
+  /**
+   * What changed when an older record was brought forward, if one was.
+   *
+   * The migration has always described its own work -- how many holdings became
+   * candidates, how many carried written research, and that every one of them
+   * is marked selected because the previous version had no way to record a
+   * rejection. Those sentences went nowhere. Carrying them here lets the screen
+   * that caused the migration say what happened to the learner's work, rather
+   * than silently presenting a portfolio in a shape they did not leave it in.
+   *
+   * Empty on every load that migrated nothing, which is all of them after the
+   * first.
+   */
+  migrationNotes: string[];
 }
 export type SessionResult = { ok: true } | StorageFailure;
 const rejected = (error: string, code: StorageFailure["code"] = "invalid"): StorageFailure => ({ ok: false, code, error });
@@ -28,7 +42,7 @@ const clone = (project: StudioProject): StudioProject => JSON.parse(JSON.stringi
 export function createProjectSession(storage: ProjectStorage, mode: StudioMode, options: {
   readLegacy?: () => string | null;
 } = {}) {
-  let state: ProjectSessionState = { status: "loading", project: null, savedProject: null, revision: null, dirty: false, externalChange: false, error: null, recoveryRaw: null };
+  let state: ProjectSessionState = { status: "loading", project: null, savedProject: null, revision: null, dirty: false, externalChange: false, error: null, recoveryRaw: null, migrationNotes: [] };
   const listeners = new Set<() => void>();
   let ended = false;
   let pendingArchive: "import" | "reset" | undefined;
@@ -70,7 +84,8 @@ export function createProjectSession(storage: ProjectStorage, mode: StudioMode, 
     return accept(result.value);
   }
   async function load(): Promise<SessionResult> {
-    publish({ status: "loading", error: null });
+    // A reload describes only what this load did, so last time's notes go.
+    publish({ status: "loading", error: null, migrationNotes: [] });
     let result: StorageResult<StoredProject | null>;
     try { result = await storage.read(mode); } catch { return fail(rejected("Browser storage could not read the project.", "unavailable")); }
     if (!result.ok) return fail(result);
@@ -80,10 +95,14 @@ export function createProjectSession(storage: ProjectStorage, mode: StudioMode, 
       legacy = options.readLegacy ? options.readLegacy() : typeof window === "undefined" ? null : window.localStorage.getItem(STUDIO_STORAGE_KEY);
     } catch { return fail(rejected("The older saved portfolio could not be checked. Enable access to browser storage and retry; it has not been replaced.", "unavailable")); }
     let project = createStudioProject(mode);
+    let notes: string[] = [];
     if (legacy !== null) {
       const parsed = importProjectBackup(legacy);
       if (!parsed.ok) return fail(rejected(parsed.error, "blocked"), legacy);
-      if (parsed.project.mode === mode) project = parsed.project;
+      if (parsed.project.mode === mode) {
+        project = parsed.project;
+        notes = parsed.notes;
+      }
     }
     publish({ revision: null, savedProject: null, recoveryRaw: null });
     const saved = await persist(project);
@@ -93,6 +112,10 @@ export function createProjectSession(storage: ProjectStorage, mode: StudioMode, 
       const winner = await storage.read(mode);
       if (winner.ok && winner.value) return accept(winner.value);
     }
+    // Only after the migrated record is safely stored, and only if this load is
+    // what migrated it. A tab that lost the race describes nothing: it did not
+    // bring the record forward, it read one another tab had already saved.
+    if (saved.ok && notes.length) publish({ migrationNotes: notes });
     return saved;
   }
 
