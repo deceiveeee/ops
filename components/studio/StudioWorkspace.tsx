@@ -4,7 +4,11 @@ import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
-import { useStudioPlan, type StudioMutationResult } from "@/lib/use-studio-plan";
+import { calculateStudio } from "@/lib/studio";
+import { STUDIO_CATALOG } from "@/lib/studio-catalog";
+import { useStudioProject } from "@/lib/use-studio-project";
+import type { ProjectSessionState } from "@/lib/studio-project/session";
+import { applyPlanChange, projectToPlan } from "@/lib/studio-project/workspace";
 import {
   BuildStage,
   BuyStage,
@@ -14,9 +18,47 @@ import {
   ReviewStage,
   RiskStage,
   type StageProps,
+  type StageResult,
   type StudioDestination,
 } from "./stages";
 import { GuidancePanel, Notice, Panel, Stat, pct, usdWhole } from "./shared";
+
+/**
+ * Which portfolio the workspace opens.
+ *
+ * Practice, because that is what every portfolio saved by the previous version
+ * already is: `createStudioPlan` defaulted to it and this screen never offered
+ * a way to change it, so every learner who has ever used Studio has a practice
+ * portfolio whether or not they meant to. Opening anything else here would
+ * leave all of that work behind a mode nobody chose.
+ *
+ * The investigation view still opens `personal`, so the two surfaces remain
+ * separate portfolios. Reconciling them is a product decision about what the
+ * words should mean, not a storage one, and it is deliberately not made here.
+ */
+const STUDIO_MODE = "practice" as const;
+
+/**
+ * What the workspace says about the state of the work.
+ *
+ * The previous version had two answers -- saved, or not saving at all -- because
+ * localStorage acknowledged a write before `setItem` returned and there was
+ * nothing in between to describe. The project session distinguishes states that
+ * genuinely differ, and collapsing them back into a binary would throw away the
+ * honesty it exists to provide: a write still in flight is not a write that
+ * landed, and a write refused because another tab moved first is not a browser
+ * that cannot save.
+ */
+const SAVE_STATE: Record<ProjectSessionState["status"], { label: string; warn: boolean }> = {
+  loading: { label: "Opening", warn: false },
+  ready: { label: "Saved in this browser", warn: false },
+  saving: { label: "Saving…", warn: false },
+  unsaved: { label: "Not saved", warn: true },
+  conflict: { label: "Changed in another tab", warn: true },
+  blocked: { label: "Cannot save", warn: true },
+  unavailable: { label: "Not saving", warn: true },
+  closed: { label: "Not saving", warn: true },
+};
 
 /**
  * The seven destinations.
@@ -50,7 +92,7 @@ const STAGES: {
 const STEP_COUNT = STAGES.filter((item) => item.step).length;
 
 export default function StudioWorkspace() {
-  const { ready, loadState, plan, calculation, update, importBackup, reset } = useStudioPlan();
+  const session = useStudioProject(STUDIO_MODE);
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -87,30 +129,55 @@ export default function StudioWorkspace() {
     [pathname, router],
   );
 
+  /*
+   * The stages still read and write a plan.
+   *
+   * `projectToPlan` renders the project as one and `applyPlanChange` applies an
+   * edit written against it, so the six steps, the calculator and every figure
+   * on this page carry on working against the shape they were built for. The
+   * arithmetic in lib/studio.ts is not ported, which is the point: a schema
+   * change is not a licence to rewrite the sums a learner is being taught.
+   */
+  const plan = useMemo(() => (session.project ? projectToPlan(session.project) : null), [session.project]);
+  const calculation = useMemo(() => (plan ? calculateStudio(plan, STUDIO_CATALOG) : null), [plan]);
+
   // A failed write must not look like a successful one, so every mutation's
-  // result is surfaced rather than assumed.
-  const report = (result: StudioMutationResult): StudioMutationResult => {
+  // result is surfaced rather than assumed. Awaited now: storage answers later.
+  const report = useCallback(async (pending: Promise<StageResult>): Promise<StageResult> => {
+    const result = await pending;
     setMessage(result.ok ? null : result.error);
     return result;
-  };
-
-  const stageProps: StageProps = {
-    plan,
-    calculation,
-    update: (change) => report(update(change)),
-    importBackup: (text) => report(importBackup(text)),
-    reset: () => {
-      const result = report(reset());
-      if (result.ok) goTo("overview");
-      return result;
-    },
-  };
+  }, []);
 
   const stage = STAGES[stageIndex];
-  const assigned = pct(calculation.totalWeightPct);
-  const fullyAssigned = Math.abs(calculation.totalWeightPct - 100) <= 0.01;
+  const save = SAVE_STATE[session.status];
 
-  if (!ready) {
+  if (!plan || !calculation) {
+    /*
+     * An unreadable record is not an empty one.
+     *
+     * The previous version started a blank portfolio and carried on, which is
+     * only safe while the original is a single localStorage string it has
+     * decided not to touch. The session refuses to open at all instead, and
+     * keeps the original verbatim -- so there is something to say here rather
+     * than a skeleton that never resolves.
+     */
+    if (session.status === "blocked" || session.status === "unavailable") {
+      return (
+        <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8">
+          <Notice tone="red" title="Your saved portfolio could not be opened">
+            {session.error} Its original has been kept exactly as it was, and nothing has replaced it.
+          </Notice>
+          <button
+            type="button"
+            onClick={() => void session.reload()}
+            className="mt-5 min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-[14px] font-semibold text-st-blue"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
         <div className="h-8 w-64 animate-pulse rounded-lg bg-st-side" />
@@ -119,6 +186,21 @@ export default function StudioWorkspace() {
       </div>
     );
   }
+
+  const stageProps: StageProps = {
+    plan,
+    calculation,
+    update: (change) => report(session.update((project) => applyPlanChange(project, change))),
+    importBackup: (text) => report(session.importBackup(text)),
+    reset: async () => {
+      const result = await report(session.reset());
+      if (result.ok) goTo("overview");
+      return result;
+    },
+  };
+
+  const assigned = pct(calculation.totalWeightPct);
+  const fullyAssigned = Math.abs(calculation.totalWeightPct - 100) <= 0.01;
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-8 sm:pt-8 lg:pb-8">
@@ -136,17 +218,20 @@ export default function StudioWorkspace() {
         </p>
       </header>
 
-      {loadState.status === "blocked" ? (
+      {/* Another tab wrote a newer version. It is announced rather than adopted:
+          taking it silently would replace work this tab may be in the middle of,
+          so loading it is a decision the person makes. */}
+      {session.externalChange ? (
         <div className="mt-5">
-          <Notice tone="red" title="Your saved portfolio could not be read">
-            {loadState.error} Studio has started an empty portfolio and left the original untouched, so nothing is lost.
-          </Notice>
-        </div>
-      ) : null}
-      {loadState.status === "memory" ? (
-        <div className="mt-5">
-          <Notice tone="amber" title="This browser is not saving your work">
-            {loadState.error}
+          <Notice tone="amber" title="This portfolio changed in another tab">
+            The version saved in this browser is newer than the one on screen.
+            <button
+              type="button"
+              onClick={() => void report(session.reload())}
+              className="ml-2 min-h-11 text-[14px] font-semibold text-st-blue underline underline-offset-2"
+            >
+              Load the newer version
+            </button>
           </Notice>
         </div>
       ) : null}
@@ -216,7 +301,7 @@ export default function StudioWorkspace() {
           <p className="mt-4 border-t border-st-hair px-3 pt-3 text-[12px] leading-5 text-st-faint">
             {plan.mode === "practice" ? "Practice portfolio" : "Your own portfolio"}
             <br />
-            {loadState.status === "memory" ? "Not saving in this browser" : "Saved in this browser"}
+            <span className={cn(save.warn && "text-st-warn")}>{save.label}</span>
           </p>
         </nav>
 
@@ -236,8 +321,8 @@ export default function StudioWorkspace() {
             ) : null}
             {/* The step number is printed once, here. Repeating it as an eyebrow
                 over the heading below was the same fact twice in 40px. */}
-            <span className="ml-auto text-[13px] text-st-faint">
-              {loadState.status === "memory" ? "Not saving" : "Saved in this browser"}
+            <span className={cn("ml-auto text-[13px]", save.warn ? "text-st-warn" : "text-st-faint")}>
+              {save.label}
             </span>
           </div>
           {stage.guidance ? <GuidancePanel guidance={STUDIO_GUIDANCE[stage.guidance]} /> : null}

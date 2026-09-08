@@ -14,20 +14,35 @@ import {
   type StudioCalculation,
   type StudioPlan,
 } from "@/lib/studio";
-import type { StudioMutationResult } from "@/lib/use-studio-plan";
 import { Choice, Fact, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole, useBufferedInput } from "./shared";
 
 /** The six places you can be. Overview is where returning learners land. */
 export type StudioDestination = "overview" | "goal" | "research" | "build" | "risk" | "buy" | "review";
 
+/**
+ * What a stage learns about a write.
+ *
+ * Declared here rather than imported from a storage hook so the stages depend
+ * on the shape of an answer, not on where it came from. Both the plan hook's
+ * result and the project session's satisfy it.
+ */
+export type StageResult = { ok: true } | { ok: false; error: string };
+
 export type StageProps = {
   plan: StudioPlan;
   calculation: StudioCalculation;
-  update: (change: (plan: StudioPlan) => StudioPlan) => StudioMutationResult;
+  /*
+   * Every mutation is a promise, because browser storage acknowledges an edit
+   * after the fact rather than before returning. The handlers below do not
+   * await it -- a control must not wait on a database to show a keystroke --
+   * so the buffering in `Field` and `WeightInput` is what keeps typing honest
+   * while a write is open.
+   */
+  update: (change: (plan: StudioPlan) => StudioPlan) => Promise<StageResult>;
   /** Whole-portfolio actions. They live in step 6 beside the downloads, rather
    *  than in a panel stacked under every other step. */
-  importBackup: (text: string) => StudioMutationResult;
-  reset: () => StudioMutationResult;
+  importBackup: (text: string) => Promise<StageResult>;
+  reset: () => Promise<StageResult>;
 };
 
 /** Blank and partial entries stay blank rather than silently becoming zero. */

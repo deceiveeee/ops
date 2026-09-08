@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { addStudioHolding, calculateStudio, createStudioPlan, type StudioPlan } from "@/lib/studio";
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { Field } from "./shared";
-import { BuildStage } from "./stages";
+import { BuildStage, type StageResult } from "./stages";
 
 /**
  * What happens to a control while its save is still in the air.
@@ -58,16 +58,16 @@ function SlowBuild({ queue }: { queue: (() => void)[] }) {
       /*
        * Reports success at once and applies the change later, which is the
        * shape of the hazard: nothing looks like it failed, the value simply
-       * arrives after the next keystroke. The result stays synchronous because
-       * `StageProps` still says so -- that signature changes when the workspace
-       * moves onto the project schema, and this control is ready for it early.
+       * arrives after the next keystroke. Resolving the promise immediately is
+       * deliberate -- it leaves the focus guard as the only thing holding the
+       * keystroke, so this test cannot pass on the pending count alone.
        */
       update={(change) => {
         queue.push(() => setPlan((current) => change(current)));
-        return { ok: true };
+        return Promise.resolve<StageResult>({ ok: true });
       }}
-      importBackup={() => ({ ok: true })}
-      reset={() => ({ ok: true })}
+      importBackup={() => Promise.resolve<StageResult>({ ok: true })}
+      reset={() => Promise.resolve<StageResult>({ ok: true })}
     />
   );
 }
