@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import SectionLabel from "@/components/ui/SectionLabel";
 import { fetchFilings, resolveTicker, secUserAgent } from "@/lib/filings/edgar";
 
 export const metadata = { title: "Filing reader — Open Portfolio Studio" };
@@ -23,7 +22,7 @@ const SUGGESTED = [
 
 function Panel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">{children}</div>
+    <div className="rounded-2xl border border-st-hair bg-st-paper p-6">{children}</div>
   );
 }
 
@@ -42,13 +41,18 @@ export default async function FilingsPage({
 
   return (
     <div className="relative w-full">
-      <div className="pointer-events-none absolute inset-0 terminal-grid opacity-30" />
+      <div className="pointer-events-none absolute inset-0 terminal-grid opacity-20" />
       <div className="relative mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-24">
-        <SectionLabel index="04" eyebrow="Filing reader" tone="amber" />
-        <h1 className="mt-6 max-w-3xl text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
+        {/* Studio's own eyebrow rather than `SectionLabel`, whose tones are the
+            marketing accents — they are chosen against a dark ground and this
+            page no longer has one. No colour class: `.ops-theme-light
+            .ops-eyebrow` is a descendant selector and outranks a utility, so
+            one here would be dead code claiming an intent it cannot deliver. */}
+        <div className="ops-eyebrow text-xs">Filing reader</div>
+        <h1 className="mt-4 max-w-3xl text-balance text-4xl font-semibold leading-tight tracking-tight text-st-ink sm:text-5xl">
           Read what the company actually filed.
         </h1>
-        <p className="mt-5 max-w-2xl text-balance text-slate-300">
+        <p className="mt-5 max-w-2xl text-balance text-st-sub">
           Annual and quarterly reports, pulled from the SEC and split into the
           sections an investor reads: the business, the risks management is
           required to admit, what they say about their own results, and the
@@ -65,11 +69,11 @@ export default async function FilingsPage({
             defaultValue={symbol}
             placeholder="Ticker — NFLX, AAPL, KO"
             autoComplete="off"
-            className="min-h-11 w-full max-w-xs rounded-full border border-white/15 bg-white/[0.03] px-5 text-[15px] text-white placeholder:text-slate-500 focus:border-accent-amber/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+            className="min-h-11 w-full max-w-xs rounded-full border border-st-bound bg-st-paper px-5 text-[15px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
           />
           <button
             type="submit"
-            className="min-h-11 rounded-full border border-accent-amber/40 bg-accent-amber/10 px-6 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
+            className="min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-6 text-sm font-semibold text-st-blue transition-colors hover:bg-st-blue-soft"
           >
             Find filings
           </button>
@@ -78,13 +82,16 @@ export default async function FilingsPage({
         {!configured ? (
           <div className="mt-8">
             <Panel>
-              <h2 className="ops-body-strong text-[16px] text-white">
+              <h2 className="ops-body-strong text-[16px] text-st-ink">
                 This reader is not connected yet
               </h2>
-              <p className="mt-2 text-[15px] leading-7 text-slate-300">
+              <p className="mt-2 text-[15px] leading-7 text-st-sub">
                 Filings come straight from EDGAR, and the SEC requires every
                 automated request to identify its sender with a contact address.
-                Until <code className="text-accent-amber">OPS_SEC_CONTACT</code>{" "}
+                {/* Not a `code` element: it renders monospace by default, which
+                    AGENTS.md bans site-wide. Weight and colour name a setting
+                    perfectly well. */}
+                Until <span className="font-semibold text-st-blue">OPS_SEC_CONTACT</span>{" "}
                 is set, this page will not fetch anything — rather than send
                 unidentified requests, which is what that policy exists to
                 prevent.
@@ -99,10 +106,10 @@ export default async function FilingsPage({
               <Link
                 key={s.ticker}
                 href={`/filings?ticker=${s.ticker}`}
-                className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 transition-colors hover:border-accent-amber/40"
+                className="rounded-2xl border border-st-hair bg-st-paper p-5 transition-colors hover:border-st-blue-edge"
               >
-                <div className="ops-body-strong text-[16px] text-white">{s.ticker}</div>
-                <div className="mt-1 text-[14px] leading-6 text-slate-400">{s.note}</div>
+                <div className="ops-body-strong text-[16px] text-st-ink">{s.ticker}</div>
+                <div className="mt-1 text-[14px] leading-6 text-st-muted">{s.note}</div>
               </Link>
             ))}
           </div>
@@ -111,17 +118,19 @@ export default async function FilingsPage({
         {lookup && lookup.ok === false ? (
           <div className="mt-8">
             <Panel>
-              <h2 className="ops-body-strong text-[16px] text-white">
+              <h2 className="ops-body-strong text-[16px] text-st-ink">
                 Nothing to open
               </h2>
-              <p className="mt-2 text-[15px] leading-7 text-slate-300">{lookup.message}</p>
+              <p className="mt-2 text-[15px] leading-7 text-st-sub">{lookup.message}</p>
             </Panel>
           </div>
         ) : null}
 
         {lookup?.ok === true && filings ? (
           <div className="mt-10">
-            <div className="ops-caption text-[12px] text-accent-amber">
+            {/* Plain classes rather than `ops-caption`, whose light rule would
+                override the accent this line is meant to carry. */}
+            <div className="text-[12px] font-semibold tracking-[0.02em] text-st-blue">
               {lookup.company.ticker} · CIK {lookup.company.cik}
             </div>
             <h2 className="ops-section-title mt-2 text-2xl">
@@ -143,7 +152,7 @@ export default async function FilingsPage({
               href={`/studio/investigate?company=${encodeURIComponent(
                 filings.ok ? filings.name || lookup.company.name : lookup.company.name,
               )}`}
-              className="mt-4 inline-flex min-h-11 items-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
+              className="mt-4 inline-flex min-h-11 items-center rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-sm font-semibold text-st-blue transition-colors hover:bg-st-blue-soft"
             >
               Work out what these numbers mean →
             </Link>
@@ -151,38 +160,42 @@ export default async function FilingsPage({
             {filings.ok === false ? (
               <div className="mt-4">
                 <Panel>
-                  <p className="text-[15px] leading-7 text-slate-300">{filings.message}</p>
+                  <p className="text-[15px] leading-7 text-st-sub">{filings.message}</p>
                 </Panel>
               </div>
             ) : filings.filings.length === 0 ? (
               <div className="mt-4">
                 <Panel>
-                  <p className="text-[15px] leading-7 text-slate-300">
+                  <p className="text-[15px] leading-7 text-st-sub">
                     This company has filed with EDGAR, but not an annual or
                     quarterly report this reader can section.
                   </p>
                 </Panel>
               </div>
             ) : (
-              <ul className="mt-4 divide-y divide-white/8 rounded-2xl border border-white/10">
+              <ul className="mt-4 divide-y divide-st-hair rounded-2xl border border-st-hair">
                 {filings.filings.map((f) => (
                   <li key={f.accession}>
                     <Link
                       href={`/filings/${lookup.company.cik}/${f.accession}?doc=${encodeURIComponent(f.primaryDocument)}&ticker=${lookup.company.ticker}`}
-                      className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4 transition-colors hover:bg-white/[0.03]"
+                      className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4 transition-colors hover:bg-st-paper"
                     >
-                      <span className="ops-body-strong w-16 text-[15px] text-accent-amber">
+                      {/* The form type is the one thing worth picking out of a
+                          row of dates, so it keeps the accent — which means not
+                          using `ops-body-strong`, whose light rule would repaint
+                          it as ordinary body text. */}
+                      <span className="w-16 text-[15px] font-semibold text-st-blue">
                         {f.form}
                       </span>
-                      <span className="text-[15px] text-white">
+                      <span className="text-[15px] text-st-ink">
                         Filed {f.filingDate}
                       </span>
                       {f.reportDate ? (
-                        <span className="text-[14px] text-slate-400">
+                        <span className="text-[14px] text-st-muted">
                           for the period ending {f.reportDate}
                         </span>
                       ) : null}
-                      <span className="ml-auto text-[13px] text-slate-500">
+                      <span className="ml-auto text-[13px] text-st-faint">
                         {f.accession}
                       </span>
                     </Link>
@@ -193,7 +206,7 @@ export default async function FilingsPage({
           </div>
         ) : null}
 
-        <p className="mt-10 text-[13px] leading-6 text-slate-500">
+        <p className="mt-10 text-[13px] leading-6 text-st-faint">
           Documents are fetched from the SEC and cached. Educational material,
           not investment advice, and nothing here is a recommendation to buy or
           sell anything.
