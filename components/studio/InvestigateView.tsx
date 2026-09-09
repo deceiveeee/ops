@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
@@ -123,6 +124,8 @@ export default function InvestigateView() {
    * see -- and the workspace's overview linked to this page directly beneath a
    * summary of holdings it would never show.
    */
+  // Set when a filing hands a company over. Read once, on the first open.
+  const requestedCompany = useSearchParams().get("company")?.trim() ?? "";
   const { mode } = useStudioMode();
   const project = useStudioProject(mode);
   const [investigationId, setInvestigationId] = useState<string | null>(null);
@@ -159,6 +162,35 @@ export default function InvestigateView() {
   useEffect(() => {
     if (hydrated.current || project.status !== "ready" || !project.project) return;
     hydrated.current = true;
+
+    /*
+     * Arriving from a filing, with the company named in the address.
+     *
+     * Reopening the last company here would be actively wrong: someone who has
+     * just read Netflix's annual report and pressed a button that says so does
+     * not want the business they were looking at on Tuesday. An investigation
+     * of that company already on file is reopened rather than duplicated, and
+     * only the name is carried across — the figures are the learner's to read
+     * out of the document, which is the exercise.
+     */
+    if (requestedCompany) {
+      const existing = project.project.investigations.find(
+        (item) => item.company.trim().toLowerCase() === requestedCompany.trim().toLowerCase(),
+      );
+      if (existing) {
+        idRef.current = existing.id;
+        setInvestigationId(existing.id);
+        setCompany(existing.company);
+        setIndustry(investigationIndustry(existing) ?? DEFAULT_INDUSTRY);
+        setEntries(existing.figures as Entries);
+        setRiskFree(existing.riskFreePct === null ? "" : String(existing.riskFreePct));
+        setSaveNote({ kind: "saved" });
+      } else {
+        setCompany(requestedCompany);
+      }
+      return;
+    }
+
     const saved = latestInvestigation(project.project);
     if (!saved) return;
     idRef.current = saved.id;

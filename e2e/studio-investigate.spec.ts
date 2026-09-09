@@ -40,6 +40,16 @@ async function stored(page: Page): Promise<StoredRow[]> {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
+    /*
+     * Opening a database that does not exist creates an empty one, so between
+     * clearing storage and the app's first save there is a moment where the
+     * store genuinely is not there. That is zero investigations, not a fault —
+     * reading it as one made this throw instead of answering.
+     */
+    if (!db.objectStoreNames.contains("projects")) {
+      db.close();
+      return [];
+    }
     const rows = await new Promise<Record<string, string>[]>((resolve) => {
       const request = db.transaction("projects").objectStore("projects").getAll();
       request.onsuccess = () => resolve(request.result);
@@ -341,4 +351,64 @@ test("a company you investigated can be held in the portfolio", async ({ page })
   await page.getByLabel("Why I chose it").fill("It earns more than its capital costs.");
   await page.reload();
   await expect(page.getByLabel("Why I chose it")).toHaveValue("It earns more than its capital costs.");
+});
+
+/**
+ * The eight are examples, and the step says so.
+ *
+ * Research opened with a catalogue of eight and mentioned other companies in a
+ * footnote, which reads as a menu. Studio can read the filings of every company
+ * listed in the US, so the search comes first and the eight are named as what
+ * they are. The claim is checked by position, not only by wording: a heading
+ * that says "examples" above a list still presented as the offer would not have
+ * changed anything.
+ */
+test("research leads with any company, and names the eight as examples", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openEmpty(page);
+  await page.goto("/studio?view=research");
+
+  const search = page.getByLabel("Ticker symbol");
+  await expect(search).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Eight investments, already researched" })).toBeVisible();
+
+  // The search reaches the filing reader rather than a page inside Studio.
+  await expect(search.locator("xpath=ancestor::form")).toHaveAttribute("action", "/filings");
+
+  // Above the examples on the page, which is the whole point of the change.
+  const searchTop = await search.boundingBox();
+  const examplesTop = await page
+    .getByRole("heading", { name: "Eight investments, already researched" })
+    .boundingBox();
+  expect(searchTop!.y).toBeLessThan(examplesTop!.y);
+
+  // And what the eight lack is described as theirs, not as Studio's limit.
+  await expect(page.getByText("What the eight examples do not cover")).toBeVisible();
+});
+
+/**
+ * A filing hands its company over by name.
+ *
+ * The figures are deliberately not carried: reading them out of the document is
+ * the exercise. Only the name crosses, which is the one fact the filing page
+ * can hand over without doing the learner's work for them.
+ */
+test("a company named in the address opens ready to investigate", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openEmpty(page);
+
+  await page.goto(`${INVESTIGATE}?company=${encodeURIComponent("Nordic Pulp")}`);
+  await expect(companyBox(page)).toHaveValue("Nordic Pulp");
+  // Nothing is saved until something is actually entered, so arriving here has
+  // not yet created a record.
+  expect(await stored(page)).toHaveLength(0);
+
+  await figureBoxes(page).first().fill("4200");
+  await savedWith(page, "Nordic Pulp", 1);
+
+  // Coming back for the same company reopens the work rather than starting a
+  // second record of it.
+  await page.goto(`${INVESTIGATE}?company=${encodeURIComponent("Nordic Pulp")}`);
+  await expect(figureBoxes(page).first()).toHaveValue("4200", { timeout: 15_000 });
+  expect(await stored(page)).toHaveLength(1);
 });

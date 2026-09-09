@@ -332,38 +332,84 @@ export function ResearchStage({ plan, calculation, update }: StageProps) {
   return (
     <div className="space-y-5">
       <StageHeading title="Research what you might buy">
-        Read what each investment actually is and what it holds, then write down why it belongs in your plan.
+        Start with a company you want to understand. Read what it filed, work out whether it earns
+        more than its money costs, and write down why it belongs in your plan.
       </StageHeading>
 
-      {/* The way into the industry view. It sits before the catalogue because
-          that is the order the research is meant to run in: work out what an
-          industry looks like before deciding whether one company inside it is
-          worth your time. */}
-      <Link
-        href="/studio/industry"
-        className="block rounded-2xl border border-st-blue-edge bg-st-blue-soft p-5 transition-colors hover:border-st-blue-edge"
-      >
-        <div className="text-[15px] font-semibold text-st-ink">Start with the industry</div>
+      {/*
+        * Any company first, the eight second.
+        *
+        * This step used to open with a catalogue of eight and mention elsewhere
+        * that other companies were possible, which read as a menu with a
+        * footnote. It is the wrong way round: the eight are worked examples, and
+        * the thing a learner came to do is look into a business they have heard
+        * of. A search box that reaches every company filing with the SEC says
+        * that in a way no amount of surrounding copy would.
+        */}
+      <Panel className="border-st-blue-edge bg-st-blue-soft">
+        <div className="text-[15px] font-semibold text-st-ink">Look up any company</div>
         <p className="mt-1 text-[13px] leading-6 text-st-muted">
-          Before picking a company, see who competes with it, how the revenue is split between
-          them, how much of that split has moved in five years, and how each one earns its return
-          on capital. Built from public filings.
+          Every company listed in the US files its annual report with the SEC, and Studio reads
+          them. Find one by its ticker to see what the business says it does and the risks it is
+          required to admit — then bring its figures back here.
         </p>
-        <span className="mt-2 inline-block text-[13px] text-st-blue">Open the industry view →</span>
-      </Link>
+        <form action="/filings" method="get" className="mt-3 flex flex-wrap gap-2">
+          <label className="sr-only" htmlFor="research-ticker">
+            Ticker symbol
+          </label>
+          <input
+            id="research-ticker"
+            name="ticker"
+            autoComplete="off"
+            placeholder="Ticker — NFLX, KO, NVDA"
+            className="min-h-11 w-full max-w-xs rounded-lg border border-st-bound bg-st-paper px-3 text-[15px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
+          />
+          <button
+            type="submit"
+            className="min-h-11 rounded-full border border-st-blue-edge bg-st-paper px-5 text-[14px] font-semibold text-st-blue"
+          >
+            Find its filings
+          </button>
+        </form>
+      </Panel>
 
-      <Link
-        href="/studio/investigate"
-        className="block rounded-2xl border border-st-blue-edge bg-st-blue-soft p-5 transition-colors hover:border-st-blue-edge"
-      >
-        <div className="text-[15px] font-semibold text-st-ink">Investigate a company you care about</div>
-        <p className="mt-1 text-[13px] leading-6 text-st-muted">
-          Look up seven figures from its annual report and find out whether it earns more than its
-          capital costs, how it earns it, and what one year cannot tell you. Works for any company,
-          not only the ones listed below.
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Link
+          href="/studio/investigate"
+          className="block rounded-2xl border border-st-bound p-5 transition-colors hover:border-st-blue-edge"
+        >
+          <div className="text-[15px] font-semibold text-st-ink">Work out what a company is worth owning</div>
+          <p className="mt-1 text-[13px] leading-6 text-st-muted">
+            Seven figures from its annual report, and Studio says whether it earns more than its
+            capital costs and how. Any company, not only the ones below.
+          </p>
+          <span className="mt-2 inline-block text-[13px] text-st-blue">Start an investigation →</span>
+        </Link>
+
+        {/* Kept because it is the order the research is meant to run in: what an
+            industry looks like before whether one company inside it is worth
+            your time. It is no longer the loudest thing on the step. */}
+        <Link
+          href="/studio/industry"
+          className="block rounded-2xl border border-st-bound p-5 transition-colors hover:border-st-blue-edge"
+        >
+          <div className="text-[15px] font-semibold text-st-ink">Start with the industry</div>
+          <p className="mt-1 text-[13px] leading-6 text-st-muted">
+            See who competes with a company, how the revenue is split between them, and how much of
+            that split has moved in five years. Built from public filings.
+          </p>
+          <span className="mt-2 inline-block text-[13px] text-st-blue">Open the industry view →</span>
+        </Link>
+      </div>
+
+      <div className="border-t border-st-hair pt-5">
+        <h3 className="text-[15px] font-semibold text-st-ink">Eight investments, already researched</h3>
+        <p className="mt-1 max-w-2xl text-[13px] leading-6 text-st-muted">
+          Worked examples rather than the choice on offer. Each one has been read out of its own
+          filings, so you can see what a researched investment looks like before doing it yourself
+          — and hold any of them if they suit your plan.
         </p>
-        <span className="mt-2 inline-block text-[13px] text-st-blue">Start an investigation →</span>
-      </Link>
+      </div>
 
       <div className="space-y-3">
         {STUDIO_CATALOG.map((instrument) => {
@@ -612,7 +658,10 @@ export function ResearchStage({ plan, calculation, update }: StageProps) {
         </div>
       ) : null}
 
-      <Notice tone="slate" title="What you cannot research here yet">
+      {/* Scoped to the eight by name. As "what you cannot research here yet" it
+          described Studio, and Studio can now research any company that files —
+          it is the worked examples that have gaps, not the tool. */}
+      <Notice tone="slate" title="What the eight examples do not cover">
         <ul className="mt-2 space-y-2">
           {CATALOG_GAPS.map((gap) => (
             <li key={gap.missing}>

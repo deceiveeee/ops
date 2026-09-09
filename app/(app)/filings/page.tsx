@@ -128,6 +128,26 @@ export default async function FilingsPage({
               {filings.ok ? filings.name || lookup.company.name : lookup.company.name}
             </h2>
 
+            {/*
+              * The way back out with something to show for it.
+              *
+              * Reading a filing and building a portfolio were separate errands:
+              * a learner could work through a 10-K here and then arrive in
+              * Studio with an empty box and the company's name to retype. This
+              * carries the name across, which is the only fact this page can
+              * honestly hand over — the figures are the learner's to read out of
+              * the document, and typing them is the exercise rather than a chore
+              * to automate away.
+              */}
+            <Link
+              href={`/studio/investigate?company=${encodeURIComponent(
+                filings.ok ? filings.name || lookup.company.name : lookup.company.name,
+              )}`}
+              className="mt-4 inline-flex min-h-11 items-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
+            >
+              Work out what these numbers mean →
+            </Link>
+
             {filings.ok === false ? (
               <div className="mt-4">
                 <Panel>
