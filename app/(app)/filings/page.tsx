@@ -1,6 +1,12 @@
 import Link from "next/link";
 
-import { fetchFilings, resolveTicker, secUserAgent } from "@/lib/filings/edgar";
+import {
+  fetchFilings,
+  isAnnual,
+  resolveTicker,
+  secUserAgent,
+  type FilingSummary,
+} from "@/lib/filings/edgar";
 
 export const metadata = { title: "Filing reader — Open Portfolio Studio" };
 
@@ -42,7 +48,10 @@ export default async function FilingsPage({
   return (
     <div className="relative w-full">
       <div className="pointer-events-none absolute inset-0 terminal-grid opacity-20" />
-      <div className="relative mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-24">
+      {/* Studio's rhythm rather than the marketing pages'. This is somewhere a
+          learner works, and eighty pixels above the first word is a cost the
+          page pays on every visit. */}
+      <div className="relative mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-16">
         {/* Studio's own eyebrow rather than `SectionLabel`, whose tones are the
             marketing accents — they are chosen against a dark ground and this
             page no longer has one. No colour class: `.ops-theme-light
@@ -52,11 +61,11 @@ export default async function FilingsPage({
         <h1 className="mt-4 max-w-3xl text-balance text-4xl font-semibold leading-tight tracking-tight text-st-ink sm:text-5xl">
           Read what the company actually filed.
         </h1>
-        <p className="mt-5 max-w-2xl text-balance text-st-sub">
-          Annual and quarterly reports, pulled from the SEC and split into the
-          sections an investor reads: the business, the risks management is
-          required to admit, what they say about their own results, and the
-          audited numbers underneath.
+        {/* Shorter, because the card below now names the sections. Saying it
+            twice cost six lines on a phone to tell someone the same thing. */}
+        <p className="mt-4 max-w-2xl text-balance text-st-sub">
+          Every company listed in the US files its reports with the SEC. Read what one actually
+          says, split into the sections an investor reads.
         </p>
 
         <form action="/filings" method="get" className="mt-10 flex flex-wrap gap-3">
@@ -173,35 +182,93 @@ export default async function FilingsPage({
                 </Panel>
               </div>
             ) : (
-              <ul className="mt-4 divide-y divide-st-hair rounded-2xl border border-st-hair">
-                {filings.filings.map((f) => (
-                  <li key={f.accession}>
-                    <Link
-                      href={`/filings/${lookup.company.cik}/${f.accession}?doc=${encodeURIComponent(f.primaryDocument)}&ticker=${lookup.company.ticker}`}
-                      className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4 transition-colors hover:bg-st-paper"
-                    >
-                      {/* The form type is the one thing worth picking out of a
-                          row of dates, so it keeps the accent — which means not
-                          using `ops-body-strong`, whose light rule would repaint
-                          it as ordinary body text. */}
-                      <span className="w-16 text-[15px] font-semibold text-st-blue">
-                        {f.form}
-                      </span>
-                      <span className="text-[15px] text-st-ink">
-                        Filed {f.filingDate}
-                      </span>
-                      {f.reportDate ? (
-                        <span className="text-[14px] text-st-muted">
-                          for the period ending {f.reportDate}
-                        </span>
-                      ) : null}
-                      <span className="ml-auto text-[13px] text-st-faint">
-                        {f.accession}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              (() => {
+                /*
+                 * The annual report first, and everything else behind a
+                 * disclosure.
+                 *
+                 * Twelve equal rows made the page three screens on a phone, and
+                 * the length was the smaller problem: the list said every filing
+                 * was as good a place to start as any, which is not true. The
+                 * business description, the risk factors and the audited
+                 * statements are in the annual report, and it is the document
+                 * Studio's own investigation asks for figures from. A beginner
+                 * opening the most recent 10-Q instead finds an update to a
+                 * story they have not read.
+                 *
+                 * The rest is disclosed rather than dropped. Someone comparing
+                 * two years, or reading what changed last quarter, is doing
+                 * something real — the page just should not open on it.
+                 */
+                const annual = filings.filings.find((f) => isAnnual(f.form));
+                const rest = filings.filings.filter((f) => f !== annual);
+                const href = (f: FilingSummary) =>
+                  `/filings/${lookup.company.cik}/${f.accession}?doc=${encodeURIComponent(f.primaryDocument)}&ticker=${lookup.company.ticker}`;
+
+                return (
+                  <>
+                    {annual ? (
+                      <Link
+                        href={href(annual)}
+                        className="mt-4 block rounded-2xl border border-st-blue-edge bg-st-blue-soft p-5 transition-colors hover:border-st-blue-edge"
+                      >
+                        <div className="text-[12px] font-semibold tracking-[0.02em] text-st-blue">
+                          Start here · {annual.form}
+                        </div>
+                        <div className="mt-1 text-[17px] font-semibold text-st-ink">
+                          The annual report, filed {annual.filingDate}
+                        </div>
+                        <p className="mt-1 text-[13px] leading-6 text-st-muted">
+                          What the business says it does, the risks management is required to
+                          admit, and the audited numbers
+                          {annual.reportDate ? ` for the year ending ${annual.reportDate}` : ""}.
+                        </p>
+                      </Link>
+                    ) : null}
+
+                    {rest.length > 0 ? (
+                      <details className="group mt-3">
+                        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[14px] font-semibold text-st-blue">
+                          <span>
+                            {annual ? "Earlier and quarterly filings" : "Filings this reader can open"} (
+                            {rest.length})
+                          </span>
+                          <span className="text-[13px] font-normal text-st-muted group-open:hidden">Show</span>
+                          <span className="hidden text-[13px] font-normal text-st-muted group-open:inline">
+                            Hide
+                          </span>
+                        </summary>
+                        <ul className="mt-2 divide-y divide-st-hair rounded-2xl border border-st-hair">
+                          {rest.map((f) => (
+                            <li key={f.accession}>
+                              <Link
+                                href={href(f)}
+                                className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-4 transition-colors hover:bg-st-paper"
+                              >
+                                {/* The form type is the one thing worth picking
+                                    out of a row of dates, so it keeps the accent
+                                    — which means not using `ops-body-strong`,
+                                    whose light rule would repaint it as ordinary
+                                    body text. */}
+                                <span className="w-16 text-[15px] font-semibold text-st-blue">
+                                  {f.form}
+                                </span>
+                                <span className="text-[15px] text-st-ink">Filed {f.filingDate}</span>
+                                {f.reportDate ? (
+                                  <span className="text-[14px] text-st-muted">
+                                    for the period ending {f.reportDate}
+                                  </span>
+                                ) : null}
+                                <span className="ml-auto text-[13px] text-st-faint">{f.accession}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    ) : null}
+                  </>
+                );
+              })()
             )}
           </div>
         ) : null}

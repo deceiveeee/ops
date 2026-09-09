@@ -136,6 +136,21 @@ export type FilingSummary = {
  */
 const READABLE_FORMS = new Set(["10-K", "10-Q", "20-F", "40-F"]);
 
+/**
+ * The once-a-year filings, which are the ones a beginner wants.
+ *
+ * A quarterly report updates a story the annual one tells: the business
+ * description, the risk factors and the audited statements are in the 10-K (or
+ * the 20-F and 40-F that foreign issuers file instead). It is also the document
+ * Studio's own investigation asks for seven figures from, so naming it is not a
+ * preference — it is the difference between a learner opening the right file
+ * and the most recent one.
+ */
+export const ANNUAL_FORMS = new Set(["10-K", "20-F", "40-F"]);
+
+/** Whether this filing is the yearly report rather than a quarterly update. */
+export const isAnnual = (form: string): boolean => ANNUAL_FORMS.has(form);
+
 export function parseSubmissions(json: unknown, limit = 12): FilingSummary[] {
   if (!json || typeof json !== "object") return [];
   const recent = (json as { filings?: { recent?: Record<string, unknown> } }).filings?.recent;
