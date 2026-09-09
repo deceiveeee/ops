@@ -150,6 +150,40 @@ html {
         max-width: 1100px;
         text-wrap: balance;
     }
+    /*
+     * Short screens get a smaller headline.
+     *
+     * The homepage chapters are pinned to exactly one screen, so the headline
+     * competes for height with the visual it introduces. At the 38px floor it
+     * took three lines and 114px out of a 640px phone, which is what pushed
+     * these chapters past the screen they are pinned to. Keyed on height
+     * rather than width because that is the dimension that runs out: an
+     * iPhone SE and an iPhone 14 are nearly the same width.
+     */
+    @media (max-height: 900px) {
+        .hp-section {
+            font-size: clamp(30px, 5vw, 80px);
+        }
+    }
+    /*
+     * A second step for the smallest phones still in use — an iPhone SE is
+     * 667px tall and older Androids 640px. Once the header has taken 68px of
+     * that, a chapter has about 570px for a headline, a sentence, a progress
+     * row, a figure and a chart. The supporting copy comes down with the
+     * headline so the proportions hold rather than the words simply crowding.
+     */
+    @media (max-height: 700px) {
+        .hp-section {
+            font-size: clamp(26px, 5vw, 80px);
+        }
+        .hp-lead {
+            font-size: 15px;
+        }
+        .hp-body {
+            font-size: 15px;
+            line-height: 1.4;
+        }
+    }
     /* Supporting sentence — readable editorial, NOT whisper gray. */
     .hp-lead {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;

@@ -9,6 +9,24 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      /*
+       * A breakpoint for short screens, not narrow ones.
+       *
+       * The homepage chapters are pinned to exactly one screen, so what breaks
+       * them is a screen's height rather than its width. An iPhone SE is 667px
+       * tall and an iPhone 14 is 844px at almost the same width, and the
+       * chapters fitted the second and were trimmed on the first. Every width
+       * breakpoint in the framework was blind to that.
+       *
+       * 900 rather than 780, because a sticky 68px header eats into the one
+       * screen these chapters get. At 780 the tall phones fell in the gap: too
+       * tall to be tightened, too short to hold the stack once the header took
+       * its share. A short laptop is tightened for the same reason it applies
+       * to a phone — the chapter still has exactly one screen to fit in.
+       */
+      screens: {
+        short: { raw: "(max-height: 900px)" },
+      },
       colors: {
         ink: {
           950: "#05070d",

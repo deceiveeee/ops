@@ -112,7 +112,9 @@ export default function PortfolioChapter() {
       ref={ref}
       className="relative isolate z-10 hp-atmosphere-teal h-[300vh] sm:h-[380vh] lg:h-[440vh]"
     >
-      <div className="sticky top-0 z-10 flex h-[100svh] items-center overflow-hidden">
+      {/* Nothing here needs clipping, and clipping is what cut the headline in
+          half on a short phone. See CashFlowValueChapter for the full note. */}
+      <div className="sticky top-0 z-10 flex h-[100svh] items-center pt-[68px]">
         <div className="hp-canvas w-full">
           {/* Headline — white, no cyan */}
           <motion.h2
@@ -124,12 +126,12 @@ export default function PortfolioChapter() {
           >
             Diversification changes the shape of risk.
           </motion.h2>
-          <p className="hp-lead mt-8">
+          <p className="hp-lead mt-8 short:mt-4">
             Portfolio risk depends on how the assets move together, not only on the risk of each asset.
           </p>
 
           {/* Top: state progress bar */}
-          <div className="mt-14 flex items-center gap-5">
+          <div className="mt-14 flex items-center gap-5 short:mt-6">
             <div className="flex flex-1 items-center gap-2">
               {STATES.map((s, i) => {
                 const isActive = i === stateIdx;
@@ -155,7 +157,7 @@ export default function PortfolioChapter() {
           </div>
 
           {/* Main split: state label + large visual + portfolio readout */}
-          <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.5fr] lg:gap-16">
+          <div className="mt-10 grid grid-cols-1 gap-10 short:mt-4 short:gap-4 lg:grid-cols-[1fr_1.5fr] lg:gap-16">
             {/* Left — state description + vol */}
             <div>
               <motion.div
@@ -167,11 +169,14 @@ export default function PortfolioChapter() {
                 <div className="text-[16px] font-medium uppercase tracking-[0.06em] text-slate-400">
                   State
                 </div>
-                <div className="mt-2 text-[clamp(28px,3vw,48px)] font-semibold leading-[1.05] tracking-[-0.025em] text-white">
+                {/* This chapter carries the most in one screen — a state name,
+                    a figure, a note and a chart — so its state name comes down
+                    with everything else on a short phone. */}
+                <div className="mt-2 text-[clamp(28px,3vw,48px)] font-semibold leading-[1.05] tracking-[-0.025em] text-white short:text-[21px]">
                   {state.label}
                 </div>
 
-                <div className="mt-10 text-[15px] font-medium uppercase tracking-[0.06em] text-slate-400">
+                <div className="mt-10 text-[15px] font-medium uppercase tracking-[0.06em] text-slate-400 short:mt-4">
                   Portfolio volatility
                 </div>
                 <motion.div
@@ -179,17 +184,15 @@ export default function PortfolioChapter() {
                   initial={reduce ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="hp-numeric mt-2"
-                  style={{
-                    fontSize: "clamp(54px, 6vw, 94px)",
-                    lineHeight: 0.95,
-                    color: state.portfolioColor,
-                  }}
+                  // Size as a class so a short screen can take it down; colour
+                  // and leading stay inline because the colour is per state.
+                  className="hp-numeric mt-2 text-[clamp(54px,6vw,94px)] short:text-[42px]"
+                  style={{ lineHeight: 0.95, color: state.portfolioColor }}
                 >
                   {state.vol.toFixed(1)}%
                 </motion.div>
 
-                <p className="hp-body mt-6 max-w-[440px]">{state.note}</p>
+                <p className="hp-body mt-6 max-w-[440px] short:mt-2">{state.note}</p>
               </motion.div>
             </div>
 
