@@ -18,9 +18,17 @@ import {
 import type { RoicDecomposition } from "@/lib/studio-project/roic";
 import { useStudioProject } from "@/lib/use-studio-project";
 import { useStudioMode } from "@/lib/studio-mode";
-import { addInvestigatedCompany, newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
+import {
+  addInvestigatedCompany,
+  newInvestigationId,
+  removeInvestigation,
+  removePosition,
+  saveInvestigation,
+  setCandidateStatus,
+  startCandidate,
+} from "@/lib/studio-project/operations";
 import { latestInvestigation, type LearnerInstrument } from "@/lib/studio-project/schema";
-import { Panel, StageHeading } from "./shared";
+import { Field, Panel, StageHeading } from "./shared";
 
 /** What the learner is told about their work being kept. */
 type SaveNote =
@@ -132,6 +140,8 @@ export default function InvestigateView() {
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
   const [assetClass, setAssetClass] = useState<LearnerInstrument["assetClass"]>("us-equity");
   const [addNote, setAddNote] = useState<string | null>(null);
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const hydrated = useRef(false);
   /*
    * The latest edit and the latest session, readable from a timer that captured
@@ -202,7 +212,9 @@ export default function InvestigateView() {
     setEntries(saved.figures as Entries);
     setRiskFree(saved.riskFreePct === null ? "" : String(saved.riskFreePct));
     setSaveNote({ kind: "saved" });
-  }, [project.status, project.project]);
+    // `requestedCompany` is read above; the `hydrated` guard is what keeps this
+    // to one run, not the dependency list.
+  }, [project.status, project.project, requestedCompany]);
 
   const flush = useCallback(async () => {
     const edit = editRef.current;
@@ -340,6 +352,50 @@ export default function InvestigateView() {
     const result = await sessionRef.current.update((current) => addInvestigatedCompany(current, id, assetClass));
     if (!result.ok) setAddNote(`Not added — ${result.error}`);
   }, [assetClass, flush]);
+
+  /*
+   * The decision is recorded as a candidate, not on the figures.
+   *
+   * `FigureInvestigation` is deliberately quantitative — seven numbers read out
+   * of a report — and says so: judgements belong on a `CandidateInvestigation`,
+   * which exists whether or not anything holds it. So turning a company down
+   * opens one for it, which is the schema's own "the two are meant to meet
+   * eventually". Nothing new had to be stored to do it.
+   */
+  const candidateId = investigationId ? `own-${investigationId}` : null;
+  const rejectedCandidate = candidateId
+    ? project.project?.candidates.find((candidate) => candidate.instrumentId === candidateId)
+    : undefined;
+  const against = rejectedCandidate?.status === "rejected" ? rejectedCandidate.rejectedBecause : null;
+
+  const decideAgainst = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    await flush();
+    setAddNote(null);
+    const instrumentId = `own-${id}`;
+    const reason = rejectReason.trim();
+    const result = await sessionRef.current.update((current) =>
+      setCandidateStatus(
+        removePosition(startCandidate(current, instrumentId), instrumentId),
+        instrumentId,
+        "rejected",
+        reason,
+      ),
+    );
+    if (result.ok) {
+      setRejecting(false);
+      setRejectReason("");
+    } else {
+      setAddNote(`Not recorded — ${result.error}`);
+    }
+  }, [flush, rejectReason]);
+
+  const reconsider = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    await sessionRef.current.update((current) => setCandidateStatus(current, `own-${id}`, "researching"));
+  }, []);
   const suppliedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
   const cost = estimate(industryCost, Number.isFinite(suppliedRate) ? suppliedRate : undefined);
 
@@ -700,6 +756,70 @@ export default function InvestigateView() {
           </>
         )}
         {addNote ? <p className="mt-3 text-[13px] leading-6 text-st-warn">{addNote}</p> : null}
+
+        {/*
+          * Deciding against it is a result, not the absence of one.
+          *
+          * A company can be worth the afternoon it took to read and still not be
+          * worth owning, and that conclusion is the one most worth keeping — it
+          * is the only one a learner can check later against what actually
+          * happened. Sitting beside "add", because they are the two honest ends
+          * of the same piece of work rather than a success and a failure.
+          */}
+        <div className="mt-5 border-t border-st-hair pt-4">
+          {against !== null ? (
+            <>
+              <div className="ops-caption text-[11px] text-st-faint">You decided against this</div>
+              <p className="mt-1 text-[14px] leading-6 text-st-sub">{against}</p>
+              <button
+                type="button"
+                onClick={() => void reconsider()}
+                className="mt-2 min-h-11 text-[14px] font-semibold text-st-blue underline underline-offset-2"
+              >
+                Put it back on the table
+              </button>
+            </>
+          ) : rejecting ? (
+            <>
+              <Field
+                label="Why it is not for you"
+                hint="Kept with these figures, so you can check later whether it still holds."
+                value={rejectReason}
+                onChange={setRejectReason}
+                placeholder="It earns less than its capital costs and I could not see that changing…"
+                multiline
+              />
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={!rejectReason.trim() || !canAdd}
+                  onClick={() => void decideAgainst()}
+                  className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-semibold text-st-body disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Record this decision
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRejecting(false);
+                    setRejectReason("");
+                  }}
+                  className="min-h-11 px-2 text-[14px] text-st-muted"
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setRejecting(true)}
+              className="min-h-11 text-[13px] text-st-muted underline underline-offset-2 hover:text-st-ink"
+            >
+              Decide against this company
+            </button>
+          )}
+        </div>
       </Panel>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">

@@ -56,6 +56,24 @@ export function projectCatalog(project: StudioProject): StudioInstrument[] {
   return [...STUDIO_CATALOG, ...own];
 }
 
+/**
+ * What to call an instrument on screen, including one nobody holds.
+ *
+ * A company can reach a decision without ever reaching the portfolio: looked
+ * up, read, and turned down. That leaves a candidate with no position and no
+ * catalogue entry, so the name has to come from the investigation the candidate
+ * was opened for. Falling back to the stored id would show a learner their own
+ * research filed under something like `own-inv-3f2a`.
+ */
+export function instrumentLabel(project: StudioProject, instrumentId: string): string {
+  const known = projectCatalog(project).find((instrument) => instrument.id === instrumentId);
+  if (known) return known.name;
+  const investigation = instrumentId.startsWith("own-")
+    ? project.investigations.find((item) => item.id === instrumentId.slice("own-".length))
+    : undefined;
+  return investigation?.company.trim() || instrumentId;
+}
+
 /** A calculation view, never the stored record. Research remains project-owned. */
 export function projectToPlan(project: StudioProject): StudioPlan {
   const alternative = workingAlternative(project);
@@ -134,11 +152,8 @@ export function exportProjectText(project: StudioProject): string {
    * failed to complete, which is a poor thing to hand someone defending a
    * decision.
    */
-  // The project's own catalogue, so a company the learner added reads by name
-  // rather than as the internal id it is stored under.
-  const named = new Map(projectCatalog(project).map((instrument) => [instrument.id, instrument.name]));
   const research = project.candidates.map((candidate) => {
-    const name = named.get(candidate.instrumentId) ?? candidate.instrumentId;
+    const name = instrumentLabel(project, candidate.instrumentId);
     const lines = [
       `${name} — ${STANDING_LABEL[candidateStanding(project, candidate.instrumentId)]}`,
       candidate.why && `Why: ${candidate.why}`,

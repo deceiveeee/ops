@@ -11,7 +11,13 @@ import { STUDIO_MODES, useStudioMode } from "@/lib/studio-mode";
 import type { ProjectSessionState } from "@/lib/studio-project/session";
 import { findCandidate, type StudioMode } from "@/lib/studio-project/schema";
 import { removePosition, setCandidateStatus, startCandidate } from "@/lib/studio-project/operations";
-import { applyPlanChange, exportProjectText, projectCatalog, projectToPlan } from "@/lib/studio-project/workspace";
+import {
+  applyPlanChange,
+  exportProjectText,
+  instrumentLabel,
+  projectCatalog,
+  projectToPlan,
+} from "@/lib/studio-project/workspace";
 import {
   BuildStage,
   BuyStage,
@@ -302,15 +308,19 @@ export default function StudioWorkspace() {
       // The reason stays on the record. Reconsidering is not forgetting.
       reconsider: (instrumentId) =>
         report(session.update((project) => setCandidateStatus(project, instrumentId, "researching"))),
-      decidedAgainst: () =>
-        (session.project?.candidates ?? [])
+      decidedAgainst: () => {
+        const project = session.project;
+        if (!project) return [];
+        return project.candidates
           .filter((candidate) => candidate.status === "rejected")
           .map((candidate) => ({
             id: candidate.instrumentId,
-            name: catalog.find((instrument) => instrument.id === candidate.instrumentId)?.name
-              ?? candidate.instrumentId,
+            // Through the investigation where there is no catalogue entry: a
+            // company turned down without ever being held has only its figures.
+            name: instrumentLabel(project, candidate.instrumentId),
             reason: candidate.rejectedBecause,
-          })),
+          }));
+      },
     },
   };
 

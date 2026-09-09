@@ -455,6 +455,11 @@ function DecideAgainst({
 
 export function ResearchStage({ plan, calculation, update, decisions }: StageProps) {
   const ownRows = calculation.rows.filter((row) => row.holding.instrumentId.startsWith(OWN_PREFIX));
+  // The eight state their own decision on their card, and a held company shows
+  // above with its research. This is what neither of those reaches.
+  const turnedDownElsewhere = decisions
+    .decidedAgainst()
+    .filter((entry) => entry.id.startsWith(OWN_PREFIX));
   const [openId, setOpenId] = useState<string | null>(STUDIO_CATALOG[0]?.id ?? null);
   const held = new Set(plan.holdings.map((holding) => holding.instrumentId));
 
@@ -800,6 +805,40 @@ export function ResearchStage({ plan, calculation, update, decisions }: StagePro
               </Panel>
             );
           })}
+        </div>
+      ) : null}
+
+      {/*
+        * Companies looked into and turned down, which appear nowhere else.
+        *
+        * The eight carry their own decision on their card, and a company still
+        * held appears above with its research. What is left is the case this
+        * whole record exists for: a business someone read the figures on,
+        * decided against, and never held. Without somewhere to show it, the
+        * decision would be kept and invisible, which is the same as lost.
+        */}
+      {turnedDownElsewhere.length > 0 ? (
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-[15px] font-semibold text-st-ink">Companies you decided against</h3>
+            <p className="mt-1 max-w-2xl text-[13px] leading-6 text-st-muted">
+              Kept with the reason, because a decision not to buy is a result. The figures you
+              entered are still under your investigations.
+            </p>
+          </div>
+          {turnedDownElsewhere.map((entry) => (
+            <Panel key={entry.id}>
+              <div className="text-[16px] font-semibold text-st-ink">{entry.name}</div>
+              <p className="mt-1 text-[14px] leading-6 text-st-sub">{entry.reason}</p>
+              <button
+                type="button"
+                onClick={() => void decisions.reconsider(entry.id)}
+                className="mt-2 min-h-11 text-[14px] font-semibold text-st-blue underline underline-offset-2"
+              >
+                Put {entry.name} back on the table
+              </button>
+            </Panel>
+          ))}
         </div>
       ) : null}
 

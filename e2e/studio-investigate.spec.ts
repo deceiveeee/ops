@@ -412,3 +412,44 @@ test("a company named in the address opens ready to investigate", async ({ page 
   await expect(figureBoxes(page).first()).toHaveValue("4200", { timeout: 15_000 });
   expect(await stored(page)).toHaveLength(1);
 });
+
+/**
+ * A company read and turned down, which never reaches the portfolio at all.
+ *
+ * This is the case the whole record was built for and the one nothing could
+ * reach: a business worth the afternoon it took to read and not worth owning.
+ * The figures stay under the investigation and the judgement becomes a
+ * candidate, which is what that record is for — `FigureInvestigation` says in
+ * its own comment that it is quantitative and that conclusions belong on a
+ * candidate, so nothing new had to be stored to hold this.
+ */
+test("a company you read and turned down is kept, with the reason", async ({ page }) => {
+  test.setTimeout(120_000);
+  await openEmpty(page);
+  await enter(page, "Meridian Freight", "3100");
+
+  await page.getByRole("button", { name: "Decide against this company" }).click();
+  await page.getByLabel("Why it is not for you").fill("It earns less than its capital costs.");
+  await page.getByRole("button", { name: "Record this decision" }).click();
+
+  await expect(page.getByText("You decided against this")).toBeVisible();
+  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
+
+  // The figures are still the learner's, filed under the same investigation.
+  expect(await stored(page)).toHaveLength(1);
+  await page.reload();
+  await expect(figureBoxes(page).first()).toHaveValue("3100", { timeout: 15_000 });
+  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
+
+  // And it is findable from the portfolio, by name rather than by a stored id.
+  await page.goto("/studio?view=research");
+  await expect(page.getByRole("heading", { name: "Companies you decided against" })).toBeVisible();
+  // Exact, because the reconsider button names it too — and the point of this
+  // assertion is the name resolving at all rather than showing a stored id.
+  await expect(page.getByText("Meridian Freight", { exact: true })).toBeVisible();
+  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
+
+  // Reversible from either screen.
+  await page.getByRole("button", { name: /Put Meridian Freight back on the table/ }).click();
+  await expect(page.getByRole("heading", { name: "Companies you decided against" })).toBeHidden();
+});
