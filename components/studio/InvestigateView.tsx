@@ -5,12 +5,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
-import { COST_OF_CAPITAL_SOURCE, estimate, forSic, industryNames, forIndustry } from "@/lib/studio-project/cost-of-capital";
-import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
+import {
+  COST_OF_CAPITAL_SOURCE,
+  estimate,
+  forIndustry,
+  industryForSic,
+  industryNames,
+  investigationIndustry,
+  sectorForIndustry,
+} from "@/lib/studio-project/cost-of-capital";
+import type { RoicDecomposition } from "@/lib/studio-project/roic";
 import { useStudioProject } from "@/lib/use-studio-project";
 import { useStudioMode } from "@/lib/studio-mode";
-import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
-import { latestInvestigation } from "@/lib/studio-project/schema";
+import { addInvestigatedCompany, newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
+import { latestInvestigation, type LearnerInstrument } from "@/lib/studio-project/schema";
 import { Panel, StageHeading } from "./shared";
 
 /** What the learner is told about their work being kept. */
@@ -44,9 +52,43 @@ const RESEARCHED = industriesData.industries.map((entry) => ({
   ),
 }));
 
-const SECTOR_BY_SIC: Record<string, RoicSector> = {
-  "3674": "general", "7372": "general", "5331": "general", "4011": "transport", "2834": "general",
-};
+/**
+ * The researched peer sets, found by the industry the learner picked.
+ *
+ * Two lists of different sizes meet here. Ninety-six industries have a
+ * published cost of capital, which is the figure the whole investigation turns
+ * on, and five of them have peer figures built from filings. Until now the
+ * picker offered only those five, so a company in any other industry could not
+ * be investigated at all — the scarcer fact was gating the commoner one.
+ */
+const PEERS_BY_INDUSTRY = new Map(
+  RESEARCHED.flatMap((entry) => {
+    const name = industryForSic(entry.sic);
+    return name ? ([[name, entry]] as const) : [];
+  }),
+);
+
+/**
+ * Where someone starts before they have said what the business does.
+ *
+ * The whole market rather than a plausible-looking industry: a beginner who has
+ * not chosen yet should be reading their company against everything, not
+ * against semiconductors because it sorted first. Financials are excluded from
+ * it because their cost of capital is built on a different capital structure.
+ */
+const DEFAULT_INDUSTRY = "Total Market (without financials)";
+
+/**
+ * The two a company the learner found can be.
+ *
+ * Not the whole asset-class list: a bond issue and a fund are things Studio
+ * researches and carries, not things someone types seven figures into an
+ * annual report for.
+ */
+const ASSET_CLASSES = [
+  { value: "us-equity" as const, label: "A US-listed company" },
+  { value: "international-equity" as const, label: "Listed outside the US" },
+];
 
 const median = (values: number[]): number => {
   const sorted = [...values].sort((a, b) => a - b);
@@ -59,7 +101,7 @@ const SAVE_DELAY_MS = 600;
 
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
-  const [sic, setSic] = useState(RESEARCHED[0].sic);
+  const [industry, setIndustry] = useState(DEFAULT_INDUSTRY);
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
   const [openHint, setOpenHint] = useState<FigureKey | null>(null);
@@ -85,6 +127,8 @@ export default function InvestigateView() {
   const project = useStudioProject(mode);
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
+  const [assetClass, setAssetClass] = useState<LearnerInstrument["assetClass"]>("us-equity");
+  const [addNote, setAddNote] = useState<string | null>(null);
   const hydrated = useRef(false);
   /*
    * The latest edit and the latest session, readable from a timer that captured
@@ -95,8 +139,8 @@ export default function InvestigateView() {
    * depends on `flush`, so its timer would be cleared and restarted each time,
    * which is the one way to make an autosave that never fires.
    */
-  const editRef = useRef({ company, sic, entries, riskFree });
-  editRef.current = { company, sic, entries, riskFree };
+  const editRef = useRef({ company, industry, entries, riskFree });
+  editRef.current = { company, industry, entries, riskFree };
   const sessionRef = useRef(project);
   sessionRef.current = project;
   /*
@@ -122,7 +166,7 @@ export default function InvestigateView() {
     setCompany(saved.company);
     // An industry Studio no longer researches would leave the select showing
     // one thing and reading against another, so it falls back rather than lies.
-    if (RESEARCHED.some((entry) => entry.sic === saved.sic)) setSic(saved.sic);
+    setIndustry(investigationIndustry(saved) ?? DEFAULT_INDUSTRY);
     setEntries(saved.figures as Entries);
     setRiskFree(saved.riskFreePct === null ? "" : String(saved.riskFreePct));
     setSaveNote({ kind: "saved" });
@@ -143,7 +187,11 @@ export default function InvestigateView() {
     const result = await session.update((current) =>
       saveInvestigation(current, {
         company: edit.company,
-        sic: edit.sic,
+        industry: edit.industry,
+        // Only set where peers exist, because that is all a SIC is used for
+        // here. Storing one for an industry with no peer figures would imply a
+        // comparison that cannot be made.
+        sic: PEERS_BY_INDUSTRY.get(edit.industry)?.sic ?? "",
         figures: edit.entries as Record<string, number>,
         riskFreePct: rate !== null && Number.isFinite(rate) ? rate : null,
       }, id),
@@ -156,7 +204,7 @@ export default function InvestigateView() {
     if (!hydrated.current) return;
     const timer = setTimeout(() => void flush(), SAVE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [company, sic, entries, riskFree, flush]);
+  }, [company, industry, entries, riskFree, flush]);
 
   /* Most recently touched first, which is the order they were last cared about. */
   const saved = useMemo(
@@ -178,7 +226,7 @@ export default function InvestigateView() {
     idRef.current = target.id;
     setInvestigationId(target.id);
     setCompany(target.company);
-    if (RESEARCHED.some((entry) => entry.sic === target.sic)) setSic(target.sic);
+    setIndustry(investigationIndustry(target) ?? DEFAULT_INDUSTRY);
     setEntries(target.figures as Entries);
     setRiskFree(target.riskFreePct === null ? "" : String(target.riskFreePct));
     setOpenHint(null);
@@ -216,11 +264,20 @@ export default function InvestigateView() {
     else await startNew();
   }, [open, startNew]);
 
-  const researched = RESEARCHED.find((entry) => entry.sic === sic)!;
-  const sector = SECTOR_BY_SIC[sic] ?? "general";
+  /*
+   * Peers are a bonus, not a requirement.
+   *
+   * Five industries have them and ninety-six do not, so this is undefined most
+   * of the time — which `checkEntries` and `read` already allow for. What the
+   * learner loses without it is the sanity check against a median, not the
+   * answer: the return on capital and the cost it is judged against are both
+   * still there.
+   */
+  const researched = PEERS_BY_INDUSTRY.get(industry);
+  const sector = sectorForIndustry(industry);
 
   const peerContext: PeerContext | undefined = useMemo(() => {
-    if (researched.peers.length < 5) return undefined;
+    if (!researched || researched.peers.length < 5) return undefined;
     return {
       industry: researched.label.toLowerCase(),
       medianMargin: median(researched.peers.map((p) => p.nopatMargin)),
@@ -229,7 +286,28 @@ export default function InvestigateView() {
     };
   }, [researched]);
 
-  const industryCost = forSic(sic) ?? forIndustry(industryNames()[0])!;
+  const industryCost = forIndustry(industry) ?? forIndustry(DEFAULT_INDUSTRY)!;
+
+  const alreadyHeld = (project.project?.instruments ?? []).some(
+    (instrument) => instrument.investigationId === investigationId,
+  );
+  /*
+   * There has to be a saved record to point at. The instrument keeps the
+   * investigation's id so the figures behind a holding stay findable, and an
+   * unsaved investigation has no id to keep.
+   */
+  const canAdd = Boolean(investigationId) && company.trim() !== "" && project.status === "ready";
+
+  const addToPortfolio = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    // Anything typed since the last save goes in first, so the holding is added
+    // against the figures on screen rather than the ones from a moment ago.
+    await flush();
+    setAddNote(null);
+    const result = await sessionRef.current.update((current) => addInvestigatedCompany(current, id, assetClass));
+    if (!result.ok) setAddNote(`Not added — ${result.error}`);
+  }, [assetClass, flush]);
   const suppliedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
   const cost = estimate(industryCost, Number.isFinite(suppliedRate) ? suppliedRate : undefined);
 
@@ -342,18 +420,28 @@ export default function InvestigateView() {
             <label className="block">
               <span className="ops-caption text-[11px] text-st-faint">Industry</span>
               <select
-                value={sic}
-                onChange={(event) => setSic(event.target.value)}
+                value={industry}
+                onChange={(event) => setIndustry(event.target.value)}
                 className="mt-1 w-full rounded-lg border border-st-hair bg-st-paper px-3 py-2 text-[14px] text-st-ink focus:border-st-blue-edge focus:outline-none"
               >
-                {RESEARCHED.map((entry) => (
-                  <option key={entry.sic} value={entry.sic} className="bg-slate-900">
-                    {entry.label}
+                {industryNames().map((name) => (
+                  <option key={name} value={name} className="bg-slate-900">
+                    {name}
                   </option>
                 ))}
               </select>
             </label>
           </div>
+
+          {/* Said rather than left to be noticed. The comparison simply does not
+              appear for most industries, and an absence explains nothing on its
+              own — a learner would reasonably read it as their figures being
+              wrong rather than as data Studio has not built yet. */}
+          <p className="mt-3 text-[13px] leading-6 text-st-muted">
+            {researched
+              ? `Studio has figures for ${researched.peers.length} companies in this industry, so your result is placed against them below.`
+              : "Studio has not built peer figures for this industry yet, so there is no median to place your company against. The return on capital and what the money costs are still worked out in full."}
+          </p>
 
           <p className="mt-4 text-[13px] leading-6 text-st-muted">
             All seven come from one annual report. Click a name to see where it sits and what other
@@ -505,6 +593,82 @@ export default function InvestigateView() {
           )}
         </div>
       </div>
+
+      {/*
+        * Where the research becomes a decision.
+        *
+        * Until this existed, reading a company's annual report and building a
+        * portfolio were separate activities that could not reach each other:
+        * Studio would investigate any business and would hold any of eight, and
+        * those were different sets. The work ended on a screen the portfolio
+        * could not see.
+        */}
+      <Panel>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+          <h3 className="text-[15px] font-semibold text-st-ink">Put this company in your portfolio</h3>
+          {alreadyHeld ? (
+            <span className="text-[13px] text-st-good">Already in your portfolio</span>
+          ) : null}
+        </div>
+        <p className="mt-2 text-[13px] leading-6 text-st-muted">
+          It joins at nothing, so nothing moves until you decide how much to hold in step 3. Your
+          figures stay here, and the reason you would own it is asked for in step 2.
+        </p>
+
+        {alreadyHeld ? null : (
+          <>
+            {/*
+              * Asked, not guessed. An investment whose kind Studio does not know
+              * is dealt a zero in the scenario test — so a wrong guess here does
+              * not show up as an error, it quietly leaves this holding out of the
+              * fall and reports a smaller loss than the portfolio would take.
+              */}
+            <fieldset className="mt-4">
+              <legend className="ops-caption text-[11px] text-st-faint">Where it trades</legend>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {ASSET_CLASSES.map((option) => (
+                  <label
+                    key={option.value}
+                    className={cn(
+                      "min-h-11 cursor-pointer rounded-full border px-4 text-[13px] leading-[2.75rem]",
+                      assetClass === option.value
+                        ? "border-st-blue-edge bg-st-blue-soft text-st-blue"
+                        : "border-st-bound text-st-body",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="asset-class"
+                      className="sr-only"
+                      checked={assetClass === option.value}
+                      onChange={() => setAssetClass(option.value)}
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </div>
+              <p className="mt-2 text-[12px] leading-5 text-st-faint">
+                This decides which fall in your scenario test applies to it.
+              </p>
+            </fieldset>
+
+            <button
+              type="button"
+              disabled={!canAdd}
+              onClick={() => void addToPortfolio()}
+              className="mt-4 min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-[14px] font-semibold text-st-blue disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Add {company.trim() || "this company"} to your portfolio
+            </button>
+            {!canAdd ? (
+              <p className="mt-2 text-[12px] leading-5 text-st-faint">
+                Give the company a name and save a figure first, so there is something to add.
+              </p>
+            ) : null}
+          </>
+        )}
+        {addNote ? <p className="mt-3 text-[13px] leading-6 text-st-warn">{addNote}</p> : null}
+      </Panel>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <p className="text-[12px] leading-5 text-st-faint">

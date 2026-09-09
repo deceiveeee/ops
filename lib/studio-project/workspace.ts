@@ -1,7 +1,46 @@
 import { exportStudioText, type StudioPlan } from "@/lib/studio";
-import { STUDIO_CATALOG } from "@/lib/studio-catalog";
+import { STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { startCandidate, updateCandidate } from "./operations";
 import { findCandidate, workingAlternative, type StudioProject } from "./schema";
+
+/**
+ * The catalogue this project computes against: Studio's eight, plus the
+ * companies the learner added from their own investigations.
+ *
+ * Every field Studio would otherwise assert about an investment is empty here,
+ * and each absence is load-bearing rather than lazy. No reference price,
+ * because nobody published one — the learner enters a dated broker quote, which
+ * is what the buying worksheet already asks of every holding. No fee, because a
+ * company is not a fund and a zero would read as "free". No risks, because the
+ * catalogue's risks are quoted from a filing and inventing a list would be the
+ * one thing this product must never do.
+ *
+ * The exposure is the company itself, at 100%. That is not a placeholder: for a
+ * single business the overlap check has exactly one issuer to report, and
+ * saying so is what lets a learner see when a fund they hold already owns it.
+ */
+export function projectCatalog(project: StudioProject): StudioInstrument[] {
+  const own = (project.instruments ?? []).map<StudioInstrument>((instrument) => ({
+    id: instrument.id,
+    symbol: instrument.name,
+    name: instrument.name,
+    kind: "stock",
+    assetClass: instrument.assetClass,
+    expenseRatioPct: null,
+    referencePrice: null,
+    priceAsOf: "",
+    quantityStep: 1,
+    minimumUnits: 1,
+    exposures: [{ label: instrument.name, weightPct: 100 }],
+    exposureCoveragePct: 100,
+    bond: null,
+    stock: null,
+    sources: [],
+    whatItIs: "A company you investigated yourself. Studio holds your figures for it, and nothing else.",
+    mainRisks: [],
+  }));
+  return [...STUDIO_CATALOG, ...own];
+}
 
 /** A calculation view, never the stored record. Research remains project-owned. */
 export function projectToPlan(project: StudioProject): StudioPlan {
@@ -46,7 +85,7 @@ export function applyPlanChange(project: StudioProject, change: (plan: StudioPla
 
 export function exportProjectText(project: StudioProject): string {
   const alternatives = project.alternatives.map((alternative) =>
-    `PORTFOLIO: ${alternative.name}\n${alternative.reasoning}\n${exportStudioText(projectToPlan({ ...project, selectedAlternativeId: alternative.id }), STUDIO_CATALOG)}`,
+    `PORTFOLIO: ${alternative.name}\n${alternative.reasoning}\n${exportStudioText(projectToPlan({ ...project, selectedAlternativeId: alternative.id }), projectCatalog(project))}`,
   );
   const research = project.candidates.map((candidate) => [
     `${candidate.instrumentId} — ${candidate.status}`, `Why: ${candidate.why}`,

@@ -10,7 +10,7 @@ import { useStudioProject } from "@/lib/use-studio-project";
 import { STUDIO_MODES, useStudioMode } from "@/lib/studio-mode";
 import type { ProjectSessionState } from "@/lib/studio-project/session";
 import type { StudioMode } from "@/lib/studio-project/schema";
-import { applyPlanChange, exportProjectText, projectToPlan } from "@/lib/studio-project/workspace";
+import { applyPlanChange, exportProjectText, projectCatalog, projectToPlan } from "@/lib/studio-project/workspace";
 import {
   BuildStage,
   BuyStage,
@@ -171,7 +171,17 @@ export default function StudioWorkspace() {
    * change is not a licence to rewrite the sums a learner is being taught.
    */
   const plan = useMemo(() => (session.project ? projectToPlan(session.project) : null), [session.project]);
-  const calculation = useMemo(() => (plan ? calculateStudio(plan, STUDIO_CATALOG) : null), [plan]);
+  /*
+   * Studio's eight plus whatever the learner added from their own research.
+   * Passing the bare catalogue would leave every self-added holding unresolved,
+   * and an unresolved holding does not fail loudly: it zeroes the entire
+   * portfolio's targets, including the ones that were fine.
+   */
+  const catalog = useMemo(
+    () => (session.project ? projectCatalog(session.project) : STUDIO_CATALOG),
+    [session.project],
+  );
+  const calculation = useMemo(() => (plan ? calculateStudio(plan, catalog) : null), [plan, catalog]);
 
   // A failed write must not look like a successful one, so every mutation's
   // result is surfaced rather than assumed. Awaited now: storage answers later.

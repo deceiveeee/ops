@@ -317,7 +317,15 @@ export function GoalStage({ plan, update }: StageProps) {
 // 2. Research
 // ---------------------------------------------------------------------------
 
-export function ResearchStage({ plan, update }: StageProps) {
+/**
+ * Companies the learner added themselves carry this prefix, which is how they
+ * are told apart from the catalogue without a second lookup. The validator
+ * enforces it, so an id that reaches here either has it or is a catalogue one.
+ */
+const OWN_PREFIX = "own-";
+
+export function ResearchStage({ plan, calculation, update }: StageProps) {
+  const ownRows = calculation.rows.filter((row) => row.holding.instrumentId.startsWith(OWN_PREFIX));
   const [openId, setOpenId] = useState<string | null>(STUDIO_CATALOG[0]?.id ?? null);
   const held = new Set(plan.holdings.map((holding) => holding.instrumentId));
 
@@ -528,6 +536,81 @@ export function ResearchStage({ plan, update }: StageProps) {
           );
         })}
       </div>
+
+      {/*
+        * Companies the learner brought, kept apart from the ones Studio
+        * researched.
+        *
+        * Not styled as another catalogue card, because it is not one: there is
+        * no filing summary, no fee table, no quoted risk list behind it. Mixing
+        * them into the list above would suggest the same evidence stands behind
+        * both, which is the single thing this surface must not imply. What it
+        * has instead is the learner's own figures and their own reasons, and
+        * those are asked for in exactly the same words.
+        */}
+      {ownRows.length > 0 ? (
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-[15px] font-semibold text-st-ink">Companies you investigated yourself</h3>
+            <p className="mt-1 text-[13px] leading-6 text-st-muted">
+              Studio holds the figures you entered for these and nothing more. The reasons are
+              yours to write, the same as above.
+            </p>
+          </div>
+          {ownRows.map((row) => {
+            const id = row.holding.instrumentId;
+            return (
+              <Panel key={id}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="text-[16px] font-semibold text-st-ink">
+                      {row.instrument?.name ?? id}
+                    </div>
+                    <div className="mt-0.5 text-[13px] text-st-faint">
+                      Your own research. Studio has no filing summary or fee for it.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => update((current) => removeStudioHolding(current, id))}
+                    className="min-h-11 rounded-full border border-st-bound px-4 text-[14px] font-semibold text-st-sub"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <div className="mt-4 grid gap-4 border-t border-st-hair pt-4 sm:grid-cols-3">
+                  <Field
+                    label="Why I chose it"
+                    value={row.holding.research.why}
+                    onChange={(value) =>
+                      update((current) => updateStudioHolding(current, id, { research: { why: value } }))
+                    }
+                    multiline
+                  />
+                  <Field
+                    label="The main risk I accept"
+                    value={row.holding.research.mainRisk}
+                    onChange={(value) =>
+                      update((current) => updateStudioHolding(current, id, { research: { mainRisk: value } }))
+                    }
+                    multiline
+                  />
+                  <Field
+                    label="What would change my mind"
+                    value={row.holding.research.whatWouldChangeMyMind}
+                    onChange={(value) =>
+                      update((current) =>
+                        updateStudioHolding(current, id, { research: { whatWouldChangeMyMind: value } }),
+                      )
+                    }
+                    multiline
+                  />
+                </div>
+              </Panel>
+            );
+          })}
+        </div>
+      ) : null}
 
       <Notice tone="slate" title="What you cannot research here yet">
         <ul className="mt-2 space-y-2">

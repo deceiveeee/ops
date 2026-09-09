@@ -3,6 +3,7 @@ import {
   type CandidateInvestigation,
   type CandidateStatus,
   type FigureInvestigation,
+  type LearnerInstrument,
   type PortfolioAlternative,
   type StudioProject,
 } from "./schema";
@@ -62,7 +63,10 @@ export function newInvestigationId(): string {
 /** What a caller may set on a figure investigation. Identity and dates are ours. */
 export type InvestigationEdit = {
   company: string;
+  /** Empty unless the industry is one of the few with peer figures built. */
   sic: string;
+  /** The industry whose cost of capital this is read against, by name. */
+  industry: string;
   figures: Record<string, number>;
   riskFreePct: number | null;
 };
@@ -92,6 +96,7 @@ export function saveInvestigation(
     updatedAt: now,
     company: edit.company,
     sic: edit.sic,
+    industry: edit.industry,
     figures: { ...edit.figures },
     riskFreePct: edit.riskFreePct,
   };
@@ -247,6 +252,50 @@ export function duplicateAlternative(
     positions: source.positions.map((position) => ({ ...position })),
   };
   return { ...project, alternatives: [...project.alternatives, copy], updatedAt: now };
+}
+
+/**
+ * Put a company the learner investigated into the portfolio.
+ *
+ * The bridge that was missing. Studio could research any business and could
+ * hold any of eight, and those were different sets — so the work of reading an
+ * annual report ended at a screen the portfolio could not see.
+ *
+ * It records the company as an instrument, because the calculator resolves
+ * every holding through the catalogue and silently zeroes the whole portfolio
+ * when it cannot. `addPosition` does the rest: it opens the candidate the six
+ * steps ask "why do you own this?" of, and adds the position at zero, because
+ * how much to hold is a separate decision belonging to the Build step rather
+ * than something to assume here.
+ *
+ * Idempotent. Adding the same company twice returns the project unchanged
+ * rather than creating a second one to weight.
+ */
+export function addInvestigatedCompany(
+  project: StudioProject,
+  investigationId: string,
+  assetClass: LearnerInstrument["assetClass"],
+  now = new Date().toISOString(),
+): StudioProject {
+  const investigation = project.investigations.find((item) => item.id === investigationId);
+  if (!investigation || !investigation.company.trim()) return project;
+
+  const existing = (project.instruments ?? []).find((item) => item.investigationId === investigationId);
+  if (existing) return project;
+
+  const instrument: LearnerInstrument = {
+    id: `own-${investigationId}`,
+    name: investigation.company.trim(),
+    assetClass,
+    investigationId,
+    addedAt: now,
+  };
+  const withInstrument: StudioProject = {
+    ...project,
+    instruments: [...(project.instruments ?? []), instrument],
+    updatedAt: now,
+  };
+  return addPosition(withInstrument, instrument.id, undefined, now);
 }
 
 /** Candidates the learner looked at and decided against. Kept findable. */

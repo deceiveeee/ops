@@ -6,6 +6,8 @@ import {
   forIndustry,
   forSic,
   industryNames,
+  investigationIndustry,
+  sectorForIndustry,
   weightedAverageCost,
 } from "./cost-of-capital";
 import data from "./data/cost-of-capital.json";
@@ -138,5 +140,77 @@ describe("finding the right industry", () => {
   it("spans a range wide enough that one number would not do", () => {
     const costs = data.industries.map((i) => i.costOfCapital);
     expect(Math.max(...costs) - Math.min(...costs)).toBeGreaterThan(0.03);
+  });
+});
+
+/**
+ * Opening the industry picker to every published industry means a learner can
+ * now choose a bank, and return on invested capital is not a meaningful measure
+ * for one. Getting this wrong does not produce a missing answer, it produces a
+ * confident wrong one, which is the failure this whole surface exists to avoid.
+ */
+describe("which industries return on capital does not suit", () => {
+  it("declines for banks, insurers and property companies", () => {
+    expect(sectorForIndustry("Bank (Money Center)")).toBe("banking");
+    expect(sectorForIndustry("Banks (Regional)")).toBe("banking");
+    expect(sectorForIndustry("Insurance (Life)")).toBe("insurance");
+    expect(sectorForIndustry("Reinsurance")).toBe("insurance");
+    expect(sectorForIndustry("R.E.I.T.")).toBe("real-estate");
+    expect(sectorForIndustry("Real Estate (Development)")).toBe("real-estate");
+  });
+
+  it("declines for financial firms that are not called banks", () => {
+    // The refusal names a bank, which reads oddly for an asset manager. A
+    // return on capital computed for one would be wrong, which is worse.
+    expect(sectorForIndustry("Brokerage & Investment Banking")).toBe("banking");
+    expect(sectorForIndustry("Investments & Asset Management")).toBe("banking");
+    expect(sectorForIndustry("Financial Svcs. (Non-bank & Insurance)")).toBe("banking");
+  });
+
+  it("measures ordinary businesses, including ones that merely sound financial", () => {
+    expect(sectorForIndustry("Semiconductor")).toBe("general");
+    expect(sectorForIndustry("Retail (Grocery and Food)")).toBe("general");
+    expect(sectorForIndustry("Air Transport")).toBe("general");
+    // Named for the industry it serves, not a lender itself.
+    expect(sectorForIndustry("Homebuilding")).toBe("general");
+  });
+
+  it("treats an industry it has never heard of as an ordinary business", () => {
+    // The picker only offers published industries, so this is the shape of a
+    // stored record from a future list rather than a live choice.
+    expect(sectorForIndustry("Interstellar Freight")).toBe("general");
+  });
+
+  it("covers every financial industry the picker offers", () => {
+    /*
+     * The classification is written by name, so an industry added to the source
+     * later would silently fall through to "general" — and for a financial one
+     * that means computing a number that should have been refused. This fails
+     * when that happens rather than when someone notices.
+     */
+    const financialByName = industryNames().filter((name) =>
+      /bank|insur|reinsur|real estate|r\.e\.i\.t|reit|brokerage|asset management|financial svcs/i.test(name),
+    );
+    const unclassified = financialByName.filter((name) => sectorForIndustry(name) === "general");
+    expect(unclassified).toEqual([]);
+  });
+});
+
+describe("the industry an investigation is read against", () => {
+  it("uses the one the learner chose", () => {
+    expect(investigationIndustry({ industry: "Air Transport", sic: "" })).toBe("Air Transport");
+  });
+
+  it("falls back through the SIC of a record saved before industries could be chosen", () => {
+    // Those records only ever carried one of the five researched SICs, so the
+    // fallback reopens them against exactly the cost of capital they were read
+    // with rather than against whichever industry sorts first.
+    expect(investigationIndustry({ industry: undefined, sic: "3674" })).toBe("Semiconductor");
+    expect(investigationIndustry({ industry: undefined, sic: "4011" })).toBe("Transportation (Railroads)");
+  });
+
+  it("says it does not know rather than guessing", () => {
+    expect(investigationIndustry({ industry: undefined, sic: "" })).toBeNull();
+    expect(investigationIndustry({ industry: undefined, sic: "9999" })).toBeNull();
   });
 });

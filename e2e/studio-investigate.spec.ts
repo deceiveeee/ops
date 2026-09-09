@@ -232,3 +232,113 @@ test("deleting asks first, and keeps the work when refused", async ({ page }) =>
   await expect(companyBox(page)).toHaveValue("");
   await expect.poll(async () => (await stored(page)).length, { timeout: 10_000 }).toBe(0);
 });
+
+const industryPicker = (page: Page) => page.getByLabel("Industry");
+
+/**
+ * Any company, not five industries' worth.
+ *
+ * The picker used to offer only the industries Studio had built peer figures
+ * for, so a company in any other one could not be investigated at all — the
+ * scarcer fact was gating the commoner one. Cost of capital is published for
+ * every industry here, and it is the figure the whole investigation turns on.
+ */
+test("a company in any industry can be investigated", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openEmpty(page);
+
+  await expect(industryPicker(page).locator("option")).toHaveCount(96);
+  // One with peer figures and one without, to show the list is not the old five.
+  await expect(industryPicker(page).locator("option", { hasText: "Semiconductor" }).first()).toBeAttached();
+  await expect(industryPicker(page).locator("option", { hasText: "Air Transport" }).first()).toBeAttached();
+
+  await industryPicker(page).selectOption("Air Transport");
+  await expect(page.getByText(/Studio has not built peer figures for this industry yet/)).toBeVisible();
+
+  // The answer still arrives in full: a cost of capital to judge a return by.
+  await expect(page.getByRole("heading", { name: "What the money costs" })).toBeVisible();
+  await expect(page.getByText(/%/).first()).toBeVisible();
+
+  // And an industry that does have peers says so rather than staying silent.
+  await industryPicker(page).selectOption("Semiconductor");
+  await expect(page.getByText(/Studio has figures for \d+ companies in this industry/)).toBeVisible();
+});
+
+/**
+ * Opening the picker means a learner can now choose a bank, and return on
+ * capital is not a meaningful measure for one. The failure this guards against
+ * is not a missing answer, it is a confident wrong one.
+ */
+test("a bank is refused rather than mismeasured", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openEmpty(page);
+
+  await companyBox(page).fill("Northgate Savings");
+  await industryPicker(page).selectOption("Banks (Regional)");
+  const values = ["5200", "780", "690", "165", "900", "2600", "180"];
+  for (let index = 0; index < values.length; index += 1) {
+    await figureBoxes(page).nth(index).fill(values[index]);
+  }
+  await figureBoxes(page).nth(values.length - 1).blur();
+
+  /*
+   * Said twice, on purpose: once as a stop above the figures, and once where
+   * the return itself would have appeared. Someone who scrolled straight to the
+   * answer needs it as much as someone reading from the top.
+   */
+  const refusal = page.getByText(/Return on capital is not a meaningful measure for a bank/);
+  await expect(refusal.first()).toBeVisible();
+  await expect(refusal).toHaveCount(2);
+  // Its own explanation, not a generic refusal.
+  await expect(page.getByText(/Borrowing is its raw material rather than its funding/).first()).toBeVisible();
+
+  // The same figures in an ordinary industry are measured, so the refusal is
+  // about the industry rather than about the numbers being unusable.
+  await industryPicker(page).selectOption("Air Transport");
+  await expect(refusal).toHaveCount(0);
+});
+
+/**
+ * The bridge between researching a company and owning one.
+ *
+ * These were separate activities that could not reach each other: Studio would
+ * investigate any business and would hold any of eight, so the work of reading
+ * an annual report ended on a screen the portfolio could not see. This walks
+ * the whole way across, because every step of it is new and the last one — the
+ * portfolio actually computing with a company Studio does not carry — is the
+ * one that used to be impossible.
+ */
+test("a company you investigated can be held in the portfolio", async ({ page }) => {
+  test.setTimeout(120_000);
+  await openEmpty(page);
+  await enter(page, "Nordic Pulp", "4200");
+
+  await page.getByRole("radio", { name: "A US-listed company" }).check();
+  await page.getByRole("button", { name: /Add Nordic Pulp to your portfolio/ }).click();
+  await expect(page.getByText("Already in your portfolio")).toBeVisible();
+
+  // It arrives owning nothing: how much to hold is a decision of its own.
+  await page.goto("/studio?view=build");
+  const weight = page.getByLabel("Nordic Pulp target percentage");
+  await expect(weight).toBeVisible();
+  await expect(weight).toHaveValue("0");
+
+  await weight.fill("100");
+  const summary = page.getByRole("complementary");
+  await expect(summary.getByText("Assigned", { exact: true }).locator("xpath=following-sibling::div[1]")).toHaveText(
+    "100.0%",
+  );
+  // The figure that proves the calculation resolved it. An unresolved holding
+  // does not error, it silently zeroes every target in the portfolio.
+  await expect(summary.getByText("To invest", { exact: true }).locator("xpath=following-sibling::div[1]")).toHaveText(
+    "$10,000",
+  );
+
+  // And the reason it is owned is asked for in the same words as any other
+  // holding, on the step the overview sends people to.
+  await page.goto("/studio?view=research");
+  await expect(page.getByRole("heading", { name: "Companies you investigated yourself" })).toBeVisible();
+  await page.getByLabel("Why I chose it").fill("It earns more than its capital costs.");
+  await page.reload();
+  await expect(page.getByLabel("Why I chose it")).toHaveValue("It earns more than its capital costs.");
+});

@@ -25,7 +25,7 @@ const emptyResearch = { why: "", mainRisk: "", whatWouldChangeMyMind: "", review
 export function validateStudioProject(value: unknown): string[] {
   if (!object(value) || value.schemaVersion !== 2) return ["This is not a supported Studio project."];
   const issues: string[] = [];
-  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom"])) {
+  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom"])) {
     issues.push("This project contains fields this version does not understand. Keep the original backup.");
   }
   // Goal/rule/position units are unchanged from v1. Reuse that validator rather
@@ -72,13 +72,35 @@ export function validateStudioProject(value: unknown): string[] {
    * is not an error -- `readStudioRecord` fills the empty list. Present means it
    * must be well formed.
    */
+  /*
+   * Absent from records saved before a learner could add their own company, so
+   * missing is valid. An id that collided with a catalogue entry would silently
+   * shadow a researched investment with an empty one, so the prefix is checked
+   * rather than assumed.
+   */
+  if (value.instruments !== undefined) {
+    if (!list(value.instruments, 1000)) issues.push("The project needs an instrument list with at most 1,000 companies.");
+    else for (const instrument of value.instruments) {
+      if (!object(instrument) || !keys(instrument, ["id", "name", "assetClass", "investigationId", "addedAt"])
+        || !id(instrument.id) || !String(instrument.id).startsWith("own-") || !uniqueId(instrument.id)
+        || !text(instrument.name, 300) || !String(instrument.name).trim()
+        || !choice(instrument.assetClass, ["us-equity", "international-equity"])
+        || !id(instrument.investigationId) || !timestamp(instrument.addedAt)) {
+        issues.push("A company you added contains missing, repeated, or invalid fields.");
+      }
+    }
+  }
+
   if (value.investigations !== undefined) {
     if (!list(value.investigations, 10_000)) issues.push("The project needs an investigation list with at most 10,000 companies.");
     else for (const investigation of value.investigations) {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct"])
+      // `industry` is absent from records saved before it could be chosen, so
+      // it is accepted as missing rather than required. See FigureInvestigation.
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
+        || !(investigation.industry === undefined || text(investigation.industry, 200))
         // null means "use the published rate", which is different from zero.
         || !(investigation.riskFreePct === null
           || (typeof investigation.riskFreePct === "number" && Number.isFinite(investigation.riskFreePct)))) {

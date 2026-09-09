@@ -73,8 +73,28 @@ export interface FigureInvestigation {
   updatedAt: string;
   /** The learner's own name for the business. Free text, and never resolved. */
   company: string;
-  /** The researched industry it is being read against, by SIC code. */
+  /**
+   * The researched industry it is being read against, by SIC code.
+   *
+   * Only the handful of industries Studio has built peer figures for. Kept
+   * because it is what a peer comparison is keyed on, and empty for a company
+   * placed in an industry that has no peers yet.
+   */
   sic: string;
+  /**
+   * The industry whose cost of capital this is judged against, by name.
+   *
+   * Separate from `sic` because the two lists are different sizes and always
+   * will be. Cost of capital is published for ninety-six industries, so almost
+   * any company can be judged; peer figures are built one industry at a time
+   * and there are five. Storing only the SIC limited the learner to those five
+   * for no reason other than that the two facts shared a field.
+   *
+   * Optional, because records saved before this existed have only a SIC. Read
+   * it through `investigationIndustry`, which falls back to the industry that
+   * SIC maps to, so an older record keeps answering the same as it always did.
+   */
+  industry?: string;
   /**
    * The figures entered so far, keyed by figure name.
    *
@@ -90,6 +110,39 @@ export interface FigureInvestigation {
    * back is what they entered.
    */
   riskFreePct: number | null;
+}
+
+/**
+ * A company the learner investigated and then chose to hold.
+ *
+ * Studio's own catalogue carries eight investments, each researched here with
+ * its filings, fee table and holdings behind it. This is the other kind: a
+ * business the learner found, whose figures they read out of its annual report
+ * themselves. Keeping the two apart in storage is the point — the interface
+ * must never present a company nobody researched as though it came with the
+ * same evidence.
+ *
+ * Deliberately thin. Everything Studio would otherwise claim about an
+ * investment — what it holds, what it costs to own, what its filing calls its
+ * risks — is absent here because nobody has established it, and an empty field
+ * is honest where a plausible-looking one is not.
+ */
+export interface LearnerInstrument {
+  /** Prefixed so it can never collide with a catalogue id. */
+  id: string;
+  /** What the learner calls the business. */
+  name: string;
+  /**
+   * Which shock the scenario test applies to it.
+   *
+   * Asked rather than assumed. An instrument whose class is unknown is dealt a
+   * zero shock, so guessing wrong here does not produce a visible error — it
+   * quietly leaves a holding out of the fall and understates the loss.
+   */
+  assetClass: "us-equity" | "international-equity";
+  /** The investigation this came from, so the figures behind it stay findable. */
+  investigationId: string;
+  addedAt: string;
 }
 
 /** A pointer back to something the learner actually read. */
@@ -199,6 +252,13 @@ export interface StudioProject {
   goal: StudioGoal;
   /** Every investigation, held or not, rejected or not. */
   candidates: CandidateInvestigation[];
+  /**
+   * Companies the learner added themselves, which the catalogue does not carry.
+   *
+   * Optional, because records saved before this existed have none. Read it as
+   * `project.instruments ?? []`.
+   */
+  instruments?: LearnerInstrument[];
   /**
    * Companies the learner looked the figures up for.
    *

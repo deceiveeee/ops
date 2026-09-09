@@ -12,6 +12,7 @@ const T3 = "2026-09-07T12:00:00.000Z";
 const EDIT = {
   company: "Ampere Instruments",
   sic: "3674",
+  industry: "Semiconductor",
   figures: { revenue: 4200, operatingProfit: 610 },
   riskFreePct: null,
 };
