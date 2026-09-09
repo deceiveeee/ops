@@ -52,6 +52,23 @@ export type StageProps = {
    */
   exportBackup: () => { ok: true; raw: string } | { ok: false; error: string };
   exportReadable: () => string;
+  /*
+   * Deciding against something is not a plan edit, so it does not go through
+   * `update`. A plan holds what you own; the reason you turned something down
+   * is about an investment you deliberately do not own, which is the whole
+   * point of keeping it. Stated as plainly as the stages can use it, so they
+   * still need to know nothing about how a project is stored.
+   */
+  decisions: {
+    /** The reason, if this was turned down. Null when it was not. */
+    againstReason: (instrumentId: string) => string | null;
+    /** Record a decision against it, and take it out of the portfolio. */
+    decideAgainst: (instrumentId: string, reason: string) => Promise<StageResult>;
+    /** Put it back on the table. The research and the reason are kept. */
+    reconsider: (instrumentId: string) => Promise<StageResult>;
+    /** Everything turned down, so a screen can show that it was kept. */
+    decidedAgainst: () => { id: string; name: string; reason: string }[];
+  };
 };
 
 /** Blank and partial entries stay blank rather than silently becoming zero. */
@@ -112,8 +129,9 @@ export function nextAction(
   return { label: "Read it back", where: "review", why: "Everything is written down. The last job is to check it still holds." };
 }
 
-export function OverviewStage({ plan, calculation, goTo }: StageProps & { goTo: (key: StudioDestination) => void }) {
+export function OverviewStage({ plan, calculation, decisions, goTo }: StageProps & { goTo: (key: StudioDestination) => void }) {
   const next = nextAction(plan, calculation);
+  const turnedDown = decisions.decidedAgainst();
   const assigned = calculation.totalWeightPct;
   const explained = plan.holdings.filter((holding) => holding.research.why.trim()).length;
 
@@ -180,6 +198,26 @@ export function OverviewStage({ plan, calculation, goTo }: StageProps & { goTo: 
           Company figures and industry comparisons are kept separately from this portfolio, so a
           business you decided against stays on file with the reason.
         </p>
+        {/*
+          * The sentence above shipped before anything could make it true: there
+          * was no way to decide against a business and nowhere to see one. This
+          * is the claim showing its work — the count is what turns it from a
+          * description of an intention into a description of the record.
+          */}
+        {turnedDown.length > 0 ? (
+          <ul className="mt-3 space-y-1 border-t border-st-hair pt-3">
+            {turnedDown.slice(0, 3).map((entry) => (
+              <li key={entry.id} className="text-[13px] leading-6 text-st-muted">
+                <span className="font-semibold text-st-sub">{entry.name}</span> — {entry.reason}
+              </li>
+            ))}
+            {turnedDown.length > 3 ? (
+              <li className="text-[13px] leading-6 text-st-faint">
+                and {turnedDown.length - 3} more, kept in step 2.
+              </li>
+            ) : null}
+          </ul>
+        ) : null}
         <div className="mt-3 flex flex-wrap gap-2">
           <Link
             href="/studio/investigate"
@@ -324,7 +362,98 @@ export function GoalStage({ plan, update }: StageProps) {
  */
 const OWN_PREFIX = "own-";
 
-export function ResearchStage({ plan, calculation, update }: StageProps) {
+/**
+ * Turning something down, and saying why.
+ *
+ * The reason is required, and that is the feature rather than a validation
+ * rule. "No" on its own is not research: what makes a rejection worth keeping
+ * is being able to read, months later, what you knew at the time — and to
+ * notice when the thing that put you off has stopped being true.
+ *
+ * Reversible on purpose. A decision you cannot revisit is a dead end rather
+ * than a record, and the reason survives being reconsidered.
+ */
+function DecideAgainst({
+  instrumentId,
+  label,
+  decisions,
+}: {
+  instrumentId: string;
+  label: string;
+  decisions: StageProps["decisions"];
+}) {
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  const against = decisions.againstReason(instrumentId);
+
+  if (against !== null) {
+    return (
+      <div className="mt-4 border-t border-st-hair pt-4">
+        <div className="ops-caption text-[11px] text-st-faint">Why you decided against it</div>
+        <p className="mt-1 text-[14px] leading-6 text-st-sub">{against}</p>
+        <button
+          type="button"
+          onClick={() => void decisions.reconsider(instrumentId)}
+          className="mt-2 min-h-11 text-[14px] font-semibold text-st-blue underline underline-offset-2"
+        >
+          Put {label} back on the table
+        </button>
+      </div>
+    );
+  }
+
+  if (!open) {
+    return (
+      <div className="mt-3">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="min-h-11 text-[13px] text-st-muted underline underline-offset-2 hover:text-st-ink"
+        >
+          Not for me
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 border-t border-st-hair pt-4">
+      <Field
+        label={`Why ${label} is not for you`}
+        hint="Kept with your research, so you can check later whether it still holds."
+        value={reason}
+        onChange={setReason}
+        placeholder="Too much of the portfolio in one company; I could not judge the accounting…"
+        multiline
+      />
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={!reason.trim()}
+          onClick={() => {
+            void decisions.decideAgainst(instrumentId, reason.trim());
+            setOpen(false);
+          }}
+          className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-semibold text-st-body disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Record this decision
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(false);
+            setReason("");
+          }}
+          className="min-h-11 px-2 text-[14px] text-st-muted"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function ResearchStage({ plan, calculation, update, decisions }: StageProps) {
   const ownRows = calculation.rows.filter((row) => row.holding.instrumentId.startsWith(OWN_PREFIX));
   const [openId, setOpenId] = useState<string | null>(STUDIO_CATALOG[0]?.id ?? null);
   const held = new Set(plan.holdings.map((holding) => holding.instrumentId));
@@ -431,6 +560,11 @@ export function ResearchStage({ plan, calculation, update }: StageProps) {
                         In your portfolio
                       </span>
                     ) : null}
+                    {decisions.againstReason(instrument.id) !== null ? (
+                      <span className="rounded-full border border-st-bound px-2 py-0.5 text-[11px] text-st-muted">
+                        You decided against this
+                      </span>
+                    ) : null}
                   </div>
                   <div className="mt-0.5 text-[14px] leading-6 text-st-sub">{instrument.name}</div>
                   <div className="mt-1 text-[13px] text-st-faint">
@@ -458,6 +592,12 @@ export function ResearchStage({ plan, calculation, update }: StageProps) {
                   {held.has(instrument.id) ? "Remove" : "Add to portfolio"}
                 </button>
               </div>
+
+              <DecideAgainst
+                instrumentId={instrument.id}
+                label={instrument.symbol}
+                decisions={decisions}
+              />
 
               {open ? (
                 <div className="mt-4 space-y-4 border-t border-st-hair pt-4">
@@ -624,6 +764,11 @@ export function ResearchStage({ plan, calculation, update }: StageProps) {
                     Remove
                   </button>
                 </div>
+                <DecideAgainst
+                  instrumentId={id}
+                  label={row.instrument?.name ?? id}
+                  decisions={decisions}
+                />
                 <div className="mt-4 grid gap-4 border-t border-st-hair pt-4 sm:grid-cols-3">
                   <Field
                     label="Why I chose it"

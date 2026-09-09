@@ -37,6 +37,7 @@ const STUDIO = "/studio";
 const PURPOSE = "A deposit on a flat";
 const CONTRIBUTION_RULE = "Each month, into whichever holding is furthest below its target.";
 const AAPL_WHY = "It earns more than its capital costs and has done for a decade.";
+const AGAINST = "Too much of one portfolio in a single company.";
 const VXUS_WHY = "Everything else I own is American.";
 
 // The sidebar needs 1024 and the summary rail 1280. Fixing the viewport above
@@ -278,4 +279,50 @@ test("a weight change shows its consequence without leaving the form", async ({ 
   await addOrRemove(page, "VXUS").click();
   await expect(stat(page, "Investments")).toHaveText("1");
   await expect(stat(page, "Assigned")).toHaveText("70.0%");
+});
+
+/**
+ * Deciding against something, which is the point of keeping research at all.
+ *
+ * Until this shipped there was no way to record it. The schema could hold a
+ * rejection and its reason, the operations to write one were tested, and no
+ * screen could reach any of it — while the overview told learners that "a
+ * business you decided against stays on file with the reason".
+ */
+test("a company you turn down is kept, with the reason", async ({ page }) => {
+  await openEmpty(page);
+
+  await go(page, "Goal");
+  await page.getByLabel("What is this money for?").fill(PURPOSE);
+
+  await go(page, "Research");
+  await addOrRemove(page, "AAPL").click();
+  await expect(stat(page, "Investments")).toHaveText("1");
+
+  // Turning it down takes it out of the portfolio and keeps everything else.
+  // Two levels up from the toggle: past the title row, to the card itself,
+  // which is where the decision control sits.
+  const card = page.getByRole("button", { name: /^AAPL\b/ }).locator("xpath=../..");
+  await card.getByRole("button", { name: "Not for me" }).click();
+  await page.getByLabel("Why AAPL is not for you").fill(AGAINST);
+  await page.getByRole("button", { name: "Record this decision" }).click();
+
+  await expect(stat(page, "Investments")).toHaveText("0");
+  await expect(page.getByText("You decided against this")).toBeVisible();
+  await expect(page.getByText(AGAINST)).toBeVisible();
+
+  // Survives a reload, which is what separates a record from a screen state.
+  await page.reload();
+  await go(page, "Research");
+  await expect(page.getByText(AGAINST)).toBeVisible();
+
+  // And the overview's claim about keeping it is now something it can show.
+  await go(page, "Overview");
+  await expect(page.getByText(AGAINST)).toBeVisible();
+
+  // Reversible: a decision you cannot revisit is a dead end, not a record.
+  await go(page, "Research");
+  await page.getByRole("button", { name: /Put AAPL back on the table/ }).click();
+  await expect(page.getByText("You decided against this")).toBeHidden();
+  await expect(card.getByRole("button", { name: "Not for me" })).toBeVisible();
 });

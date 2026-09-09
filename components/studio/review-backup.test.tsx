@@ -21,6 +21,14 @@ import { ReviewStage, type StageProps, type StageResult } from "./stages";
 
 const PLAN: StudioPlan = addStudioHolding(createStudioPlan("practice"), "aapl");
 
+/** Nothing has been turned down; these stages do not exercise that path. */
+const NO_DECISIONS: StageProps["decisions"] = {
+  againstReason: () => null,
+  decideAgainst: () => Promise.resolve<StageResult>({ ok: true }),
+  reconsider: () => Promise.resolve<StageResult>({ ok: true }),
+  decidedAgainst: () => [],
+};
+
 function renderReview(overrides: Partial<StageProps> = {}) {
   const props: StageProps = {
     plan: PLAN,
@@ -30,6 +38,7 @@ function renderReview(overrides: Partial<StageProps> = {}) {
     reset: () => Promise.resolve<StageResult>({ ok: true }),
     exportBackup: () => ({ ok: true, raw: "{}" }),
     exportReadable: () => "",
+    decisions: NO_DECISIONS,
     ...overrides,
   };
   render(<ReviewStage {...props} />);

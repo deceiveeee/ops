@@ -70,6 +70,12 @@ function SlowBuild({ queue }: { queue: (() => void)[] }) {
       reset={() => Promise.resolve<StageResult>({ ok: true })}
       exportBackup={() => ({ ok: true, raw: "" })}
       exportReadable={() => ""}
+      decisions={{
+        againstReason: () => null,
+        decideAgainst: () => Promise.resolve<StageResult>({ ok: true }),
+        reconsider: () => Promise.resolve<StageResult>({ ok: true }),
+        decidedAgainst: () => [],
+      }}
     />
   );
 }

@@ -291,6 +291,39 @@ export function findCandidate(
   return project.candidates.find((candidate) => candidate.instrumentId === instrumentId);
 }
 
+/** Whether any portfolio in this project holds it. Matches `unheldCandidates`. */
+export function isHeld(project: StudioProject, instrumentId: string): boolean {
+  return project.alternatives.some((alternative) =>
+    alternative.positions.some((position) => position.instrumentId === instrumentId),
+  );
+}
+
+/**
+ * Where a candidate actually stands, rather than what its record last said.
+ *
+ * The stored status has never been maintained. `startCandidate` writes
+ * `researching` and nothing ever moved it on, so an investment owned outright
+ * and fully weighted still described itself as under investigation — which is
+ * what the downloadable plan has been printing next to every holding. The one
+ * exception ran the other way: the v1 migration marked everything it carried
+ * across `selected`, and it stayed selected after the learner removed it.
+ *
+ * Being held is a fact about the portfolio, so it is read from the portfolio and
+ * never stored. Rejecting something is a decision, so that is read from the
+ * record, where the learner put it.
+ *
+ * A stored `selected` on something no longer held is deliberately *not* read as
+ * a rejection. The shapes match — it was in, it is out — but the learner never
+ * said so. They may have removed it by accident, or to add it back at a
+ * different weight, or the migration may simply have assumed it. Writing
+ * "rejected" there would fabricate a judgement and put their name on it.
+ */
+export function candidateStanding(project: StudioProject, instrumentId: string): CandidateStatus {
+  if (isHeld(project, instrumentId)) return "selected";
+  const status = findCandidate(project, instrumentId)?.status;
+  return status === "rejected" || status === "shortlisted" ? status : "researching";
+}
+
 /**
  * The investigation to reopen when the learner returns.
  *

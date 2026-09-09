@@ -9,7 +9,8 @@ import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { useStudioProject } from "@/lib/use-studio-project";
 import { STUDIO_MODES, useStudioMode } from "@/lib/studio-mode";
 import type { ProjectSessionState } from "@/lib/studio-project/session";
-import type { StudioMode } from "@/lib/studio-project/schema";
+import { findCandidate, type StudioMode } from "@/lib/studio-project/schema";
+import { removePosition, setCandidateStatus, startCandidate } from "@/lib/studio-project/operations";
 import { applyPlanChange, exportProjectText, projectCatalog, projectToPlan } from "@/lib/studio-project/workspace";
 import {
   BuildStage,
@@ -271,6 +272,46 @@ export default function StudioWorkspace() {
     // backup carries the research and decisions the six steps never show.
     exportBackup: () => session.exportBackup(),
     exportReadable: () => (session.project ? exportProjectText(session.project) : ""),
+    decisions: {
+      againstReason: (instrumentId) => {
+        const candidate = session.project ? findCandidate(session.project, instrumentId) : undefined;
+        return candidate?.status === "rejected" ? candidate.rejectedBecause : null;
+      },
+      /*
+       * Turning something down takes it out of the portfolio and keeps
+       * everything that produced the decision. That asymmetry is the point of
+       * the schema: in the version before this, removing a holding destroyed
+       * the research with it, so the only way to record "I looked at this and
+       * said no" was to keep owning it.
+       *
+       * `startCandidate` first, because something can be decided against
+       * without ever having been held, and a status cannot be set on a
+       * candidate that does not exist yet.
+       */
+      decideAgainst: (instrumentId, reason) =>
+        report(
+          session.update((project) =>
+            setCandidateStatus(
+              removePosition(startCandidate(project, instrumentId), instrumentId),
+              instrumentId,
+              "rejected",
+              reason,
+            ),
+          ),
+        ),
+      // The reason stays on the record. Reconsidering is not forgetting.
+      reconsider: (instrumentId) =>
+        report(session.update((project) => setCandidateStatus(project, instrumentId, "researching"))),
+      decidedAgainst: () =>
+        (session.project?.candidates ?? [])
+          .filter((candidate) => candidate.status === "rejected")
+          .map((candidate) => ({
+            id: candidate.instrumentId,
+            name: catalog.find((instrument) => instrument.id === candidate.instrumentId)?.name
+              ?? candidate.instrumentId,
+            reason: candidate.rejectedBecause,
+          })),
+    },
   };
 
   const assigned = pct(calculation.totalWeightPct);
