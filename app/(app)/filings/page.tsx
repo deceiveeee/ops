@@ -3,7 +3,7 @@ import Link from "next/link";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { fetchFilings, resolveTicker, secUserAgent } from "@/lib/filings/edgar";
 
-export const metadata = { title: "Filing reader — Open Portfolio Studio" };
+export const metadata = { title: "Filing reader — Investing Studio" };
 
 /**
  * The filing reader's entry point.

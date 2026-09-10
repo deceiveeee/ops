@@ -3,9 +3,9 @@ import Link from "next/link";
 import { LegalPage, Section } from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Privacy — Open Portfolio Studio",
+  title: "Privacy — Investing Studio",
   description:
-    "What Open Portfolio Studio does with your data: no accounts, no cookies, and your course and portfolio work never leaves your browser.",
+    "What Investing Studio does with your data: no accounts, no cookies, and your course and portfolio work never leaves your browser.",
 };
 
 /**
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
     <LegalPage
       title="Privacy"
       updated="6 September 2026"
-      summary="Open Portfolio Studio has no accounts, sets no cookies, and never receives the work you do here. Your lessons, your plan and your research stay in your browser."
+      summary="Investing Studio has no accounts, sets no cookies, and never receives the work you do here. Your lessons, your plan and your research stay in your browser."
     >
       <Section heading="There are no accounts">
         <p>

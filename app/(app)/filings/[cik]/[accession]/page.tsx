@@ -7,7 +7,7 @@ import {
 } from "@/lib/filings/edgar";
 import { extractFilingSections } from "@/lib/filings/sections";
 
-export const metadata = { title: "Filing reader — Open Portfolio Studio" };
+export const metadata = { title: "Filing reader — Investing Studio" };
 
 /**
  * One filing, sectioned.

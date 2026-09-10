@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-    color-scheme: dark;
+    color-scheme: light;
 }
 
 html,
 body {
-    background-color: #05070d;
-    color: #e6ebf5;
+    background-color: #F5F5F7;
+    color: #1D1D1F;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
@@ -19,8 +19,8 @@ html {
 }
 
 ::selection {
-    background: rgba(34, 211, 238, 0.25);
-    color: #ffffff;
+    background: #dceafd;
+    color: #1D1D1F;
 }
 
 @layer components {
@@ -496,10 +496,10 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   LIGHT LEARNING THEME
-   Scoped to `.ops-theme-light` (applied by SiteShell on /courses,
-   course-detail, and every lesson page). Homepage, /studio and /filings
-   keep the dark shell and are unaffected.
+   SHARED LIGHT THEME
+   SiteShell applies this on every route, including Studio and reports.
+   Compatibility mappings keep existing lesson content readable while its
+   individual components migrate to semantic tokens.
 
    Strategy: redefine the OPS CSS variables + flip the shared primitive
    classes + override the pervasive dark Tailwind utilities that lesson
@@ -509,7 +509,7 @@ html {
    order against Tailwind's layered utilities.
    ═══════════════════════════════════════════════════════════════════ */
 
-.ops-theme-light {
+:root, .ops-theme-light {
     --ops-bg: #F5F5F7;
     --ops-surface: #FFFFFF;
     --ops-surface-2: #EFEFF2;
@@ -522,8 +522,10 @@ html {
        card, rail and inset panel in a lesson sits on that grey, and #6e6e73
        measured 4.42:1 there — under AA, while looking safe at 5.1:1 on white. */
     --ops-text-tertiary: #68686d;    /* 4.83:1 on #EFEFF2, 5.4:1 on white */
-    --ops-accent-strong: #007A8A;
-    --ops-accent-soft: rgba(34,211,238,0.10);
+    --ops-accent-strong: #0066CC;
+    --ops-accent-soft: #E8F1FC;
+    --ops-control-border: #85858C;
+    --ops-divider: #DEDEE3;
     --ops-accent-warm-strong: #8A5A00;
     --ops-accent-warm-soft: rgba(251,191,36,0.12);
 
@@ -976,7 +978,7 @@ svg tspan[font-size="12"] {
 
 /* ─────────────────────────────────────────────────────────────
    Button variants — spec §6.3
-   Pill shape retained. Glow removed. Solid teal primary.
+   Shared action treatment. Glow removed. Solid blue primary.
    ───────────────────────────────────────────────────────────── */
 .ops-theme-light .ops-btn.variant-primary {
     background: var(--ops-accent-strong);

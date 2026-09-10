@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import StudioWorkspace from "@/components/studio/StudioWorkspace";
 
 export const metadata: Metadata = {
-  title: "Studio — Open Portfolio Studio",
+  title: "Studio — Investing Studio",
   description:
     "Build a portfolio you can explain: set a goal, research real investments from their own filings, set weights, check risk and cost, and write the rules you will follow.",
 };

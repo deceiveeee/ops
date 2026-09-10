@@ -11,7 +11,7 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { lessonSlug: string } }) {
   const l = findLesson(params.lessonSlug);
-  return { title: l ? `${l.lesson.title} — Open Portfolio Studio` : "Lesson — Open Portfolio Studio" };
+  return { title: l ? `${l.lesson.title} — Investing Studio` : "Lesson — Investing Studio" };
 }
 
 export default function LessonPage({ params }: { params: { lessonSlug: string } }) {

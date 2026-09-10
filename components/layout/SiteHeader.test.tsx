@@ -38,7 +38,7 @@ describe("SiteHeader public beta navigation", () => {
     renderHeader();
     expect(screen.getAllByText("Courses").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Your plan").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Filings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Company reports").length).toBeGreaterThan(0);
     // Studio was excluded while it was six sample panels. It is now a working
     // workspace, so the beta surfaces it.
     expect(screen.getAllByText("Studio").length).toBeGreaterThan(0);
@@ -47,6 +47,6 @@ describe("SiteHeader public beta navigation", () => {
   it("keeps account entry points out of the guest-only beta", () => {
     renderHeader();
     expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
-    expect(screen.getAllByText("Start building").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Open Studio" })).toHaveAttribute("href", "/studio");
   });
 });

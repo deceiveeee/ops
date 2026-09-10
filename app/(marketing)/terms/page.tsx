@@ -3,9 +3,9 @@ import Link from "next/link";
 import { LegalPage, Section } from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Terms — Open Portfolio Studio",
+  title: "Terms — Investing Studio",
   description:
-    "Open Portfolio Studio is a place to learn about investing. It is not investment advice, and nothing here is a recommendation to buy or sell anything.",
+    "Investing Studio is a place to learn about investing. It is not investment advice, and nothing here is a recommendation to buy or sell anything.",
 };
 
 /**
@@ -19,7 +19,7 @@ export default function TermsPage() {
     <LegalPage
       title="Terms of use"
       updated="6 September 2026"
-      summary="Open Portfolio Studio is a place to learn how investing works. It is not investment advice, we are not your adviser, and every decision you make with what you learn here is your own."
+      summary="Investing Studio is a place to learn how investing works. It is not investment advice, we are not your adviser, and every decision you make with what you learn here is your own."
     >
       <Section heading="This is not investment advice">
         <p>
@@ -40,7 +40,7 @@ export default function TermsPage() {
 
       <Section heading="We are not your adviser or your broker">
         <p>
-          Open Portfolio Studio is not a registered investment adviser, a broker-dealer, or a
+          Investing Studio is not a registered investment adviser, a broker-dealer, or a
           financial institution of any kind. Using this site creates no advisory relationship, no
           fiduciary duty, and no professional relationship of any sort between us.
         </p>

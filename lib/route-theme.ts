@@ -3,15 +3,9 @@ export type RouteTheme = "dark" | "light";
 /**
  * Resolve the site theme for a given pathname.
  *
- * Light = the learning surface (/courses, /courses/[slug], /lessons/[slug]).
- * Dark  = everything else (/, /studio, /filings, not-found).
- *
- * Centralised so SiteShell can switch theme from the pathname alone,
- * without per-route configuration.
+ * One visual environment across learning, research and portfolio work.
+ * Keep this resolver for callers, but navigation must never change the theme.
  */
-export function routeTheme(pathname: string): RouteTheme {
-  if (pathname.startsWith("/courses") || pathname.startsWith("/lessons")) {
-    return "light";
-  }
-  return "dark";
+export function routeTheme(_pathname: string): RouteTheme {
+  return "light";
 }

@@ -55,7 +55,7 @@ export default function StudioWorkspace() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
+    <div className="studio-workspace mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
       <header>
         <div className="ops-eyebrow flex flex-wrap items-center gap-3 text-xs">
           <span>Studio</span>
@@ -135,7 +135,7 @@ export default function StudioWorkspace() {
 
       <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start">
         <div className="min-w-0 space-y-4">
-          <GuidancePanel guidance={STUDIO_GUIDANCE[stage.key]} />
+          <div className="lg:hidden"><GuidancePanel guidance={STUDIO_GUIDANCE[stage.key]} /></div>
           {stage.render(stageProps)}
 
           <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-5">
@@ -160,7 +160,8 @@ export default function StudioWorkspace() {
 
         {/* Beside the work, never under it: a weight change is never made
             without its consequence on screen. */}
-        <aside className="hidden lg:sticky lg:top-24 lg:block">
+        <aside className="hidden space-y-4 lg:sticky lg:top-24 lg:block">
+          <GuidancePanel guidance={STUDIO_GUIDANCE[stage.key]} />
           <Panel>
             <div className="ops-caption text-[11px] text-slate-500">Your portfolio</div>
             <div className="mt-3 space-y-3">

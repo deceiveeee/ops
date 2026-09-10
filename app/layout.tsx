@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+import "./refresh.css";
 import SiteShell from "@/components/layout/SiteShell";
 import { SessionProvider } from "@/lib/supabase/session";
 import { ProgressProvider } from "@/lib/progress/store";
@@ -25,13 +26,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Open Portfolio Studio — Decode the market beneath the chart",
+  title: "Investing Studio — Learn investing. Build a portfolio you can explain.",
   description:
-    "An interactive finance learning and portfolio studio. Investigate real companies, filings, portfolios, and market signals — not definitions.",
+    "Learn investing through interactive finance courses. Explore company reports, set portfolio goals, compare investments and test your assumptions.",
   metadataBase: getSiteUrl(),
   openGraph: {
-    title: "Open Portfolio Studio",
-    description: "Decode the market beneath the chart.",
+    title: "Investing Studio",
+    description: "Learn investing. Build a portfolio you can explain.",
     type: "website",
     url: getSiteUrl(),
   },

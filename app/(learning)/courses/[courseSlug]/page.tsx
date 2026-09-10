@@ -14,7 +14,7 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { courseSlug: string } }) {
   const c = getCourse(params.courseSlug);
-  return { title: c ? `${c.title} — Open Portfolio Studio` : "Course — Open Portfolio Studio" };
+  return { title: c ? `${c.title} — Investing Studio` : "Course — Investing Studio" };
 }
 
 /** Course-specific accent color. Decorative: fills, bars, SVG. */
