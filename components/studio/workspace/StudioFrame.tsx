@@ -22,7 +22,7 @@ export const SECTIONS = [
     key: "research",
     label: "Research",
     href: "/studio/research",
-    covers: ["/studio/research", "/studio/investigate", "/studio/industry"],
+    covers: ["/studio/research", "/studio/investigate", "/studio/industry", "/studio/filings"],
   },
   { key: "portfolio", label: "Portfolio", href: "/studio/portfolio", covers: ["/studio/portfolio"] },
   { key: "review", label: "Review", href: "/studio/review", covers: ["/studio/review"] },
@@ -39,7 +39,7 @@ const sectionFor = (pathname: string): Section | undefined =>
 /** Pages built from the old form's steps: the guide sits with them, and so does the portfolio total. */
 const STAGE_PAGES = ["/studio/goals", "/studio/research", "/studio/portfolio", "/studio/review"];
 /** Research tools with their own introductions, whose sources belong beside the work. */
-const TOOL_PAGES = ["/studio/investigate", "/studio/industry"];
+const TOOL_PAGES = ["/studio/investigate", "/studio/industry", "/studio/filings"];
 
 /** The explanation that belongs with each page's work. */
 function guidanceFor(pathname: string): StudioGuidanceKey | null {

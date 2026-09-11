@@ -12,15 +12,18 @@
  * change it. Data from Aswath Damodaran, NYU Stern, whose stated rules permit
  * this and ask only for optional acknowledgement.
  *
- * **The stale part is separated on purpose.** His page carries no date, and the
- * newest dated file in his archive is the January 2025 update. The risk-free
- * rate inside a cost of capital moves with the Treasury yield, so the ingestion
- * recovers it out of the data — verified to within beta-rounding error across
- * all 96 industries — and this module lets a learner replace it with today's.
- * Everything else in the estimate is far more stable than the rate.
+ * **The rate ages fastest, so it is taken from somewhere newer.** His figures
+ * are dated on the page his data index links ("Last Updated in January 2026").
+ * The risk-free rate inside them is recovered by the ingestion, verified to
+ * within beta-rounding error across all 96 industries, because it is the part
+ * that goes stale first. By default Studio rebuilds each industry's figure on
+ * the US Treasury's most recent 10-year note auction, dated and sourced, and a
+ * learner can type their own rate instead. The equity risk premium, betas and
+ * debt costs stay his.
  */
 
 import data from "./data/cost-of-capital.json";
+import treasury from "./data/treasury-rate.json";
 
 export interface IndustryCost {
   industry: string;
@@ -39,9 +42,33 @@ export const COST_OF_CAPITAL_SOURCE = {
   url: data.source,
   retrievedAt: data.retrievedAt,
   vintage: data.vintage,
+  vintageStated: data.vintageStated,
   impliedRiskFreeRate: data.impliedRiskFreeRate,
   impliedEquityRiskPremium: data.impliedEquityRiskPremium,
 } as const;
+
+/** The US Treasury's most recent 10-year note auction: Studio's default government rate. */
+export const TREASURY_RATE = {
+  rate: treasury.rate,
+  yieldPct: treasury.yieldPct,
+  auctionDate: treasury.security.auctionDate,
+  cusip: treasury.security.cusip,
+  reopening: treasury.security.reopening,
+  attribution: treasury.attribution,
+  source: treasury.source,
+  retrievedAt: treasury.retrievedAt,
+} as const;
+
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+/** "2026-09-09" as "9 September 2026", the same for every reader whatever their locale. */
+export const longDate = (iso: string): string => {
+  const [year, month, day] = iso.split("-").map(Number);
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+};
 
 const INDUSTRIES = data.industries as IndustryCost[];
 const BY_NAME = new Map(INDUSTRIES.map((row) => [row.industry, row]));
@@ -65,6 +92,9 @@ export const costOfEquity = (beta: number, riskFreeRate: number, equityRiskPremi
 export const weightedAverageCost = (equityCost: number, afterTaxDebtCost: number, debtWeight: number): number =>
   equityCost * (1 - debtWeight) + afterTaxDebtCost * debtWeight;
 
+/** Where the government rate in an estimate came from. */
+export type RateSource = "published" | "treasury" | "learner";
+
 export interface CostEstimate {
   costOfCapital: number;
   costOfEquity: number;
@@ -73,23 +103,43 @@ export interface CostEstimate {
   equityRiskPremium: number;
   afterTaxCostOfDebt: number;
   debtWeight: number;
-  /** True when the learner supplied a rate rather than accepting the source's. */
+  /** True when a rate other than the source's own was used. */
   riskFreeRateReplaced: boolean;
+  rateSource: RateSource;
   /** Every sentence the surface needs to show where this came from. */
   provenance: string[];
 }
 
+const percent = (value: number) => `${(value * 100).toFixed(2)}%`;
+
 /**
- * The industry's cost of capital, optionally rebuilt on today's risk-free rate.
+ * The industry's cost of capital, optionally rebuilt on another risk-free rate.
  *
  * Given no rate, this reproduces the published figure exactly — the test suite
- * checks that round trip across all 96 industries, so a learner who changes
- * nothing sees the source's own number rather than an approximation of it.
+ * checks that round trip across all 96 industries, so the source's own number
+ * is always recoverable rather than an approximation of it. Given a rate, `from`
+ * says whose it is: the Treasury auction Studio uses by default, or one the
+ * learner typed. The provenance says which, in words.
  */
-export function estimate(industry: IndustryCost, riskFreeRate?: number): CostEstimate {
+export function estimate(
+  industry: IndustryCost,
+  riskFreeRate?: number,
+  from: Exclude<RateSource, "published"> = "learner",
+): CostEstimate {
   const replaced = typeof riskFreeRate === "number" && Number.isFinite(riskFreeRate);
   const rate = replaced ? (riskFreeRate as number) : data.impliedRiskFreeRate;
   const equity = replaced ? costOfEquity(industry.beta, rate, data.impliedEquityRiskPremium) : industry.costOfEquity;
+  const rateSource: RateSource = replaced ? from : "published";
+  const vintage = data.vintageStated ? `last updated ${data.vintage}` : "which the source does not date";
+
+  const rateLine = {
+    published: `The ${percent(rate)} government rate is the one inside the source's own figures, ${vintage}.`,
+    treasury:
+      `The ${percent(rate)} government rate is the yield at the US Treasury's 10-year note auction on ` +
+      `${longDate(treasury.security.auctionDate)}. The source's own figures, ${vintage}, used ` +
+      `${percent(data.impliedRiskFreeRate)}; its equity risk premium and beta are kept.`,
+    learner: `You supplied the ${percent(rate)} government rate, so this is rebuilt rather than taken as published.`,
+  }[rateSource];
 
   return {
     costOfCapital: replaced
@@ -102,13 +152,13 @@ export function estimate(industry: IndustryCost, riskFreeRate?: number): CostEst
     afterTaxCostOfDebt: industry.afterTaxCostOfDebt,
     debtWeight: industry.debtWeight,
     riskFreeRateReplaced: replaced,
+    rateSource,
     provenance: [
       `Built from ${industry.firms} companies in ${industry.industry}, which carry ${(industry.debtWeight * 100).toFixed(0)}% of their capital as debt.`,
-      `Shareholders are assumed to want ${(rate * 100).toFixed(2)}% for lending to the government, plus ${(data.impliedEquityRiskPremium * 100).toFixed(2)}% for taking equity risk, multiplied by this industry's beta of ${industry.beta.toFixed(2)}.`,
-      replaced
-        ? `You supplied the ${(rate * 100).toFixed(2)}% government rate, so this is rebuilt rather than taken as published.`
-        : `The ${(rate * 100).toFixed(2)}% government rate is the one inside the source's own figures. It is undated — the newest dated file in the archive is the January 2025 update — so check it against today's Treasury yield and change it if it has moved.`,
+      `Shareholders are assumed to want ${percent(rate)} for lending to the government, plus ${percent(data.impliedEquityRiskPremium)} for taking equity risk, multiplied by this industry's beta of ${industry.beta.toFixed(2)}.`,
+      rateLine,
       `${data.attribution} Retrieved ${data.retrievedAt}.`,
+      ...(rateSource === "treasury" ? [`${treasury.attribution} Retrieved ${treasury.retrievedAt}.`] : []),
     ],
   };
 }

@@ -242,10 +242,19 @@ recorded in the coverage map. The prototype cannot avoid answering it.
 
 ## Outstanding for M1
 
-Not done. No claim is made for any of these.
+Updated 2026-09-10 by the online data and tools research. The items still open make no claim.
 
-1. Full field inventory for one complete investigation and one portfolio comparison.
-2. Damodaran NYU industry data — permitted-use confirmation.
+1. ~~Full field inventory for one complete investigation and one portfolio comparison.~~
+   **Done 2026-09-10:** [`studio-online-data-and-tools.md`](./studio-online-data-and-tools.md),
+   §3.
+2. ~~Damodaran NYU industry data — permitted-use confirmation.~~ **Closed** by
+   [`studio-cost-of-capital.md`](./studio-cost-of-capital.md), "Permitted use", 2026-09-06.
+   - Re-read firsthand on 2026-09-10 at `New_Home_Page/datahistory.html` (the two addresses tried
+     first were wrong). The acknowledgement rule stands.
+   - His data is dated January 2026, not undated. The pipeline now reads the date from the page
+     his index links.
 3. Strategy PDF pp. 8-10 read as images for the workbook layout.
-4. A decision on Finding 3, which requires the user.
-5. Concept-mapping tables per sector template, following from Findings 1 and 2.
+4. ~~A decision on Finding 3, which requires the user.~~ **Closed:** decided on 2026-09-05
+   (curated dated snapshots), and D2 is resolved. Both are recorded in Finding 3 above.
+5. Concept-mapping tables per sector template, following from Findings 1 and 2. Add an IFRS
+   template: 20-F filers report under `ifrs-full` in their own currency (research §5.1).

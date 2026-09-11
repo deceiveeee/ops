@@ -9,7 +9,7 @@ const nav = [
   { href: "/courses", label: "Courses" },
   { href: "/studio", label: "Studio" },
   { href: "/plan", label: "Your plan" },
-  { href: "/filings", label: "Company reports" },
+  { href: "/studio/filings", label: "Company reports" },
 ];
 
 export default function SiteHeader() {
@@ -17,7 +17,11 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => { setOpen(false); }, [pathname]);
-  const current = (href: string) => pathname === href || pathname?.startsWith(href + "/");
+  const matches = (href: string) => pathname === href || pathname?.startsWith(href + "/");
+  // Company reports lives inside Studio, so both would match there. The most
+  // specific wins, and only one place is ever marked as current.
+  const active = nav.filter((item) => matches(item.href)).sort((a, b) => b.href.length - a.href.length)[0]?.href;
+  const current = (href: string) => href === active;
 
   return (
     <header className="site-header" onKeyDown={(event) => {

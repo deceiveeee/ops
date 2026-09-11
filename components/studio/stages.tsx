@@ -205,11 +205,16 @@ export function ResearchStage(props: StageProps) {
         <span className="mt-2 inline-block text-[13px] text-accent-cyan">Open the industry view →</span>
       </Link>
 
-      <Link
-        href="/studio/investigate"
-        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-4 transition-colors hover:border-accent-cyan/50"
-      >
-        <div className="text-[15px] font-semibold text-white">Investigate a company you care about</div>
+      {/* Two links in one card. The title's link is stretched over the whole card,
+          and the reports link sits above that layer: links cannot nest, and a
+          separate line under the cards cost this page its screen budget. */}
+      <div className="relative rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-4 transition-colors hover:border-accent-cyan/50">
+        <Link
+          href="/studio/investigate"
+          className="text-[15px] font-semibold text-white after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-[var(--ops-accent-strong)]"
+        >
+          Investigate a company you care about
+        </Link>
         <p className="mt-1 text-[13px] leading-6 text-slate-400">
           Look up seven figures from its annual report and see whether it earns more than its
           capital costs, and how. Works for any company, not only those listed below.
@@ -219,10 +224,18 @@ export function ResearchStage(props: StageProps) {
             Saved so far: {investigations.map((item) => item.company.trim() || "Unnamed company").join(", ")}
           </span>
         ) : null}
-        <span className="mt-2 inline-block text-[13px] text-accent-cyan">
-          {investigations.length > 0 ? "Carry on investigating →" : "Start an investigation →"}
-        </span>
-      </Link>
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[13px]">
+          <span aria-hidden="true" className="text-accent-cyan">
+            {investigations.length > 0 ? "Carry on investigating →" : "Start an investigation →"}
+          </span>
+          <Link
+            href="/studio/filings"
+            className="relative z-10 text-accent-cyan underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]"
+          >
+            Find its annual report →
+          </Link>
+        </div>
+      </div>
       </div>
 
       <div className="grid items-start gap-3 lg:grid-cols-2">

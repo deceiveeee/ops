@@ -208,9 +208,26 @@ test("an idle visit records nothing", async ({ page }) => {
   // Well past the 600ms the page waits for typing to settle.
   await page.waitForTimeout(2_500);
   expect(await stored(page)).toEqual([]);
-  await expect(
-    page.getByRole("navigation", { name: "Companies you have looked at" }),
-  ).toHaveCount(0);
+  // The row itself is always there, holding the company in hand, so that it cannot
+  // appear under a learner's cursor. With nothing saved it lists no company to
+  // open or delete, and offers no second one.
+  await expect(chips(page)).toHaveCount(0);
+});
+
+/**
+ * The row used to appear with the first save. Leaving the company box saves, so a
+ * click on anything below it moved 66px between the press and the release and
+ * landed on empty space. Found 2026-09-10 through the Company reports link; the
+ * "?" beside each figure lost its first click the same way.
+ */
+test("the first click after naming a new company is not lost", async ({ page }) => {
+  test.setTimeout(60_000);
+  await openEmpty(page);
+  await companyBox(page).fill("Ampere Instruments");
+  const hint = page.getByRole("button", { name: /^Revenue/ });
+  await hint.click();
+  await expect(hint).toHaveAttribute("aria-expanded", "true");
+  await expect.poll(async () => (await stored(page)).length, { timeout: 10_000 }).toBe(1);
 });
 
 test("deleting asks first, and keeps the work when refused", async ({ page }) => {

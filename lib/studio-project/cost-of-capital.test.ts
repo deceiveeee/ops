@@ -1,14 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
   COST_OF_CAPITAL_SOURCE,
+  TREASURY_RATE,
   costOfEquity,
   estimate,
   forIndustry,
   forSic,
   industryNames,
+  longDate,
   weightedAverageCost,
 } from "./cost-of-capital";
 import data from "./data/cost-of-capital.json";
+import treasury from "./data/treasury-rate.json";
 
 /**
  * The strongest test here is a round trip. The published cost of capital is not
@@ -95,18 +98,58 @@ describe("estimating for an industry", () => {
     expect(worst).toBeLessThan(0.0005);
   });
 
-  it("says where every part of the number came from", () => {
-    const result = estimate(semis);
-    expect(result.provenance.join(" ")).toContain("Damodaran");
-    expect(result.provenance.join(" ")).toContain("beta");
-    // The undated vintage must reach the learner, not sit in a comment.
-    expect(result.provenance.join(" ")).toContain("undated");
-    expect(result.provenance.join(" ")).toContain("Treasury");
+  it("says where every part of the number came from, and when", () => {
+    const text = estimate(semis).provenance.join(" ");
+    expect(text).toContain("Damodaran");
+    expect(text).toContain("beta");
+    // The vintage is read from the source page. It must reach the learner, and an
+    // old claim that the figures were undated must not come back.
+    expect(COST_OF_CAPITAL_SOURCE.vintageStated).toBe(true);
+    expect(text).toContain(`last updated ${COST_OF_CAPITAL_SOURCE.vintage}`);
+    expect(text).not.toContain("undated");
   });
 
   it("tells the learner it was rebuilt once they change the rate", () => {
     const result = estimate(semis, 0.045);
     expect(result.provenance.join(" ")).toContain("You supplied");
+  });
+});
+
+describe("the Treasury rate Studio uses by default", () => {
+  const semis = forIndustry("Semiconductor")!;
+
+  it("is a nominal 10-year note yield, with its auction date", () => {
+    expect(treasury.security.originalTerm).toBe("10-Year");
+    // Inflation-protected notes carry the same label, and their yield is a real
+    // rate about two points lower. One slipping in would understate every figure.
+    expect(treasury.security.inflationIndexed).toBe(false);
+    expect(TREASURY_RATE.rate).toBeCloseTo(treasury.yieldPct / 100, 6);
+    expect(TREASURY_RATE.yieldPct).toBeGreaterThan(0);
+    expect(TREASURY_RATE.yieldPct).toBeLessThan(20);
+    expect(TREASURY_RATE.auctionDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(TREASURY_RATE.auctionDate <= treasury.retrievedAt).toBe(true);
+  });
+
+  it("rebuilds the cost of capital on it by the source's own formula", () => {
+    // Worked by hand from the published parts rather than by calling the helpers.
+    const result = estimate(semis, TREASURY_RATE.rate, "treasury");
+    const equity = TREASURY_RATE.rate + semis.beta * COST_OF_CAPITAL_SOURCE.impliedEquityRiskPremium;
+    const expected = equity * (1 - semis.debtWeight) + semis.afterTaxCostOfDebt * semis.debtWeight;
+    expect(result.rateSource).toBe("treasury");
+    expect(result.costOfCapital).toBeCloseTo(expected, 12);
+  });
+
+  it("says which rate it used, from when, and what the source's own figures used", () => {
+    const text = estimate(semis, TREASURY_RATE.rate, "treasury").provenance.join(" ");
+    expect(text).toContain(longDate(TREASURY_RATE.auctionDate));
+    expect(text).toContain(`${(COST_OF_CAPITAL_SOURCE.impliedRiskFreeRate * 100).toFixed(2)}%`);
+    expect(text).toContain("Fiscal Data");
+    expect(text).not.toContain("You supplied");
+  });
+
+  it("writes dates the same way whatever the reader's locale", () => {
+    expect(longDate("2026-09-09")).toBe("9 September 2026");
+    expect(longDate("2026-01-31")).toBe("31 January 2026");
   });
 });
 

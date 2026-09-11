@@ -1,10 +1,16 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, within } from "@testing-library/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { SessionProvider } from "@/lib/supabase/session";
 import { ProgressProvider } from "@/lib/progress/store";
 import { OnboardingProvider } from "@/lib/onboarding/store";
 import SiteHeader from "./SiteHeader";
+
+const route = vi.hoisted(() => ({ pathname: "/" }));
+vi.mock("next/navigation", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/navigation")>()),
+  usePathname: () => route.pathname,
+}));
 
 function baseClient() {
   return {
@@ -48,5 +54,26 @@ describe("SiteHeader public beta navigation", () => {
     renderHeader();
     expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open Studio" })).toHaveAttribute("href", "/studio");
+  });
+});
+
+describe("SiteHeader current page", () => {
+  // Company reports lives inside Studio, so both links match its path. A header
+  // that marked both would tell a screen-reader user they are in two places.
+  it("marks only Company reports as current on a report, though it sits under Studio", () => {
+    route.pathname = "/studio/filings/0001666138/0001628280-25-054049";
+    renderHeader();
+    const main = screen.getByRole("navigation", { name: "Main navigation" });
+    expect(within(main).getByRole("link", { name: "Company reports" })).toHaveAttribute("href", "/studio/filings");
+    expect(within(main).getByRole("link", { name: "Company reports" })).toHaveAttribute("aria-current", "page");
+    expect(within(main).getByRole("link", { name: "Studio" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("still marks Studio as current everywhere else in Studio", () => {
+    route.pathname = "/studio/investigate";
+    renderHeader();
+    const main = screen.getByRole("navigation", { name: "Main navigation" });
+    expect(within(main).getByRole("link", { name: "Studio" })).toHaveAttribute("aria-current", "page");
+    expect(within(main).getByRole("link", { name: "Company reports" })).not.toHaveAttribute("aria-current");
   });
 });

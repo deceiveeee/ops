@@ -21,7 +21,7 @@ export const STUDIO_MODE_KEY = "ops-studio-mode";
  * "leave Studio?" warning would be wrong. Anywhere else is leaving.
  */
 export const isWorkspacePath = (pathname: string) =>
-  pathname === "/studio" || /^\/studio\/(goals|research|investigate|industry|portfolio|review)(\/|$)/.test(pathname);
+  pathname === "/studio" || /^\/studio\/(goals|research|investigate|industry|filings|portfolio|review)(\/|$)/.test(pathname);
 
 type Session = ReturnType<typeof useStudioProject>;
 

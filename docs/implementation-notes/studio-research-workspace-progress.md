@@ -66,6 +66,8 @@ Observed 2026-09-05: `npm run typecheck` clean; `npm test` 396 passing across 34
 | 8 | Goal and Rules move into the workspace unchanged in Phase 1 | Decided by the user 2026-09-10. A goal is learner-authored, so a form suits it; the evidence-first rule applies where evidence exists |
 | 9 | Workspace Phase 1 moves in only what already works; the Atkore journey is Phase 2's acceptance test | Decided by the user 2026-09-10. Retires the wizard using tested parts without shipping partial valuation; the §9 bar is kept, not lowered. See [`studio-workspace-design.md`](../agent-prompts/studio-workspace-design.md) |
 | 10 | Strategy is left out of workspace Phase 1 | Decided by the user 2026-09-10. Nothing is behind it yet: no storage for a philosophy, and its teaching must be written and source-checked first. A section that cannot be used would be a promise Studio cannot keep |
+| 11 | OPS is non-commercial | Decided by the user 2026-09-10. This settles the data terms that turn on commercial use. CGS lets CUSIPs taken from public sources be stored for non-commercial use, so Studio may carry them from SEC filings and Treasury records (never as a download). See [`studio-online-data-and-tools.md`](../source-audits/studio-online-data-and-tools.md) §5.4 |
+| 12 | Fix the borrowing rate, move the filing reader into Studio, and measure corporate bond prices from one bond-fund filing | Decided by the user 2026-09-10, answering §12 of the research report |
 
 ## Open questions for the user
 
@@ -800,3 +802,122 @@ measured at six widths.
 After Phase 1 and before Phase 2: screens for candidate records, evidence attachment and decision
 records, and the `needs review` flags. Phase 2's acceptance test is the Atkore journey in
 handoff §9.
+
+## 2026-09-10: online data and tools research, checkpoint
+
+Running [`studio-online-data-and-tools-research.md`](../agent-prompts/studio-online-data-and-tools-research.md)
+at the user's request. Findings go into
+[`studio-online-data-and-tools.md`](../source-audits/studio-online-data-and-tools.md) as they
+are established. Nothing is committed and no product code has changed.
+
+Established so far, each verified in that file:
+
+- The SEC's data cannot be called from a learner's browser (no CORS on company facts, plus the
+  User-Agent rule). It stays on the server or in snapshots.
+- Atkore's filing has revenue by product line, regions and customer concentration in its own
+  XBRL data file. None of it is in company facts.
+- Implied Treasury bill prices from N-PORT agree with Treasury's published bill rates for the
+  same day: 22 of 22 within 0.05 points, at T+1 settlement.
+- Fund total returns are tagged XBRL in shareholder reports (N-CSR, `oef`).
+- BLS producer prices for Atkore's inputs are public domain and need no key.
+- FRED forbids storing data, and the Board's download program is being retired toward it, so
+  rates come from Treasury directly.
+- A walk of today's Studio found 4 outside sites needed to finish the Atkore journey, 1 dead end
+  (Atkore's industry is missing), and 1 stale learner-facing claim (Investigate's "undated,
+  January 2025" risk-free-rate note).
+
+## 2026-09-10: online data and tools research, complete
+
+The report is [`studio-online-data-and-tools.md`](../source-audits/studio-online-data-and-tools.md).
+Its §1 is the one-screen summary, and §12 lists the questions only the user can answer. M1 items
+1, 2 and 4 are closed in
+[`studio-data-coverage.md`](../source-audits/studio-data-coverage.md).
+
+### Established, beyond the checkpoint above
+
+- Every essential fact of the Atkore journey has a free, lawful public source, except corporate
+  bond prices (unmeasured; one 15.9 MB filing awaits the user's go-ahead). Private competitors
+  cannot come from SEC data.
+- SIC 3690 is mostly battery and EV-charging makers, so Atkore's peer set must be chosen
+  deliberately.
+- Fiscal Data's auction records give a dated risk-free rate under open terms: 4.683% for the
+  10-year note auctioned 2026-08-12. Studio uses 3.96%. Filter out inflation-indexed notes, which
+  share the "10-Year" label.
+- Treasury's daily par curve and FedInvest prices are not usable for display on the terms found.
+  FRED forbids storing data.
+- No free price source permits public display. Tiingo's own pricing page confirms the 2026-09-05
+  audit.
+
+### Next concrete action
+
+The user's decisions in the report's §12. Then R1, a dated Treasury rate, which fixes the live
+stale note. Then the research record with its evidence panel (R2). Nothing is committed.
+
+## 2026-09-11: the borrowing rate, company reports inside Studio, and a lost click
+
+The user's answers to the research report's §12: download the bond filing, OPS is
+non-commercial, fix the borrowing rate, move the filing reader into Studio.
+
+### Built
+
+- **A dated government borrowing rate.** `scripts/source/fetch-treasury-rate.mjs` takes the most
+  recent ordinary 10-year Treasury note auction from Fiscal Data, whose terms are open and need no
+  key: 4.834% on 2026-09-09, CUSIP `91282CRF0`. Data in `lib/studio-project/data/treasury-rate.json`,
+  audit in [`studio-treasury-rate.md`](../source-audits/studio-treasury-rate.md).
+  - Inflation-protected notes carry the same "10-Year" label and a real yield about two points
+    lower. The query excludes them, and the run fails if one gets through anyway.
+  - `cost-of-capital.ts` rebuilds each industry's figure on that rate by default and says so in
+    words, naming the source's own implied 3.96% beside it. A typed rate still wins, and
+    `estimate()` with no rate still reproduces the published figure exactly.
+  - Investigate's old note is gone: "undated — the newest dated file in the archive is the January
+    2025 update — so check it against today's Treasury yield". It was wrong, and it sent the
+    learner to another website.
+- **The vintage was mislabelled, not missing.** The pipeline read `datafile/wacc.htm`; his data
+  index links `datafile/wacc.html`, which ends "Last Updated in January 2026". Both pages were
+  parsed with the pipeline's own parser and compared: identical tables, 96 industries, 3.958% and
+  4.45% recovered from each. The pipeline now reads the linked page. The regenerated dataset
+  changed only its retrieval date, source URL, vintage and the new `vintageStated`; no industry
+  figure moved.
+- **Company reports moved inside Studio**, to `/studio/filings` and
+  `/studio/filings/[cik]/[accession]`, under Research in the workspace frame. Permanent redirects
+  keep every old `/filings` link working, including the homepage's.
+  - One section at a time. Each opens with about 900 characters and keeps the rest of the excerpt
+    behind "Keep reading this section". The old page stacked all seven sections: 9.52 screens at
+    1440.
+  - "What to look for" sits beside the reading at 1280 and wider.
+  - Header, footer and sitemap point at the new place. The header now marks only the most specific
+    match as current, so Studio and Company reports are never both current.
+  - Investigate and the Research card link to it.
+- **A lost click, found and fixed.** Typing a company's name and then clicking anything below the
+  companies row did nothing: leaving the box saved the record, the row appeared, and the target
+  moved 66px between the press and the release. Measured before the fix: the link at y=476 when
+  pressed, y=542 three tenths of a second later, no navigation. The row is now always there,
+  holding the company in hand as a label until it is saved.
+
+### Verified
+
+- `tsc` 0. Lint clean apart from two older onboarding warnings. Vitest 48 files, 619 tests.
+- Playwright on a production build: 78 passed, 4 skipped, none failed. The new checks cover the
+  redirects, Company reports opening inside the workspace under Research with only one navigation
+  item current, and the lost click twice over: through the Company reports link and through a
+  figure's "?".
+- Six widths across 13 workspace routes. At 1440x900 every page is within 1.5 screens with its
+  first control within half a screen. Problems: none. The report pages are 1.14 and 1.22 screens,
+  down from 2.06 and 1.94; Investigate 1.45 with its first box at 429px; Research 1.48.
+- The rendered provenance was read back from the page: "The 4.83% government rate is the yield at
+  the US Treasury's 10-year note auction on 9 September 2026. The source's own figures, last
+  updated January 2026, used 3.96%; its equity risk premium and beta are kept."
+
+### Known limits
+
+- Investigate still asks the learner to type the seven figures. Filling them from the filing is R3
+  in the research report's roadmap.
+- The reader still shows an excerpt of each section, so the whole text is still at the SEC. Outside
+  websites needed to finish the Atkore journey: 3, down from 4.
+- Company facts can lag a filing (TSMC), so any prefill needs the filing's own data file as a
+  fallback.
+- Nothing is committed.
+
+### Next concrete action
+
+R2 in the roadmap: the research record with its evidence panel. Or commit this first.

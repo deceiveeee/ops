@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
-import { COST_OF_CAPITAL_SOURCE, estimate, forSic, industryNames, forIndustry } from "@/lib/studio-project/cost-of-capital";
+import { TREASURY_RATE, estimate, forSic, industryNames, forIndustry, longDate } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
 import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
 import { latestInvestigation } from "@/lib/studio-project/schema";
@@ -235,8 +235,14 @@ export default function InvestigateView() {
   }, [researched]);
 
   const industryCost = forSic(sic) ?? forIndustry(industryNames()[0])!;
-  const suppliedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
-  const cost = estimate(industryCost, Number.isFinite(suppliedRate) ? suppliedRate : undefined);
+  const typedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
+  const learnerRate = typedRate !== undefined && Number.isFinite(typedRate) ? typedRate : undefined;
+  // With nothing typed, the rate is the Treasury's latest 10-year auction, dated and
+  // sourced, rather than the older one inside the source's January figures.
+  const cost =
+    learnerRate === undefined
+      ? estimate(industryCost, TREASURY_RATE.rate, "treasury")
+      : estimate(industryCost, learnerRate, "learner");
 
   const checks = checkEntries(entries, sector, peerContext);
   const stops = checks.filter((c) => c.severity === "stop");
@@ -264,63 +270,83 @@ export default function InvestigateView() {
       </nav>
 
       <StageHeading as="h1" title="Is this business creating value?">
-        Look up seven figures for a company you care about. Studio says which ones matter, checks
-        what you typed, and tells you what the answer means against real competitors.
+        Look up seven figures from one annual report, then read them against real competitors.
       </StageHeading>
 
       {/*
         * One row, and it scrolls sideways rather than wrapping.
         *
-        * This page is already over the screen budget, so a list of companies
-        * cannot cost vertical space that grows with how much work you have
-        * done -- the more you use it, the worse that would get.
+        * A list of companies cannot cost vertical space that grows with how much
+        * work you have done -- the more you use the page, the worse that would get.
+        *
+        * The row is always there, holding the company in hand even before it is
+        * saved. It used to appear with the first save, and a learner who typed a
+        * company's name and then clicked a link or a "?" below saw nothing
+        * happen: leaving the box saved the record, the row pushed the form down
+        * 66px between the press and the release, and the click landed on empty
+        * space (found 2026-09-10). The placeholder is a label, not a button,
+        * because there is nothing to open or delete until it is saved.
         */}
-      {saved.length > 0 && (
-        <nav aria-label="Companies you have looked at" className="-mx-1 overflow-x-auto px-1 pb-1">
-          <ul className="flex items-center gap-2">
-            {saved.map((item) => {
-              const active = item.id === investigationId;
-              const label = item.company.trim() || "Unnamed company";
-              return (
-                <li key={item.id} className="flex-shrink-0">
-                  <span
-                    className={cn(
-                      "inline-flex items-center rounded-full border text-[13px] transition-colors",
-                      active
-                        ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
-                        : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:text-white",
-                    )}
+      <nav aria-label="Companies you have looked at" className="-mx-1 overflow-x-auto px-1 pb-1">
+        <ul className="flex items-center gap-2">
+          {!saved.some((item) => item.id === investigationId) ? (
+            <li className="flex-shrink-0">
+              <span
+                aria-current="true"
+                className="inline-flex min-h-11 items-center rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] text-white"
+              >
+                {company.trim() || "New company"}
+                <span className="ml-2 text-[11px] text-slate-500">
+                  {Object.keys(entries).length}/{FIGURES.length}
+                </span>
+              </span>
+            </li>
+          ) : null}
+          {saved.map((item) => {
+            const active = item.id === investigationId;
+            const label = item.company.trim() || "Unnamed company";
+            return (
+              <li key={item.id} className="flex-shrink-0">
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-full border text-[13px] transition-colors",
+                    active
+                      ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
+                      : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:text-white",
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => void open(item.id)}
+                    aria-current={active ? "true" : undefined}
+                    className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
                   >
+                    {label}
+                    <span className="ml-2 text-[11px] text-slate-500">
+                      {Object.keys(item.figures).length}/{FIGURES.length}
+                    </span>
+                  </button>
+                  {/*
+                    * Only on the company in hand. On every chip it would be a
+                    * row of delete buttons a thumb can hit by accident, and
+                    * hiding them until hover fails on touch entirely.
+                    */}
+                  {active && (
                     <button
                       type="button"
-                      onClick={() => void open(item.id)}
-                      aria-current={active ? "true" : undefined}
-                      className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                      onClick={() => void forget(item.id, label)}
+                      aria-label={`Delete ${label}`}
+                      className="min-h-11 rounded-full pl-1 pr-3 text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
                     >
-                      {label}
-                      <span className="ml-2 text-[11px] text-slate-500">
-                        {Object.keys(item.figures).length}/{FIGURES.length}
-                      </span>
+                      ×
                     </button>
-                    {/*
-                      * Only on the company in hand. On every chip it would be a
-                      * row of delete buttons a thumb can hit by accident, and
-                      * hiding them until hover fails on touch entirely.
-                      */}
-                    {active && (
-                      <button
-                        type="button"
-                        onClick={() => void forget(item.id, label)}
-                        aria-label={`Delete ${label}`}
-                        className="min-h-11 rounded-full pl-1 pr-3 text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </span>
-                </li>
-              );
-            })}
+                  )}
+                </span>
+              </li>
+            );
+          })}
+          {/* With nothing saved yet there is no other company to make room for. */}
+          {saved.length > 0 ? (
             <li className="flex-shrink-0">
               <button
                 type="button"
@@ -330,9 +356,9 @@ export default function InvestigateView() {
                 + Another company
               </button>
             </li>
-          </ul>
-        </nav>
-      )}
+          ) : null}
+        </ul>
+      </nav>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {/* ---------------------------------------------------------- entry */}
@@ -365,8 +391,11 @@ export default function InvestigateView() {
           </div>
 
           <p className="mt-4 text-[13px] leading-6 text-slate-400">
-            All seven come from one annual report. Click a name to see where it sits and what other
-            sites call it.
+            All seven come from one annual report, which you can open in{" "}
+            <Link href="/studio/filings" className="text-accent-cyan hover:underline">
+              Company reports
+            </Link>
+            . Click a name to see where it sits and what other sites call it.
           </p>
 
           <div className="mt-3 space-y-2">
@@ -452,11 +481,16 @@ export default function InvestigateView() {
                 value={riskFree}
                 onChange={(event) => setRiskFree(event.target.value)}
                 onBlur={() => void flush()}
-                placeholder={(COST_OF_CAPITAL_SOURCE.impliedRiskFreeRate * 100).toFixed(2)}
+                placeholder={TREASURY_RATE.yieldPct.toFixed(2)}
                 className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
               <span>%</span>
             </label>
+            <p className="mt-1 text-[12px] leading-5 text-slate-500">
+              {learnerRate === undefined
+                ? `From the Treasury's 10-year auction on ${longDate(TREASURY_RATE.auctionDate)}.`
+                : "Your own rate. Clear the box to use the Treasury's."}
+            </p>
 
             <StudioAside
               inline={
