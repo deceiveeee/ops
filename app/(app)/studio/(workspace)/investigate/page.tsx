@@ -8,12 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function InvestigatePage() {
-  return (
-    <div className="relative w-full">
-      <div className="pointer-events-none absolute inset-0 terminal-grid opacity-20" />
-      <div className="relative mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <InvestigateView />
-      </div>
-    </div>
-  );
+  return <InvestigateView />;
 }

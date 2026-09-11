@@ -7,10 +7,11 @@ import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
 import { COST_OF_CAPITAL_SOURCE, estimate, forSic, industryNames, forIndustry } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
-import { useStudioProject } from "@/lib/use-studio-project";
 import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
 import { latestInvestigation } from "@/lib/studio-project/schema";
 import { Panel, StageHeading } from "./shared";
+import StudioAside from "./workspace/StudioAside";
+import { useWorkspace } from "./workspace/WorkspaceProvider";
 
 /** What the learner is told about their work being kept. */
 type SaveNote =
@@ -72,7 +73,7 @@ export default function InvestigateView() {
    * to remove. Storage is the same versioned, conflict-checked project record
    * the rest of Studio uses; nothing here writes its own store.
    */
-  const project = useStudioProject("personal");
+  const { session: project, setDraft } = useWorkspace();
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
   const hydrated = useRef(false);
@@ -105,7 +106,9 @@ export default function InvestigateView() {
   useEffect(() => {
     if (hydrated.current || project.status !== "ready" || !project.project) return;
     hydrated.current = true;
-    const saved = latestInvestigation(project.project);
+    // Overview links name the company to open; otherwise reopen the one last touched.
+    const wanted = new URLSearchParams(window.location.search).get("company");
+    const saved = project.project.investigations.find((item) => item.id === wanted) ?? latestInvestigation(project.project);
     if (!saved) return;
     idRef.current = saved.id;
     setInvestigationId(saved.id);
@@ -142,11 +145,23 @@ export default function InvestigateView() {
   }, []);
 
   // Save after typing settles. Hydration must not trigger one of its own.
+  // Until then the project bar says "Saving…": an edit that exists only on
+  // this page is not yet kept, and must not be reported as saved.
   useEffect(() => {
     if (!hydrated.current) return;
-    const timer = setTimeout(() => void flush(), SAVE_DELAY_MS);
+    setDraft(true);
+    const timer = setTimeout(() => void flush().finally(() => setDraft(false)), SAVE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [company, sic, entries, riskFree, flush]);
+  }, [company, sic, entries, riskFree, flush, setDraft]);
+
+  // Leaving for another section inside the typing pause would drop the last
+  // edit. The workspace keeps the session open, so write it on the way out.
+  useEffect(
+    () => () => {
+      void flush().finally(() => setDraft(false));
+    },
+    [flush, setDraft],
+  );
 
   /* Most recently touched first, which is the order they were last cared about. */
   const saved = useMemo(
@@ -240,11 +255,15 @@ export default function InvestigateView() {
 
   return (
     <div className="space-y-4">
-      <Link href="/studio" className="inline-block text-[13px] text-slate-500 hover:text-slate-300">
-        ← Back to your plan
-      </Link>
+      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
+        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+          Research
+        </Link>
+        <span aria-hidden="true"> › </span>
+        <span>Investigate a company</span>
+      </nav>
 
-      <StageHeading eyebrow="Investigate" title="Is this business creating value?">
+      <StageHeading as="h1" title="Is this business creating value?">
         Look up seven figures for a company you care about. Studio says which ones matter, checks
         what you typed, and tells you what the answer means against real competitors.
       </StageHeading>
@@ -439,14 +458,28 @@ export default function InvestigateView() {
               <span>%</span>
             </label>
 
-            <details className="mt-3">
-              <summary className="cursor-pointer text-[12px] text-slate-500">Where this number comes from</summary>
-              <ul className="mt-2 space-y-1 text-[12px] leading-5 text-slate-500">
-                {cost.provenance.map((line, index) => (
-                  <li key={index}>{line}</li>
-                ))}
-              </ul>
-            </details>
+            <StudioAside
+              inline={
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-[12px] text-slate-500">Where this number comes from</summary>
+                  <ul className="mt-2 space-y-1 text-[12px] leading-5 text-slate-500">
+                    {cost.provenance.map((line, index) => (
+                      <li key={index}>{line}</li>
+                    ))}
+                  </ul>
+                </details>
+              }
+              beside={
+                <Panel>
+                  <h2 className="text-[14px] font-semibold text-white">Where the cost of capital comes from</h2>
+                  <ul className="mt-2 space-y-2 text-[13px] leading-5 text-slate-400">
+                    {cost.provenance.map((line, index) => (
+                      <li key={index}>{line}</li>
+                    ))}
+                  </ul>
+                </Panel>
+              }
+            />
           </Panel>
 
           {"blocked" in reading ? (

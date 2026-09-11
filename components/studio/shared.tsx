@@ -20,14 +20,77 @@ export function Panel({ children, className }: { children: ReactNode; className?
   );
 }
 
-export function StageHeading({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) {
+export function StageHeading({
+  eyebrow, title, children, as: Heading = "h2",
+}: { eyebrow?: string; title: string; children?: ReactNode; as?: "h1" | "h2" }) {
   return (
     <div>
-      <div className="ops-caption text-[12px] text-accent-amber">{eyebrow}</div>
-      <h2 className="ops-display mt-2 text-2xl leading-tight text-white sm:text-3xl">{title}</h2>
+      {/* A label, not a warning, so it takes no accent colour. */}
+      {eyebrow ? <div className="ops-caption text-[12px] text-slate-500">{eyebrow}</div> : null}
+      <Heading className={cn("ops-display text-2xl leading-tight text-white sm:text-3xl", eyebrow && "mt-2")}>{title}</Heading>
       {children ? <p className="ops-body mt-3 max-w-2xl text-[15px] leading-7 text-slate-300">{children}</p> : null}
     </div>
   );
+}
+
+/**
+ * A bare number box for tables, with Field's protection against saves that
+ * finish after the next keystroke.
+ *
+ * A plain controlled input is not safe once saving is asynchronous: React puts
+ * the old value back between keystrokes, so typing "253" quickly while a save
+ * is still in flight can store "23". Keystrokes stay local until the queued
+ * edits settle, exactly as Field does.
+ */
+export function NumberInput({
+  id, value, onChange, min, max, className,
+}: {
+  id?: string;
+  value: number;
+  onChange: (raw: string) => unknown;
+  min?: number;
+  max?: number;
+  className?: string;
+}) {
+  const [input, setInput] = useState(String(value));
+  const [settled, setSettled] = useState(0);
+  const focused = useRef(false);
+  const pending = useRef(0);
+  useEffect(() => {
+    if (!focused.current && pending.current === 0) setInput(String(value));
+  }, [value, settled]);
+  const edit = (raw: string) => {
+    setInput(raw);
+    pending.current += 1;
+    void Promise.resolve(onChange(raw)).finally(() => {
+      pending.current -= 1;
+      setSettled((count) => count + 1);
+    });
+  };
+  return (
+    <input
+      id={id}
+      type="number"
+      inputMode="decimal"
+      min={min}
+      max={max}
+      value={input}
+      onFocus={() => { focused.current = true; }}
+      onBlur={() => { focused.current = false; setSettled((count) => count + 1); }}
+      onChange={(event) => edit(event.currentTarget.value)}
+      className={className}
+    />
+  );
+}
+
+/** Hands the learner a file made in the browser. Nothing is uploaded anywhere. */
+export function downloadFile(name: string, text: string, type: string) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 /**

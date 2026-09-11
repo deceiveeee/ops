@@ -22,7 +22,7 @@ test("homepage teaches a rate comparison and links the real destinations", async
   await expect(page.getByRole("link", { name: "Read the original SEC report" })).toHaveAttribute("href", /sec\.gov\/Archives/);
   await page.getByRole("banner").getByRole("link", { name: "Open Studio", exact: true }).click();
   await expect(page).toHaveURL(/\/studio$/);
-  await expect(page.getByRole("navigation", { name: "Studio steps" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Studio sections" })).toBeVisible();
   await expect(page.locator(".site-shell")).toHaveCSS("background-color", "rgb(245, 245, 247)");
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Courses", exact: true }).click();
   await expect(page).toHaveURL(/\/courses$/);

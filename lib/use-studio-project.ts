@@ -12,11 +12,20 @@ const notReady = (): SessionResult => ({ ok: false, code: "unavailable", error: 
  * The workspace owns a v2 session, including research and alternatives. Render status,
  * dirty and externalChange alongside project; showing an edit is not a save.
  */
-export function useStudioProject(mode: StudioMode) {
+export function useStudioProject(mode: StudioMode, options: {
+  /**
+   * Pages that keep this same session open, such as the workspace's other
+   * sections. Moving between them loses nothing, so it is not leaving Studio
+   * and needs no warning.
+   */
+  internal?: (pathname: string) => boolean;
+} = {}) {
   const [snapshot, setSnapshot] = useState({ mode, state: INITIAL });
   const current = useRef<{ mode: StudioMode; session: ProjectSession } | null>(null);
   const pending = useRef(0);
   const [pendingCount, setPendingCount] = useState(0);
+  const internal = useRef(options.internal);
+  internal.current = options.internal;
   useEffect(() => {
     const session = createProjectSession(createIndexedDbProjectStorage(), mode);
     current.current = { mode, session };
@@ -30,7 +39,8 @@ export function useStudioProject(mode: StudioMode) {
     const navigation = (event: MouseEvent) => {
       const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
       if (!(link instanceof HTMLAnchorElement) || link.target === "_blank" || link.hasAttribute("download")
-        || link.origin !== window.location.origin || link.pathname === window.location.pathname) return;
+        || link.origin !== window.location.origin || link.pathname === window.location.pathname
+        || internal.current?.(link.pathname)) return;
       if (pending.current) {
         event.preventDefault(); event.stopPropagation();
         window.alert("A save is still in progress. Wait for it to finish before leaving Studio.");

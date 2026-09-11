@@ -11,8 +11,8 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | --- | --- | --- |
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
-| M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented. Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. Dependency graph and workspace UI integration remain |
-| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Five forces, value stick and industry map not started |
+| M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented; saved investigations added to the schema with migration (`85101cd`). Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. The workspace runs on v2 and the wizard is retired (Phase 1, 2026-09-10). Remaining: no screen yet lets a learner reject an investment with a reason or record a decision, though storage holds both and its tests show rejected research survives; and the dependency graph behind `needs review` |
+| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces, value stick and industry map not started |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -62,6 +62,10 @@ Observed 2026-09-05: `npm run typecheck` clean; `npm test` 396 passing across 34
 | 4 | Adopt SEC XBRL as the primary candidate for company fundamentals | Free, official, per-figure accession and date; verified live |
 | 5 | Treat price history as the highest-risk dependency, resolved early in M1 | It gates F2 momentum, F7 covariance, F9 simulation and F10 worksheet |
 | 6 | Carry the Morgan Stanley checklist concepts into the F3 design | The user asked for institutional procedure; this is a free, citable, dated primary source, and the team already adapted it |
+| 7 | The workspace opens in practice for a newcomer; one action switches to personal | Decided by the user 2026-09-10. The wizard already does this, and the two modes are stored separately, so switching loses nothing |
+| 8 | Goal and Rules move into the workspace unchanged in Phase 1 | Decided by the user 2026-09-10. A goal is learner-authored, so a form suits it; the evidence-first rule applies where evidence exists |
+| 9 | Workspace Phase 1 moves in only what already works; the Atkore journey is Phase 2's acceptance test | Decided by the user 2026-09-10. Retires the wizard using tested parts without shipping partial valuation; the §9 bar is kept, not lowered. See [`studio-workspace-design.md`](../agent-prompts/studio-workspace-design.md) |
+| 10 | Strategy is left out of workspace Phase 1 | Decided by the user 2026-09-10. Nothing is behind it yet: no storage for a philosophy, and its teaching must be written and source-checked first. A section that cannot be used would be a promise Studio cannot keep |
 
 ## Open questions for the user
 
@@ -523,3 +527,276 @@ pins the step between the published and rebuilt paths at under a twentieth of a 
 Permitted use confirmed from his stated rules: acknowledgement optional, no commercial or
 redistribution restriction, industry-level only, and he says explicitly not to use it for
 individual company analysis — which is exactly the split Studio makes.
+
+## 2026-09-10: what landed after the last entry, and Phase 1 scope
+
+### Built between 2026-09-06 and 2026-09-10
+
+Four Studio commits landed without a ledger entry:
+
+- `6694568` — `/studio/investigate`. The learner enters seven figures from one annual report;
+  the page checks them, interprets them against real peers, and sets return on capital against
+  the cost of capital. Linked from the wizard's Research step.
+- `85101cd` — investigations are part of the v2 project schema, with validation, migration and
+  operations, so the research survives outside any holding.
+- `3109aa2` — the investigate page saves as it is typed.
+- `05cc236` — several companies can be investigated and switched between;
+  `e2e/studio-investigate.spec.ts` covers it.
+
+`6e0b607`, the site-wide light refresh, relit the Studio pages through the shared shell. It did
+not restyle Studio's own components.
+
+### Baseline before Phase 1
+
+Measured 2026-09-10 on a production build. Page height in screens:
+
+| Route | 1440x900 | 390x900 | Notes |
+| --- | --- | --- | --- |
+| `/studio` (wizard, Goal step) | 1.33 | 2.31 | At 390, steps 5 and 6 sit off the edge of the step bar |
+| `/studio/investigate` | 1.16 | 2.00 | No `<h1>`; the page title is styled text |
+| `/studio/industry` | 1.46 | 2.11 | No `<h1>` |
+
+No sideways scroll on any of them. The only failed requests were Vercel's analytics scripts,
+which exist only when deployed on Vercel. Studio still uses its own teal and amber accents where
+the rest of the site now uses blue: it renders light and legible, but does not match.
+
+### Decided with the user
+
+Decisions 7–9 above: open in practice, keep Goal and Rules as they are, and a narrower Phase 1
+whose acceptance test moves to Phase 2 rather than being lowered.
+
+### Review approved, 2026-09-10
+
+The review of the mockup against the built code was published as a private page, "Studio
+Workspace Phase 1" (https://claude.ai/code/artifact/91a172c8-17c2-4410-91aa-415e2814cfe8), and
+approved by the user together with decision 10.
+
+Findings that shape the build:
+
+- The v2 storage already holds candidate records, evidence roles, named alternatives and decision
+  records. None has a screen; only `InvestigateView` uses `useStudioProject`.
+- `lib/studio-project/workspace.ts` already adapts the v1 stage forms to the working alternative
+  (`projectToPlan`, `applyPlanChange`).
+- The mockup's Goals, Portfolio and Review screens ask for a target amount, several goals and a
+  purpose per investment. None is stored; all wait.
+- Mockup defects not to copy: icons that never load (a blank phone menu button), a malformed
+  Flexibility select, Review's first control past half a screen, stacked dividers.
+
+### Next concrete action
+
+Build Phase 1 in the approved order, leaving Studio working after each step:
+
+1. The frame: sidebar, project bar, work area and source panel at six widths, under the site header.
+2. The v2 storage: confirm the migration picks up work saved by the wizard, then switch.
+3. Goal and Rules unchanged; Build, Risk and cost, and Buying into Portfolio through the adapter.
+4. Research: Investigate and Industry inside, with real `<h1>`s; provenance into the source panel.
+5. Overview, built only from saved work.
+6. The project bar: save state, practice or personal, backup and recovery.
+7. Retire the wizard and `useStudioPlan`; update the tests; measure six widths.
+
+After Phase 1 and before Phase 2: screens for candidate records, evidence attachment and decision
+records, and the `needs review` flags. Under decision 9 the older M3 items — five forces, value
+stick, industry map, profit pool — are not Phase 1 work.
+
+## 2026-09-10: Phase 1 build, steps 1 to 3
+
+### Built
+
+- The workspace frame, `components/studio/workspace/StudioFrame.tsx`: a section sidebar from
+  1024px, a Section menu labelled in words below that, and a project bar with the portfolio's
+  name, its save state and the Practice / Your own switch. The guide sits beside the work from
+  1280px and stays above it on narrower screens, as the wizard's did, so a definition still comes
+  before the questions that use it.
+- `components/studio/workspace/WorkspaceProvider.tsx`: one v2 session shared by every section,
+  through `useStudioProject` and the existing `projectToPlan` / `applyPlanChange` adapter. The
+  mode opened is the learner's last explicit choice (`ops-studio-mode`); failing that, their own
+  portfolio if it already holds work, because Investigate saved there before the workspace
+  existed; otherwise practice. That check only reads, and never creates a project.
+- Routes inside the `(workspace)` route group, so `/studio` keeps the wizard until step 7:
+  `/studio/goals`, `/studio/research`, `/studio/portfolio` with `/risk` and `/buying`, and
+  `/studio/review`.
+- The stage forms are shared by both. In the workspace, section names replace "Step N", each title
+  is the page's `<h1>`, copy no longer points at step numbers, and the downloads carry the whole v2
+  project, research included. The weight box became `NumberInput` in `shared.tsx`: a plain
+  controlled input drops keystrokes once saves are asynchronous, because React restores the old
+  value while a queued write is still in flight.
+- `useStudioProject` takes an `internal` predicate, so moving between sections raises no "leave
+  Studio?" warning. Nothing is lost by it: the layout keeps the session open.
+- `app/(app)/studio/(workspace)/workspace.css`: Studio's cyan takes the site blue, inside
+  `.studio-app` only. Amber is left alone because Studio uses it for warnings.
+
+### Verified
+
+`tsc` exit 0; `next lint` clean; Vitest 48 files, 612 tests. Headless Chromium against the dev
+server ran 14 checks, all passing, with no page errors and no dialogs. Stored values were read
+back from IndexedDB, not from the page's own save line:
+
+- a goal edit reaches storage; an investment added in Research appears in Portfolio;
+- moving between sections raises no dialog;
+- typing "100" quickly into a weight box stores 100;
+- Your own opens the other portfolio without practice work in it, the choice survives a reload,
+  and practice work is intact after switching back;
+- the phone Section menu reaches Review;
+- `/studio` (the wizard), `/studio/investigate` and `/studio/industry` still render.
+
+Page height in screens:
+
+| Page | 1440x900 | 390x900 |
+| --- | --- | --- |
+| Goals | 1.14 | 2.17 |
+| Research | 3.03 | 4.73 |
+| Portfolio: how much goes where | 1.17 | 1.47 |
+| Portfolio: risk and cost | 1.30 | 2.55 |
+| Portfolio: what to buy | 1.24 | 1.48 |
+| Review | 1.34 | 2.70 |
+
+Research is over the 1.5 budget, but not because of this change: the wizard's Research step
+measures 3.23 at 1440 and 5.00 at 390. It is restructured in step 4.
+
+Not yet run: the full Playwright suite. Its production build writes to the same `.next` the dev
+server uses, so it runs at step 7 with the dev server stopped.
+
+### Next concrete action
+
+Step 4. Investigate and Industry move inside the frame on the shared session, with `<h1>`s and a
+Research breadcrumb in place of "Back to your plan", and their "Where these numbers come from"
+in the side panel from 1280px. Research comes within 1.5 screens at 1440 without dropping any of
+its content.
+
+## 2026-09-10: Phase 1 build, steps 4 to 6
+
+### Built
+
+- **Step 4, Research.** `/studio/investigate` and `/studio/industry` moved into the `(workspace)`
+  route group at the same URLs. Investigate now uses the workspace's session instead of opening
+  its own `useStudioProject("personal")`, so its investigations follow the open portfolio; a
+  returning learner whose own portfolio already holds Investigate work opens there. Both pages
+  have an `<h1>` and a Research breadcrumb in place of "Back to your plan". Industry's decorative
+  amber is the site blue; its "check revenue" warning stays amber. Each page's "Where these
+  numbers come from" is drawn in the side panel from 1280px through `StudioAside`, and stays
+  inline below that.
+- **Two save-honesty fixes in Investigate.** During its 600ms typing pause the workspace's
+  `draft` flag makes the project bar say "Saving…" rather than "Saved". It also writes the pending
+  edit when it unmounts, because moving to another section inside the pause otherwise lost it.
+- **Research within budget, nothing removed.** No catalogue entry opens by default; the two ways
+  in sit side by side; the catalogue is two columns, with the add button in each card's corner so
+  names use the full width; "What you cannot research here yet" is a disclosure; copy is shorter.
+- **Step 5, Overview,** at `/studio/overview` until step 7: what the money is for, one suggested
+  next step taken from what is missing, the companies investigated (each opening that company via
+  `/studio/investigate?company=<id>`), the investments read about including ones taken out of the
+  portfolio, and a line when the other portfolio holds work, which counts the old form's
+  not-yet-migrated record for practice. Built only from saved work; nothing is sample content.
+- **Step 6, the project bar.** `ProjectMenu`: download a backup, restore from a file, start again,
+  and earlier versions from the recovery store, each with download and restore. Every storage
+  problem now carries its remedy: unsaved (try again, download the draft), conflict (download this
+  version, load the saved one), a newer version elsewhere (load it), unreadable (download the
+  original), storage unavailable (try again).
+
+### Verified
+
+- `tsc` exit 0, lint clean and Vitest 48 files / 612 tests after each step.
+- The existing Playwright specs `studio-investigate` (6 tests) and `visual-refresh` (2) pass
+  against the dev server with Investigate inside the workspace.
+- Headless Chromium, with stored values read back from IndexedDB: 8 checks for step 4, 17 for
+  step 5 and 15 for step 6, all passing, with no page errors. The only dialogs were the three
+  confirmations the step-6 check accepted deliberately.
+- **Step 2's condition, met with the old form itself.** A goal typed and an investment added at
+  `/studio` appear in the workspace; the new project's `migratedFrom.raw` equals the old record
+  exactly; the `ops-studio-portfolio-v1` value is unchanged.
+- One check failed first, and the script was at fault: it typed the second company before
+  "+ Another company" had cleared the sheet, so the name was wiped. With the wait the
+  `studio-investigate` spec already uses, both companies store under their own names.
+- One defect was found by looking rather than measuring: the Overview's suggested-step button
+  used `text-white`, which the light theme maps to dark ink site-wide, giving about 3:1 on the
+  blue. It is now `text-[#ffffff]`, white on #0066CC at about 5.6:1.
+
+Page height in screens:
+
+| Page | 1440x900 | 390x900 |
+| --- | --- | --- |
+| Research | 1.48 | 3.10 |
+| Investigate | 1.35 | 2.14 |
+| Industry | 1.46 | 2.25 |
+| Overview, fresh | 1.19 | 1.57 |
+
+### Next concrete action
+
+Step 7. The Overview moves to `/studio`. The wizard page, `components/studio/StudioWorkspace.tsx`,
+`lib/use-studio-plan.ts` and the temporary `/studio/overview` route are deleted.
+`visual-refresh.spec.ts` asserts the workspace's navigation instead of "Studio steps". The full
+Playwright suite runs on a production build with the dev server stopped, and every page is
+measured at six widths.
+
+## 2026-09-10: Phase 1 build, step 7, and Phase 1's final checks
+
+### Built
+
+- The Overview is now `/studio` (`app/(app)/studio/(workspace)/page.tsx`). It keeps the wizard
+  page's title; its description now names the workspace's sections. The sidebar's Overview entry
+  matches `/studio` exactly, because every other section also starts with `/studio`, and
+  `isWorkspacePath` treats `/studio` as inside the workspace.
+- Retired: `app/(app)/studio/page.tsx` (the six-step form), `components/studio/StudioWorkspace.tsx`,
+  `lib/use-studio-plan.ts` and the temporary `/studio/overview` route. No code or test refers to
+  them; only earlier notes do. `lib/studio.ts` stays: the v2 project still uses its plan model,
+  validation and text export, and reads its old `ops-studio-portfolio-v1` record to migrate it.
+- `e2e/visual-refresh.spec.ts` asserts the workspace's "Studio sections" navigation where it
+  asserted "Studio steps".
+- From the six-width measurement: the empty "How much goes where" and "What to buy" pages had no
+  control at all and warned in amber. Each now says what to do, in a neutral tone, with a link to
+  where it can be done. Portfolio pages drop the "Portfolio" label the tabs already state and the
+  tab bar sits closer, which moves Risk and cost's first box from 481px to 447px.
+- `headingFor` no longer falls back to the wizard's "Step N".
+
+### Verified, on a production build
+
+- Rerun on the final code: `tsc` exit 0; Vitest 48 files, 612 tests, all passed; lint exit 0,
+  with two warnings, both in onboarding files this work did not touch
+  (`components/onboarding/OnboardingFlow.tsx`, `lib/onboarding/store.tsx`).
+- The full Playwright suite on a production build, rerun on the final code: 74 passed, none
+  failed, 4 skipped. The suite's only skips are switches for optional screenshots, deck rendering,
+  a Supabase test project and a capture address, none set for this run. The storage spec runs
+  under this config as well as its own.
+- Every workspace page at 390, 768, 1024, 1280, 1440 and 1920 wide: exactly one `<h1>` and no
+  sideways scroll anywhere. At 1440x900 every page is within 1.5 screens, with its first control
+  within half a screen.
+
+| Page | 390 | 768 | 1024 | 1280 | 1440 | 1920 | First control at 1440 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `/studio` (Overview) | 1.63 | 1.25 | 1.19 | 1.19 | 1.19 | 1.19 | 407px |
+| `/studio/goals` | 2.22 | 1.49 | 1.39 | 1.14 | 1.14 | 1.14 | 357px |
+| `/studio/research` | 3.10 | 2.45 | 1.83 | 1.53 | 1.48 | 1.48 | 302px |
+| `/studio/investigate` | 2.20 | 1.63 | 1.27 | 1.35 | 1.35 | 1.35 | 393px |
+| `/studio/industry` | 2.30 | 1.65 | 1.59 | 1.53 | 1.46 | 1.46 | 340px |
+| `/studio/portfolio` | 1.49 | 1.07 | 1.01 | 1.17 | 1.17 | 1.17 | 345px |
+| `/studio/portfolio/risk` | 2.57 | 1.75 | 1.59 | 1.26 | 1.26 | 1.26 | 447px |
+| `/studio/portfolio/buying` | 1.52 | 1.07 | 1.01 | 1.24 | 1.24 | 1.24 | 345px |
+| `/studio/review` | 2.75 | 1.67 | 1.67 | 1.43 | 1.34 | 1.34 | 357px |
+
+- The only failed requests were `/_vercel/insights/script.js` and
+  `/_vercel/speed-insights/script.js`, 54 each (nine pages at six widths). Both exist only when the
+  site is deployed on Vercel. There were no other errors.
+- Both menus open, close on Escape and hand focus back to their button: Section at 390, and
+  Backup and restore at 390 and 1440. The check fails if a menu never opens.
+
+### Known limits
+
+- Research and Industry reach 1.53 screens at 1280, just over the budget at that width. The rule
+  is measured at 1440, where they are 1.48 and 1.46. Narrower widths stack and run longer, as the
+  wizard's did: its Goal step was 2.31 screens at 390, and Goals is now 2.22.
+- Against the baseline above, Goals is shorter (1.33 to 1.14 at 1440), but Investigate is longer:
+  1.16 to 1.35 at 1440 and 2.00 to 2.20 at 390. Industry is unchanged at 1440 (1.46) and longer at
+  390 (2.11 to 2.30). All three stay within the 1440 budget. Which part of the frame adds the
+  height was not isolated.
+- On a phone the project bar takes three rows: the Section menu with the portfolio's name, then
+  Backup and restore, then the Practice / Your own switch. It works, but it is tall.
+- `ReviewStage` in `stages.tsx` still carries the wizard's single-record download fallbacks, now
+  unreachable. They go when `stages.tsx` is broken into focused tools, as handoff §3 and §10 ask.
+- No full keyboard-only or screen-reader walkthrough was run. Beyond the Escape check, this rests
+  on labelled controls and focus styles in the code, and on the existing Playwright specs.
+- Nothing is committed.
+
+### Next concrete action
+
+After Phase 1 and before Phase 2: screens for candidate records, evidence attachment and decision
+records, and the `needs review` flags. Phase 2's acceptance test is the Atkore journey in
+handoff §9.

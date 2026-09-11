@@ -14,18 +14,41 @@ import {
   type StudioCalculation,
   type StudioPlan,
 } from "@/lib/studio";
-import type { StudioMutationResult } from "@/lib/use-studio-plan";
-import { Choice, Fact, Field, Notice, Panel, Stat, StageHeading, TableScroll, pct, usd, usdWhole } from "./shared";
+import { Choice, Fact, Field, Notice, NumberInput, Panel, Stat, StageHeading, TableScroll, downloadFile, pct, usd, usdWhole } from "./shared";
+
+/** What a change reports. The workspace's saves finish later, so it may arrive as a promise. */
+export type StageResult = { ok: true } | { ok: false; error: string; conflict: boolean };
+type Reported = StageResult | Promise<StageResult>;
+
+/** Downloads and restores that carry the whole project, research included. */
+export type StageActions = {
+  downloadBackup: () => void;
+  downloadText: () => void;
+  downloadCsv: () => void;
+  restore: (text: string) => unknown;
+  startAgain: () => unknown;
+};
 
 export type StageProps = {
   plan: StudioPlan;
   calculation: StudioCalculation;
-  update: (change: (plan: StudioPlan) => StudioPlan) => StudioMutationResult;
-  /** Whole-portfolio actions. They live in step 6 beside the downloads, rather
-   *  than in a panel stacked under every other step. */
-  importBackup: (text: string) => StudioMutationResult;
-  reset: () => StudioMutationResult;
+  update: (change: (plan: StudioPlan) => StudioPlan) => Reported;
+  /** Whole-portfolio actions. They live beside the downloads, rather than in a
+   *  panel stacked under every other page. */
+  importBackup: (text: string) => Reported;
+  reset: () => Reported;
+  /** The section's name, shown above the title. Left out where tabs already name it. */
+  eyebrow?: string;
+  /** Workspace only: each section is its own page, so its title is the page's h1. */
+  headingAs?: "h1" | "h2";
+  /** Workspace only. Without it, the wizard's single-portfolio downloads are used. */
+  actions?: StageActions;
+  /** Workspace only: companies investigated so far, named on the way in to Investigate. */
+  investigations?: { id: string; company: string }[];
 };
+
+/** The section's name above the title where the page wants one, and the title at the page's level. */
+const headingFor = (props: StageProps) => ({ eyebrow: props.eyebrow, as: props.headingAs });
 
 /** Blank and partial entries stay blank rather than silently becoming zero. */
 const num = (raw: string, fallback = 0): number => {
@@ -38,13 +61,14 @@ const num = (raw: string, fallback = 0): number => {
 // 1. Goal
 // ---------------------------------------------------------------------------
 
-export function GoalStage({ plan, update }: StageProps) {
+export function GoalStage(props: StageProps) {
+  const { plan, update } = props;
   const setGoal = (patch: Partial<StudioPlan["goal"]>) =>
     update((current) => ({ ...current, goal: { ...current.goal, ...patch }, updatedAt: new Date().toISOString() }));
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 1" title="Give the money a job">
+      <StageHeading {...headingFor(props)} title="Give the money a job">
         Every later choice is judged against what you write here.
       </StageHeading>
 
@@ -152,93 +176,109 @@ export function GoalStage({ plan, update }: StageProps) {
 // 2. Research
 // ---------------------------------------------------------------------------
 
-export function ResearchStage({ plan, update }: StageProps) {
-  const [openId, setOpenId] = useState<string | null>(STUDIO_CATALOG[0]?.id ?? null);
+export function ResearchStage(props: StageProps) {
+  const { plan, update, investigations = [] } = props;
+  // Nothing open to start with: one open entry is taller than the rest of the list together.
+  const [openId, setOpenId] = useState<string | null>(null);
   const held = new Set(plan.holdings.map((holding) => holding.instrumentId));
 
   return (
-    <div className="space-y-5">
-      <StageHeading eyebrow="Step 2" title="Research what you might buy">
-        Read what each investment actually is and what it holds, then write down why it belongs in your plan.
+    <div className="space-y-4">
+      <StageHeading {...headingFor(props)} title="Research what you might buy">
+        Read what each investment is and holds, then write down why it belongs.
       </StageHeading>
 
       {/* The way into the industry view. It sits before the catalogue because
           that is the order the research is meant to run in: work out what an
           industry looks like before deciding whether one company inside it is
           worth your time. */}
+      <div className="grid gap-3 sm:grid-cols-2">
       <Link
         href="/studio/industry"
-        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 transition-colors hover:border-accent-cyan/50"
+        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-4 transition-colors hover:border-accent-cyan/50"
       >
         <div className="text-[15px] font-semibold text-white">Start with the industry</div>
         <p className="mt-1 text-[13px] leading-6 text-slate-400">
-          Before picking a company, see who competes with it, how the revenue is split between
-          them, how much of that split has moved in five years, and how each one earns its return
-          on capital. Built from public filings.
+          See who competes, how the revenue is split between them, how much of that split has
+          moved in five years, and how each earns its return on capital. From public filings.
         </p>
         <span className="mt-2 inline-block text-[13px] text-accent-cyan">Open the industry view →</span>
       </Link>
 
       <Link
         href="/studio/investigate"
-        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5 transition-colors hover:border-accent-cyan/50"
+        className="block rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-4 transition-colors hover:border-accent-cyan/50"
       >
         <div className="text-[15px] font-semibold text-white">Investigate a company you care about</div>
         <p className="mt-1 text-[13px] leading-6 text-slate-400">
-          Look up seven figures from its annual report and find out whether it earns more than its
-          capital costs, how it earns it, and what one year cannot tell you. Works for any company,
-          not only the ones listed below.
+          Look up seven figures from its annual report and see whether it earns more than its
+          capital costs, and how. Works for any company, not only those listed below.
         </p>
-        <span className="mt-2 inline-block text-[13px] text-accent-cyan">Start an investigation →</span>
+        {investigations.length > 0 ? (
+          <span className="mt-2 block text-[13px] leading-5 text-slate-400">
+            Saved so far: {investigations.map((item) => item.company.trim() || "Unnamed company").join(", ")}
+          </span>
+        ) : null}
+        <span className="mt-2 inline-block text-[13px] text-accent-cyan">
+          {investigations.length > 0 ? "Carry on investigating →" : "Start an investigation →"}
+        </span>
       </Link>
+      </div>
 
-      <div className="space-y-3">
+      <div className="grid items-start gap-3 lg:grid-cols-2">
         {STUDIO_CATALOG.map((instrument) => {
           const open = openId === instrument.id;
           const holding = plan.holdings.find((item) => item.instrumentId === instrument.id);
           return (
-            <Panel key={instrument.id} className={cn(open && "border-accent-cyan/30")}>
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => setOpenId(open ? null : instrument.id)}
-                  aria-expanded={open}
-                  className="min-h-11 flex-1 text-left"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[16px] font-semibold text-white">{instrument.symbol}</span>
-                    {held.has(instrument.id) ? (
-                      <span className="rounded-full border border-accent-green/40 bg-accent-green/10 px-2 py-0.5 text-[11px] text-accent-green">
-                        In your portfolio
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="mt-0.5 text-[14px] leading-6 text-slate-300">{instrument.name}</div>
-                  <div className="mt-1 text-[13px] text-slate-500">
-                    {instrument.expenseRatioPct === null
-                      ? "Annual cost not stated in a reviewed filing"
-                      : `${instrument.expenseRatioPct}% a year in fund costs`}
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    update((current) =>
-                      held.has(instrument.id)
-                        ? removeStudioHolding(current, instrument.id)
-                        : addStudioHolding(current, instrument.id),
-                    )
-                  }
-                  className={cn(
-                    "min-h-11 rounded-full border px-4 text-[14px] font-semibold transition-colors",
+            <div
+              key={instrument.id}
+              className={cn(
+                "relative rounded-2xl border border-white/10 bg-white/[0.03] p-4",
+                open && "border-accent-cyan/30 lg:col-span-2",
+              )}
+            >
+              {/* The add button sits in the corner so the name can use the whole
+                  width. Beside it, long names wrapped to three lines and made the
+                  list far taller than its content. */}
+              <button
+                type="button"
+                onClick={() => setOpenId(open ? null : instrument.id)}
+                aria-expanded={open}
+                className="block w-full text-left"
+              >
+                <div className="flex min-h-11 items-center gap-2 pr-40">
+                  <span className="text-[16px] font-semibold text-white">{instrument.symbol}</span>
+                  {held.has(instrument.id) ? (
+                    <span className="rounded-full border border-accent-green/40 bg-accent-green/10 px-2 py-0.5 text-[11px] text-accent-green">
+                      In your portfolio
+                    </span>
+                  ) : null}
+                </div>
+                <div className="text-[14px] leading-6 text-slate-300">{instrument.name}</div>
+                <div className="mt-0.5 text-[13px] text-slate-500">
+                  {instrument.expenseRatioPct === null
+                    ? "Annual cost not stated in a reviewed filing"
+                    : `${instrument.expenseRatioPct}% a year in fund costs`}
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  update((current) =>
                     held.has(instrument.id)
-                      ? "border-white/15 text-slate-300 hover:border-white/30 hover:text-white"
-                      : "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20",
-                  )}
-                >
-                  {held.has(instrument.id) ? "Remove" : "Add to portfolio"}
-                </button>
-              </div>
+                      ? removeStudioHolding(current, instrument.id)
+                      : addStudioHolding(current, instrument.id),
+                  )
+                }
+                className={cn(
+                  "absolute right-4 top-4 min-h-11 rounded-full border px-4 text-[14px] font-semibold transition-colors",
+                  held.has(instrument.id)
+                    ? "border-white/15 text-slate-300 hover:border-white/30 hover:text-white"
+                    : "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20",
+                )}
+              >
+                {held.has(instrument.id) ? "Remove" : "Add to portfolio"}
+              </button>
 
               {open ? (
                 <div className="mt-4 space-y-4 border-t border-white/10 pt-4">
@@ -359,20 +399,25 @@ export function ResearchStage({ plan, update }: StageProps) {
                   ) : null}
                 </div>
               ) : null}
-            </Panel>
+            </div>
           );
         })}
       </div>
 
-      <Notice tone="slate" title="What you cannot research here yet">
-        <ul className="mt-2 space-y-2">
+      {/* The gaps stay named on the page, with the detail one click away rather
+          than a screen of scroll under the list. */}
+      <details className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
+        <summary className="cursor-pointer text-[14px] font-semibold text-slate-200">
+          What you cannot research here yet
+        </summary>
+        <ul className="mt-3 space-y-2 text-[14px] leading-6 text-slate-300">
           {CATALOG_GAPS.map((gap) => (
             <li key={gap.missing}>
               <span className="font-semibold text-white">{gap.missing}.</span> {gap.whyItMatters}
             </li>
           ))}
         </ul>
-      </Notice>
+      </details>
     </div>
   );
 }
@@ -381,13 +426,19 @@ export function ResearchStage({ plan, update }: StageProps) {
 // 3. Build
 // ---------------------------------------------------------------------------
 
-export function BuildStage({ plan, calculation, update }: StageProps) {
+export function BuildStage(props: StageProps) {
+  const { plan, calculation, update } = props;
   if (plan.holdings.length === 0) {
     return (
       <div className="space-y-5">
-        <StageHeading eyebrow="Step 3" title="Decide how much goes where" />
-        <Notice tone="amber" title="Nothing to weight yet">
-          Add at least one investment in step 2, then come back to set how much of the money each one takes.
+        <StageHeading {...headingFor(props)} title="Decide how much goes where" />
+        {/* Not yet, rather than wrong: a new portfolio is shown the way forward, not a warning. */}
+        <Notice tone="slate" title="Nothing to weight yet">
+          Add at least one investment in{" "}
+          <Link href="/studio/research" className="font-semibold text-accent-cyan underline underline-offset-2">
+            Research
+          </Link>
+          , then come back to set how much of the money each one takes.
         </Notice>
       </div>
     );
@@ -396,7 +447,7 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
   const total = calculation.totalWeightPct;
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 3" title="Decide how much goes where">
+      <StageHeading {...headingFor(props)} title="Decide how much goes where">
         Percentages apply to the {usdWhole(calculation.investableBudget)} left after your cash reserve. They need to
         total 100%.
       </StageHeading>
@@ -424,18 +475,14 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
                     <label className="sr-only" htmlFor={`weight-${row.holding.instrumentId}`}>
                       {row.instrument?.symbol ?? row.holding.instrumentId} target percentage
                     </label>
-                    <input
+                    <NumberInput
                       id={`weight-${row.holding.instrumentId}`}
-                      type="number"
-                      inputMode="decimal"
                       min={0}
                       max={100}
                       value={row.holding.targetWeightPct}
-                      onChange={(event) =>
+                      onChange={(raw) =>
                         update((current) =>
-                          updateStudioHolding(current, row.holding.instrumentId, {
-                            targetWeightPct: num(event.currentTarget.value),
-                          }),
+                          updateStudioHolding(current, row.holding.instrumentId, { targetWeightPct: num(raw) }),
                         )
                       }
                       className="min-h-11 w-24 rounded-lg border border-white/12 bg-white/[0.03] px-3 text-right text-[15px] tabular-nums text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
@@ -464,7 +511,7 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
         <Notice tone="amber" title={`Your percentages total ${pct(total)}`}>
           {total > 100
             ? "That counts the same money more than once. Reduce one or more until they total 100%."
-            : `The remaining ${pct(100 - total)} stays in cash. That is a choice you can make on purpose — set it aside as a cash reserve in step 1 if you meant it.`}
+            : `The remaining ${pct(100 - total)} stays in cash. That is a choice you can make on purpose — set it aside as a cash reserve in your goal if you meant it.`}
         </Notice>
       ) : (
         <Notice tone="green" title="The percentages total 100%">
@@ -479,7 +526,8 @@ export function BuildStage({ plan, calculation, update }: StageProps) {
 // 4. Risk and costs
 // ---------------------------------------------------------------------------
 
-export function RiskStage({ plan, calculation, update }: StageProps) {
+export function RiskStage(props: StageProps) {
+  const { plan, calculation, update } = props;
   const setStress = (patch: Partial<StudioPlan["stress"]>) =>
     update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
 
@@ -488,7 +536,7 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 4" title="Check the risk and the cost">
+      <StageHeading {...headingFor(props)} title="Check the risk and the cost">
         These are assumptions you choose, not forecasts. Nothing here predicts what markets will do.
       </StageHeading>
 
@@ -591,13 +639,18 @@ export function RiskStage({ plan, calculation, update }: StageProps) {
 // 5. Buying worksheet
 // ---------------------------------------------------------------------------
 
-export function BuyStage({ plan, calculation, update }: StageProps) {
+export function BuyStage(props: StageProps) {
+  const { plan, calculation, update } = props;
   if (calculation.orders.length === 0) {
     return (
       <div className="space-y-5">
-        <StageHeading eyebrow="Step 5" title="Work out what to buy" />
-        <Notice tone="amber" title="Set your weights first">
-          Step 3 needs valid percentages before Studio can work out amounts.
+        <StageHeading {...headingFor(props)} title="Work out what to buy" />
+        <Notice tone="slate" title="Set your weights first">
+          Studio needs your percentages before it can work out amounts. Set them under{" "}
+          <Link href="/studio/portfolio" className="font-semibold text-accent-cyan underline underline-offset-2">
+            How much goes where
+          </Link>
+          .
         </Notice>
       </div>
     );
@@ -605,7 +658,7 @@ export function BuyStage({ plan, calculation, update }: StageProps) {
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 5" title="Work out what to buy">
+      <StageHeading {...headingFor(props)} title="Work out what to buy">
         Studio holds no market prices. Enter the quote your broker shows and the date you saw it, and this works out a
         quantity that stays inside your dollar target.
       </StageHeading>
@@ -687,22 +740,14 @@ export function BuyStage({ plan, calculation, update }: StageProps) {
 // 6. Review and rules
 // ---------------------------------------------------------------------------
 
-function download(name: string, text: string, type: string) {
-  const url = URL.createObjectURL(new Blob([text], { type }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = name;
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-export function ReviewStage({ plan, calculation, update, importBackup, reset }: StageProps) {
+export function ReviewStage(props: StageProps) {
+  const { plan, calculation, update, importBackup, reset, actions } = props;
   const setRules = (patch: Partial<StudioPlan["rules"]>) =>
     update((current) => ({ ...current, rules: { ...current.rules, ...patch }, updatedAt: new Date().toISOString() }));
 
   return (
     <div className="space-y-5">
-      <StageHeading eyebrow="Step 6" title="Write the rules and keep a copy">
+      <StageHeading {...headingFor(props)} title="Write the rules and keep a copy">
         Decide now what you will do later, while nothing is happening and you can think clearly.
       </StageHeading>
 
@@ -738,7 +783,7 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
             label="What must be true before I sell"
             value={plan.rules.sellRule}
             onChange={(value) => setRules({ sellRule: value })}
-            placeholder="Only if the reason I wrote in step 2 has stopped being true."
+            placeholder="Only if the reason I wrote down for owning it has stopped being true."
             multiline
           />
           <Field
@@ -793,21 +838,21 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={() => download(`${plan.name}.json`, exportStudioJson(plan), "application/json")}
+            onClick={actions ? actions.downloadBackup : () => downloadFile(`${plan.name}.json`, exportStudioJson(plan), "application/json")}
             className="min-h-11 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-5 text-[14px] font-semibold text-accent-cyan hover:bg-accent-cyan/20"
           >
             Download a backup
           </button>
           <button
             type="button"
-            onClick={() => download(`${plan.name}.txt`, exportStudioText(plan, STUDIO_CATALOG), "text/plain")}
+            onClick={actions ? actions.downloadText : () => downloadFile(`${plan.name}.txt`, exportStudioText(plan, STUDIO_CATALOG), "text/plain")}
             className="min-h-11 rounded-full border border-white/15 px-5 text-[14px] font-semibold text-slate-200 hover:border-white/30"
           >
             Download the readable plan
           </button>
           <button
             type="button"
-            onClick={() => download(`${plan.name}.csv`, exportStudioCsv(plan, STUDIO_CATALOG), "text/csv")}
+            onClick={actions ? actions.downloadCsv : () => downloadFile(`${plan.name}.csv`, exportStudioCsv(plan, STUDIO_CATALOG), "text/csv")}
             className="min-h-11 rounded-full border border-white/15 px-5 text-[14px] font-semibold text-slate-200 hover:border-white/30"
           >
             Download a spreadsheet
@@ -824,7 +869,10 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
               onChange={async (event) => {
                 const file = event.currentTarget.files?.[0];
                 event.currentTarget.value = "";
-                if (file) importBackup(await file.text());
+                if (!file) return;
+                const text = await file.text();
+                if (actions) void actions.restore(text);
+                else void importBackup(text);
               }}
             />
           </label>
@@ -836,7 +884,8 @@ export function ReviewStage({ plan, calculation, update, importBackup, reset }: 
                   "Start an empty portfolio? Your saved work will be replaced. Download a backup first if you want to keep it.",
                 )
               ) {
-                reset();
+                if (actions) void actions.startAgain();
+                else void reset();
               }
             }}
             className="min-h-11 rounded-full border border-white/15 px-5 text-[14px] font-medium text-slate-400 hover:border-accent-red/40 hover:text-accent-red"
