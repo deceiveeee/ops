@@ -8,7 +8,8 @@ import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerCon
 import { TREASURY_RATE, estimate, forSic, industryNames, forIndustry, longDate } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
 import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
-import { latestInvestigation } from "@/lib/studio-project/schema";
+import { latestInvestigation, type FigureSource } from "@/lib/studio-project/schema";
+import type { MissingFigure, SuppliedFigure } from "@/lib/studio-project/prefill";
 import { Panel, StageHeading } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
@@ -57,12 +58,34 @@ const median = (values: number[]): number => {
 /** How long typing settles before a save. Short enough to survive a stray click. */
 const SAVE_DELAY_MS = 600;
 
+/** A date as a person writes it, for a filing period a learner has to recognise. */
+const readableDate = (iso: string): string => {
+  const parsed = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return iso;
+  return parsed.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+};
+
+/** What the SEC lookup is doing, so the button can say so rather than just sit there. */
+type Lookup = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message: string };
+
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
   const [sic, setSic] = useState(RESEARCHED[0].sic);
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
   const [openHint, setOpenHint] = useState<FigureKey | null>(null);
+  /*
+   * Where the figures came from, when they were filled in from a filing.
+   *
+   * Saved with the record, because "every supplied figure shows where it came
+   * from" has to survive closing the tab. What is *not* saved is the list of
+   * figures the SEC could not supply: those are the empty boxes, which say it
+   * themselves, and the reasons are only worth the words in the visit that
+   * fetched them.
+   */
+  const [source, setSource] = useState<FigureSource | null>(null);
+  const [couldNotFill, setCouldNotFill] = useState<MissingFigure[]>([]);
+  const [lookup, setLookup] = useState<Lookup>({ kind: "idle" });
 
   /*
    * The work is saved as it is typed.
@@ -86,8 +109,8 @@ export default function InvestigateView() {
    * depends on `flush`, so its timer would be cleared and restarted each time,
    * which is the one way to make an autosave that never fires.
    */
-  const editRef = useRef({ company, sic, entries, riskFree });
-  editRef.current = { company, sic, entries, riskFree };
+  const editRef = useRef({ company, sic, entries, riskFree, source });
+  editRef.current = { company, sic, entries, riskFree, source };
   const sessionRef = useRef(project);
   sessionRef.current = project;
   /*
@@ -118,6 +141,7 @@ export default function InvestigateView() {
     if (RESEARCHED.some((entry) => entry.sic === saved.sic)) setSic(saved.sic);
     setEntries(saved.figures as Entries);
     setRiskFree(saved.riskFreePct === null ? "" : String(saved.riskFreePct));
+    setSource(saved.source ?? null);
     setSaveNote({ kind: "saved" });
   }, [project.status, project.project]);
 
@@ -139,6 +163,7 @@ export default function InvestigateView() {
         sic: edit.sic,
         figures: edit.entries as Record<string, number>,
         riskFreePct: rate !== null && Number.isFinite(rate) ? rate : null,
+        source: edit.source,
       }, id),
     );
     setSaveNote(result.ok ? { kind: "saved" } : { kind: "error", message: result.error });
@@ -152,7 +177,7 @@ export default function InvestigateView() {
     setDraft(true);
     const timer = setTimeout(() => void flush().finally(() => setDraft(false)), SAVE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [company, sic, entries, riskFree, flush, setDraft]);
+  }, [company, sic, entries, riskFree, source, flush, setDraft]);
 
   // Leaving for another section inside the typing pause would drop the last
   // edit. The workspace keeps the session open, so write it on the way out.
@@ -186,9 +211,119 @@ export default function InvestigateView() {
     if (RESEARCHED.some((entry) => entry.sic === target.sic)) setSic(target.sic);
     setEntries(target.figures as Entries);
     setRiskFree(target.riskFreePct === null ? "" : String(target.riskFreePct));
+    setSource(target.source ?? null);
+    setCouldNotFill([]);
+    setLookup({ kind: "idle" });
     setOpenHint(null);
     setSaveNote({ kind: "saved" });
   }, [flush]);
+
+  /**
+   * Fill the seven boxes from what the company filed with the SEC.
+   *
+   * The lookup runs on the server: `data.sec.gov`'s company-facts endpoint sends
+   * no cross-origin header, and a browser cannot set the User-Agent the SEC's
+   * fair-access policy asks for. So this asks Studio's own route, which fetches
+   * identified and returns the seven numbers rather than the two megabytes they
+   * were read out of.
+   *
+   * Typed work is never replaced without asking. Figures already filled in from
+   * a filing are another matter -- looking up a second time is how a learner
+   * corrects a mistyped ticker, and pausing to confirm that would be noise.
+   */
+  const fill = useCallback(async () => {
+    /*
+     * One box holds both the company's name and the ticker to look up, because
+     * two boxes for one company is a question a learner should not have to
+     * answer twice. A successful lookup writes EDGAR's name into it -- "Atkore
+     * Inc." -- so a second press must recognise that as the company already
+     * found rather than send it back as a ticker, while a name that matches
+     * nothing still asks for a symbol instead of quietly refetching the last one.
+     */
+    const typed = company.trim();
+    const symbol = /^[A-Za-z0-9.-]{1,12}$/.test(typed)
+      ? typed
+      : source && typed === source.entityName
+        ? source.ticker
+        : "";
+    if (!symbol) {
+      setLookup({
+        kind: "error",
+        message: typed
+          ? `Studio looks companies up by ticker symbol, and "${typed}" is not one. Atkore's is ATKR.`
+          : "Type the company's ticker symbol first — Atkore's is ATKR.",
+      });
+      return;
+    }
+    const typedByHand = Object.keys(entries).some((key) => !source || !(key in source.figures));
+    if (typedByHand && !window.confirm(`Replace the figures with ${symbol.toUpperCase()}'s own, as filed? What you typed will be gone.`)) {
+      return;
+    }
+
+    setLookup({ kind: "loading" });
+    let body: {
+      error?: string;
+      ticker?: string;
+      cik?: string;
+      entityName?: string;
+      sic?: string;
+      sicDescription?: string;
+      periodEnd?: string;
+      supplied?: SuppliedFigure[];
+      missing?: MissingFigure[];
+      filing?: { accession: string; form: string; filed: string } | null;
+    };
+    try {
+      const response = await fetch(`/api/studio/company-figures?ticker=${encodeURIComponent(symbol)}`);
+      body = await response.json();
+      if (!response.ok) {
+        setLookup({ kind: "error", message: body.error ?? "The SEC could not be reached just now." });
+        return;
+      }
+    } catch {
+      setLookup({ kind: "error", message: "The SEC could not be reached just now. Type the figures from the annual report instead." });
+      return;
+    }
+
+    const supplied = body.supplied ?? [];
+    if (!supplied.length) {
+      setLookup({
+        kind: "error",
+        message: `Nothing could be read from ${body.entityName ?? symbol.toUpperCase()}'s filings for the year ending ${body.periodEnd ?? "the latest period"}. Type the seven from the annual report.`,
+      });
+      setCouldNotFill(body.missing ?? []);
+      return;
+    }
+
+    const filled: Entries = {};
+    const figures: FigureSource["figures"] = {};
+    for (const figure of supplied) {
+      filled[figure.key] = figure.value;
+      figures[figure.key] = { concepts: figure.concepts, addedUp: figure.addedUp };
+    }
+
+    setEntries(filled);
+    setSource({
+      ticker: body.ticker ?? symbol.toUpperCase(),
+      cik: body.cik ?? "",
+      entityName: body.entityName ?? "",
+      sic: body.sic ?? "",
+      sicDescription: body.sicDescription ?? "",
+      periodEnd: body.periodEnd ?? "",
+      accession: body.filing?.accession ?? "",
+      form: body.filing?.form ?? "",
+      filed: body.filing?.filed ?? "",
+      figures,
+    });
+    // EDGAR's name for the company, which is the one on the filing the figures
+    // came from, so the two agree on screen.
+    if (body.entityName) setCompany(body.entityName);
+    // Only where Studio has actually researched that industry. Where it has not,
+    // the select keeps what it had and the page says so rather than pretending.
+    if (body.sic && RESEARCHED.some((entry) => entry.sic === body.sic)) setSic(body.sic);
+    setCouldNotFill(body.missing ?? []);
+    setLookup({ kind: "idle" });
+  }, [company, entries, source]);
 
   /** A blank sheet. Nothing is written until something is actually entered. */
   const startNew = useCallback(async () => {
@@ -198,6 +333,9 @@ export default function InvestigateView() {
     setCompany("");
     setEntries({});
     setRiskFree("");
+    setSource(null);
+    setCouldNotFill([]);
+    setLookup({ kind: "idle" });
     setOpenHint(null);
     setSaveNote({ kind: "idle" });
   }, [flush]);
@@ -249,13 +387,29 @@ export default function InvestigateView() {
   const questions = checks.filter((c) => c.severity === "question");
   const reading = stops.length ? { blocked: stops[0].message } : read(entries, sector, cost.costOfCapital, peerContext);
 
-  const set = (key: FigureKey, raw: string) =>
+  const set = (key: FigureKey, raw: string) => {
     setEntries((current) => {
       const next = { ...current };
       if (raw.trim() === "") delete next[key];
       else if (Number.isFinite(Number(raw))) next[key] = Number(raw);
       return next;
     });
+    /*
+     * Touching a figure makes it the learner's own.
+     *
+     * The moment a box is edited it is no longer what the company filed, so its
+     * provenance goes with it -- keeping the tag beside a number the learner
+     * changed would be the worst kind of wrong: a false source note on a figure
+     * they have every right to overrule. When the last one goes, so does the
+     * filing reference, because nothing on the page comes from it any more.
+     */
+    setSource((current) => {
+      if (!current || !(key in current.figures)) return current;
+      const figures = { ...current.figures };
+      delete figures[key];
+      return Object.keys(figures).length ? { ...current, figures } : null;
+    });
+  };
 
   const flagged = new Set(checks.flatMap((c) => c.figures));
 
@@ -370,7 +524,7 @@ export default function InvestigateView() {
                 value={company}
                 onChange={(event) => setCompany(event.target.value)}
                 onBlur={() => void flush()}
-                placeholder="The one you want to understand"
+                placeholder="Its ticker, such as ATKR"
                 className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
             </label>
@@ -390,18 +544,94 @@ export default function InvestigateView() {
             </label>
           </div>
 
-          <p className="mt-4 text-[13px] leading-6 text-slate-400">
-            All seven come from one annual report, which you can open in{" "}
-            <Link href="/studio/filings" className="text-accent-cyan hover:underline">
-              Company reports
-            </Link>
-            . Click a name to see where it sits and what other sites call it.
-          </p>
+          {/*
+            * The lookup replaces the paragraph that used to sit here, rather
+            * than being added below it, so the first figure box does not move
+            * further down the screen. Everything it says, that paragraph said.
+            */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <button
+              type="button"
+              onClick={() => void fill()}
+              disabled={lookup.kind === "loading"}
+              className="inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white transition-colors hover:border-accent-cyan/70 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+            >
+              {lookup.kind === "loading" ? "Reading the filing…" : "Fill these from the SEC"}
+            </button>
+            <p className="text-[13px] leading-6 text-slate-400">
+              Or type them from the annual report, which you can open in{" "}
+              <Link href="/studio/filings" className="text-accent-cyan hover:underline">
+                Company reports
+              </Link>
+              .
+            </p>
+          </div>
+
+          {/*
+            * Where the figures came from, once they came from somewhere.
+            *
+            * Absent until a lookup succeeds, so the page at rest is no taller
+            * than it was. The tint on a box is explained here rather than left
+            * to be guessed, and every supplied box also says it in its label,
+            * because colour on its own tells a screen reader nothing.
+            */}
+          {source ? (
+            <div className="mt-3 rounded-lg border border-accent-cyan/25 bg-accent-cyan/[0.06] p-3">
+              <p className="text-[13px] leading-6 text-slate-200">
+                <span className="font-semibold text-white">{source.entityName}</span>
+                {source.periodEnd ? ` · the year to ${readableDate(source.periodEnd)}` : null}
+                {source.form && source.filed ? ` · from its ${source.form} filed ${readableDate(source.filed)}` : null}
+                {source.accession && source.cik ? (
+                  <>
+                    {" · "}
+                    <a
+                      href={`https://www.sec.gov/Archives/edgar/data/${source.cik.replace(/^0+/, "")}/${source.accession.replace(/-/g, "")}/${source.accession}-index.htm`}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-accent-cyan underline underline-offset-2"
+                    >
+                      open the filing
+                    </a>
+                  </>
+                ) : null}
+              </p>
+              <p className="mt-1 text-[12px] leading-5 text-slate-400">
+                Highlighted boxes are its own figures. Type over any to use yours.
+              </p>
+              {/*
+                * Atkore files under SIC 3690, mostly battery and EV-charging
+                * makers, which is not one of the five industries Studio has
+                * researched. Reading its figures against semiconductors without
+                * saying so was the one dead end the friction walk found
+                * (2026-09-10). It shares this block rather than taking one of
+                * its own, which on a phone is 50px of border and padding.
+                */}
+              {source.sic && !RESEARCHED.some((entry) => entry.sic === source.sic) ? (
+                <p className="mt-2 border-t border-accent-cyan/20 pt-2 text-[12px] leading-5 text-accent-amber">
+                  The SEC files it under {source.sic}
+                  {source.sicDescription ? `, ${source.sicDescription.toLowerCase()}` : null} — not one of
+                  the five industries Studio has researched. The peers and the cost of capital below are{" "}
+                  {researched.label.toLowerCase()}, so read the comparison with that in mind.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {lookup.kind === "error" ? (
+            <p
+              role="alert"
+              className="mt-2 rounded-lg border border-accent-amber/30 bg-accent-amber/[0.05] p-3 text-[13px] leading-6 text-slate-300"
+            >
+              {lookup.message}
+            </p>
+          ) : null}
 
           <div className="mt-3 space-y-2">
             {FIGURES.map((figure) => {
               const open = openHint === figure.key;
               const marked = flagged.has(figure.key);
+              const filed = source?.figures[figure.key];
+              const couldNot = couldNotFill.find((entry) => entry.key === figure.key);
               return (
                 <div key={figure.key}>
                   <div className="flex items-center gap-2">
@@ -420,27 +650,65 @@ export default function InvestigateView() {
                       onChange={(event) => set(figure.key, event.target.value)}
                       onBlur={() => void flush()}
                       placeholder="0"
-                      aria-label={figure.label}
+                      /* The tint says where a figure came from; this says it in words. */
+                      aria-label={filed ? `${figure.label}, as the company filed it` : figure.label}
                       className={cn(
-                        "w-full rounded-lg border bg-white/[0.03] px-3 py-1.5 text-right text-[14px] tabular-nums text-white placeholder:text-slate-700 focus:outline-none",
-                        marked ? "border-accent-amber/50" : "border-white/10 focus:border-accent-cyan/50",
+                        "w-full rounded-lg border px-3 py-1.5 text-right text-[14px] tabular-nums text-white placeholder:text-slate-700 focus:outline-none",
+                        marked
+                          ? "border-accent-amber/50 bg-white/[0.03]"
+                          : filed
+                            ? "border-accent-cyan/40 bg-accent-cyan/[0.07] focus:border-accent-cyan/70"
+                            : "border-white/10 bg-white/[0.03] focus:border-accent-cyan/50",
                       )}
                     />
                   </div>
                   {open ? (
-                    <p className="mt-1 pl-[158px] text-[12px] leading-5 text-slate-500">
-                      {figure.whatItIs} On the {figure.statement}. Also called{" "}
-                      {figure.alsoCalled.join(", ")}.
-                    </p>
+                    <div className="mt-1 space-y-1 pl-[158px] text-[12px] leading-5 text-slate-500">
+                      <p>
+                        {figure.whatItIs} On the {figure.statement}. Also called{" "}
+                        {figure.alsoCalled.join(", ")}.
+                      </p>
+                      {/*
+                        * The SEC's own viewer pattern: a supplied figure opens to
+                        * the tag it was read from and the period it covers, so a
+                        * learner can check it against the statement rather than
+                        * take it on trust.
+                        */}
+                      {filed && source ? (
+                        <p className="text-slate-400">
+                          Read from {source.entityName}&rsquo;s {source.form || "filing"} as{" "}
+                          <span className="text-slate-300">{filed.concepts.join(" + ")}</span>
+                          {filed.addedUp ? `, which is ${filed.addedUp}` : null}, for the year to{" "}
+                          {readableDate(source.periodEnd)}.
+                        </p>
+                      ) : null}
+                      {couldNot ? <p className="text-slate-400">{couldNot.reason}</p> : null}
+                    </div>
                   ) : null}
                 </div>
               );
             })}
           </div>
 
+          {/*
+            * Which of the seven the filing could not give, named where the empty
+            * boxes are rather than in a list somewhere else. Only after a lookup:
+            * before one, every box is empty and saying so would be noise.
+            */}
+          {couldNotFill.length ? (
+            <p className="mt-3 text-[12px] leading-5 text-slate-400">
+              Not tagged in this filing:{" "}
+              {couldNotFill
+                .map((entry) => FIGURES.find((figure) => figure.key === entry.key)?.label.toLowerCase() ?? entry.key)
+                .join(", ")}
+              . Click the name of each to see why, then read it off the statement.
+            </p>
+          ) : null}
+
           <p className="mt-3 text-[12px] leading-5 text-slate-600">
-            Use the same units throughout — all millions, or all billions. Studio only compares them
-            with each other.
+            {source
+              ? "Every figure is in US dollars, as filed. Keep any you type in the same units."
+              : "Use the same units throughout — all millions, or all billions. Studio only compares them with each other."}
           </p>
 
           {checks.length ? (
@@ -544,7 +812,7 @@ export default function InvestigateView() {
                   ))}
                 </div>
                 <p className="mt-3 text-[12px] leading-5 text-slate-600">
-                  Calculated from what you entered — not a figure any company reports.
+                  Calculated from the figures above — not a figure any company reports.
                 </p>
               </Panel>
 

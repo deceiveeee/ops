@@ -918,6 +918,78 @@ non-commercial, fix the borrowing rate, move the filing reader into Studio.
   fallback.
 - Nothing is committed.
 
+## 2026-09-11: Investigate fills its own figures
+
+R3 in the research roadmap. Committed work up to this point is `c1d9598`.
+
+### Built
+
+- **One button fills the seven figures from the company's own filing.** Type a ticker in
+  Investigate, press "Fill these from the SEC", and the seven arrive from SEC company facts with
+  the company's name, the year they cover, and the filing that reported them. Atkore's FY2025 10-K
+  gives all seven; the reading follows immediately, where before it needed seven numbers hunted out
+  of 400,000 characters.
+- **Every supplied figure carries its source, and keeps it.** Clicking a figure's name opens the
+  XBRL tag it was read from, how it was combined if it is a sum, and the period. The provenance is
+  saved with the investigation, so reopening it later still shows which numbers were the company's.
+  Investigate was the one surface in Studio where a figure could not be traced to anything.
+- **Typing over a figure takes its source away.** The box loses its highlight and its label stops
+  saying the company filed it; the others keep theirs. When the last one goes, so does the filing
+  reference. A false source note on a number the learner changed would be worse than none.
+- **The dead end now speaks.** Where the SEC files a company under an industry Studio has not
+  researched — Atkore under 3690, mostly battery and EV-charging makers — the page says so and
+  names the industry the peers and cost of capital actually come from. It still preselects one; it
+  no longer does it silently.
+- **A gap is a gap.** A figure the filing does not tag stays an empty box, is named under the form,
+  and explains itself when clicked. None is ever filled with a zero.
+- **The lookup runs on the server** (`app/api/studio/company-figures/route.ts`), because
+  `data.sec.gov`'s company-facts endpoint sends no cross-origin header and a browser cannot set
+  the User-Agent SEC fair access asks for. It returns seven numbers rather than the 2.3 MB they
+  were read out of.
+
+### Verified
+
+- **Measured against twelve real companies before any of it was built**, using the cached facts and
+  the manifest that spans a bank, an insurer, a REIT, a utility, a railroad and a loss year:
+  `scripts/source/check-prefill-coverage.mjs`, audit in
+  [`studio-investigate-prefill.md`](../source-audits/studio-investigate-prefill.md). 8 of 12 give
+  all seven. The four short all lack operating profit, which they do not tag.
+- **That measurement found three defects in total borrowings, each of which produced a plausible
+  number rather than an error.** A noncurrent tag drops the instalment due this year (Costco $75m,
+  Pfizer $3.0bn, NextEra $3.5bn); a combined tag already contains short-term borrowings, so adding
+  them counted Verizon's $441m twice; and Exxon's only borrowing tag bundles $2.7bn of finance
+  leases in with the debt, which is not what the box asks for, so it is refused rather than
+  supplied. All twelve totals were worked out by hand first, then asserted.
+- **Live against EDGAR**, not only against fixtures: ATKR returns all seven in about a second and
+  matches the fixture to the dollar; COST's assembled $5,788m matches the hand figure; an unknown
+  ticker, a name that is not a ticker, and an IFRS filer (SAP) each return their own message.
+- `tsc` 0. Lint clean apart from the two older onboarding warnings. Vitest 49 files, 630 tests
+  (11 new, on real filings trimmed to size).
+- Playwright on a production build: **87 passed, 4 skipped, none failed**. Nine new checks cover the
+  fill, the provenance behind a figure, the industry warning, survival across a reload read back out
+  of IndexedDB, overtyping dropping one source and not the others, both refusal paths, and the
+  named gaps.
+- Six widths across every workspace route: **problems none**. Investigate is 1.45 screens at 1440
+  with its first box at 429px — unchanged, because the lookup replaced the paragraph that was there
+  rather than being added below it.
+
+### Known limits
+
+- **Filled, the page runs to 1.84 screens at 1440.** That is not this change: filling the same seven
+  by hand measures 1.84 too, and the growth is the reading appearing, which is the page doing its
+  job. On a phone the difference is real — 3.65 against 3.31 — and it is the provenance block and
+  the industry warning. Combining them into one block took it from 3.83.
+- **US GAAP only.** An IFRS filer's figures cannot be read; it says so rather than showing an empty
+  form. An IFRS concept map is its own piece of work.
+- **Operating profit is often not tagged**, including by Exxon and Pfizer. It is not derived from
+  total costs: that subtraction gives operating income wearing the name of gross profit.
+- **Company facts can lag a filing** (TSMC, measured 2026-09-10). The period read is the newest
+  company facts holds, and the filing named is the one that reported it — not necessarily the
+  company's newest.
+- The reasons a figure could not be filled are not saved; they last the visit that fetched them.
+  The empty box and its "?" still say what the figure is.
+
 ### Next concrete action
 
-R2 in the roadmap: the research record with its evidence panel. Or commit this first.
+R2 in the roadmap: the research record with its evidence panel. Or R4, the reader with whole
+sections and find-in-filing, which would remove another outside site.

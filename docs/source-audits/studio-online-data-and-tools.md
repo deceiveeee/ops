@@ -24,8 +24,10 @@ Status: **complete for this run.** Nothing below is a claim unless it is labelle
 
 **Where Studio fell short when this was measured on 2026-09-10.** §13 records what has been
 fixed since.
-- Finishing the Atkore journey needed **4 outside websites**. Three remain.
-- Atkore's industry is not in the industry view. Still open.
+- Finishing the Atkore journey needed **4 outside websites**. Two remain.
+- Atkore's industry is not in the industry view. Still open, but no longer silent: Investigate now
+  says when a company's industry is not one Studio has researched, instead of reading its figures
+  against semiconductors without comment.
 - Investigate told learners the government borrowing rate was undated and from January 2025, while
   its source says January 2026. **Fixed.**
 - Studio used 3.96% for that rate, against 4.683% at the 10-year auction of 12 August 2026.
@@ -476,10 +478,21 @@ pages would not draw; the rest was read as page text and measured with scripts.
 | Two competing numbers on one screen | none found | |
 | Clicks from a figure to where it came from | Industry: 0. Catalogue facts: 1. Investigate: **none possible** | Industry puts its source note beside the table. Catalogue facts show sources once an entry is opened. Investigate's figures are typed by the learner and carry no source |
 
-**Since measured.** The changes of 2026-09-11 (§13) removed one of the four: the government
-borrowing rate now arrives inside Investigate with its date and its source. Three remain. The seven
-figures and the input-cost passages still need the full filing, because the reader inside Studio
-shows an excerpt of each section, and "What to buy" still asks for a broker quote.
+**Since measured.** The changes of 2026-09-11 (§13) removed two of the four. The government
+borrowing rate now arrives inside Investigate with its date and its source; and the seven figures
+arrive from the company's own filing, each carrying the tag it was read from, so they no longer
+have to be copied from anywhere. Two remain: the input-cost passages still need the full filing,
+because the reader inside Studio shows an excerpt of each section, and "What to buy" still asks for
+a broker quote.
+
+The dead end is also no longer silent. Investigate still preselects an industry, but where the SEC
+files a company under one Studio has not researched it now says so, and names the industry whose
+peers and cost of capital the reading actually uses. The industry itself is still missing.
+
+Investigate's figures now carry a source. The walk recorded "clicks from a figure to where it came
+from — Investigate: **none possible**", because every figure there was typed. A supplied figure now
+opens to its tag, its period and its filing in one click; a figure the learner types still carries
+none, which is correct.
 
 **Page by page.**
 - **Overview:** reads cleanly for a newcomer. There is one suggested next step ("Say what this money
@@ -664,10 +677,11 @@ Each item names what the learner gains and the check that proves it.
     evidence survives a backup and restore.
   - Milestone: M2.
 - **R3. Investigate filled from company facts,** with units and provenance, and the learner can
-  override.
+  override. **Done 2026-09-11 (§13).**
   - Learner: sees Atkore's seven figures with their filing and period.
   - Check: the values equal an independent read of company facts for FY2025, and outside site 1
-    is gone.
+    is gone. Both met: the seven match Atkore's FY2025 10-K to the dollar, and the figures no
+    longer have to be copied from anywhere.
   - Milestone: M3.
 - **R4. The reader inside Research:** whole sections, paged; find in a filing; save a passage as
   evidence.
@@ -757,8 +771,32 @@ detail. In short:
   now always there.
 - **Corporate bond prices** measured from the approved AGG download (§5.4).
 
-Outside websites needed to finish the Atkore journey: 3, down from 4. The rest of the roadmap in
-§10 is untouched, and R2, the research record with its evidence panel, is next.
+### R3, done 2026-09-11
+
+**Investigate fills its seven figures from the company's own filing.** A learner types a ticker,
+presses one button, and gets the seven numbers with the tag each was read from, the period it
+covers and the filing that reported it. Every one can be typed over, and doing so removes its
+source rather than leaving a false one attached. The provenance is saved with the record, so it
+survives closing the tab. Detail and the measurement: [`studio-investigate-prefill.md`](./studio-investigate-prefill.md).
+
+- **Coverage: 8 of the 12 manifest companies gave all seven.** The four short all lack operating
+  profit, which they do not tag; two of those are a bank and an insurer, for which Investigate
+  already declines to compute a return on capital. Exxon also lacks borrowings, by refusal rather
+  than by failure (below).
+- **Three ways of building total borrowings wrongly, all found by measuring rather than reading.**
+  A noncurrent tag dropped the instalment due this year (Pfizer $3.0bn, NextEra $3.5bn); a
+  combined tag had short-term borrowings added to it twice (Verizon $441m); and Exxon's only
+  borrowing tag bundles finance leases in with debt, which is not what the box asks for, so it is
+  refused and the learner is told why. Each produced a plausible number, not an error.
+- **The dead end is no longer silent.** Where the SEC files a company under an industry Studio has
+  not researched — Atkore under 3690, mostly battery and EV-charging makers — the page says so and
+  names the industry its peers and cost of capital actually belong to.
+- **US GAAP only.** An IFRS filer returns a message saying its figures cannot be read, not an
+  empty form.
+
+Outside websites needed to finish the Atkore journey: 2, down from 4. Investigate's figures now
+carry a source, which they never could while they were typed. Next in §10: R2, the research record
+with its evidence panel, or R4, the reader with whole sections and find-in-filing.
 
 ## Appendix A. Probe log
 

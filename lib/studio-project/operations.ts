@@ -3,6 +3,7 @@ import {
   type CandidateInvestigation,
   type CandidateStatus,
   type FigureInvestigation,
+  type FigureSource,
   type PortfolioAlternative,
   type StudioProject,
 } from "./schema";
@@ -65,6 +66,8 @@ export type InvestigationEdit = {
   sic: string;
   figures: Record<string, number>;
   riskFreePct: number | null;
+  /** Where the figures came from, or null once they are the learner's own. */
+  source?: FigureSource | null;
 };
 
 /**
@@ -94,6 +97,7 @@ export function saveInvestigation(
     sic: edit.sic,
     figures: { ...edit.figures },
     riskFreePct: edit.riskFreePct,
+    source: edit.source ?? null,
   };
   const investigations = existing
     ? project.investigations.map((item) => (item.id === existing.id ? record : item))

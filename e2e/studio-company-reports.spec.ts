@@ -50,7 +50,7 @@ test("Investigate links to the reports it needs, and going there is not leaving 
     warned = true;
     void dialog.dismiss();
   });
-  await page.getByPlaceholder("The one you want to understand").fill("Atkore");
+  await page.getByPlaceholder("Its ticker, such as ATKR").fill("Atkore");
   await page.getByRole("main").getByRole("link", { name: "Company reports" }).click();
 
   await expect(page).toHaveURL(/\/studio\/filings$/);

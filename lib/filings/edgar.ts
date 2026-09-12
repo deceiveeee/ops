@@ -171,6 +171,22 @@ export function companyName(json: unknown): string {
   return typeof name === "string" ? name : "";
 }
 
+/**
+ * The industry the SEC assigns the company, from its own filing index.
+ *
+ * SIC decides which accounting shape a company's statements have, and so which
+ * XBRL concepts mean what for it - a bank's revenue is not a line but a sum.
+ * It is read from the submissions payload rather than guessed from the name.
+ */
+export function companySic(json: unknown): { sic: string; sicDescription: string } {
+  if (!json || typeof json !== "object") return { sic: "", sicDescription: "" };
+  const row = json as { sic?: unknown; sicDescription?: unknown };
+  return {
+    sic: typeof row.sic === "string" || typeof row.sic === "number" ? String(row.sic) : "",
+    sicDescription: typeof row.sicDescription === "string" ? row.sicDescription : "",
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Network calls.
 // ---------------------------------------------------------------------------
@@ -198,10 +214,10 @@ export async function resolveTicker(symbol: string): Promise<EdgarResult<{ compa
   return { ok: true, company };
 }
 
-/** A company's recent readable filings. Cached for an hour. */
+/** A company's recent readable filings, and the industry SEC files it under. Cached for an hour. */
 export async function fetchFilings(
   cik: string,
-): Promise<EdgarResult<{ name: string; filings: FilingSummary[] }>> {
+): Promise<EdgarResult<{ name: string; sic: string; sicDescription: string; filings: FilingSummary[] }>> {
   const res = await secFetch(`https://data.sec.gov/submissions/CIK${padCik(cik)}.json`, 3_600);
   if (!res.ok) return res;
 
@@ -212,7 +228,37 @@ export async function fetchFilings(
     return { ok: false, reason: "fetch-failed", message: "That company's filing index could not be read." };
   }
 
-  return { ok: true, name: companyName(parsed), filings: parseSubmissions(parsed) };
+  return { ok: true, name: companyName(parsed), ...companySic(parsed), filings: parseSubmissions(parsed) };
+}
+
+/**
+ * Everything a company has tagged in XBRL, as the SEC assembles it.
+ *
+ * A few megabytes, and it changes only when a filing lands, so it is cached for
+ * six hours. This is what fills Investigate's seven boxes; it deliberately
+ * holds no dimensional detail - revenue by product line lives in the filing's
+ * own data file, not here.
+ */
+export async function fetchCompanyFacts(cik: string): Promise<EdgarResult<{ facts: unknown }>> {
+  const res = await secFetch(`https://data.sec.gov/api/xbrl/companyfacts/CIK${padCik(cik)}.json`, 21_600);
+  if (!res.ok) {
+    // A company with nothing tagged is a real case, and 404 here means exactly
+    // that rather than a bad address the learner could correct.
+    if (res.reason === "not-found") {
+      return {
+        ok: false,
+        reason: "not-found",
+        message: "The SEC holds no tagged financial data for this company, so its figures cannot be filled in automatically.",
+      };
+    }
+    return res;
+  }
+
+  try {
+    return { ok: true, facts: JSON.parse(res.body) };
+  } catch {
+    return { ok: false, reason: "fetch-failed", message: "That company's tagged financial data could not be read." };
+  }
 }
 
 /**

@@ -16,7 +16,7 @@ const DATABASE = "ops-studio-projects";
 /** Every figure input, in the order the page asks for them. */
 const figureBoxes = (page: Page) => page.getByPlaceholder("0", { exact: true });
 
-const companyBox = (page: Page) => page.getByPlaceholder("The one you want to understand");
+const companyBox = (page: Page) => page.getByPlaceholder("Its ticker, such as ATKR");
 
 /** One saved investigation, as much of it as these tests care about. */
 type StoredRow = { id: string; company: string; figures: number };

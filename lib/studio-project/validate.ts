@@ -76,7 +76,7 @@ export function validateStudioProject(value: unknown): string[] {
     if (!list(value.investigations, 10_000)) issues.push("The project needs an investigation list with at most 10,000 companies.");
     else for (const investigation of value.investigations) {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct"])
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct", "source"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
         // null means "use the published rate", which is different from zero.
@@ -94,6 +94,35 @@ export function validateStudioProject(value: unknown): string[] {
         ([key, entry]) => FIGURE_KEYS.has(key) && typeof entry === "number" && Number.isFinite(entry),
       )) {
         issues.push("A company investigation contains an unrecognised or non-numeric figure.");
+      }
+      /*
+       * Where the figures came from, when they were filled in from a filing.
+       * Absent on every record saved before the SEC lookup existed, and null
+       * whenever the learner typed them, so only a present object is checked.
+       *
+       * It is checked rather than trusted because this is what the page shows a
+       * learner as the provenance of a number. A restored backup that had been
+       * edited by hand could otherwise attach a real accession to figures that
+       * never came from it, which is worse than having no provenance at all.
+       */
+      if (investigation.source !== undefined && investigation.source !== null) {
+        const source = investigation.source;
+        if (!object(source)
+          || !keys(source, ["ticker", "cik", "entityName", "sic", "sicDescription", "periodEnd", "accession", "form", "filed", "figures"])
+          || !text(source.ticker, 20) || !text(source.cik, 20) || !text(source.entityName, 300)
+          || !text(source.sic, 20) || !text(source.sicDescription, 300)
+          || !text(source.periodEnd, 10) || !text(source.accession, 40)
+          || !text(source.form, 20) || !text(source.filed, 10)
+          || !object(source.figures)
+          || !Object.entries(source.figures).every(([key, entry]) =>
+            FIGURE_KEYS.has(key)
+            && object(entry)
+            && keys(entry, ["concepts", "addedUp"])
+            && list(entry.concepts, 20)
+            && (entry.concepts as unknown[]).every((concept) => text(concept, 200))
+            && (entry.addedUp === null || text(entry.addedUp, 300)))) {
+          issues.push("A company investigation records where its figures came from in a form this version does not understand.");
+        }
       }
     }
   }

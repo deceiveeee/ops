@@ -90,6 +90,41 @@ export interface FigureInvestigation {
    * back is what they entered.
    */
   riskFreePct: number | null;
+  /**
+   * Where the figures came from, when they were filled in from a filing.
+   *
+   * Null for figures the learner typed, and absent on every record saved before
+   * the SEC lookup existed. Kept because "every supplied figure shows where it
+   * came from" has to survive closing the tab: without this, a reopened
+   * investigation would show seven numbers with no way to tell which were the
+   * company's and which were the learner's own.
+   */
+  source?: FigureSource | null;
+}
+
+/**
+ * The filing a set of figures was read out of, and how each one was read.
+ *
+ * Only the figures still exactly as EDGAR supplied them are listed. Overtyping
+ * one drops it from here, because at that moment it stops being the company's
+ * number and becomes the learner's.
+ */
+export interface FigureSource {
+  /** The ticker looked up, as EDGAR spells it. */
+  ticker: string;
+  cik: string;
+  /** The company as EDGAR names it, which is often not how the learner does. */
+  entityName: string;
+  /** The industry SEC files it under, which need not be one Studio researches. */
+  sic: string;
+  sicDescription: string;
+  /** The annual period every figure below covers. */
+  periodEnd: string;
+  accession: string;
+  form: string;
+  filed: string;
+  /** Keyed by figure name: the XBRL tags read, and how they were combined. */
+  figures: Record<string, { concepts: string[]; addedUp: string | null }>;
 }
 
 /** A pointer back to something the learner actually read. */
