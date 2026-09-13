@@ -1165,3 +1165,45 @@ investigation in Investigate rather than to a catalogue record. Committed work u
 R5 in the roadmap: research prices in the app, which removes the broker quote, the last outside
 website on the Atkore journey. The smaller alternative is shortening the open catalogue card, 2.13
 screens at 1440 before R2's record was added to it.
+
+## 2026-09-13: can Studio price what a learner buys? A research pass before R5
+
+R4 is committed as `550e130`. Nothing was built in this pass; the findings are in
+[`studio-fund-prices.md`](../source-audits/studio-fund-prices.md).
+
+### Why it was needed
+
+Checked against Studio's price snapshot, R5 as written would have priced one more investment. Apple
+had a dated quoted price and the Treasury note its auction price, but VTI, VOO, VXUS, AGG, SGOV and
+TSMC's American share had none: the snapshot is built from the holdings of stock index funds, which
+hold stocks rather than other funds.
+
+### Found
+
+- **All six can be priced from other funds' holdings filings**, dated, at quoted market prices. On the
+  newest usable date, 30 June 2026: VTI $370.04, VOO $686.81, VXUS $85.49, AGG $98.98, SGOV $100.67,
+  TSMC's American share $477.57.
+- **The method was checked where it could fail.** Unrelated funds reporting the same month-end agreed
+  to the cent on every date where more than one was read, for all six, with as many as nine funds on
+  one date.
+- **A price is about two months old when it becomes usable:** filings went public 37 to 60 days after
+  the month they report.
+- **Names are not a safe key.** Matching "Taiwan Semiconductor" also finds a different company at
+  $2.03. A price must be matched on the CUSIP of the listing a learner buys.
+- **Routes that do not work:** the funds' own shareholder reports tag no per-share value; the SEC's
+  quarterly holdings data sets would work but run to 387–483 MB each and are not needed.
+
+### Limits
+
+- A price exists only while other funds hold the investment. VXUS is the thinnest, with two agreeing
+  funds on 30 June.
+- EDGAR's full-text search returned server errors when queried 400ms apart, and succeeded 1.5 seconds
+  apart with retries.
+- That funds file holdings every month was observed in these filings, not read in the rule.
+
+### Next concrete action
+
+R5, built as `studio-fund-prices.md` suggests: a source step that records each catalogue investment's
+CUSIP, finds holders through full-text search, reads a few small filings, and takes the newest
+month-end on which at least two unrelated funds agree; then "What to buy" starts from that dated
+price, with the broker's quote as an optional override.

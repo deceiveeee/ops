@@ -693,10 +693,13 @@ Each item names what the learner gains and the check that proves it.
     that really shifted between two extractions of the filing.
   - Milestone: M3.
 - **R5. Research prices in the app,** for stocks and bills, with dates and fair-value levels. The
-  broker quote becomes an optional override.
+  broker quote becomes an optional override. **Checked before building, 2026-09-13:** all eight
+  catalogue investments can carry a dated price (`studio-fund-prices.md`).
   - Learner: can finish "What to buy" with no outside quote.
   - Check: outside site 3 is gone, and every price shows its date. Also measure price coverage
-    for the catalogue ETFs' own shares.
+    for the catalogue ETFs' own shares. Measured: the five funds and TSMC's American share are each
+    priced by at least two unrelated funds' holdings filings that agree to the cent on the newest
+    date, 30 June 2026; VXUS is the thinnest, with two.
   - Milestones: M3 and M5.
 - **R6. Fund returns and costs** from shareholder reports.
   - Learner: sees 1-, 5- and 10-year returns by share class, with their period.
@@ -848,6 +851,23 @@ report, searchable, with passages kept as evidence".
 
 Outside websites needed to finish the Atkore journey: **1**, the broker quote in What to buy. Next in
 §10: R5, research prices in the app.
+
+### Research pass on prices, 2026-09-13
+
+**Before building R5, whether the prices exist.** Studio's own snapshot priced only Apple among the
+catalogue's investments; the Treasury note already had its auction price. The five funds and
+TSMC's American share had none. Detail in `studio-fund-prices.md`.
+
+- **They can all be priced from other funds' holdings filings.** A fund that owns VTI reports its
+  shares and their dollar value each month-end; value over shares is the closing price.
+- **Checked where it could fail:** unrelated funds reporting the same month-end agreed to the cent
+  on every date where more than one was read, for all six.
+- **Dated about two months back.** Filings go public 37 to 60 days after the month they report, so
+  on 13 September the newest usable date is 30 June 2026.
+- **Match on the CUSIP of the listing bought, never the name.** "Taiwan Semiconductor" also matches
+  a different company, priced at $2.03.
+- Set aside: the funds' own shareholder reports, which tag no per-share value; the quarterly N-PORT
+  data sets, 387 to 483 MB each and not needed.
 
 ## Appendix A. Probe log
 
