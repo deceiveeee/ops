@@ -1207,3 +1207,80 @@ R5, built as `studio-fund-prices.md` suggests: a source step that records each c
 CUSIP, finds holders through full-text search, reads a few small filings, and takes the newest
 month-end on which at least two unrelated funds agree; then "What to buy" starts from that dated
 price, with the broker's quote as an optional override.
+
+## 2026-09-13: What to buy starts from a dated price
+
+R5 in the research roadmap. The research notes behind it are committed as `2a8c8f5`.
+
+### Built
+
+- **A dated price for every investment in the catalogue.** Seven come from other funds' SEC holdings
+  filings, all for 30 June 2026: VTI $370.04, VOO $686.81, VXUS $85.49, AGG $98.98, SGOV $100.67,
+  AAPL $289.36 and TSM, the American share, $477.57. The Treasury note keeps its auction price,
+  99.540696 per $100 of face value on 12 August 2026.
+- **`scripts/source/fetch-catalog-prices.mjs`**, reading `catalog-prices-manifest.json`. For each
+  listing it finds holdings filings that name its CUSIP through EDGAR's full-text search, paced
+  1.5 seconds apart with retries; reads the most recently filed of them, skipping any over 4 MB,
+  with the extraction rules `prices.ts` already had; keeps only holdings of that exact listing; and
+  takes the newest month-end on which funds under two different registrants agree within the
+  snapshot's own tolerance. It writes `lib/studio-project/data/catalog-prices.json` and the audit
+  page `docs/source-audits/studio-catalog-prices.md`, naming every filing that agreed.
+- **`lib/studio-project/catalog-prices.ts`**: the selection rules, pure and unit-tested. A price is
+  one a fund actually reported, never an average. A newer month-end that only one registrant
+  reported is set aside with the reason, not skipped silently.
+- **The catalogue** records each listing's CUSIP and a sentence saying what its price is, and reads
+  its prices from the data file. A missing or malformed entry gives no price, and the worksheet
+  asks for a broker quote as before.
+- **What to buy** no longer says Studio holds no market prices. Under each investment a line says
+  which price its amounts are worked out from, and the date that price was true. The broker price
+  fields are marked optional, and an entered price replaces the one on record for that investment.
+  The worksheet's warning now reads "This is the last price on record, not today's."
+
+### Found and fixed on the way
+
+- **A date check rejected every price, silently.** A backslash was lost between my edit and the
+  file, turning `\d` into `d`, so no date matched. Type-check passed, because the broken pattern
+  was still a valid one. The catalogue tests passed too, because the old guard only checked that
+  nothing but the Treasury note had a price. It is now written without backslashes, and the
+  rewritten test, which asserts that every entry is priced, would have failed on it. This is the
+  same lost backslash that broke R4's Keep-button pattern; patterns are now written with `[0-9]`.
+- **"Unrelated funds" said more than the rule does.** The rule counts registrants, and AGG's three
+  are two Columbia trusts and Catalyst. The code and audit page now say "registrants" and state that
+  one sponsor can file under two; the sentence a learner reads no longer claims a count.
+- **The guard test was rewritten, not deleted.** It said a fund gaining a price "is a licence
+  question and not a detail to slip through". It now states the new rule and why that question is
+  answered: SEC terms allow the filings to be copied and redistributed, and each price needs funds
+  under two registrants to agree.
+
+### Verified
+
+- `tsc` 0. Lint clean apart from the two older onboarding warnings. Vitest 55 files, 702 tests: 11
+  new, nine on the selection rules and two on the catalogue's prices.
+- **The script re-derived the research pass's prices through the app's own extraction rules**, and
+  all seven were identical to the figures read by hand earlier the same day.
+- Playwright on a production build: **110 passed, 4 skipped, none failed**. Two new checks: with a
+  portfolio of VTI and AGG, What to buy works out both from dated prices with no broker quote and
+  flags each as not today's; and an entered broker price replaces the price for that investment
+  only.
+- Six widths across every workspace route: problems none, every figure as before. What to buy with a
+  two-investment portfolio measures 1.44 screens at 1440, the first time it has been measured with a
+  portfolio in it; 2.14 at 1024 and 3.22 at 390.
+
+### Known limits
+
+- **A price is two to three months old when a learner sees it.** On 13 September the newest
+  usable month-end is 30 June. Every price shows its date and says it is not today's.
+- A price exists only while other funds hold the listing. VXUS has two registrants, and all 19 of
+  its holders were read.
+- Registrants are the nearest thing the filings record to independence, not a perfect one.
+- The refresh is a script someone runs once a month, not automatic.
+- The Treasury note's price is what it sold for at auction, not a market price since.
+
+**Outside websites needed to finish the Atkore journey: 0**, from 4 when the research report measured
+them.
+
+### Next concrete action
+
+Commit R5. Then, from the roadmap, R6: fund returns and costs from shareholder reports. The smaller
+alternative is shortening the open catalogue card in Research, 2.13 screens at 1440 before R2's
+record was added to it.

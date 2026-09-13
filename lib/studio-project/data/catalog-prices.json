@@ -1,0 +1,303 @@
+{
+  "retrievedAt": "2026-09-13",
+  "method": "Each price is a month-end closing price: what funds holding the listing reported it was worth, divided by the shares they held, from their SEC N-PORT holdings filings. It is accepted only when funds under at least two different registrants report the same month-end and agree within the snapshot's tolerance.",
+  "terms": "SEC website dissemination terms, read firsthand on 2026-09-10 (docs/source-audits/studio-online-data-and-tools.md §5.1): information on sec.gov may be copied or further distributed; citation is requested.",
+  "tolerance": 0.0005,
+  "minimumRegistrants": 2,
+  "listings": {
+    "vti": {
+      "symbol": "VTI",
+      "cusip": "922908769",
+      "price": 370.04,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 3,
+      "agreeing": [
+        {
+          "entity": "Connetic Venture Capital Access Fund",
+          "series": "Connetic Venture Capital Access Fund",
+          "cik": "1996211",
+          "accession": "0001996211-26-000007",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "PFS FUNDS",
+          "series": "Potomac Tactical Rotation Fund",
+          "cik": "1103243",
+          "accession": "0001103243-26-000103",
+          "filedAt": "2026-08-27"
+        },
+        {
+          "entity": "AUGUSTAR VARIABLE INSURANCE PRODUCTS FUND INC",
+          "series": "AVIP Constellation Managed Risk Growth Portfolio",
+          "cik": "315754",
+          "accession": "0000315754-26-000270",
+          "filedAt": "2026-08-26"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 88,
+      "filingsRead": 3,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    },
+    "voo": {
+      "symbol": "VOO",
+      "cusip": "922908363",
+      "price": 686.81,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 3,
+      "agreeing": [
+        {
+          "entity": "PIMCO Equity Series",
+          "series": "PIMCO REALPATH Blend 2070 Fund",
+          "cik": "1479360",
+          "accession": "0001410368-26-090153",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "ASSET MANAGEMENT FUND",
+          "series": "AAMA EQUITY FUND",
+          "cik": "705318",
+          "accession": "0000910472-26-013965",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "NORTHERN LIGHTS FUND TRUST III",
+          "series": "RESQ Dynamic Allocation Fund",
+          "cik": "1537140",
+          "accession": "0000910472-26-013522",
+          "filedAt": "2026-08-28"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 199,
+      "filingsRead": 3,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    },
+    "vxus": {
+      "symbol": "VXUS",
+      "cusip": "921909768",
+      "price": 85.49,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 2,
+      "agreeing": [
+        {
+          "entity": "Northern Lights Fund Trust",
+          "series": "Ocean Park International ETF",
+          "cik": "1314414",
+          "accession": "0000910472-26-013018",
+          "filedAt": "2026-08-27"
+        },
+        {
+          "entity": "LINCOLN VARIABLE INSURANCE PRODUCTS TRUST",
+          "series": "LVIP Vanguard International Equity ETF Fund",
+          "cik": "914036",
+          "accession": "0001410368-26-078311",
+          "filedAt": "2026-08-06"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 19,
+      "filingsRead": 19,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    },
+    "agg": {
+      "symbol": "AGG",
+      "cusip": "464287226",
+      "price": 98.98,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 3,
+      "agreeing": [
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - Managed Risk U.S. Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088877",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - U.S. Flexible Conservative Growth Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088898",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - U.S. Flexible Moderate Growth Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088870",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - U.S. Flexible Growth Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088871",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - Managed Risk Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088924",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - Managed Volatility Growth Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088869",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - Managed Volatility Conservative Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088907",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "COLUMBIA FUNDS VARIABLE INSURANCE TRUST",
+          "series": "Variable Portfolio - Managed Volatility Conservative Growth Fund",
+          "cik": "815425",
+          "accession": "0001410368-26-088891",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "Columbia Funds Variable Series Trust II",
+          "series": "Variable Portfolio - Managed Volatility Moderate Growth Fund",
+          "cik": "1413032",
+          "accession": "0001410368-26-088893",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "MUTUAL FUND SERIES TRUST",
+          "series": "Catalyst/Aspect Enhanced Multi-Asset Fund",
+          "cik": "1355064",
+          "accession": "0000910472-26-013403",
+          "filedAt": "2026-08-28"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 191,
+      "filingsRead": 10,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    },
+    "sgov": {
+      "symbol": "SGOV",
+      "cusip": "46436E718",
+      "price": 100.67,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 3,
+      "agreeing": [
+        {
+          "entity": "Advisors' Inner Circle Fund II",
+          "series": "3EDGE Dynamic Fixed Income ETF",
+          "cik": "890540",
+          "accession": "0002048251-26-007563",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "Advisors' Inner Circle Fund III",
+          "series": "Strategas Macro Thematic Opportunities ETF",
+          "cik": "1593547",
+          "accession": "0002048251-26-007557",
+          "filedAt": "2026-08-28"
+        },
+        {
+          "entity": "PFS FUNDS",
+          "series": "Potomac Tactical Opportunities Fund",
+          "cik": "1103243",
+          "accession": "0001103243-26-000106",
+          "filedAt": "2026-08-27"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 42,
+      "filingsRead": 3,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    },
+    "aapl": {
+      "symbol": "AAPL",
+      "cusip": "037833100",
+      "price": 289.36,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 3,
+      "agreeing": [
+        {
+          "entity": "360 Funds",
+          "series": "IMS Capital Value Fund",
+          "cik": "1319067",
+          "accession": "0002000324-26-004327",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "UPRIGHT INVESTMENTS TRUST",
+          "series": "Upright Growth and Income Fund",
+          "cik": "1058587",
+          "accession": "0001162044-26-000781",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "Segall Bryant & Hamill Trust",
+          "series": "BARRETT OPPORTUNITY FUND",
+          "cik": "357204",
+          "accession": "0000910472-26-013755",
+          "filedAt": "2026-08-28"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 199,
+      "filingsRead": 3,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    },
+    "tsm": {
+      "symbol": "TSM",
+      "cusip": "874039100",
+      "price": 477.57,
+      "asOf": "2026-06-30",
+      "fairValueLevel": "1",
+      "registrants": 3,
+      "agreeing": [
+        {
+          "entity": "SCM Trust",
+          "series": "ICON HEALTH AND INFORMATION TECHNOLOGY FUND",
+          "cik": "836267",
+          "accession": "0002000324-26-004308",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "UPRIGHT INVESTMENTS TRUST",
+          "series": "Upright Growth and Income Fund",
+          "cik": "1058587",
+          "accession": "0001162044-26-000781",
+          "filedAt": "2026-08-31"
+        },
+        {
+          "entity": "WEITZ FUNDS",
+          "series": "Weitz Large Cap Equity Fund",
+          "cik": "1257927",
+          "accession": "0000910472-26-014076",
+          "filedAt": "2026-08-31"
+        }
+      ],
+      "reason": null,
+      "holdersFound": 200,
+      "filingsRead": 3,
+      "filingsSkippedAsLarge": 0,
+      "setAside": []
+    }
+  }
+}

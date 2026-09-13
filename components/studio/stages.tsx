@@ -18,6 +18,7 @@ import { Choice, Fact, Field, Notice, NumberInput, Panel, Stat, StageHeading, Ta
 import ResearchRecord from "./ResearchRecord";
 import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
+import { longDate } from "@/lib/studio-project/cost-of-capital";
 
 /** What a change reports. The workspace's saves finish later, so it may arrive as a promise. */
 export type StageResult = { ok: true } | { ok: false; error: string; conflict: boolean };
@@ -676,8 +677,8 @@ export function BuyStage(props: StageProps) {
   return (
     <div className="space-y-5">
       <StageHeading {...headingFor(props)} title="Work out what to buy">
-        Studio holds no market prices. Enter the quote your broker shows and the date you saw it, and this works out a
-        quantity that stays inside your dollar target.
+        Each investment starts from its last price on record, with the date it was true. If your broker shows a
+        different price, enter it, and the quantity is worked out from yours instead.
       </StageHeading>
 
       <Notice tone="slate">
@@ -696,10 +697,22 @@ export function BuyStage(props: StageProps) {
                 </div>
                 <div className="text-[14px] tabular-nums text-slate-300">Target {usd(row.targetValue)}</div>
               </div>
+              {/*
+                * Which price the amounts below come from. A price on record is months old by
+                * the time anyone reads it, so its date and what it is sit right beside it; a
+                * broker's price, once entered, replaces it.
+                */}
+              <p className="mt-1 text-[13px] leading-6 text-slate-400">
+                {row.holding.quotePrice !== null
+                  ? `Worked out from your broker's price${isBond ? " per $100 of face value" : ""}, ${usd(row.holding.quotePrice)}${row.holding.quoteAsOf ? `, from ${row.holding.quoteAsOf}` : ""}.`
+                  : row.instrument && row.instrument.referencePrice !== null
+                    ? `Worked out from ${usd(row.instrument.referencePrice)}${isBond ? " per $100 of face value" : " a share"}, the price on ${longDate(row.instrument.priceAsOf)}: ${row.instrument.priceSource}.`
+                    : "There is no price on record for this one. Enter your broker's price to work out a quantity."}
+              </p>
 
               <div className="mt-4 grid gap-4 sm:grid-cols-3">
                 <Field
-                  label={isBond ? "Price per $100 of face value" : "Price per share"}
+                  label={isBond ? "Your broker's price per $100 of face value (optional)" : "Your broker's price per share (optional)"}
                   type="number" min={0} prefix="$"
                   value={row.holding.quotePrice ?? ""}
                   onChange={(event) =>
@@ -711,7 +724,7 @@ export function BuyStage(props: StageProps) {
                   }
                 />
                 <Field
-                  label="Date of that price"
+                  label="Date of your broker's price"
                   type="text"
                   placeholder="2026-09-04"
                   value={row.holding.quoteAsOf}

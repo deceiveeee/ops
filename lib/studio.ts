@@ -305,7 +305,8 @@ function orderFor(row: StudioCalculatedRow): StudioOrder {
   if (!instrument) return { ...blank, complete: false, warnings: ["This investment is missing from the current research library."] };
   if (price === null || !Number.isFinite(price) || price <= 0) return { ...blank, complete: false, warnings: ["Enter a dated broker quote to estimate a quantity. Your dollar target is saved."] };
   if (!priceAsOf) warnings.push("Add the date of this quote.");
-  if (holding.quotePrice === null) warnings.push("This is a dated research price. Verify a current broker quote before placing an order.");
+  // A price on record is months old by the time anyone reads it. Say so in the same breath as using it.
+  if (holding.quotePrice === null) warnings.push("This is the last price on record, not today's. Prices move, so check your broker's price before you buy.");
   if (isBond && !bond) return { ...blank, complete: false, warnings: ["Bond terms are missing. Verify the bond before estimating face value."] };
   if (accruedRate === null) warnings.push("Accrued interest is unknown and excluded. The quantity and total cost are incomplete estimates.");
   if (isBond) warnings.push("Confirm the broker's minimum face value, increments, accrued interest, and fees before buying.");

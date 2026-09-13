@@ -1,4 +1,5 @@
 import { PRODUCTS, RETRIEVED_AT, type Passport } from "@/lib/holdings-slate";
+import catalogPrices from "@/lib/studio-project/data/catalog-prices.json";
 
 /**
  * The investments a user can research inside Studio.
@@ -114,9 +115,16 @@ export interface StudioInstrument {
   assetClass: StudioAssetClass;
   /** Annual fund operating expenses. Null for anything with no filed fee table. */
   expenseRatioPct: number | null;
-  /** Null unless an official source publishes a price. Funds have none. */
+  /**
+   * A dated price from a checked public source, or null. Never a live quote: it is
+   * what that source said on `priceAsOf`, and the worksheet says so beside it.
+   */
   referencePrice: number | null;
   priceAsOf: string;
+  /** What the price is and where it came from, in words a learner can check. Empty with no price. */
+  priceSource: string;
+  /** The CUSIP of the exact listing a US learner buys. A bond carries its CUSIP on its terms instead. */
+  listingCusip: string | null;
   /** Smallest tradeable increment. Shares for funds and stocks; face value for bonds. */
   quantityStep: number;
   minimumUnits: number;
@@ -142,6 +150,33 @@ function filingIndexUrl(cik: string, accession: string): string {
   return `https://www.sec.gov/Archives/edgar/data/${Number(cik)}/${bare}/${accession}-index.htm`;
 }
 
+/** The listings a US learner buys, each confirmed against a real holding (docs/source-audits/studio-fund-prices.md). */
+const LISTING_CUSIP: Record<string, string> = {
+  vti: "922908769", voo: "922908363", vxus: "921909768", agg: "464287226", sgov: "46436E718", aapl: "037833100", tsm: "874039100",
+};
+
+type CatalogPrice = { price: number | null; asOf: string };
+
+/**
+ * The dated price for a listing, as scripts/source/fetch-catalog-prices.mjs last
+ * wrote it: a month-end closing price reported, in their SEC holdings filings, by
+ * funds holding the listing under at least two different registrants. Anything missing or malformed in that file
+ * gives no price, and the worksheet goes back to asking for a broker quote.
+ */
+function researchPrice(instrumentId: string): Pick<StudioInstrument, "referencePrice" | "priceAsOf" | "priceSource" | "listingCusip"> {
+  const entry = (catalogPrices.listings as unknown as Record<string, CatalogPrice | undefined>)[instrumentId];
+  const listingCusip = LISTING_CUSIP[instrumentId] ?? null;
+  if (!entry || typeof entry.price !== "number" || !(entry.price > 0) || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(entry.asOf)) {
+    return { referencePrice: null, priceAsOf: "", priceSource: "", listingCusip };
+  }
+  return {
+    referencePrice: entry.price,
+    priceAsOf: entry.asOf,
+    priceSource: "what funds holding it reported in their SEC holdings filings",
+    listingCusip,
+  };
+}
+
 /**
  * Asset class drives the stress scenario, so it is assigned from what each fund
  * says it tracks, not from a guess about how it behaves. All four of Mission
@@ -164,8 +199,7 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
     kind: "fund",
     assetClass: ASSET_CLASS[passport.ticker] ?? "us-equity",
     expenseRatioPct: passport.totalExpensePct,
-    referencePrice: null,
-    priceAsOf: "",
+    ...researchPrice(passport.ticker.toLowerCase()),
     quantityStep: 1,
     minimumUnits: 1,
     // Issuer rollup, not the raw position list: two share classes of one
@@ -235,8 +269,7 @@ const APPLE: StudioInstrument = {
   // A share has no fund operating expenses. Null rather than zero: holding it
   // still costs commission and spread, which this figure does not describe.
   expenseRatioPct: null,
-  referencePrice: null,
-  priceAsOf: "",
+  ...researchPrice("aapl"),
   quantityStep: 1,
   minimumUnits: 1,
   // One company is one issuer, at its whole weight. Not a sample, so coverage
@@ -284,8 +317,7 @@ const TSMC: StudioInstrument = {
   // international shock is the one that should apply to it.
   assetClass: "international-equity",
   expenseRatioPct: null,
-  referencePrice: null,
-  priceAsOf: "",
+  ...researchPrice("tsm"),
   quantityStep: 1,
   minimumUnits: 1,
   exposures: [
@@ -325,10 +357,10 @@ const TSMC: StudioInstrument = {
  * accrued-interest handling has a real issue to work on.
  *
  * Every figure is from the US Treasury's own auction record for this CUSIP,
- * retrieved 2026-09-04 from the Fiscal Data auctions query. It is the only
- * catalog entry carrying a price, and the reason is narrow: Treasury publishes
- * the auction price itself, so this is an official dated figure rather than
- * market data OPS is not licensed to supply. It is the price at one auction on
+ * retrieved 2026-09-04 from the Fiscal Data auctions query. Its price is the one
+ * Treasury itself set at auction, an official dated figure; the other entries are
+ * priced from SEC holdings filings by scripts/source/fetch-catalog-prices.mjs. It
+ * is the price at one auction on
  * one date, not a current quote, and the worksheet says so — an entry with a
  * `referencePrice` and no user quote already warns that it is a dated research
  * price to verify with a broker.
@@ -344,6 +376,8 @@ const TREASURY_10Y: StudioInstrument = {
   expenseRatioPct: null,
   referencePrice: 99.540696,
   priceAsOf: "2026-08-12",
+  priceSource: "the price the US Treasury set at this note's auction",
+  listingCusip: null,
   // Treasury sets a $100 minimum in $100 multiples. A broker may require more,
   // which the worksheet tells the user to confirm.
   quantityStep: 100,
@@ -402,8 +436,7 @@ const VXUS: StudioInstrument = {
   kind: "fund",
   assetClass: "international-equity",
   expenseRatioPct: 0.05,
-  referencePrice: null,
-  priceAsOf: "",
+  ...researchPrice("vxus"),
   quantityStep: 1,
   minimumUnits: 1,
   // The eight largest issuers by weight, rolled up across every position each

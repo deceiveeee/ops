@@ -482,8 +482,9 @@ pages would not draw; the rest was read as page text and measured with scripts.
 borrowing rate now arrives inside Investigate with its date and its source; and the seven figures
 arrive from the company's own filing, each carrying the tag it was read from, so they no longer
 have to be copied from anywhere. The changes of 2026-09-13 removed a third: the reader inside Studio shows every section in full
-and searches it, so the input-cost passages are found in Studio and can be kept as evidence. One
-remains: "What to buy" still asks for a broker quote.
+and searches it, so the input-cost passages are found in Studio and can be kept as evidence. R5,
+the same day, removed the last: "What to buy" starts from a dated price for every investment. None
+remain.
 
 The dead end is also no longer silent. Investigate still preselects an industry, but where the SEC
 files a company under one Studio has not researched it now says so, and names the industry whose
@@ -694,7 +695,7 @@ Each item names what the learner gains and the check that proves it.
   - Milestone: M3.
 - **R5. Research prices in the app,** for stocks and bills, with dates and fair-value levels. The
   broker quote becomes an optional override. **Checked before building, 2026-09-13:** all eight
-  catalogue investments can carry a dated price (`studio-fund-prices.md`).
+  catalogue investments can carry a dated price (`studio-fund-prices.md`). **Done the same day (§13).**
   - Learner: can finish "What to buy" with no outside quote.
   - Check: outside site 3 is gone, and every price shows its date. Also measure price coverage
     for the catalogue ETFs' own shares. Measured: the five funds and TSMC's American share are each
@@ -868,6 +869,26 @@ TSMC's American share had none. Detail in `studio-fund-prices.md`.
   a different company, priced at $2.03.
 - Set aside: the funds' own shareholder reports, which tag no per-share value; the quarterly N-PORT
   data sets, 387 to 483 MB each and not needed.
+
+### R5, done 2026-09-13
+
+**"What to buy" starts from a dated price for every investment, and a learner's broker price replaces
+it when one is entered.** Detail in the ledger entry "2026-09-13: What to buy starts from a dated
+price".
+
+- **Seven prices come from other funds' SEC holdings filings**, each the newest month-end on which
+  funds under two different registrants agree; the Treasury note keeps its auction price. Re-derived
+  by `scripts/source/fetch-catalog-prices.mjs` through the app's own extraction rules, all seven
+  matched the figures the research pass read by hand.
+- **Every price shows its date and says what it is**, and the worksheet says it is the last price on
+  record, not today's. That keeps to the rule of dated snapshots over live quotes.
+- **Registrants are the proxy for independence the filings allow**, and not a perfect one: AGG's three
+  are two Columbia trusts and Catalyst. The audit page, `studio-catalog-prices.md`, says so and names
+  every filing that agreed.
+- The check in this section is met: outside site 3 is gone, and every price shows its date.
+
+**Outside websites needed to finish the Atkore journey: 0**, from 4 when §7.1 measured them. Next in
+§10: R6, fund returns and costs from shareholder reports.
 
 ## Appendix A. Probe log
 
