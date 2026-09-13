@@ -100,6 +100,16 @@ export interface FigureInvestigation {
    * company's and which were the learner's own.
    */
   source?: FigureSource | null;
+  /**
+   * Passages kept from the company's own filings, as evidence for or against
+   * the reading these figures produce.
+   *
+   * They live here rather than on a catalogue record because the company does:
+   * Atkore is an investigation of seven figures, not an entry in the catalogue,
+   * and its passages belong beside its figures. Absent on every record saved
+   * before the reader could keep a passage.
+   */
+  passages?: KeptPassage[];
 }
 
 /**
@@ -125,6 +135,41 @@ export interface FigureSource {
   filed: string;
   /** Keyed by figure name: the XBRL tags read, and how they were combined. */
   figures: Record<string, { concepts: string[]; addedUp: string | null }>;
+}
+
+/**
+ * A passage kept from a filing, stored so it can be found again.
+ *
+ * The quote alone is not enough and neither is the offset alone. The filed
+ * document never changes, but the text Studio extracts from it can when the
+ * extractor improves, and a bare offset would then point at a paragraph the
+ * learner never read. So the exact quote travels with up to 32 characters
+ * either side and the position it was kept at; `lib/filings/anchor.ts` uses
+ * all three to find it again, and says plainly when it cannot.
+ */
+export interface KeptPassage {
+  id: string;
+  savedAt: string;
+  cik: string;
+  accession: string;
+  /** The document inside the filing, which is what the reader opens. */
+  document: string;
+  form: string;
+  /** The filing date, or empty for a filing older than the company's index lists. */
+  filed: string;
+  sectionId: string;
+  quote: string;
+  prefix: string;
+  suffix: string;
+  /** Where the quote began in the section text when it was kept. */
+  offset: number;
+  /**
+   * Kept as background until the learner says otherwise. Keeping a passage is
+   * one action; deciding what it argues is a judgment, and it is made beside
+   * the figures rather than forced at the moment of reading.
+   */
+  role: EvidenceRole;
+  note: string;
 }
 
 /** A pointer back to something the learner actually read. */

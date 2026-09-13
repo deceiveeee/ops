@@ -30,6 +30,8 @@ export type EdgarResult<T> = ({ ok: true } & T) | EdgarUnavailable;
 
 /** The declared identity, or null when the deployment has not configured one. */
 export function secUserAgent(): string | null {
+  // Fixture mode never reaches the SEC, so it has no one to identify itself to.
+  if (process.env.OPS_EDGAR_FIXTURE_DIR?.trim()) return "Open Portfolio Studio test fixtures";
   const contact = process.env.OPS_SEC_CONTACT?.trim();
   if (!contact) return null;
   return `Open Portfolio Studio educational research ${contact}`;
@@ -42,10 +44,46 @@ const noContact: EdgarUnavailable = {
     "This reader fetches documents straight from EDGAR, and the SEC requires a contact address in the request. Set OPS_SEC_CONTACT to enable it.",
 };
 
+/**
+ * The file a URL is served from when `OPS_EDGAR_FIXTURE_DIR` is set.
+ *
+ * Every character that is not a letter, digit, dot, dash or underscore becomes
+ * an underscore, so no name can climb out of the directory it is read from.
+ */
+export function fixtureFileName(url: string): string {
+  return url.replace(/[^A-Za-z0-9._-]/g, "_");
+}
+
+/**
+ * Company reports from files on disk instead of from sec.gov.
+ *
+ * For the end-to-end tests, which must pass whether or not the SEC is reachable,
+ * fast or rate-limiting that afternoon. Set only in `playwright.config.ts`. A
+ * missing fixture is "not found" and never falls through to the network, so a
+ * test run cannot quietly send requests the fixtures were meant to replace.
+ *
+ * The imports are dynamic, and hidden from webpack, so the file system is only
+ * reached for when fixture mode is actually on. The pure helpers in this module
+ * are the kind client code reaches for, and a top-level import of `node:fs`
+ * would turn any such import into a failed browser build.
+ */
+async function readFixture(directory: string, url: string): Promise<EdgarResult<{ body: string }>> {
+  try {
+    const { readFile } = await import(/* webpackIgnore: true */ "node:fs/promises");
+    const { join } = await import(/* webpackIgnore: true */ "node:path");
+    return { ok: true, body: await readFile(join(directory, fixtureFileName(url)), "utf8") };
+  } catch {
+    return { ok: false, reason: "not-found", message: "EDGAR has no document at that address." };
+  }
+}
+
 async function secFetch(
   url: string,
   revalidateSeconds: number,
 ): Promise<EdgarResult<{ body: string }>> {
+  const fixtures = process.env.OPS_EDGAR_FIXTURE_DIR?.trim();
+  if (fixtures) return readFixture(fixtures, url);
+
   const ua = secUserAgent();
   if (!ua) return noContact;
 

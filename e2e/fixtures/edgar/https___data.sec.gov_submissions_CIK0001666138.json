@@ -1,0 +1,25 @@
+{
+  "cik": "1666138",
+  "name": "Atkore Inc.",
+  "sic": "3690",
+  "sicDescription": "Miscellaneous Electrical Machinery, Equipment & Supplies",
+  "filings": {
+    "recent": {
+      "accessionNumber": [
+        "0001628280-25-054049"
+      ],
+      "filingDate": [
+        "2025-11-26"
+      ],
+      "reportDate": [
+        "2025-09-30"
+      ],
+      "form": [
+        "10-K"
+      ],
+      "primaryDocument": [
+        "atkr-20250930.htm"
+      ]
+    }
+  }
+}

@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
 import { TREASURY_RATE, estimate, forSic, industryNames, forIndustry, longDate } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
-import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
-import { latestInvestigation, type FigureSource } from "@/lib/studio-project/schema";
+import { newInvestigationId, removeInvestigation, removePassage, saveInvestigation, updatePassage } from "@/lib/studio-project/operations";
+import { latestInvestigation, type EvidenceRole, type FigureSource, type KeptPassage } from "@/lib/studio-project/schema";
 import type { MissingFigure, SuppliedFigure } from "@/lib/studio-project/prefill";
-import { Panel, StageHeading } from "./shared";
+import { FILING_SECTIONS } from "@/lib/filings/sections";
+import { Field, Panel, StageHeading } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
 
@@ -68,6 +70,13 @@ const readableDate = (iso: string): string => {
 /** What the SEC lookup is doing, so the button can say so rather than just sit there. */
 type Lookup = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message: string };
 
+/** The same three words the research record uses, so a role means one thing everywhere. */
+const PASSAGE_ROLES: { value: EvidenceRole; label: string; tone: string }[] = [
+  { value: "supports", label: "For it", tone: "border-accent-green/40 bg-accent-green/10 text-accent-green" },
+  { value: "challenges", label: "Against it", tone: "border-accent-amber/40 bg-accent-amber/10 text-accent-amber" },
+  { value: "context", label: "Background", tone: "border-white/25 bg-white/10 text-slate-200" },
+];
+
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
   const [sic, setSic] = useState(RESEARCHED[0].sic);
@@ -97,6 +106,7 @@ export default function InvestigateView() {
    * the rest of Studio uses; nothing here writes its own store.
    */
   const { session: project, setDraft } = useWorkspace();
+  const router = useRouter();
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
   const hydrated = useRef(false);
@@ -347,7 +357,10 @@ export default function InvestigateView() {
    * that cannot be undone by carrying on typing. It asks first.
    */
   const forget = useCallback(async (id: string, label: string) => {
-    if (!window.confirm(`Delete ${label}? The figures you entered for it will be gone.`)) return;
+    // Kept passages go with the company, so the warning names them.
+    const keptCount = sessionRef.current.project?.investigations.find((item) => item.id === id)?.passages?.length ?? 0;
+    const alsoGone = keptCount ? ` and the ${keptCount} ${keptCount === 1 ? "passage" : "passages"} you kept from its filings` : "";
+    if (!window.confirm(`Delete ${label}? The figures you entered for it${alsoGone} will be gone.`)) return;
     const result = await sessionRef.current.update((current) => removeInvestigation(current, id));
     if (!result.ok) { setSaveNote({ kind: "error", message: result.error }); return; }
     if (idRef.current !== id) return;
@@ -358,6 +371,66 @@ export default function InvestigateView() {
     if (next) await open(next.id);
     else await startNew();
   }, [open, startNew]);
+
+  /*
+   * Passages kept from this company’s filings, read from the saved project
+   * rather than held in page state. The reader writes them, not this page, so
+   * the stored record is the only place that knows them.
+   */
+  const passages: KeptPassage[] = saved.find((item) => item.id === investigationId)?.passages ?? [];
+  const [passageNote, setPassageNote] = useState<{ id: string; message: string; search?: string } | null>(null);
+
+  const markPassage = (passageId: string, patch: Partial<Pick<KeptPassage, "role" | "note">>) => {
+    const target = idRef.current;
+    if (!target) return undefined;
+    return sessionRef.current.update((current) => updatePassage(current, target, passageId, patch));
+  };
+
+  const dropPassage = async (passageId: string) => {
+    const target = idRef.current;
+    if (!target) return;
+    const result = await sessionRef.current.update((current) => removePassage(current, target, passageId));
+    if (!result.ok) setSaveNote({ kind: "error", message: result.error });
+  };
+
+  /**
+   * Open a kept passage where it is now.
+   *
+   * The report is fetched fresh and the passage found again across its whole
+   * section by the locate-passage route, so what opens is where the words are
+   * today. When they cannot be found, that is said, with a search for their
+   * opening words as the way to look.
+   */
+  const openPassage = async (passage: KeptPassage) => {
+    setPassageNote(null);
+    const opening = passage.quote.split(/\s+/).slice(0, 5).join(" ");
+    const reader = `/studio/filings/${passage.cik}/${passage.accession}?doc=${encodeURIComponent(passage.document)}`;
+    let answer: { found?: boolean; strategy?: string; sectionId?: string; start?: number; end?: number; message?: string; error?: string };
+    try {
+      const response = await fetch("/api/studio/locate-passage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cik: passage.cik, accession: passage.accession, document: passage.document, sectionId: passage.sectionId,
+          quote: passage.quote, prefix: passage.prefix, suffix: passage.suffix, offset: passage.offset,
+        }),
+      });
+      answer = await response.json();
+    } catch {
+      setPassageNote({ id: passage.id, message: "The report could not be reached just now." });
+      return;
+    }
+    if (!answer.found || answer.start === undefined || answer.end === undefined) {
+      setPassageNote({
+        id: passage.id,
+        message: answer.message ?? answer.error ?? "This passage could not be found in the report any more.",
+        search: `${reader}&q=${encodeURIComponent(opening)}`,
+      });
+      return;
+    }
+    const moved = answer.strategy && answer.strategy !== "position" ? `&moved=${answer.strategy}` : "";
+    router.push(`${reader}&section=${answer.sectionId}&at=${answer.start}&len=${answer.end - answer.start}${moved}#passage`);
+  };
 
   const researched = RESEARCHED.find((entry) => entry.sic === sic)!;
   const sector = SECTOR_BY_SIC[sic] ?? "general";
@@ -830,6 +903,92 @@ export default function InvestigateView() {
           )}
         </div>
       </div>
+
+      {/*
+        * Passages kept while reading this company’s reports, beside the reading
+        * they bear on. Absent until one is kept, so the page is no taller for
+        * a learner who has not used the reader.
+        */}
+      {passages.length ? (
+        <Panel>
+          <h3 className="text-[15px] font-semibold text-white">
+            From its own filings <span className="font-normal text-slate-500">({passages.length})</span>
+          </h3>
+          <p className="mt-1 text-[13px] leading-6 text-slate-400">
+            Passages you kept while reading. Say whether each argues for this business or against it.
+          </p>
+          <ul className="mt-3 space-y-4">
+            {passages.map((passage) => {
+              const sectionLabel = FILING_SECTIONS.find((item) => item.id === passage.sectionId)?.label ?? passage.sectionId;
+              return (
+                <li key={passage.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+                  <blockquote className="line-clamp-4 border-l-2 border-accent-cyan/40 pl-3 text-[14px] leading-6 text-slate-200">
+                    {passage.quote}
+                  </blockquote>
+                  <p className="mt-1.5 text-[12px] leading-5 text-slate-500">
+                    {passage.form || "Report"} · {sectionLabel}
+                    {passage.filed ? ` · filed ${passage.filed}` : ""}
+                  </p>
+                  <div className="mt-3 grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)]">
+                    <fieldset>
+                      <legend className="text-[13px] font-semibold text-white">Does it argue for it or against it?</legend>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {PASSAGE_ROLES.map((option) => (
+                          <label
+                            key={option.value}
+                            className={cn(
+                              "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3.5 text-[13px] transition-colors focus-within:ring-2 focus-within:ring-accent-cyan/40",
+                              passage.role === option.value ? option.tone : "border-white/12 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white",
+                            )}
+                          >
+                            <input
+                              type="radio"
+                              name={`passage-role-${passage.id}`}
+                              value={option.value}
+                              checked={passage.role === option.value}
+                              onChange={() => void markPassage(passage.id, { role: option.value })}
+                              className="sr-only"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                    <Field label="What it shows" value={passage.note} onChange={(value) => markPassage(passage.id, { note: value })} multiline />
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <button
+                      type="button"
+                      onClick={() => void openPassage(passage)}
+                      className="inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                    >
+                      Open it in the report
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void dropPassage(passage.id)}
+                      aria-label="Remove this passage"
+                      className="inline-flex min-h-11 items-center text-[13px] text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  {passageNote?.id === passage.id ? (
+                    <p role="alert" className="mt-1 text-[13px] leading-6 text-accent-amber">
+                      {passageNote.message}{" "}
+                      {passageNote.search ? (
+                        <Link href={passageNote.search} className="underline underline-offset-2">
+                          Search the report for it
+                        </Link>
+                      ) : null}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </Panel>
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <p className="text-[12px] leading-5 text-slate-600">

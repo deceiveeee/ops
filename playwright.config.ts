@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { resolve } from "node:path";
 
 /**
  * The suite runs against a production build, not `next dev`.
@@ -64,6 +65,14 @@ export default defineConfig({
      * to start is the honest outcome.
      */
     reuseExistingServer: !process.env.CI && useDevServer,
+    /*
+     * Company reports are read from fixtures, not fetched from sec.gov, so the
+     * reader's tests pass or fail on the code rather than on the SEC's
+     * availability that minute. See `readFixture` in lib/filings/edgar.ts and
+     * e2e/fixtures/edgar/README.md. A reused dev server started without this
+     * variable will fetch live, which is one more reason reuse stays off here.
+     */
+    env: { OPS_EDGAR_FIXTURE_DIR: resolve(process.cwd(), "e2e", "fixtures", "edgar") },
     // The default is 60s and the build alone takes longer than that.
     timeout: useDevServer ? 120_000 : 300_000,
   },

@@ -76,7 +76,7 @@ export function validateStudioProject(value: unknown): string[] {
     if (!list(value.investigations, 10_000)) issues.push("The project needs an investigation list with at most 10,000 companies.");
     else for (const investigation of value.investigations) {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct", "source"])
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct", "source", "passages"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
         // null means "use the published rate", which is different from zero.
@@ -122,6 +122,33 @@ export function validateStudioProject(value: unknown): string[] {
             && (entry.concepts as unknown[]).every((concept) => text(concept, 200))
             && (entry.addedUp === null || text(entry.addedUp, 300)))) {
           issues.push("A company investigation records where its figures came from in a form this version does not understand.");
+        }
+      }
+      /*
+       * Kept passages are shown beside a learner's own note as the words a
+       * filing used. Checked rather than trusted, because a hand-edited backup
+       * could otherwise put words in a filing's mouth, or give a passage an
+       * offset that points somewhere it never was.
+       */
+      if (investigation.passages !== undefined) {
+        if (!list(investigation.passages, 1000)) issues.push("A company investigation can keep at most 1,000 passages.");
+        else for (const passage of investigation.passages) {
+          if (!object(passage)
+            || !keys(passage, ["id", "savedAt", "cik", "accession", "document", "form", "filed", "sectionId", "quote", "prefix", "suffix", "offset", "role", "note"])
+            || !uniqueId(passage.id) || !timestamp(passage.savedAt)
+            || !id(passage.cik) || !text(passage.cik, 20)
+            || !id(passage.accession) || !text(passage.accession, 40)
+            || !id(passage.document) || !text(passage.document, 200)
+            || !text(passage.form, 20) || !text(passage.filed, 10)
+            || !id(passage.sectionId) || !text(passage.sectionId, 40)
+            // Not id(): that caps text at 200 characters, and a paragraph of a 10-K
+            // runs past 2,000. Every whole paragraph kept was refused until 2026-09-13.
+            || !text(passage.quote, 5000) || !passage.quote.trim()
+            || !text(passage.prefix, 64) || !text(passage.suffix, 64)
+            || !(typeof passage.offset === "number" && Number.isInteger(passage.offset) && passage.offset >= 0)
+            || !choice(passage.role, ["supports", "challenges", "context"]) || !text(passage.note)) {
+            issues.push("A kept passage contains missing, repeated, or invalid fields.");
+          }
         }
       }
     }

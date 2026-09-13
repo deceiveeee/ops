@@ -6,6 +6,7 @@ import {
   type EvidenceRole,
   type FigureInvestigation,
   type FigureSource,
+  type KeptPassage,
   type PortfolioAlternative,
   type StudioProject,
 } from "./schema";
@@ -100,6 +101,13 @@ export function saveInvestigation(
     figures: { ...edit.figures },
     riskFreePct: edit.riskFreePct,
     source: edit.source ?? null,
+    /*
+     * Carried over, never taken from the edit. Investigate saves as it is typed
+     * and knows nothing about passages kept in the reader, so rebuilding the
+     * record from its edit alone would delete every kept passage on the next
+     * keystroke — silently, and long after the learner kept them.
+     */
+    ...(existing?.passages ? { passages: existing.passages } : {}),
   };
   const investigations = existing
     ? project.investigations.map((item) => (item.id === existing.id ? record : item))
@@ -119,6 +127,121 @@ export function removeInvestigation(
     investigations: project.investigations.filter((item) => item.id !== id),
     updatedAt: now,
   };
+}
+
+/** What the reader supplies when a passage is kept. The judgment on it comes later. */
+export type PassageEdit = Omit<KeptPassage, "id" | "savedAt" | "role" | "note">;
+
+/** An id for a passage about to be kept, so the page can refer to it straight away. */
+export function newPassageId(): string {
+  return makeId("psg");
+}
+
+/** SEC numbers arrive padded and unpadded; they name the same company either way. */
+const bareCik = (cik: string) => cik.replace(/\D/g, "").replace(/^0+/, "");
+
+/**
+ * Keep a passage from a filing against a company investigation.
+ *
+ * It is kept as background. Keeping is one action taken while reading; saying
+ * whether a passage argues for the business or against it is a judgment, and it
+ * is made in Investigate beside the figures the passage bears on.
+ *
+ * Keeping the same passage twice is not two pieces of evidence, so a second
+ * press on the same words at the same place changes nothing.
+ */
+export function keepPassage(
+  project: StudioProject,
+  investigationId: string,
+  passage: PassageEdit,
+  id: string = makeId("psg"),
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target) return project;
+  const already = (target.passages ?? []).some(
+    (kept) =>
+      kept.accession === passage.accession &&
+      kept.sectionId === passage.sectionId &&
+      kept.offset === passage.offset &&
+      kept.quote === passage.quote,
+  );
+  if (already) return project;
+  const kept: KeptPassage = { ...passage, id, savedAt: now, role: "context", note: "" };
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, passages: [...(item.passages ?? []), kept] }, now) : item,
+    ),
+  };
+}
+
+/** Say what a kept passage argues, or what it shows, in the learner's own words. */
+export function updatePassage(
+  project: StudioProject,
+  investigationId: string,
+  passageId: string,
+  patch: Partial<Pick<KeptPassage, "role" | "note">>,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.passages?.some((kept) => kept.id === passageId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId
+        ? touch({ ...item, passages: item.passages!.map((kept) => (kept.id === passageId ? { ...kept, ...patch } : kept)) }, now)
+        : item,
+    ),
+  };
+}
+
+/** Let one passage go. The figures and every other passage stay. */
+export function removePassage(
+  project: StudioProject,
+  investigationId: string,
+  passageId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.passages?.some((kept) => kept.id === passageId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId
+        ? touch({ ...item, passages: item.passages!.filter((kept) => kept.id !== passageId) }, now)
+        : item,
+    ),
+  };
+}
+
+/**
+ * The investigation a company's filing belongs with, when the learner has one.
+ *
+ * Three honest links, any one of which is enough: the figures were filled from
+ * this company's filings, a passage has already been kept from them, or the
+ * learner's name for the company is EDGAR's name for it. The most recently
+ * touched wins, which is the one the learner was last working on. Nothing is
+ * matched on a near-miss name: "Atkore" typed by hand is not treated as
+ * "Atkore Inc." here, and the reader offers the choice instead of guessing.
+ */
+export function investigationForCompany(
+  project: StudioProject,
+  company: { cik: string; name: string },
+): FigureInvestigation | undefined {
+  const cik = bareCik(company.cik);
+  const name = company.name.trim().toLowerCase();
+  return project.investigations
+    .filter(
+      (item) =>
+        (item.source != null && bareCik(item.source.cik) === cik) ||
+        (item.passages ?? []).some((kept) => bareCik(kept.cik) === cik) ||
+        (name !== "" && item.company.trim().toLowerCase() === name),
+    )
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
 }
 
 /**

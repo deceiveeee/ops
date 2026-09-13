@@ -481,9 +481,9 @@ pages would not draw; the rest was read as page text and measured with scripts.
 **Since measured.** The changes of 2026-09-11 (§13) removed two of the four. The government
 borrowing rate now arrives inside Investigate with its date and its source; and the seven figures
 arrive from the company's own filing, each carrying the tag it was read from, so they no longer
-have to be copied from anywhere. Two remain: the input-cost passages still need the full filing,
-because the reader inside Studio shows an excerpt of each section, and "What to buy" still asks for
-a broker quote.
+have to be copied from anywhere. The changes of 2026-09-13 removed a third: the reader inside Studio shows every section in full
+and searches it, so the input-cost passages are found in Studio and can be kept as evidence. One
+remains: "What to buy" still asks for a broker quote.
 
 The dead end is also no longer silent. Investigate still preselects an industry, but where the SEC
 files a company under one Studio has not researched it now says so, and names the industry whose
@@ -686,10 +686,11 @@ Each item names what the learner gains and the check that proves it.
     longer have to be copied from anywhere.
   - Milestone: M3.
 - **R4. The reader inside Research:** whole sections, paged; find in a filing; save a passage as
-  evidence.
+  evidence. **Done 2026-09-13 (§13).**
   - Learner: finds "PVC resin" in Atkore's 10-K without leaving Studio.
   - Check: a full-text hit leads to the passage in the app; a saved passage is found again after
-    a re-fetch; each view is within 1.5 screens. Outside site 4 is gone.
+    a re-fetch; each view is within 1.5 screens. Outside site 4 is gone. All met, the second on text
+    that really shifted between two extractions of the filing.
   - Milestone: M3.
 - **R5. Research prices in the app,** for stocks and bills, with dates and fair-value levels. The
   broker quote becomes an optional override.
@@ -821,6 +822,32 @@ and evidence for and against".
 
 Next in §10: R4, the reader with whole sections and find-in-filing, which would take the outside
 websites from two to one and let a passage be saved straight into the record built here.
+
+### R4, done 2026-09-13
+
+**A learner can read a whole annual report inside Studio, search it, and keep passages from it as
+evidence in their investigation of the company.** Detail in the ledger entry "2026-09-13: the whole
+report, searchable, with passages kept as evidence".
+
+- **Outside site 4 is gone.** Every section reads in full, in pages sized to the screen: 1.22 to 1.43
+  screens at 1440, and 1.50 on the page that says a kept passage has moved. Searching "PVC resin"
+  finds it in business, risk factors, management's discussion and market risk, and a hit opens the
+  passage, marked.
+- **Principle 8 is met.** Keeping takes one action, or two for a selection, and a kept passage is
+  found again after a re-fetch — the Hypothesis pattern in §7.3: the exact quote, 32 characters
+  either side and its position, re-found by four strategies in order of confidence. This was proved
+  on text that really shifted, a passage anchored in the live filing and found in a re-extracted
+  copy, and the page says when a passage has moved or can no longer be found.
+- **Where passages live was the user's decision:** in the company's investigation, beside its
+  figures, because Atkore is an investigation rather than a catalogue entry.
+- **The pages are sized by the height they will take, not by characters**, from a model calibrated
+  on 56 measured paragraphs. A page of a financial table counted by characters had rendered at 1.9
+  screens.
+- The browser tests read these reports from fixtures of the filing's own text rather than from
+  sec.gov, so a result cannot depend on the SEC's availability.
+
+Outside websites needed to finish the Atkore journey: **1**, the broker quote in What to buy. Next in
+§10: R5, research prices in the app.
 
 ## Appendix A. Probe log
 

@@ -1060,3 +1060,108 @@ R2 in the research roadmap. Committed work up to this point is `fb65670`.
 R4 in the roadmap: the reader with whole sections and find-in-filing, which would take the outside
 websites needed to finish the Atkore journey from two to one, and would let a passage be saved as
 evidence straight from the filing — which is what the record was built to receive.
+
+## 2026-09-13: the whole report, searchable, with passages kept as evidence
+
+R4 in the research roadmap, with the user's decision that passages attach to the company's
+investigation in Investigate rather than to a catalogue record. Committed work up to this point is
+`ccb980c`.
+
+### Built
+
+- **Every section readable in full, a page at a time.** The reader showed 2,600 characters of each
+  section and linked to sec.gov for the rest. Atkore's first mention of PVC resin, the input whose
+  price moves its margins, is 8,274 characters into its business section, where no excerpt reached.
+  Pages break between paragraphs, never inside one.
+- **Pages sized by the height they take, not by characters.** Counting characters, a page of
+  management's discussion that was really a financial table — dozens of one-line paragraphs —
+  rendered 1,708px at 1440 against 968px for business prose of similar length. The model was
+  calibrated on 56 paragraphs measured in the reader: a 643px column, 28px lines, 89 characters to a
+  line, and a Keep button that makes each paragraph's last line 32px. It put every one on the right
+  number of lines, and on four whole pages its estimate matched the measured height to the pixel.
+- **Find in this report.** Ignores capitals and spacing; does not stem, guess synonyms or rank. Each
+  hit names its section and page, with about eight words either side, eight at a time. It searches
+  the seven sections the reader extracts, and the page says so.
+- **Keep a passage.** A Keep beside every paragraph keeps it; selecting words inside the paragraph
+  first keeps just those. It goes to the learner's investigation of this company, matched on the
+  SEC's company number, on a passage already kept from it, or on EDGAR's exact name — never on a
+  name that is merely close. With no such investigation, keeping starts one and says so, and Undo
+  takes back both. A passage arrives as background; the judgment is made in Investigate. Each Keep
+  is named for its paragraph's number and opening words, so no two on a page share a name.
+- **Kept passages in Investigate**, under "From its own filings", absent until one is kept: the
+  quote, where it came from, For it / Against it / Background, what it shows, "Open it in the
+  report", and Remove. Deleting the company warns that its passages go too.
+- **Found again in a fresh copy of the report.** Opening a kept passage sends its anchor — the exact
+  words, 32 characters either side and where it began — to a new route, which fetches and
+  re-extracts the filing and looks across the whole section by position, then by the words with
+  their surroundings, then by the words alone, then ignoring spacing and capitals. When it has
+  moved the page says so; when it cannot be found the learner is told, with a search for its
+  opening words.
+- **Report fixtures instead of sec.gov in the browser tests.** `OPS_EDGAR_FIXTURE_DIR`, set only in
+  `playwright.config.ts`, serves Atkore's FY2025 10-K trimmed from 2,358 KB to 108 KB of its own
+  text, a minimal filing index, and passages anchored in the live filing. A missing fixture is "not
+  found"; nothing falls through to the network. See `e2e/fixtures/edgar/README.md`.
+
+### Found and fixed on the way
+
+- **Storage refused every whole paragraph.** The validator checked a kept quote with the rule for
+  ids, which stops at 200 characters; paragraphs run past 2,000. The unit test used a 71-character
+  quote and passed. The browser suite caught it. There is now a test at 2,303 characters, the
+  longest paragraph in Atkore's business section.
+- **Investigate's autosave would have deleted kept passages.** It rebuilds the record from what is on
+  its page, and its page knows nothing of passages. `saveInvestigation` now carries them over, and
+  a test types a figure after keeping one.
+- **A search hit arrived before the page did.** The workspace shows "Opening your work…" until saved
+  work loads, so the browser's jump to `#passage` found nothing. The passage now brings itself into
+  view when it appears.
+- **The heading block was 170px at 1440**, because the long facts line pushed search underneath it;
+  it is 92px. The section tabs wrapped to two rows and are one.
+- **Two code comments said things that were not so**: that the catalogue imports `edgar.ts` (it has
+  its own copy of the helper), and that filings repeat their own subheadings (never checked). Both
+  were rewritten to what is true.
+
+### Verified
+
+- `tsc` 0. Lint clean apart from the two older onboarding warnings. Vitest 54 files, 691 tests: 49
+  new, on paging and the height model's two measured line breaks, search, kept passages and their
+  validation, and anchoring.
+- **Anchoring on text that really shifted.** Four sentences were anchored in the live filing's text
+  and looked for in the fixture, whose spacing differs. Before checking, the strategy for each was
+  written down from why it should hold: the two whose context stays inside their paragraph by
+  context, the two whose context crosses a line break by the words alone. All four held. One word
+  changed is not found.
+- Playwright on a production build with fixtures: **108 passed, 4 skipped, none failed**. Thirteen
+  new checks, reading IndexedDB rather than the screen: paging; PVC resin found in four sections,
+  and a hit opening the passage marked and in view; distinct Keep names; every reading and search
+  view within budget; a kept paragraph starting an investigation of Atkore Inc.; a selection keeping
+  only its words; keeping twice keeping once; undo; an existing investigation receiving the passage;
+  passages surviving Investigate's autosave; a role and note stored; a passage reopened from
+  Investigate landing marked; and, through a real backup and restore, a passage anchored in the live
+  filing found again after the text shifted, with the moved note, beside one whose words are gone,
+  reported missing with a search.
+- Six widths across every workspace route and seven reader views: **problems none**. At 1440 the
+  reader's first page is 1.22 screens, other pages 1.41 to 1.43, searches 1.00 and 1.34, and a page
+  carrying the moved note 1.50. Every other Studio route measures as it did before.
+
+### Known limits
+
+- **Outside websites needed to finish the Atkore journey: 1**, down from 2 — the broker quote in
+  What to buy, which is R5.
+- The height model is calibrated at 1440, where the budget is measured. At 390 reader pages measure
+  2.80 to 3.35 screens, and at 1024 up to 1.96.
+- Not in the budget: the confirmation under a paragraph just kept, and the "Kept in …" line under
+  each paragraph already kept. Each adds a line; neither was measured.
+- A selection running from one paragraph into the next keeps the whole paragraph whose Keep was
+  pressed, not the selection.
+- Anchoring is proved on one real kind of shift, re-flowed spacing between two extractions of one
+  filing. Other changes to the extractor are covered only by the unit tests' constructed cases.
+- As decided, passages from the reader go to company investigations; a catalogue investment's record
+  still cites only its listed sources.
+- A dev server that Playwright reuses without `OPS_EDGAR_FIXTURE_DIR` fetches live. Reuse stays off on
+  the production path.
+
+### Next concrete action
+
+R5 in the roadmap: research prices in the app, which removes the broker quote, the last outside
+website on the Atkore journey. The smaller alternative is shortening the open catalogue card, 2.13
+screens at 1440 before R2's record was added to it.
