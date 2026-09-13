@@ -989,7 +989,74 @@ R3 in the research roadmap. Committed work up to this point is `c1d9598`.
 - The reasons a figure could not be filled are not saved; they last the visit that fetched them.
   The empty box and its "?" still say what the figure is.
 
+## 2026-09-11: the research record, and evidence for and against
+
+R2 in the research roadmap. Committed work up to this point is `fb65670`.
+
+### Built
+
+- **A record for every investment in the catalogue, held or not.** The three note boxes used to
+  appear only once something was in the portfolio, so the one conclusion a beginner most needs to
+  keep — "I read this and decided against it" — had nowhere to go. It now sits inside each
+  catalogue entry, and writing in it starts the record if there is none.
+- **Where this stands**, as the learner's own judgment: still reading, worth a closer look, decided
+  to buy, decided against. Choosing "decided against" opens a box for the reason. Studio never sets
+  the judgment: adding a position leaves it at "still reading", because owning something in a draft
+  portfolio is not the same as having concluded anything about it. Where the two disagree — rejected
+  but still held — the page says so instead of quietly removing the position.
+- **Evidence for and against.** Each piece says which way it argues (for it, against it,
+  background), points at one of the sources listed in that same card, takes an optional "where in
+  it", and carries the learner's own words. Nothing counts the sides or draws a verdict from the
+  balance: two weak reasons for and one decisive reason against is an ordinary shape for a decision,
+  and a tally would misrepresent it.
+- **Sources have ids now**, so a saved note points at a specific document. For anything filed with
+  the SEC the id is the accession number, which is what EDGAR calls the filing and what a filing
+  read inside Studio already carries — nothing new was invented. The one source that is not a
+  filing, the Treasury auction page, gets a readable slug. Evidence whose source has since left the
+  catalogue says so rather than showing a label that no longer matches what was read.
+- **The Overview says where each one got to** — "Decided against · not in your portfolio; your
+  notes are kept · 1 thing you read" — so a rejection is findable, not merely stored.
+- **A control that said "Remove" twice.** The catalogue card's own Remove takes the position out of
+  the portfolio; the evidence list's took a note away. Two controls reading the same word in one
+  card is ambiguous to anyone navigating by control rather than by sight, and it caught a test
+  written by someone who knew the layout. The evidence one is now "Remove this note".
+
+### Verified
+
+- `tsc` 0. Lint clean apart from the two older onboarding warnings. Vitest 50 files, 642 tests
+  (12 new: ten on the operations, two on source identity).
+- Playwright on a production build: **95 passed, 4 skipped, none failed**. Eight new checks, every
+  one of them reading IndexedDB or the app's own backup file rather than the screen — what is on
+  screen a moment after typing proves only that React has state.
+  - A note kept for an investment in no portfolio, with nothing added to one to make it possible.
+  - A rejection and its reason reaching storage.
+  - Moving off "decided against" keeping the reason, so a misclick costs nothing.
+  - Evidence saved with its role, its locator and an SEC accession as its source id.
+  - Both sides kept, in order, with no tally on the page.
+  - **A rejection outliving the position and a reload**: added to the portfolio, rejected with a
+    reason and a piece of evidence, then removed and reloaded. Under v1 this deleted the research.
+  - **Evidence surviving a real backup and restore**, taken through the app's own download button
+    and file input, with a reset in between so the restore had something to restore.
+- Six widths across every workspace route: **problems none**, and every figure identical to before
+  this change. The record costs nothing at rest because it lives inside a card the learner opens.
+- The source-identity test was proved able to fail by changing one accession by a digit.
+
+### Known limits
+
+- **An open catalogue card is long, and was before this.** Measured at 1440 by removing the record
+  from the flow and reading the page again: 2.13 screens with a card open and no record, 2.46 with
+  it. At 390 it is 4.09 and 4.80. So the record costs 298px and 595px; the card itself is what needs
+  shortening, and that is separate work.
+- With the evidence form open and one piece saved, an open card reaches 3.00 screens at 1440 and
+  5.70 at 390. Both are states the learner opened deliberately.
+- `openQuestions` is still written by nothing. It is in the record, and the text export prints it,
+  but no surface collects it. Unchanged by this work rather than made worse.
+- The status radios are visually hidden inside their labels. Mouse and keyboard both work — arrow
+  keys move between the four and write the change — but an automated tool clicking the input rather
+  than the label will miss, which the specs handle by clicking the label as a person does.
+
 ### Next concrete action
 
-R2 in the roadmap: the research record with its evidence panel. Or R4, the reader with whole
-sections and find-in-filing, which would remove another outside site.
+R4 in the roadmap: the reader with whole sections and find-in-filing, which would take the outside
+websites needed to finish the Atkore journey from two to one, and would let a passage be saved as
+evidence straight from the filing — which is what the record was built to receive.

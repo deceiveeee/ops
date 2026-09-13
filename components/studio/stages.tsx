@@ -15,6 +15,9 @@ import {
   type StudioPlan,
 } from "@/lib/studio";
 import { Choice, Fact, Field, Notice, NumberInput, Panel, Stat, StageHeading, TableScroll, downloadFile, pct, usd, usdWhole } from "./shared";
+import ResearchRecord from "./ResearchRecord";
+import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
+import type { EvidenceEdit } from "@/lib/studio-project/operations";
 
 /** What a change reports. The workspace's saves finish later, so it may arrive as a promise. */
 export type StageResult = { ok: true } | { ok: false; error: string; conflict: boolean };
@@ -45,6 +48,22 @@ export type StageProps = {
   actions?: StageActions;
   /** Workspace only: companies investigated so far, named on the way in to Investigate. */
   investigations?: { id: string; company: string }[];
+  /**
+   * Workspace only: the research record, which belongs to the project rather
+   * than to a portfolio.
+   *
+   * It is passed separately because that is exactly the point of it. The plan
+   * carries holdings, and research attached to a holding disappears the moment
+   * the holding does; these records outlive any portfolio, so they cannot
+   * travel through the plan adapter.
+   */
+  record?: {
+    candidates: CandidateInvestigation[];
+    note: (instrumentId: string, patch: Partial<Pick<CandidateInvestigation, "why" | "mainRisk" | "whatWouldChangeMyMind">>) => Reported;
+    setStatus: (instrumentId: string, status: CandidateStatus, rejectedBecause?: string) => Reported;
+    addEvidence: (instrumentId: string, entry: EvidenceEdit) => Reported;
+    removeEvidence: (instrumentId: string, evidenceId: string) => Reported;
+  };
 };
 
 /** The section's name above the title where the page wants one, and the title at the page's level. */
@@ -177,7 +196,7 @@ export function GoalStage(props: StageProps) {
 // ---------------------------------------------------------------------------
 
 export function ResearchStage(props: StageProps) {
-  const { plan, update, investigations = [] } = props;
+  const { plan, update, investigations = [], record } = props;
   // Nothing open to start with: one open entry is taller than the rest of the list together.
   const [openId, setOpenId] = useState<string | null>(null);
   const held = new Set(plan.holdings.map((holding) => holding.instrumentId));
@@ -376,39 +395,24 @@ export function ResearchStage(props: StageProps) {
                     </ul>
                   </div>
 
-                  {holding ? (
-                    <div className="grid gap-4 sm:grid-cols-3">
-                      <Field
-                        label="Why I chose it"
-                        value={holding.research.why}
-                        onChange={(value) =>
-                          update((current) => updateStudioHolding(current, instrument.id, { research: { why: value } }))
-                        }
-                        multiline
-                      />
-                      <Field
-                        label="The main risk I accept"
-                        value={holding.research.mainRisk}
-                        onChange={(value) =>
-                          update((current) =>
-                            updateStudioHolding(current, instrument.id, { research: { mainRisk: value } }),
-                          )
-                        }
-                        multiline
-                      />
-                      <Field
-                        label="What would change my mind"
-                        value={holding.research.whatWouldChangeMyMind}
-                        onChange={(value) =>
-                          update((current) =>
-                            updateStudioHolding(current, instrument.id, {
-                              research: { whatWouldChangeMyMind: value },
-                            }),
-                          )
-                        }
-                        multiline
-                      />
-                    </div>
+                  {/*
+                    The record used to appear only for investments already in
+                    the portfolio, which meant the one conclusion worth keeping
+                    most -- "I read this and decided against it" -- had nowhere
+                    to go. It is now here for everything in the catalogue.
+                  */}
+                  {record ? (
+                    <ResearchRecord
+                      instrument={instrument}
+                      candidate={record.candidates.find((item) => item.instrumentId === instrument.id)}
+                      held={held.has(instrument.id)}
+                      actions={{
+                        note: (patch) => record.note(instrument.id, patch),
+                        setStatus: (status, rejectedBecause) => record.setStatus(instrument.id, status, rejectedBecause),
+                        addEvidence: (entry) => record.addEvidence(instrument.id, entry),
+                        removeEvidence: (evidenceId) => record.removeEvidence(instrument.id, evidenceId),
+                      }}
+                    />
                   ) : null}
                 </div>
               ) : null}

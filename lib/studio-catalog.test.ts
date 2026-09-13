@@ -334,3 +334,35 @@ describe("Studio calculations over the real catalog", () => {
     expect(order?.leftover).toBe(400);
   });
 });
+
+describe("source identity", () => {
+  /**
+   * Saved evidence points at a source by id, so an id that is blank, repeated
+   * or drifts away from the filing it names would attach a learner's note to
+   * the wrong document — or to nothing. TypeScript proves the field exists; it
+   * cannot prove any of this.
+   */
+  it("gives every source a distinct id, and uses the accession where there is one", () => {
+    const sources = STUDIO_CATALOG.flatMap((instrument) => instrument.sources);
+    expect(sources.length).toBeGreaterThan(0);
+
+    for (const source of sources) expect(source.id.trim()).not.toBe("");
+    expect(new Set(sources.map((source) => source.id)).size).toBe(sources.length);
+
+    for (const source of sources) {
+      // An SEC accession is 10-2-6 digits, and the id must be that filing's own.
+      const accession = source.label.match(/\((\d{10}-\d{2}-\d{6})\)/)?.[1];
+      if (accession) {
+        expect(source.id).toBe(accession);
+        expect(source.url).toContain(accession.replace(/-/g, ""));
+      }
+    }
+  });
+
+  it("names a source that is not a filing readably rather than by accession", () => {
+    const treasury = STUDIO_CATALOG.find((instrument) => instrument.id === "ust-91282crf0");
+    const [source] = treasury?.sources ?? [];
+    expect(source?.id).toBe("treasury-auction-91282CRF0");
+    expect(source?.id).not.toMatch(/^\d{10}-\d{2}-\d{6}$/);
+  });
+});

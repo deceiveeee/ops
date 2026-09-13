@@ -37,6 +37,20 @@ export type StudioAssetClass =
 export type StudioInstrumentKind = "fund" | "stock" | "bond";
 
 export type StudioSource = {
+  /**
+   * A stable name for this source, so a saved piece of evidence can point at it.
+   *
+   * For anything filed with the SEC it is the accession number, which is what
+   * EDGAR itself calls the filing and what a filing read inside Studio would
+   * carry. Nothing else needs inventing, and the same id means the same
+   * document wherever it is referenced. Sources that are not filings get a
+   * readable slug naming what they are.
+   *
+   * If a source is replaced by a newer one its id changes with it, and evidence
+   * pointing at the old id says the source is no longer listed rather than
+   * silently re-pointing at a different document.
+   */
+  id: string;
   label: string;
   url: string;
   /** The date the source states its facts were true, not the date it was read. */
@@ -180,11 +194,13 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
     stock: null,
     sources: [
       {
+        id: prospectus.accession,
         label: `${prospectus.form} prospectus, ${passport.registrant} (${prospectus.accession})`,
         url: filingIndexUrl(passport.cik, prospectus.accession),
         asOf: prospectus.dated,
       },
       {
+        id: holdings.accession,
         label: `N-PORT holdings, ${passport.legalSeriesName} (${holdings.accession})`,
         url: filingIndexUrl(passport.cik, holdings.accession),
         asOf: holdings.asOf,
@@ -238,6 +254,7 @@ const APPLE: StudioInstrument = {
   },
   sources: [
     {
+      id: "0000320193-25-000079",
       label: "Form 10-K, Apple Inc., fiscal year ended 2025-09-27 (0000320193-25-000079)",
       url: filingIndexUrl("0000320193", "0000320193-25-000079"),
       asOf: "2025-09-27",
@@ -287,6 +304,7 @@ const TSMC: StudioInstrument = {
   },
   sources: [
     {
+      id: "0001628280-26-025362",
       label:
         "Form 20-F, Taiwan Semiconductor Manufacturing Company Limited, year ended 2025-12-31 (0001628280-26-025362)",
       url: filingIndexUrl("0001046179", "0001628280-26-025362"),
@@ -348,6 +366,7 @@ const TREASURY_10Y: StudioInstrument = {
   },
   sources: [
     {
+      id: "treasury-auction-91282CRF0",
       label: "US Treasury auction results for CUSIP 91282CRF0, 10-year note auctioned 2026-08-12, issued 2026-08-17",
       url: "https://www.treasurydirect.gov/auctions/announcements-data-results/",
       asOf: "2026-08-12",
@@ -408,12 +427,14 @@ const VXUS: StudioInstrument = {
   stock: null,
   sources: [
     {
+      id: "0001193125-26-077488",
       label:
         "485BPOS prospectus, Vanguard Star Funds, ETF share class (0001193125-26-077488)",
       url: filingIndexUrl("0000736054", "0001193125-26-077488"),
       asOf: "2026-02-27",
     },
     {
+      id: "0000736054-26-000191",
       label:
         "N-PORT holdings, Vanguard Total International Stock Index Fund (0000736054-26-000191)",
       url: filingIndexUrl("0000736054", "0000736054-26-000191"),

@@ -2,6 +2,7 @@
 
 import { exportStudioCsv } from "@/lib/studio";
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
+import { addEvidence, removeEvidence, setCandidateStatus, updateCandidate } from "@/lib/studio-project/operations";
 import { exportProjectText } from "@/lib/studio-project/workspace";
 import { downloadFile } from "../shared";
 import { BuildStage, BuyStage, GoalStage, ResearchStage, ReviewStage, RiskStage, type StageProps } from "../stages";
@@ -39,6 +40,23 @@ export default function WorkspaceStage({ stage, eyebrow }: { stage: keyof typeof
     eyebrow,
     headingAs: "h1",
     investigations: project.investigations.map(({ id, company }) => ({ id, company })),
+    /*
+     * Research goes straight to the project, not through the plan adapter.
+     *
+     * The adapter's job is to present a portfolio to code that predates the
+     * project record, and research about an investment nobody holds has no
+     * place in a portfolio to be presented from. Writing it directly is also
+     * what lets a rejection survive the position being removed.
+     */
+    record: {
+      candidates: project.candidates,
+      note: async (instrumentId, patch) => report(await session.update((current) => updateCandidate(current, instrumentId, patch))),
+      setStatus: async (instrumentId, status, rejectedBecause) =>
+        report(await session.update((current) => setCandidateStatus(current, instrumentId, status, rejectedBecause))),
+      addEvidence: async (instrumentId, entry) => report(await session.update((current) => addEvidence(current, instrumentId, entry))),
+      removeEvidence: async (instrumentId, evidenceId) =>
+        report(await session.update((current) => removeEvidence(current, instrumentId, evidenceId))),
+    },
     update: workspace.updatePlan,
     importBackup: async (text) => report(await session.importBackup(text)),
     reset: async () => report(await session.reset()),

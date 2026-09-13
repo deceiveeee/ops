@@ -671,10 +671,12 @@ Each item names what the learner gains and the check that proves it.
   - Check: no undated rate; a test against the 2026-08-12 record (4.683%), read by hand.
   - Milestone: M3.
 - **R2. The research record and the evidence panel,** with ids for catalogue sources.
+  **Done 2026-09-11 (§13).**
   - Learner: can record research, reject an investment with a reason, and save evidence for and
     against.
   - Check: end-to-end tests that read IndexedDB. Rejected research survives removal and reload;
-    evidence survives a backup and restore.
+    evidence survives a backup and restore. Both met, the second through the app's own download
+    button and file input with a reset in between.
   - Milestone: M2.
 - **R3. Investigate filled from company facts,** with units and provenance, and the learner can
   override. **Done 2026-09-11 (§13).**
@@ -795,8 +797,30 @@ survives closing the tab. Detail and the measurement: [`studio-investigate-prefi
   empty form.
 
 Outside websites needed to finish the Atkore journey: 2, down from 4. Investigate's figures now
-carry a source, which they never could while they were typed. Next in §10: R2, the research record
-with its evidence panel, or R4, the reader with whole sections and find-in-filing.
+carry a source, which they never could while they were typed.
+
+### R2, done 2026-09-11
+
+**A learner can now record what they worked out, reject an investment with a reason, and keep
+evidence for and against it.** The record sits inside each catalogue entry and no longer waits for
+the investment to be in a portfolio — which is what made a rejection impossible to write down, since
+nobody holds what they decided against. Detail in the ledger entry "2026-09-11: the research record,
+and evidence for and against".
+
+- **Where this stands** is the learner's judgment — still reading, worth a closer look, decided to
+  buy, decided against — and is deliberately not the same as the contents of a portfolio. Studio
+  never sets it, and says so where the two disagree.
+- **Each piece of evidence names its source by id.** For an SEC filing that id is the accession
+  number, the same identifier EDGAR uses and the same one a filing read inside Studio carries, so
+  nothing had to be invented and a passage saved from the reader in R4 will point at documents the
+  same way. Evidence whose source has since left the catalogue says so.
+- **Nothing scores the record.** No tally of one side against the other, no grade and no verdict:
+  principle 4 of §7.4, applied to a learner's own reasoning rather than to a screen.
+- The schema already held all of this and the text export already printed it; until now the status,
+  rejection reason and evidence fields were written by nothing at all.
+
+Next in §10: R4, the reader with whole sections and find-in-filing, which would take the outside
+websites from two to one and let a passage be saved straight into the record built here.
 
 ## Appendix A. Probe log
 

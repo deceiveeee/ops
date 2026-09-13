@@ -2,6 +2,8 @@ import {
   workingAlternative,
   type CandidateInvestigation,
   type CandidateStatus,
+  type EvidenceReference,
+  type EvidenceRole,
   type FigureInvestigation,
   type FigureSource,
   type PortfolioAlternative,
@@ -119,17 +121,96 @@ export function removeInvestigation(
   };
 }
 
+/**
+ * Write on an investigation, starting one if there is none.
+ *
+ * The seeding matters now that research is not tied to owning something. Until
+ * the research record shipped, the only way to write a note was to add the
+ * investment to a portfolio first, so a candidate always existed by the time
+ * anything wrote to it. A learner reading an investment and deciding against it
+ * never holds it, and their reason has to land somewhere — dropping the write
+ * because no record existed yet would lose exactly the work this exists to keep.
+ */
 export function updateCandidate(
   project: StudioProject,
   instrumentId: string,
   patch: Partial<Omit<CandidateInvestigation, "id" | "instrumentId" | "createdAt">>,
   now = new Date().toISOString(),
 ): StudioProject {
+  const seeded = startCandidate(project, instrumentId, now);
+  return {
+    ...seeded,
+    updatedAt: now,
+    candidates: seeded.candidates.map((candidate) =>
+      candidate.instrumentId === instrumentId ? touch({ ...candidate, ...patch }, now) : candidate,
+    ),
+  };
+}
+
+/** What a learner may attach to an investigation. Identity and time are ours. */
+export type EvidenceEdit = {
+  /** The source it came from: a catalog source id, or a filing accession. */
+  sourceId: string;
+  /** Where in the source — a section, a statement line, a page. May be empty. */
+  locator: string;
+  /** What it shows, in the learner's own words. */
+  note: string;
+  role: EvidenceRole;
+};
+
+/**
+ * Keep a piece of evidence against an investment.
+ *
+ * Evidence that only supports a conclusion is not evidence, it is decoration,
+ * which is why the role is required rather than assumed: a learner has to say
+ * whether what they read argues for the investment or against it. Nothing here
+ * judges the note or counts the sides.
+ *
+ * The investigation is started if there is none, because the first thing a
+ * learner does with an investment is often to read something about it.
+ */
+export function addEvidence(
+  project: StudioProject,
+  instrumentId: string,
+  entry: EvidenceEdit,
+  now = new Date().toISOString(),
+): StudioProject {
+  const reference: EvidenceReference = {
+    id: makeId("ev"),
+    sourceId: entry.sourceId,
+    locator: entry.locator,
+    note: entry.note,
+    role: entry.role,
+    savedAt: now,
+  };
+  const seeded = startCandidate(project, instrumentId, now);
+  return {
+    ...seeded,
+    updatedAt: now,
+    candidates: seeded.candidates.map((candidate) =>
+      candidate.instrumentId === instrumentId
+        ? touch({ ...candidate, evidence: [...candidate.evidence, reference] }, now)
+        : candidate,
+    ),
+  };
+}
+
+/** Drop one piece of evidence. Nothing else about the investigation changes. */
+export function removeEvidence(
+  project: StudioProject,
+  instrumentId: string,
+  evidenceId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const candidate = project.candidates.find((item) => item.instrumentId === instrumentId);
+  if (!candidate?.evidence.some((item) => item.id === evidenceId)) return project;
   return {
     ...project,
     updatedAt: now,
-    candidates: project.candidates.map((candidate) =>
-      candidate.instrumentId === instrumentId ? touch({ ...candidate, ...patch }, now) : candidate,
+    candidates: project.candidates.map((item) =>
+      item.instrumentId === instrumentId
+        ? touch({ ...item, evidence: item.evidence.filter((entry) => entry.id !== evidenceId) }, now)
+        : item,
     ),
   };
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { STUDIO_STORAGE_KEY, type StudioCalculation } from "@/lib/studio";
 import { findStudioInstrument } from "@/lib/studio-catalog";
 import { FIGURES } from "@/lib/studio-project/investigate";
-import { workingAlternative, type StudioMode, type StudioProject } from "@/lib/studio-project/schema";
+import { workingAlternative, type CandidateStatus, type StudioMode, type StudioProject } from "@/lib/studio-project/schema";
 import { createIndexedDbProjectStorage } from "@/lib/studio-project/storage";
 import { StageHeading, pct, usdWhole } from "../shared";
 import { WorkWaiting } from "./StudioFrame";
@@ -62,6 +62,14 @@ function suggest(project: StudioProject, calculation: StudioCalculation): NextSt
 
 const newestFirst = <T extends { updatedAt: string }>(items: T[]) =>
   [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+
+/** Where a piece of research got to, in the same words the Research page uses. */
+const STANDING: Record<CandidateStatus, string> = {
+  researching: "Still reading",
+  shortlisted: "Worth a closer look",
+  selected: "Decided to buy",
+  rejected: "Decided against",
+};
 
 /**
  * The workspace's home: a worklist rather than a dashboard. Everything on it
@@ -168,10 +176,19 @@ export default function OverviewView() {
                     </span>{" "}
                     <span className="text-[14px] text-[var(--ops-text-secondary)]">{instrument?.name ?? ""}</span>
                   </span>
+                  {/*
+                    * Where the learner got to, in their words rather than the
+                    * schema's, and what they kept. A rejection says so first:
+                    * finding an investment you already decided against, with
+                    * the reason attached, is the whole point of keeping it.
+                    */}
                   <span className="text-[13px] text-[var(--ops-text-tertiary)]">
-                    {inPortfolio ? "In your portfolio" : "Not in your portfolio; your notes are kept"}
+                    {STANDING[candidate.status]}
                     {" · "}
-                    {candidate.why.trim() ? "Reason written" : "No reason written yet"}
+                    {inPortfolio ? "in your portfolio" : "not in your portfolio; your notes are kept"}
+                    {candidate.evidence.length
+                      ? ` · ${candidate.evidence.length} ${candidate.evidence.length === 1 ? "thing" : "things"} you read`
+                      : ""}
                   </span>
                 </li>
               );
