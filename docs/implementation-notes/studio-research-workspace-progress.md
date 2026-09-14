@@ -1491,3 +1491,101 @@ R7 in the research roadmap, the first item of Phase 2. R6 is committed as `eb05c
 
 Commit R7. Then R8: product lines, regions and customers from Atkore's filing data file, checked by the
 shares reconciling to total revenue.
+
+## 2026-09-13: where revenue comes from, read from the filing's data file
+
+R8 in the research roadmap. R7 is committed as `87f6b73`.
+
+### Built
+
+- **A "Where revenue comes from" tab in the company-report reader, on annual reports**, right after
+  Business, which says in words what the company sells. The tab shows the same report's own figures:
+  revenue by product line (with the segment each sits in), by region and by segment, each with its share
+  and amount, and the customers the company depends on, as a share of sales or of what customers owed at
+  the year end. For Atkore's year to 30 September 2025: six product lines, four regions and two
+  segments, each adding exactly to $2,850m; Sonepar USA is 10% of sales, and Sonepar USA and CED National
+  are 13% and 12% of what customers owed.
+- **`lib/filings/revenue.ts`**, pure and unit-tested. It reads a filing's XBRL data file and its labels,
+  from the label file or from the schema, where Nucor keeps them; takes the year's total revenue in US
+  dollars; and builds each breakdown, shown only when its parts add up to that total within the rounding
+  the filing declares. Where every part together overshoots, it uses the largest set that adds up, if no
+  other set of that size does and each part left out is the sum of parts kept. Customer concentration is
+  read as a share of sales or of receivables, and nothing else.
+- **`lib/filings/revenue-source.ts`** finds the data and label files in the filing's index, fetches them
+  through two new helpers in `lib/filings/edgar.ts`, and caches the answer for a week. An EDGAR failure
+  is never cached, and test-fixture answers are kept apart from live ones.
+- **`scripts/source/check-revenue-breakdowns.mjs`** runs the same rules over eight companies' latest
+  10-Ks and writes `docs/source-audits/studio-revenue-breakdowns.md`.
+- **Fixtures:** Atkore's filing index as EDGAR serves it, and its data and label files trimmed to 47.5 KB
+  and 21.1 KB, written only after they read exactly as the full files do.
+
+### Found and fixed on the way
+
+- **Filings tag more than clean breakdowns.** Apple's "Products" row is the sum of four others; Nucor
+  tags intersegment amounts beside segment sales; Netflix tags one region on its own, 41% of revenue;
+  Hubbell tags a restatement axis. Each is now handled or refused with its reason.
+- **Eaton's total is tagged twice**, $27,448m and $27.4bn, and the first rule, wanting one value, read
+  nothing. Figures that round to each other at their own stated precision are now one total; figures
+  that do not are refused, and the page says why.
+- **The rounding allowance was looser than claimed.** First a floor of 0.01% of revenue, then a
+  floating-point term of a billionth of revenue, $3 on $3bn, let parts a dollar past the rounding
+  through. It is now the declared rounding and only true floating-point error, and a test fails at one
+  dollar over.
+- **Revenue in another currency would have been printed as dollars.** Units are now read, and anything
+  but US dollars is refused by name.
+- **Four of ten deliberate breaks first went unnoticed**: a restatement axis combined with a breakdown
+  axis, eliminations counted in, the subtotal check skipped, and credit exposure read as a customer
+  share. Four tests were added from real cases, among them Nucor's eliminations and Apple's credit
+  exposure, and all ten breaks now fail a test.
+- **A browser check matched the wrong row.** "Electrical" found the product line "Metal Electrical
+  Conduit and Fittings" before the segment. Each list is now named by its heading and rows are matched by
+  exact name, which also helps anyone using a screen reader.
+- **The new tab was out of view at 1440**, at the end of a row that scrolls sideways. It now sits right
+  after Business.
+- **The reader's header was squeezed on a phone, before this work.** At 390 the facts under the title
+  kept their row beside the search box and ran one word to a line. The column now has a width of its own:
+  the reader's Business page fell from 2.63 to 2.09 screens at 390, and the revenue tab from 2.83 to
+  2.29. Both new checks failed against the build before the fix, with a facts column 23px wide and "Risk
+  factors" second in the row.
+- **A long shell heredoc failed to parse** again, before anything ran. The patch scripts were written as
+  files instead.
+
+### Verified
+
+- `tsc` 0; lint clean on every changed file. Vitest with the other session's `tmp/` copy excluded: 60
+  files, 771 tests, 22 new in `lib/filings/revenue.test.ts`. Run over the whole folder, vitest also picks
+  up `tmp/homepage-redesign/review/`, a gitignored review copy holding Playwright specs, which fail under
+  vitest. None of it is this work's, and it was not touched.
+- **The checks can fail.** Ten deliberate breaks in the rules each failed at least one test, and the file
+  was restored and compared after each.
+- The rules on Atkore's real, untrimmed files gave the figures above, and the trimmed fixtures read the
+  same.
+- **Live:** on a preview server fetching from EDGAR rather than fixtures, the tab rendered the same
+  figures, and the browser test passed against it.
+- Playwright on a production build: **129 passed, 4 skipped, none failed**, with seven revenue checks
+  among them.
+- Six widths across every workspace route: problems none. The revenue tab is 1.23 screens at 1440
+  (1,106px), 1.32 at 1280, 1.40 at 1024, 1.69 at 768 and 2.29 at 390, with no sideways scroll anywhere.
+- **Coverage, 35.14 MB read:** for all eight companies, every list shown adds up. Not shown: Nucor's
+  regions and nVent's product lines, which are not tagged, and Eaton's product lines, which come to 82.3%
+  of its revenue.
+
+### Known limits
+
+- **Annual reports under US accounting rules only.** Quarterly reports do not offer the tab, and 20-F and
+  40-F filers tag accounting concepts this does not read.
+- **One year**, the one the report covers. No trend across years yet.
+- **Names are the filing's own labels**, as written: Atkore's "UNITED STATES" in capitals, nVent's "One
+  Customer". Where a filing has no label, a member's own name is split into words, which can read
+  awkwardly.
+- **Customer concentration only where it is tagged.** A customer named only in the words of Business is
+  not picked up, and not tagged does not mean no large customer; the page says the data file "tags no
+  single customer's share".
+- **A first visit fetches the files.** Only the answer is cached, so the first visit to a filing's tab
+  reads its data and label files, 3.5 MB for Atkore.
+- The tab is not yet linked from Investigate.
+
+### Next concrete action
+
+Commit R8. Then R9: input-cost series, each tied to an input the filing itself names, checked by every
+series citing that passage.

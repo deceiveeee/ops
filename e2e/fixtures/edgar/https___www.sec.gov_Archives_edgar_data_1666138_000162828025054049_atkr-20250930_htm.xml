@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Trimmed from https://www.sec.gov/Archives/edgar/data/1666138/000162828025054049/atkr-20250930_htm.xml for the reader's end-to-end tests: the contexts, units and facts lib/filings/revenue.ts reads, as filed. -->
+<xbrl>
+<context id="c-1">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-4">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-5">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-153">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-154">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-157">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-158">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-225">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-226">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-227">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-228">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-229">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-230">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-231">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-232">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-233">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-234">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-235">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-236">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-237">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-238">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-239">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-240">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-241">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:IntersegmentEliminationMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-260">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:US</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-261">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:US</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-262">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:US</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-266">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">atkr:OtherAmericasMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-267">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">atkr:OtherAmericasMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-268">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">atkr:OtherAmericasMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-272">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">srt:EuropeMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-273">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">srt:EuropeMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-274">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">srt:EuropeMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-278">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">srt:AsiaPacificMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-279">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">srt:AsiaPacificMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-280">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">srt:AsiaPacificMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-281">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:MetalElectricalConduitandFittingsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-282">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:MetalElectricalConduitandFittingsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-283">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:MetalElectricalConduitandFittingsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-284">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:PlasticPipeConduitAndFittingsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-285">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:PlasticPipeConduitAndFittingsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-286">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:PlasticPipeConduitAndFittingsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-287">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:ElectricalCableAndFlexibleConduitMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-288">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:ElectricalCableAndFlexibleConduitMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-289">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:ElectricalCableAndFlexibleConduitMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-290">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:OtherElectricalProductsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-291">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:OtherElectricalProductsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-292">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:OtherElectricalProductsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:ElectricalSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-293">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:MechanicalTubeMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-294">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:MechanicalTubeMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-295">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:MechanicalTubeMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-296">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:OtherSafetyInfrastructureProductsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-297">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:OtherSafetyInfrastructureProductsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-298">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">atkr:OtherSafetyInfrastructureProductsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">atkr:SafetyAndInfrastructureSegmentMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-299">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:SoneparUSAMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">atkr:AccountsReceivableBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-300">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:CEDNationalMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">atkr:AccountsReceivableBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-301">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:SoneparUSAMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">atkr:AccountsReceivableBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-302">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:CEDNationalMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">atkr:AccountsReceivableBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="c-303">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:SoneparUSAMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">us-gaap:RevenueFromContractWithCustomerProductAndServiceBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="c-304">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:SoneparUSAMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">us-gaap:RevenueFromContractWithCustomerProductAndServiceBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="c-305">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001666138</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="srt:MajorCustomersAxis">atkr:SoneparUSAMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByBenchmarkAxis">us-gaap:RevenueFromContractWithCustomerProductAndServiceBenchmarkMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:ConcentrationRiskByTypeAxis">us-gaap:CustomerConcentrationRiskMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<unit id="usd">
+        <measure>iso4217:USD</measure>
+    </unit>
+<unit id="number">
+        <measure>pure</measure>
+    </unit>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-1" decimals="-3" id="f-55" unitRef="usd">2850378000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-4" decimals="-3" id="f-56" unitRef="usd">3202053000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-5" decimals="-3" id="f-57" unitRef="usd">3518761000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-157" decimals="-3" id="f-1328" unitRef="usd">1998209000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-225" decimals="-3" id="f-1329" unitRef="usd">-10000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-153" decimals="-3" id="f-1331" unitRef="usd">2354958000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-227" decimals="-3" id="f-1332" unitRef="usd">-20000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-229" decimals="-3" id="f-1334" unitRef="usd">2675050000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-230" decimals="-3" id="f-1335" unitRef="usd">-25000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-158" decimals="-3" id="f-1337" unitRef="usd">852169000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-232" decimals="-3" id="f-1338" unitRef="usd">-1200000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-154" decimals="-3" id="f-1340" unitRef="usd">847095000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-234" decimals="-3" id="f-1341" unitRef="usd">-1982000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-236" decimals="-3" id="f-1343" unitRef="usd">843711000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-237" decimals="-3" id="f-1344" unitRef="usd">-447000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-239" decimals="-3" id="f-1346" unitRef="usd">-1210000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-240" decimals="-3" id="f-1347" unitRef="usd">-2002000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-241" decimals="-3" id="f-1348" unitRef="usd">-471000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-1" decimals="-3" id="f-1349" unitRef="usd">2850378000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-4" decimals="-3" id="f-1350" unitRef="usd">3202053000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-5" decimals="-3" id="f-1351" unitRef="usd">3518761000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-226" decimals="-3" id="f-1352" unitRef="usd">1998219000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-233" decimals="-3" id="f-1353" unitRef="usd">853369000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-228" decimals="-3" id="f-1354" unitRef="usd">2354978000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-235" decimals="-3" id="f-1355" unitRef="usd">849077000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-231" decimals="-3" id="f-1356" unitRef="usd">2675074000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-238" decimals="-3" id="f-1357" unitRef="usd">844158000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-260" decimals="-3" id="f-1451" unitRef="usd">2501481000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-261" decimals="-3" id="f-1452" unitRef="usd">2817844000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-262" decimals="-3" id="f-1453" unitRef="usd">3150143000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-266" decimals="-3" id="f-1457" unitRef="usd">80380000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-267" decimals="-3" id="f-1458" unitRef="usd">92361000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-268" decimals="-3" id="f-1459" unitRef="usd">94064000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-272" decimals="-3" id="f-1463" unitRef="usd">220803000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-273" decimals="-3" id="f-1464" unitRef="usd">245764000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-274" decimals="-3" id="f-1465" unitRef="usd">228885000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-278" decimals="-3" id="f-1469" unitRef="usd">47714000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-279" decimals="-3" id="f-1470" unitRef="usd">46084000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-280" decimals="-3" id="f-1471" unitRef="usd">45669000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-1" decimals="-3" id="f-1475" unitRef="usd">2850378000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-4" decimals="-3" id="f-1476" unitRef="usd">3202053000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-5" decimals="-3" id="f-1477" unitRef="usd">3518761000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-281" decimals="-3" id="f-1478" unitRef="usd">455678000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-282" decimals="-3" id="f-1479" unitRef="usd">551753000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-283" decimals="-3" id="f-1480" unitRef="usd">529083000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-284" decimals="-3" id="f-1481" unitRef="usd">673622000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-285" decimals="-3" id="f-1482" unitRef="usd">921587000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-286" decimals="-3" id="f-1483" unitRef="usd">1252422000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-287" decimals="-3" id="f-1484" unitRef="usd">494011000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-288" decimals="-3" id="f-1485" unitRef="usd">489927000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-289" decimals="-3" id="f-1486" unitRef="usd">506994000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-290" decimals="-3" id="f-1487" unitRef="usd">374898000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-291" decimals="-3" id="f-1488" unitRef="usd">391691000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-292" decimals="-3" id="f-1489" unitRef="usd">386551000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-157" decimals="-3" id="f-1490" unitRef="usd">1998209000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-153" decimals="-3" id="f-1491" unitRef="usd">2354958000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-229" decimals="-3" id="f-1492" unitRef="usd">2675050000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-293" decimals="-3" id="f-1493" unitRef="usd">306637000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-294" decimals="-3" id="f-1494" unitRef="usd">352707000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-295" decimals="-3" id="f-1495" unitRef="usd">367730000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-296" decimals="-3" id="f-1496" unitRef="usd">545532000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-297" decimals="-3" id="f-1497" unitRef="usd">494388000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-298" decimals="-3" id="f-1498" unitRef="usd">475982000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-158" decimals="-3" id="f-1499" unitRef="usd">852169000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-154" decimals="-3" id="f-1500" unitRef="usd">847095000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-236" decimals="-3" id="f-1501" unitRef="usd">843711000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-1" decimals="-3" id="f-1502" unitRef="usd">2850378000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-4" decimals="-3" id="f-1503" unitRef="usd">3202053000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-5" decimals="-3" id="f-1504" unitRef="usd">3518761000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-299"
+      decimals="2"
+      id="f-1505"
+      unitRef="number">0.13</us-gaap:ConcentrationRiskPercentage1>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-300"
+      decimals="2"
+      id="f-1506"
+      unitRef="number">0.12</us-gaap:ConcentrationRiskPercentage1>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-301"
+      decimals="2"
+      id="f-1507"
+      unitRef="number">0.17</us-gaap:ConcentrationRiskPercentage1>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-302"
+      decimals="2"
+      id="f-1508"
+      unitRef="number">0.11</us-gaap:ConcentrationRiskPercentage1>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-303"
+      decimals="2"
+      id="f-1509"
+      unitRef="number">0.10</us-gaap:ConcentrationRiskPercentage1>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-304"
+      decimals="2"
+      id="f-1510"
+      unitRef="number">0.10</us-gaap:ConcentrationRiskPercentage1>
+<us-gaap:ConcentrationRiskPercentage1
+      contextRef="c-305"
+      decimals="2"
+      id="f-1511"
+      unitRef="number">0.10</us-gaap:ConcentrationRiskPercentage1>
+<dei:DocumentPeriodEndDate contextRef="c-1" id="f-3">2025-09-30</dei:DocumentPeriodEndDate>
+</xbrl>

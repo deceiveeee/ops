@@ -715,7 +715,7 @@ Each item names what the learner gains and the check that proves it.
   Find step can show why Atkore appears, and every peer has a stated reason.
   **Done 2026-09-13 (§13).**
 - **R8. Product lines, regions and customers** from the filing's data file. Check: the shares
-  reconcile to total revenue.
+  reconcile to total revenue. **Done 2026-09-13 (§13).**
 - **R9. Input-cost series,** each tied to an input the filing itself names. Check: every series
   cites that passage.
 - **R10. The peer screen with its working shown; valuation with sensitivities; bond cash flows and
@@ -952,6 +952,32 @@ filing covers; and the companies a search found but left out.** Detail in the le
   stated reason.
 
 Next in §10: R8, product lines, regions and customers from the filing's data file.
+
+### R8, done 2026-09-13
+
+**The company-report reader has a "Where revenue comes from" tab on annual reports: what the company
+sells, where, and to whom, from the same report's own data file, each list shown only where its parts
+add up to the report's total revenue.** Detail in the ledger entry "2026-09-13: where revenue comes
+from, read from the filing's data file".
+
+- **Atkore:** six product lines under its two segments, four regions and two segments, each adding
+  exactly to $2,850m for the year to 30 September 2025. Sonepar USA is 10% of its sales; Sonepar USA
+  and CED National are 13% and 12% of what customers owed it at the year end.
+- **The check is enforced, not assumed.** A list is shown only when its parts add up to total revenue
+  within the rounding the filing declares. Filings tag more than clean breakdowns on these axes:
+  Apple's "Products" row is the sum of four others, Nucor tags intersegment amounts beside segment
+  sales, Netflix tags one region on its own, Hubbell tags a restatement axis, and Eaton tags its total
+  twice at different precision. Each is handled or refused with its reason, and revenue in another
+  currency is refused rather than printed as dollars.
+- **Measured on eight companies' latest 10-Ks**, Atkore, Nucor, Hubbell, Eaton, nVent, Westlake, Apple
+  and Netflix (`studio-revenue-breakdowns.md`). Every list shown adds up. Nucor's regions and nVent's
+  product lines are not tagged; Eaton's product lines come to 82.3% of its revenue and are not shown.
+- **Worked out on the server, and the answer is what is cached**: Atkore's data and label files are
+  3.5 MB, the answer a few kilobytes, and an EDGAR failure is never cached.
+- The check in this section is met: the shares reconcile to total revenue, and where they do not,
+  nothing is shown as shares.
+
+Next in §10: R9, input-cost series, each tied to an input the filing itself names.
 
 ## Appendix A. Probe log
 

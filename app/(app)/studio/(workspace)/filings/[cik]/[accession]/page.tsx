@@ -4,10 +4,12 @@ import FilingPassages, { type PageParagraph } from "@/components/studio/FilingPa
 import { Notice, Panel, StageHeading } from "@/components/studio/shared";
 import StudioAside from "@/components/studio/workspace/StudioAside";
 import { CONTEXT_CHARS } from "@/lib/filings/anchor";
-import { fetchFilingDocument, fetchFilings, filingIndexUrl, secUserAgent } from "@/lib/filings/edgar";
+import { archivePath, fetchFilingDocument, fetchFilings, filingIndexUrl, secUserAgent } from "@/lib/filings/edgar";
 import { findInSections } from "@/lib/filings/find";
 import { pageForOffset, paginate, paragraphsOf } from "@/lib/filings/pages";
+import { revenueFromFiling } from "@/lib/filings/revenue-source";
 import { extractFilingSections } from "@/lib/filings/sections";
+import RevenueView from "@/components/studio/RevenueView";
 
 export const metadata: Metadata = {
   title: "Company report · Studio — Investing Studio",
@@ -34,6 +36,13 @@ export const metadata: Metadata = {
 
 /** Search hits shown at once. Eight fit the screen budget with their context. */
 const HITS_PER_VIEW = 8;
+
+/**
+ * The report's own figures for what the Business section describes: product lines, regions,
+ * segments and customers. Only annual reports cover a year of revenue, so only they offer it.
+ */
+const REVENUE_TAB = { id: "revenue", label: "Where revenue comes from" };
+const ANNUAL_FORMS = new Set(["10-K", "10-K/A"]);
 
 /** How keeping works, said once beside the reading rather than under every page. */
 const KEEP_HOW = "Keep saves a paragraph to your investigation of this company. Select some words in it first to keep just those.";
@@ -126,6 +135,8 @@ export default async function CompanyReportPage({
   const companyName = (list.ok ? list.name : "") || ticker || "Company";
   const kind = filing ? KIND[filing.form] ?? "report" : "report";
   const current = sections.find((section) => section.id === wanted) ?? sections[0];
+  const extraTabs = filing && ANNUAL_FORMS.has(filing.form) ? [REVENUE_TAB] : [];
+  const revenue = extraTabs.length && wanted === REVENUE_TAB.id ? await revenueFromFiling(cik, accession, doc) : null;
 
   /** A link to somewhere in this same report, keeping which document and ticker. */
   const hrefFor = (extra: Record<string, string | number | undefined>, hash = "") => {
@@ -168,10 +179,18 @@ export default async function CompanyReportPage({
               view={int(query.r) ?? 1}
               hrefFor={hrefFor}
             />
+          ) : revenue ? (
+            <RevenueView
+              name={companyName}
+              source={revenue}
+              dataFileUrl={revenue.dataFile ? archivePath(cik, accession, revenue.dataFile) : null}
+              tabs={<SectionTabs sections={sections} extraTabs={extraTabs} current={REVENUE_TAB.id} hrefFor={hrefFor} />}
+            />
           ) : current ? (
             <SectionView
               section={current}
               sections={sections}
+              extraTabs={extraTabs}
               filing={{
                 cik,
                 accession,
@@ -206,13 +225,34 @@ export default async function CompanyReportPage({
 type Sections = ReturnType<typeof extractFilingSections>["sections"];
 type HrefFor = (extra: Record<string, string | number | undefined>, hash?: string) => string;
 
-function SectionTabs({ sections, current, hrefFor }: { sections: Sections; current: string; hrefFor: HrefFor }) {
+/**
+ * The tabs in order, with any extra ones right after Business, which they
+ * complement. At the end of a row that scrolls sideways, a new tab sat out of
+ * view at 1440.
+ */
+function withExtras(sections: Sections, extraTabs: { id: string; label: string }[]) {
+  const tabs: { id: string; label: string }[] = sections.map(({ id, label }) => ({ id, label }));
+  tabs.splice(tabs.findIndex((tab) => tab.id === "business") + 1, 0, ...extraTabs);
+  return tabs;
+}
+
+function SectionTabs({
+  sections,
+  extraTabs,
+  current,
+  hrefFor,
+}: {
+  sections: Sections;
+  extraTabs: { id: string; label: string }[];
+  current: string;
+  hrefFor: HrefFor;
+}) {
   return (
     // One row that scrolls sideways rather than wrapping: at 1440 the seven
     // labels wrapped to two rows, 43px of a page held to 1,350.
     <nav aria-label="Sections of this report" className="overflow-x-auto border-b border-[var(--ops-divider)]">
       <ul className="flex gap-x-5">
-        {sections.map((section) => {
+        {withExtras(sections, extraTabs).map((section) => {
           const active = section.id === current;
           return (
             <li key={section.id} className="shrink-0">
@@ -239,6 +279,7 @@ function SectionTabs({ sections, current, hrefFor }: { sections: Sections; curre
 function SectionView({
   section,
   sections,
+  extraTabs,
   filing,
   requestedPage,
   at,
@@ -248,6 +289,7 @@ function SectionView({
 }: {
   section: Sections[number];
   sections: Sections;
+  extraTabs: { id: string; label: string }[];
   filing: React.ComponentProps<typeof FilingPassages>["filing"];
   requestedPage: number | null;
   at: number | null;
@@ -272,7 +314,7 @@ function SectionView({
 
   return (
     <>
-      <SectionTabs sections={sections} current={section.id} hrefFor={hrefFor} />
+      <SectionTabs sections={sections} extraTabs={extraTabs} current={section.id} hrefFor={hrefFor} />
 
       <section aria-labelledby={`section-${section.id}`} className="space-y-3">
         <h2 id={`section-${section.id}`} className="text-[17px] font-semibold text-white">
@@ -490,9 +532,11 @@ function Shell({
         * inside its own column. Left free to wrap, that long line pushed the search
         * box underneath and the block measured 170px at 1440, which is what put two
         * report pages over the screen budget (2026-09-13).
+        * Below 1024px the facts column needs a width of its own before it gives up the
+        * row, or at 390 it kept the row and ran one word to a line.
         */}
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 lg:flex-nowrap">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 basis-72">
           <StageHeading as="h1" title={title} />
           <p className="mt-2 text-[13px] leading-6 text-slate-500">
             {subtitle ? `${subtitle} · ` : "Filed with the SEC · "}

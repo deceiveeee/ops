@@ -312,3 +312,25 @@ export async function fetchFilingDocument(
   if (!res.ok) return res;
   return { ok: true, html: res.body };
 }
+
+/**
+ * Any file in a filing, by name: its XBRL data file, say, or its label file.
+ * A data file can run to megabytes, so a caller reading one should cache what
+ * it works out from the file rather than count on the file itself being cached.
+ */
+export async function fetchFilingFile(cik: string, accession: string, name: string): Promise<EdgarResult<{ body: string }>> {
+  return secFetch(archivePath(cik, accession, name), 604_800);
+}
+
+/** The names of the files a filing holds, from its index. */
+export async function fetchFilingFileNames(cik: string, accession: string): Promise<EdgarResult<{ names: string[] }>> {
+  const res = await secFetch(archivePath(cik, accession, "index.json"), 604_800);
+  if (!res.ok) return res;
+  try {
+    const parsed = JSON.parse(res.body) as { directory?: { item?: { name?: unknown }[] } };
+    const names = (parsed.directory?.item ?? []).map((item) => item.name).filter((name): name is string => typeof name === "string");
+    return { ok: true, names };
+  } catch {
+    return { ok: false, reason: "fetch-failed", message: "That filing's list of files could not be read." };
+  }
+}

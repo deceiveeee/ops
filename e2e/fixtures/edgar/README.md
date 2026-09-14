@@ -65,3 +65,19 @@ rebuild it, fetch the filing again, extract its sections with `extractFilingSect
 lengths in the table above, wrap headings in `<div>` and paragraphs in `<p>` with `&`, `<` and `>`
 escaped, and check that all seven sections still extract and the PVC resin offsets in the tests
 still hold.
+
+## Atkore Inc., the same annual report's XBRL data
+
+**`https___www.sec.gov_Archives_edgar_data_1666138_000162828025054049_index.json`**,
+**`https___www.sec.gov_Archives_edgar_data_1666138_000162828025054049_atkr-20250930_htm.xml`** and
+**`https___www.sec.gov_Archives_edgar_data_1666138_000162828025054049_atkr-20250930_lab.xml`**
+
+- **Source:** the same filing's index, data file and label file, fetched from sec.gov on 13 September
+  2026 with the project's declared User-Agent.
+- **The index is as EDGAR serves it** (13.2 KB). The reader reads it to find which data and label files
+  the filing holds.
+- **The data file is trimmed from 2,367 KB to 47.4 KB, and the label file from 1,120 KB to 21.1 KB.**
+  What is kept is every context and fact `lib/filings/revenue.ts` reads (revenue, customer
+  concentration and the period covered) and the labels of the members those contexts name, copied as
+  filed. The trimmed files were written only after they gave exactly the same product lines, regions,
+  segments and customers as the full files.
