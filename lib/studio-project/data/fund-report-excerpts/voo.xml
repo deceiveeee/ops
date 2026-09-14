@@ -1,0 +1,786 @@
+<!-- Excerpt of https://www.sec.gov/Archives/edgar/data/36405/000110465926021519/tm263123d8_ncsr_htm.xml
+     for share class C000092055: its contexts and the facts lib/studio-project/fund-reports.ts reads, as filed. -->
+<fundReportExcerpt classId="C000092055">
+<context id="From2025-01-01to2025-12-31">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2025-01-01to2025-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2015-12-31to2015-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2015-12-31</startDate>
+            <endDate>2015-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2016-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2016-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2016-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2016-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2016-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2016-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2016-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2016-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2017-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2017-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2017-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2017-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2017-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2017-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2017-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2017-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2018-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2018-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2018-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2018-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2018-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2018-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2018-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2018-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2019-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2019-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2019-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2019-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2019-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2019-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2019-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2019-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2020-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2020-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2020-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2020-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2020-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2020-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2020-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2020-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2021-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2021-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2021-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2021-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2021-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2021-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2021-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2021-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2022-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2022-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2022-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2022-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2022-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2022-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2022-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2022-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2023-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2023-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2023-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2023-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2023-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2023-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2023-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2024-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2024-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2024-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2024-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2024-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2024-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2025-03-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-03-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2025-06-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-06-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2025-09-30_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2025-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2025-01-01to2025-12-31_C000092055Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2021-01-01to2025-12-31_C000092055Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2016-01-01to2025-12-31_C000092055Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2021-01-01to2025-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorCommunicationServicesSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorCommunicationServicesSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorConsumerDiscretionarySectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorConsumerDiscretionarySectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorConsumerStaplesSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorConsumerStaplesSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorEnergySectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorEnergySectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorFinancialsSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorFinancialsSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorHealthCareSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorHealthCareSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorIndustrialsSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorIndustrialsSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorInformationTechnologySectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorInformationTechnologySectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorMaterialsSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorMaterialsSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorRealEstateSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorRealEstateSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorUtilitiesSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorUtilitiesSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="AsOf2025-12-31_C000092055Member_SectorOtherNetLineSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">nacc2:C000092055Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">nacc2:SectorOtherNetLineSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<dei:DocumentPeriodEndDate contextRef="From2025-01-01to2025-12-31" id="Fact000013">2025-12-31</dei:DocumentPeriodEndDate>
+<dei:DocumentType contextRef="From2025-01-01to2025-12-31" id="Fact000011">N-CSR</dei:DocumentType>
+<dei:TradingSymbol
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="TradingSymbol_BE13665EC5624235">VOO</dei:TradingSymbol>
+<oef:ClassName
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="ClassName_00DD9271C38441A0">ETF Shares</oef:ClassName>
+<oef:FundName
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="FundName_FBE66CE50DA44749">500 Index Fund</oef:FundName>
+<oef:AvgAnnlRtrPct
+      contextRef="From2025-01-01to2025-12-31_C000092055Member_WithoutSalesLoadMember"
+      decimals="INF"
+      id="AvgAnnlRtrPct_64F8E46419ED4F2F"
+      unitRef="Pure">0.1784</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2021-01-01to2025-12-31_C000092055Member_WithoutSalesLoadMember"
+      decimals="INF"
+      id="AvgAnnlRtrPct_60519F92C592484A"
+      unitRef="Pure">0.1438</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2016-01-01to2025-12-31_C000092055Member_WithoutSalesLoadMember"
+      decimals="INF"
+      id="AvgAnnlRtrPct_75B1E4A047684A03"
+      unitRef="Pure">0.1478</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      decimals="INF"
+      id="AvgAnnlRtrPct_FC9D4B2DC54D4F69"
+      unitRef="Pure">0.1782</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2021-01-01to2025-12-31_C000092055Member"
+      decimals="INF"
+      id="AvgAnnlRtrPct_007024102815448D"
+      unitRef="Pure">0.1438</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2016-01-01to2025-12-31_C000092055Member"
+      decimals="INF"
+      id="AvgAnnlRtrPct_EED221F120BB440E"
+      unitRef="Pure">0.1478</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrTableTextBlock
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="AvgAnnlRtrTableTextBlock_49937BB1AF6F47DF">&lt;div style="width: 100%; height: 100%; display: flex; grid-auto-rows: minmax(6px, max-content); grid-template-columns: repeat(auto-fill, 6px);"&gt;&lt;div style="box-sizing: border-box; color: rgb(0, 0, 0); display: block; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: hidden; text-align-last: auto; white-space-collapse: collapse; width: 100%; height: 100%;"&gt;&lt;table style="border-collapse: collapse; table-layout: auto; width: 100%; background-color: rgba(255, 255, 255, 0); border-bottom: 1px solid rgb(157, 163, 163); box-sizing: border-box; color: rgb(0, 0, 0); display: table; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; white-space-collapse: collapse;"&gt;&lt;thead style="box-sizing: border-box; color: rgb(0, 0, 0); display: table-header-group; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse;"&gt;&lt;tr style="box-sizing: border-box; color: rgb(0, 0, 0); display: table-row; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse; height: 16.5px;"&gt;&lt;td colspan="1" style="padding: 0px; font-family: Arial; font-weight: 700; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 700; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;&#160;&lt;/div&gt;&lt;/td&gt;&lt;th colspan="1" style="padding: 0px; font-family: Arial; font-weight: 700; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 700; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;1 Year&lt;/div&gt;&lt;/th&gt;&lt;th colspan="1" style="padding: 0px; font-family: Arial; font-weight: 700; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 700; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;5 Years&lt;/div&gt;&lt;/th&gt;&lt;th colspan="1" style="padding: 0px; font-family: Arial; font-weight: 700; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 700; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;10 Years&lt;/div&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody style="box-sizing: border-box; color: rgb(0, 0, 0); display: table-row-group; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse;"&gt;&lt;tr style="background-color: rgba(255, 255, 255, 0); box-sizing: border-box; color: rgb(0, 0, 0); display: table-row; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse; height: 17px;"&gt;&lt;th colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: left; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: left; text-align-last: auto;"&gt;ETF Shares  Net Asset Value&lt;/div&gt;&lt;/th&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;17.84%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.38%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.78%&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="background-color: rgba(255, 255, 255, 0); box-sizing: border-box; color: rgb(0, 0, 0); display: table-row; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse; height: 17px;"&gt;&lt;th colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: left; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: left; text-align-last: auto;"&gt;ETF Shares Market Price&lt;/div&gt;&lt;/th&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;17.82%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.38%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.78%&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="background-color: rgba(255, 255, 255, 0); box-sizing: border-box; color: rgb(0, 0, 0); display: table-row; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse; height: 17px;"&gt;&lt;th colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: left; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: left; text-align-last: auto;"&gt;S&amp;amp;P 500 Index&lt;/div&gt;&lt;/th&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;17.88%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.42%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.82%&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="background-color: rgba(255, 255, 255, 0); box-sizing: border-box; color: rgb(0, 0, 0); display: table-row; flex-wrap: nowrap; font-size: 16px; font-weight: 400; grid-area: auto; line-height: 24px; margin: 0px; overflow: visible; text-align-last: auto; vertical-align: middle; white-space-collapse: collapse; height: 17px;"&gt;&lt;th colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: left; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: left; text-align-last: auto;"&gt;Dow Jones U.S. Total Stock Market Float Adjusted Index&lt;/div&gt;&lt;/th&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;17.05%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;13.07%&lt;/div&gt;&lt;/td&gt;&lt;td colspan="1" style="padding: 0px; border-top: 1px solid rgb(157, 163, 163); font-family: Arial; font-weight: 400; font-size: 10.6667px; text-align: center; vertical-align: middle; text-decoration: unset; text-underline-position: auto; text-decoration-skip-ink: auto; font-style: normal; color: rgb(0, 0, 0); white-space: pre-wrap; line-height: 16px; background-color: rgba(255, 255, 255, 0); box-sizing: border-box; display: table-cell; flex-wrap: nowrap; grid-area: auto; margin: 0px; overflow: visible; text-align-last: auto;"&gt;&lt;div style="display: inline-block; margin: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; white-space: pre-line; height: 100%; text-decoration: unset; box-sizing: border-box; color: rgb(0, 0, 0); flex-wrap: nowrap; font-size: 10.6667px; font-weight: 400; grid-area: auto; line-height: 16px; overflow: visible; text-align: center; text-align-last: auto;"&gt;14.21%&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;</oef:AvgAnnlRtrTableTextBlock>
+<oef:LineGraphAndTableMeasureName
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="LineGraphAndTableMeasureName_09433F2479A6475A">ETF Shares Net Asset Value </oef:LineGraphAndTableMeasureName>
+<oef:ExpenseRatioPct
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      decimals="INF"
+      id="ExpenseRatioPct_3DF67A954F3641FB"
+      unitRef="Pure">0.0003</oef:ExpenseRatioPct>
+<oef:ExpensesPaidAmt
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      decimals="0"
+      id="ExpensesPaidAmt_1E281626AD214BA1"
+      unitRef="USD">3</oef:ExpensesPaidAmt>
+<oef:PerformancePastDoesNotIndicateFuture
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="PerformancePastDoesNotIndicateFuture_856171F0E65946DD">Keep in mind that the Fund's past performance does not indicate how the Fund will perform in the future.</oef:PerformancePastDoesNotIndicateFuture>
+<oef:NoDeductionOfTaxesTextBlock
+      contextRef="From2025-01-01to2025-12-31_C000092055Member"
+      id="NoDeductionOfTaxesTextBlock_9C244A5FB8274DAC">The graph and returns shown do not reflect taxes that a shareholder would pay on fund distributions or on the sale of fund shares.</oef:NoDeductionOfTaxesTextBlock>
+</fundReportExcerpt>

@@ -56,6 +56,39 @@ describe("Studio catalog provenance", () => {
     expect(instrument("SGOV").expenseRatioPct).not.toBe(instrument("VTI").expenseRatioPct);
   });
 
+  it("carries each fund's own annual report, cited as a source, and none for a share or the Treasury note", () => {
+    for (const item of STUDIO_CATALOG) {
+      if (item.kind !== "fund") {
+        expect(item.report, item.symbol).toBeNull();
+        continue;
+      }
+      const report = item.report;
+      if (!report) throw new Error(`${item.symbol} has no annual report`);
+      expect(report.returns.slice(0, 2).map((period) => period.years), item.symbol).toEqual([1, 5]);
+      expect(report.pastPerformance, item.symbol).toMatch(/past performance/i);
+      // Citable as evidence in the research record, under the report's accession.
+      expect(item.sources.map((source) => source.id), item.symbol).toContain(report.source.id);
+    }
+  });
+
+  it("shows the same returns VTI's and VOO's prospectuses give for the same periods", () => {
+    // Independent of the reports the figures were read from: lib/holdings-slate.ts
+    // took these from each fund's prospectus, for periods ended 31 December 2025.
+    expect(instrument("VTI").report?.returns.map((period) => period.pct)).toEqual(PRODUCTS.VTI.returns.map((row) => row.fundPct));
+    expect(instrument("VOO").report?.returns.map((period) => period.pct)).toEqual(PRODUCTS.VOO.returns.map((row) => row.fundPct));
+  });
+
+  it("differs from the prospectus cost only for VXUS, by the amounts its two filings give", () => {
+    // VXUS's report year, to 31 October 2025, cost 0.06%; the prospectus in this
+    // catalogue, of February 2026, gives 0.05%. The card says where each comes from.
+    const differing = STUDIO_CATALOG.filter((item) => item.report && item.report.costPct !== item.expenseRatioPct).map((item) => [
+      item.symbol,
+      item.expenseRatioPct,
+      item.report?.costPct,
+    ]);
+    expect(differing).toEqual([["VXUS", 0.05, 0.06]]);
+  });
+
   it("gives every instrument at least one dated source on an official domain", () => {
     for (const item of STUDIO_CATALOG) {
       expect(item.sources.length).toBeGreaterThan(0);

@@ -1,0 +1,459 @@
+<!-- Excerpt of https://www.sec.gov/Archives/edgar/data/36405/000110465926021502/tm263123d1_ncsr_htm.xml
+     for share class C000007808: its contexts and the facts lib/studio-project/fund-reports.ts reads, as filed. -->
+<fundReportExcerpt classId="C000007808">
+<context id="D20151231_20151231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2015-12-31</startDate>
+            <endDate>2015-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20171231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2017-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20181231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2018-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20191231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2019-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20211231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2021-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20221231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2022-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20231231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2023-12-31</endDate>
+        </period>
+    </context>
+<context id="D20160101_20241231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+<context id="DefaultContext">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="FiveY2020_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2020-12-31</endDate>
+        </period>
+    </context>
+<context id="FiveY2025_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="FiveY2025_C000007808Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="FY2016_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2016-12-31</endDate>
+        </period>
+    </context>
+<context id="FY2025_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="FY2025_C000007808Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="TenY2025_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="TenY2025_C000007808Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2016-01-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_BasicMaterialsMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">vif:BasicMaterialsMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_ConsumerDiscretionarySectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">oef:ConsumerDiscretionarySectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_ConsumerStaplesSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">oef:ConsumerStaplesSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_EnergySectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">us-gaap:EnergySectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_FinancialServicesSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">us-gaap:FinancialServicesSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_HealthcareSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">us-gaap:HealthcareSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_IndustrialSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">oef:IndustrialSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_OtherAssetsAndLiabilitiesNetMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="us-gaap:InvestmentTypeAxis">vif:OtherAssetsAndLiabilitiesNetMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_RealEstateSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">us-gaap:RealEstateSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_TechnologySectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">us-gaap:TechnologySectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_TelecommunicationsMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">vif:TelecommunicationsMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<context id="TI20251231_C000007808Member_UtilitiesSectorMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0000036405</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">vif:C000007808Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:IndustrySectorAxis">oef:UtilitiesSectorMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2025-12-31</instant>
+        </period>
+    </context>
+<dei:DocumentPeriodEndDate contextRef="DefaultContext" id="Fact000013">2025-12-31</dei:DocumentPeriodEndDate>
+<dei:DocumentType contextRef="DefaultContext" id="Fact000011">N-CSR</dei:DocumentType>
+<dei:TradingSymbol
+      contextRef="FY2025_C000007808Member"
+      id="t_304_bb811402_a468_be42_5f4d_7f2d440d24cd">VTI</dei:TradingSymbol>
+<oef:ClassName
+      contextRef="FY2025_C000007808Member"
+      id="t_303_daca9657_984d_33b9_fddd_ed3fa9433020">ETF Shares</oef:ClassName>
+<oef:FundName
+      contextRef="FY2025_C000007808Member"
+      id="t_302_451ae5a2_e2a4_ee29_eccb_01e013580dc9">Vanguard Total Stock Market Index Fund</oef:FundName>
+<oef:AvgAnnlRtrPct
+      contextRef="FY2025_C000007808Member"
+      decimals="4"
+      id="h_804_6743e29d_7aba_4dff_aa8b_6d9bd9b3790a"
+      unitRef="pure">0.1714</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="FiveY2025_C000007808Member"
+      decimals="4"
+      id="h_805_6f78de55_ff0b_4baa_94f2_27058934fd97"
+      unitRef="pure">0.1308</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="TenY2025_C000007808Member"
+      decimals="4"
+      id="h_806_2d7bc989_4378_402b_ad37_f07981787afe"
+      unitRef="pure">0.1425</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="FY2025_C000007808Member_WithoutSalesLoadMember"
+      decimals="4"
+      id="h_807_718b57f7_02fa_4170_86d7_b44a5bc143b0"
+      unitRef="pure">0.1710</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="FiveY2025_C000007808Member_WithoutSalesLoadMember"
+      decimals="4"
+      id="h_808_6b5c2a5d_96a0_4f5d_bf94_54a78399e2ed"
+      unitRef="pure">0.1306</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="TenY2025_C000007808Member_WithoutSalesLoadMember"
+      decimals="4"
+      id="h_809_6548a20c_b16b_46eb_8fbc_de40508f5a57"
+      unitRef="pure">0.1425</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrTableTextBlock
+      contextRef="FY2025_C000007808Member"
+      id="t_300_bcb6bc67_96e8_4dc4_ee94_78641cf3eb59">&lt;table style="width:100%;border-collapse:collapse;break-inside:avoid"&gt;
+&lt;tr style="break-after:avoid;border-bottom-style:solid;border-bottom-width:1pt;break-inside:avoid-page;height:20pt;border-bottom-color:rgb(0, 0, 0);border-top-color:rgb(0, 0, 0);border-top-style:solid;border-top-width:0.25pt"&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; vertical-align: middle; width: 60%; text-align: left; top: 0.7pt; left: 0.7pt; border-right-width: 0; background-color: rgb(242, 242, 242); background-image: initial;"&gt;&lt;strong&gt;Average Annual Total Returns&lt;/strong&gt;&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; vertical-align: middle; text-align: left; top: 0.7pt; left: 0.7pt; border-right-width: 0; background-color: rgb(242, 242, 242); background-image: initial;"&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; vertical-align: middle; text-align: left; top: 0.7pt; left: 0.7pt; border-right-width: 0; background-color: rgb(242, 242, 242); background-image: initial;"&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; vertical-align: middle; border-right-color: initial; border-right-style: none; border-right-width: 0; text-align: left; top: 0.7pt; left: 0.7pt; background-color: rgb(242, 242, 242); background-image: initial;"&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/td&gt; &lt;/tr&gt;
+&lt;tr style="break-after:avoid;border-bottom-style:solid;border-bottom-width:1pt;break-inside:avoid-page;height:20pt;border-bottom-color:rgb(0, 0, 0);border-top-color:rgb(0, 0, 0);border-top-style:solid;border-top-width:0.25pt"&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: left; vertical-align: middle; width: 60%;"&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; vertical-align: middle;"&gt;&lt;strong&gt;1 Year&lt;/strong&gt;&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; vertical-align: middle;"&gt;&lt;strong&gt;5 Years&lt;/strong&gt;&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; vertical-align: middle; border-right-color: initial; border-right-style: none; border-right-width: initial;"&gt;&lt;strong&gt;10 Years&lt;/strong&gt;&lt;/td&gt; &lt;/tr&gt;
+&lt;tr style="break-inside:avoid-page;height:20pt;border-bottom-color:rgb(0, 0, 0);border-bottom-style:solid;border-bottom-width:0.5pt"&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; color: rgb(0, 0, 0); font-size: 8pt; font-family: 'Arial'; text-align: left; font-weight: normal;"&gt;ETF Shares Net Asset Value&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;17.14%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;13.08%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; border-right-color: initial; border-right-style: none; border-right-width: initial;"&gt;14.25%&lt;/td&gt; &lt;/tr&gt;
+&lt;tr style="break-inside:avoid-page;height:20pt;border-bottom-color:rgb(0, 0, 0);border-bottom-style:solid;border-bottom-width:0.5pt"&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; color: rgb(0, 0, 0); font-size: 8pt; font-family: 'Arial'; text-align: left; font-weight: normal;"&gt;ETF Shares Market Price&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;17.10%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;13.06%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; border-right-color: initial; border-right-style: none; border-right-width: initial;"&gt;14.25%&lt;/td&gt; &lt;/tr&gt;
+&lt;tr style="break-inside:avoid-page;height:20pt;border-bottom-color:rgb(0, 0, 0);border-bottom-style:solid;border-bottom-width:0.5pt"&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; color: rgb(0, 0, 0); font-size: 8pt; font-family: 'Arial'; text-align: left; font-weight: normal;"&gt;CRSP US Total Market Index&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;17.15%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;13.08%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; border-right-color: initial; border-right-style: none; border-right-width: initial;"&gt;14.25%&lt;/td&gt; &lt;/tr&gt;
+&lt;tr style="break-inside:avoid-page;height:20pt;border-bottom-width:0.5pt;border-bottom-color:rgb(0, 0, 0);border-bottom-style:solid"&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; color: rgb(0, 0, 0); font-size: 8pt; font-family: 'Arial'; text-align: left; font-weight: normal;"&gt;Dow Jones U.S. Total Stock Market Float Adjusted Index&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;17.05%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center;"&gt;13.07%&lt;/td&gt;
+&lt;td style="break-inside: avoid-page; vertical-align: middle; padding-top: 6pt; padding-right: 3pt; padding-bottom: 3pt; padding-left: 3pt; font-family: 'Arial'; color: rgb(0, 0, 0); font-size: 8pt; text-align: center; border-right-color: initial; border-right-style: none; border-right-width: initial;"&gt;14.21%&lt;/td&gt; &lt;/tr&gt; &lt;/table&gt;</oef:AvgAnnlRtrTableTextBlock>
+<oef:LineGraphAndTableMeasureName
+      contextRef="FY2025_C000007808Member"
+      id="t_308_df84da40_67ff_0aed_aa9d_28336f72d22e">ETF Shares Net Asset Value</oef:LineGraphAndTableMeasureName>
+<oef:LineGraphAndTableMeasureName
+      contextRef="FY2025_C000007808Member_WithoutSalesLoadMember"
+      id="t_309_cfd1e0e7_12df_dc6e_99e6_a1692f4294d4">ETF Shares Market Price</oef:LineGraphAndTableMeasureName>
+<oef:ExpenseRatioPct
+      contextRef="FY2025_C000007808Member"
+      decimals="4"
+      id="h_803_6c6b8355_ce4a_466d_880b_43cbfc814ca6"
+      unitRef="pure">0.0003</oef:ExpenseRatioPct>
+<oef:ExpensesPaidAmt
+      contextRef="FY2025_C000007808Member"
+      decimals="INF"
+      id="h_802_5f3f3b1d_bf8a_46d0_9c13_2848155a0d76"
+      unitRef="USD">3</oef:ExpensesPaidAmt>
+<oef:PerformancePastDoesNotIndicateFuture
+      contextRef="FY2025_C000007808Member"
+      id="t_305_4ee1cda6_efcd_3a92_b911_0dff18f2f94d">Keep in mind that the Fund's past performance does not indicate how the Fund will perform in the future.</oef:PerformancePastDoesNotIndicateFuture>
+<oef:NoDeductionOfTaxesTextBlock
+      contextRef="FY2025_C000007808Member"
+      id="t_306_1f0f1647_fdc4_70a2_aefd_f4815147c1de">The graph and returns shown do not reflect taxes that a shareholder would pay on fund distributions or on the sale of fund shares.</oef:NoDeductionOfTaxesTextBlock>
+</fundReportExcerpt>

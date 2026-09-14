@@ -1284,3 +1284,104 @@ them.
 Commit R5. Then, from the roadmap, R6: fund returns and costs from shareholder reports. The smaller
 alternative is shortening the open catalogue card in Research, 2.13 screens at 1440 before R2's
 record was added to it.
+
+## 2026-09-13: fund returns and costs from annual reports
+
+R6 in the research roadmap, the last of the six items listed before or alongside the research record.
+
+### Built
+
+- **Each fund's card in Research shows what it returned and cost, from its own annual report.** A
+  table gives the average return a year over 1, 5 and 10 years, or since a younger share class began.
+  A sentence gives the date the periods end, says the figures are before any tax, and says what the
+  share class cost over that year on $10,000. The card quotes the report's own statement that past
+  performance does not predict. The block sits after the fund's main risks. Company shares and the
+  Treasury note show none.
+- **The figures, for the year each report covers:** VTI 17.14%, 13.08% and 14.25%, and VOO 17.84%,
+  14.38% and 14.78%, both to 31 December 2025; VXUS 24.83%, 11.27% and 7.86%, to 31 October 2025;
+  AGG 6.24%, 0.41% and 1.94%, and SGOV 4.11%, 3.35% and 2.91% since 26 May 2020, both to 28 February
+  2026. Costs on $10,000: $3, $3, $7, $3 and $9.
+- **`lib/studio-project/fund-reports.ts`**, pure and unit-tested. It reads a report's contexts and
+  facts for exactly one share class; takes the return series the report prints as net asset value,
+  every figure of which must equal a tagged fact; reads the year's costs; and refuses, with the
+  reason, whatever cannot be checked. It also reads a filing's EDGAR header and checks a ticker three
+  ways.
+- **`scripts/source/fetch-fund-reports.mjs`**, reading `fund-reports-manifest.json`. It finds each
+  share class in the SEC's fund ticker list, reads the registrant's annual reports newest first by
+  their EDGAR headers, tens of kilobytes each, until one lists the class, and only then fetches that
+  report's data file, 0.67 to 9.12 MB. It writes `lib/studio-project/data/fund-reports.json`, a
+  verbatim excerpt per fund under `fund-report-excerpts/` (23 to 55 KB), and the audit page
+  `docs/source-audits/studio-fund-reports.md`. It refuses to write if an excerpt does not read exactly
+  as the whole report does.
+- **The catalogue** carries each fund's report and lists it among the card's sources, so it can be
+  cited as evidence in the research record.
+
+### Found and fixed on the way
+
+- **VOO's report labels its two return series the wrong way round in its data file.** VTI's report
+  tags net asset value with no further dimension and market price on the sales-load axis. VOO's,
+  filed the same day, does the opposite, and puts the "Net Asset Value" label on the market-price
+  figures: 17.82% for the year, against the 17.84% it prints. Choosing by tag or by label would have
+  shown the wrong series for one of the two. Studio takes the printed row instead, and VTI's and
+  VOO's prospectuses, in Mission 12's records, give the same figures. The audit page records the
+  disagreement.
+- **VXUS has two true costs.** Its report year cost 0.06%; the prospectus of February 2026 in the
+  catalogue gives 0.05%. The card says where each comes from rather than choosing one, and a test
+  pins VXUS as the only fund where they differ.
+- **SGOV's card made the whole page scroll sideways on a phone.** At 390px its "Since 26 May 2020"
+  heading would not wrap, and the card list is a grid, whose items grow to fit such content, so every
+  card widened to 418px. The cards may now shrink (`min-w-0`), and the "Since" heading wraps. Fixing
+  that exposed two more faults at 390. VTI's table needed 334px of the 324 available and scrolled
+  inside its box, so the padding after each column is now 12px, and none after the last. And with
+  every heading free to wrap, SGOV's "5 years" split over two lines and read as two labels, so only a
+  "Since" heading may wrap. Each fault has a test, and each test failed against the build that had
+  the fault: by 44px, by 10px, and by a second line.
+- **The data test first built its excerpt path with `new URL(..., import.meta.url)`, which under
+  vitest resolved to a file named "undefined".** It resolves from the repository root instead.
+
+### Verified
+
+- `tsc` 0; lint clean on every changed file. Vitest 57 files, 730 tests, 28 new: 19 on the reading
+  rules, 6 reading the data against its excerpts, 3 in the catalogue.
+- **The checks can fail.** Four deliberate breaks in the reading rules each failed at least one test:
+  taking the first series, reading every share class, counting an index as a series, and missing the
+  leap day in a ten-year period. So did four edits to the data file: VOO given its market-price
+  figure, VTI tagged with the Admiral ticker, AGG pointed at another share class, and SGOV's cost
+  changed by hand. The files were restored and compared after each.
+- **The check this roadmap item names is met.** Every figure equals the tagged fact: the data test
+  reads each verbatim excerpt again and must get the data exactly. Every share class is matched to
+  its ticker by three records that agree, and the four funds in Mission 12's records name the same
+  classes. Where the periods coincide, VTI's and VOO's figures equal their prospectuses'.
+- **The script was run twice**, and the second run wrote identical data and excerpts. It dates its
+  retrieval in UTC, so the audit page says 14 September.
+- Playwright on a production build: **114 passed, 4 skipped, none failed**, with the four new checks
+  as first written. After the three phone fixes the app was rebuilt, and the Research specs, now with
+  a fifth check, re-ran on the final build: 15 passed.
+- Six widths across every workspace route: problems none, and every height as before. That was
+  measured on the build before the heading fix, which changes only an opened card. With one card
+  open at a time, the returns block adds 141px at 1440 for VTI and SGOV and 161px for VXUS, whose
+  card carries the sentence about its two costs; at 390, 241, 201 and 261px. No page scrolls
+  sideways at any width, and no table scrolls inside its box at 390.
+
+### Known limits
+
+- **An open fund card is long, and longer now.** At 1440 VTI's is 2.70 screens, and 2.52 without the
+  returns block; R2 measured 2.46 with the record. The report's line in the sources list is not
+  counted in the "without" figure. The card needs shortening as a whole, which is still separate work.
+- **Figures are as old as the report.** VXUS's run to 31 October 2025, so on 13 September 2026 they
+  are over ten months old; the card shows the date the periods end. The next annual reports cover
+  the years to 31 December 2026, 31 October 2026 and 28 February 2027, and the refresh is a script
+  someone runs.
+- **Returns are shown at net asset value only.** The market-price series is read and recorded on the
+  audit page, not shown. In these reports it is within 0.23 of a percentage point, the widest being
+  VXUS's year: 24.83% against 24.60%.
+- **SGOV's figures rest on the tags alone.** Its report tags one return series for the class and no
+  returns table the data file carries, so there is no printed row to check them against. The audit
+  page says so.
+- Distributions are not shown, and semiannual reports, which carry costs but not returns, are not
+  read. A "since" period is named by the date its context starts, not by the report's own wording.
+
+### Next concrete action
+
+Commit R6. Then, from the roadmap, Phase 2, starting with R7: a peer set for Atkore. The smaller
+alternative is shortening the open catalogue card in Research, now 2.70 screens at 1440 for VTI.

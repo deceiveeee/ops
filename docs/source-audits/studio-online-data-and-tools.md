@@ -705,6 +705,7 @@ Each item names what the learner gains and the check that proves it.
 - **R6. Fund returns and costs** from shareholder reports.
   - Learner: sees 1-, 5- and 10-year returns by share class, with their period.
   - Check: they equal the tagged values, and each share class is matched to its ticker.
+    **Done 2026-09-13 (§13).**
   - Milestones: M4 and M5.
 
 **Phase 2, with the Atkore journey as its acceptance test:**
@@ -889,6 +890,35 @@ price".
 
 **Outside websites needed to finish the Atkore journey: 0**, from 4 when §7.1 measured them. Next in
 §10: R6, fund returns and costs from shareholder reports.
+
+### R6, done 2026-09-13
+
+**A fund's card in Research now shows what it returned over 1, 5 and 10 years, and what it cost, from
+the fund's own annual report.** Detail in the ledger entry "2026-09-13: fund returns and costs from
+annual reports".
+
+- **Five funds, every figure checked against its filing.** `scripts/source/fetch-fund-reports.mjs`
+  finds each fund's newest annual report through the filings' EDGAR headers, which list the share
+  classes a filing covers, and keeps a verbatim excerpt of what it read. A test reads each excerpt
+  again and must get exactly the figures Studio shows.
+- **Each share class is matched to its ticker three ways:** the SEC's fund ticker list, the filing's
+  header, and the ticker the report tags on the class. All five agree, and the four funds in Mission
+  12's records name the same classes.
+- **A risk this section did not name turned up.** An ETF's report can give returns at net asset value
+  and at market price. VOO's report labels its market-price series "Net Asset Value" in its data
+  file, the opposite of VTI's, filed the same day. Studio uses the row the report prints as net asset
+  value, every figure of which must equal a tagged fact, and VTI's and VOO's prospectuses give the
+  same figures. The audit page, `studio-fund-reports.md`, records the disagreement.
+- **The period and the report's own words go with the figures:** the date the periods end, "since"
+  a younger class's start where there is no 10-year figure (SGOV, since 26 May 2020), and the
+  report's statement that past performance does not predict.
+- **One cost differs, and the card says where each comes from.** VXUS's report year, to 31 October
+  2025, cost 0.06%; the prospectus of February 2026 in the catalogue gives 0.05%.
+- The check in this section is met: the figures equal the tagged values, and each share class is
+  matched to its ticker.
+
+All six items listed before or alongside the research record are done. Next in §10: Phase 2,
+starting with R7, a peer set for Atkore.
 
 ## Appendix A. Probe log
 

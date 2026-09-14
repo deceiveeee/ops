@@ -16,6 +16,7 @@ import {
 } from "@/lib/studio";
 import { Choice, Fact, Field, Notice, NumberInput, Panel, Stat, StageHeading, TableScroll, downloadFile, pct, usd, usdWhole } from "./shared";
 import ResearchRecord from "./ResearchRecord";
+import FundReportFacts from "./FundReportFacts";
 import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
@@ -266,7 +267,9 @@ export function ResearchStage(props: StageProps) {
             <div
               key={instrument.id}
               className={cn(
-                "relative rounded-2xl border border-white/10 bg-white/[0.03] p-4",
+                // min-w-0: a grid item otherwise grows to fit content that cannot
+                // wrap, which widened every card and scrolled the page sideways.
+                "relative min-w-0 rounded-2xl border border-white/10 bg-white/[0.03] p-4",
                 open && "border-accent-cyan/30 lg:col-span-2",
               )}
             >
@@ -328,6 +331,8 @@ export function ResearchStage(props: StageProps) {
                       ))}
                     </ul>
                   </div>
+
+                  <FundReportFacts instrument={instrument} />
 
                   {/*
                     Four facts a single share needs kept apart, because the

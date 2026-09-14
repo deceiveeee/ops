@@ -1,5 +1,7 @@
 import { PRODUCTS, RETRIEVED_AT, type Passport } from "@/lib/holdings-slate";
 import catalogPrices from "@/lib/studio-project/data/catalog-prices.json";
+import fundReports from "@/lib/studio-project/data/fund-reports.json";
+import { returnPct, type FundReportEntry } from "@/lib/studio-project/fund-reports";
 
 /**
  * The investments a user can research inside Studio.
@@ -142,6 +144,8 @@ export interface StudioInstrument {
   whatItIs: string;
   /** The filing's own principal-risk language, not an OPS ranking. */
   mainRisks: string[];
+  /** What the fund's own annual report says it returned and cost. Null for anything that is not a fund, or whose report could not be checked. */
+  report: StudioFundReport | null;
 }
 
 /** EDGAR's filing index page for one accession. */
@@ -177,6 +181,60 @@ function researchPrice(instrumentId: string): Pick<StudioInstrument, "referenceP
   };
 }
 
+/** What a fund's own annual shareholder report says it returned and cost, for the share class a learner buys. */
+export interface StudioFundReport {
+  /** The last day of the year the report covers. Every period ends on it. */
+  periodEnd: string;
+  /**
+   * Average annual total return at net asset value, as a percentage: 1 year,
+   * 5 years, then 10 years or, for a younger share class, since `start`.
+   */
+  returns: { years: number | null; start: string; pct: number }[];
+  /** What the share class cost over that year on $10,000 invested, in dollars. */
+  costPer10000Usd: number;
+  costPct: number;
+  /** A fund's share classes each have their own costs, and so their own returns. */
+  classesInSeries: number;
+  /** The report's own words that past performance does not predict. */
+  pastPerformance: string;
+  /** Whether the report says its returns leave out the taxes a holder pays. */
+  leavesOutTaxes: boolean;
+  /** The date of the prospectus `expenseRatioPct` comes from, so a difference from the report's cost can be explained. */
+  prospectusDated: string;
+  source: StudioSource;
+}
+
+const FUND_REPORTS = (fundReports as unknown as { funds: Record<string, FundReportEntry | undefined> }).funds;
+
+/**
+ * A fund's returns and costs as scripts/source/fetch-fund-reports.mjs last read
+ * them from its annual shareholder report (docs/source-audits/studio-fund-reports.md),
+ * or null. Nothing is shown for a fund whose share class was not matched to its
+ * ticker, or whose figures could not be checked against the report itself.
+ */
+function annualReport(instrumentId: string, prospectusDated: string): StudioFundReport | null {
+  const entry = FUND_REPORTS[instrumentId];
+  const extract = entry?.extract;
+  if (!entry || entry.problems.length || !extract?.periodEnd || !extract.pastPerformance) return null;
+  if (!extract.returns.found || !extract.costs.found) return null;
+  return {
+    periodEnd: extract.periodEnd,
+    returns: extract.returns.periods.map((period) => ({ years: period.years, start: period.start, pct: returnPct(period.value) })),
+    costPer10000Usd: extract.costs.paidPer10000Usd,
+    costPct: returnPct(extract.costs.ratio),
+    classesInSeries: entry.classesInSeries,
+    pastPerformance: extract.pastPerformance,
+    leavesOutTaxes: Boolean(extract.taxes),
+    prospectusDated,
+    source: {
+      id: entry.accession,
+      label: `${entry.form} annual shareholder report, ${entry.seriesName}${extract.className ? `, ${extract.className}` : ""} (${entry.accession})`,
+      url: filingIndexUrl(entry.cik, entry.accession),
+      asOf: extract.periodEnd,
+    },
+  };
+}
+
 /**
  * Asset class drives the stress scenario, so it is assigned from what each fund
  * says it tracks, not from a guess about how it behaves. All four of Mission
@@ -192,6 +250,7 @@ const ASSET_CLASS: Record<string, StudioAssetClass> = {
 
 function instrumentFromPassport(passport: Passport): StudioInstrument {
   const { holdings, prospectus } = passport;
+  const report = annualReport(passport.ticker.toLowerCase(), prospectus.dated);
   return {
     id: passport.ticker.toLowerCase(),
     symbol: passport.ticker,
@@ -239,11 +298,13 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
         url: filingIndexUrl(passport.cik, holdings.accession),
         asOf: holdings.asOf,
       },
+      ...(report ? [report.source] : []),
     ],
     whatItIs: `${passport.structure} ${passport.objective} It tracks the ${passport.targetIndex} and holds it by ${
       passport.replication === "full" ? "full replication" : "sampling"
     }. Listed on ${passport.listing}.`,
     mainRisks: passport.riskHighlights,
+    report,
   };
 }
 
@@ -276,6 +337,7 @@ const APPLE: StudioInstrument = {
   // is complete — the opposite of a fund, where it never is.
   exposures: [{ label: "Apple Inc", key: "HWUPKR0MPOU8FGXBT394", weightPct: 100 }],
   exposureCoveragePct: 100,
+  report: null,
   bond: null,
   stock: {
     incorporatedIn: "California, United States",
@@ -324,6 +386,7 @@ const TSMC: StudioInstrument = {
     { label: "Taiwan Semiconductor Manufacturing Co Ltd", key: "549300KB6NK5SBD14S87", weightPct: 100 },
   ],
   exposureCoveragePct: 100,
+  report: null,
   bond: null,
   stock: {
     incorporatedIn: "Taiwan",
@@ -388,6 +451,7 @@ const TREASURY_10Y: StudioInstrument = {
   // instead of reading as three separate things.
   exposures: [{ label: "United States of America", key: "254900HROIFWPRGM1V77", weightPct: 100 }],
   exposureCoveragePct: 100,
+  report: null,
   stock: null,
   bond: {
     cusip: "91282CRF0",
@@ -414,6 +478,9 @@ const TREASURY_10Y: StudioInstrument = {
     "Inflation can outpace a fixed 4.625% payment, so the money repaid buys less than the money lent",
   ],
 };
+
+/** VXUS's annual report. The date is that of its prospectus, the first of its sources below. */
+const VXUS_REPORT = annualReport("vxus", "2026-02-27");
 
 /**
  * One broad international stock fund, so a portfolio built here is not
@@ -458,6 +525,7 @@ const VXUS: StudioInstrument = {
   exposureCoveragePct: 12.9901,
   bond: null,
   stock: null,
+  report: VXUS_REPORT,
   sources: [
     {
       id: "0001193125-26-077488",
@@ -473,6 +541,7 @@ const VXUS: StudioInstrument = {
       url: filingIndexUrl("0000736054", "0000736054-26-000191"),
       asOf: "2026-04-30",
     },
+    ...(VXUS_REPORT ? [VXUS_REPORT.source] : []),
   ],
   whatItIs:
     "An exchange-traded share class of an open-end index fund. It seeks to track the performance of a benchmark index that measures the investment return of stocks issued by companies located in developed and emerging markets, excluding the United States. It tracks the FTSE Global All Cap ex US Index and holds it by full replication, meaning it generally holds the same stocks as the index in approximately the same proportions.",
