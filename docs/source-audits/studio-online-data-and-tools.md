@@ -713,6 +713,7 @@ Each item names what the learner gains and the check that proves it.
   (§5.1). Build the set from companies whose filings describe the same products (full-text
   search), record why each is in, and name the private competitors that are missing. Check: the
   Find step can show why Atkore appears, and every peer has a stated reason.
+  **Done 2026-09-13 (§13).**
 - **R8. Product lines, regions and customers** from the filing's data file. Check: the shares
   reconcile to total revenue.
 - **R9. Input-cost series,** each tied to an input the filing itself names. Check: every series
@@ -919,6 +920,38 @@ annual reports".
 
 All six items listed before or alongside the research record are done. Next in §10: Phase 2,
 starting with R7, a peer set for Atkore.
+
+### R7, done 2026-09-13
+
+**The industry view now offers "Atkore's peers, by product": why Atkore is there, in its own annual
+report's words; every peer with a stated reason and a filing to check it in; the competitors no SEC
+filing covers; and the companies a search found but left out.** Detail in the ledger entry
+"2026-09-13: Atkore's peers, chosen by product".
+
+- **The set starts from Atkore's own list.** Its 10-K names eleven main competitors across its two
+  segments. Four file annual reports with the SEC and are in the set: Nucor, Eaton, Hubbell and nVent.
+  A full-text search of annual reports for the products Atkore makes added Westlake, whose own report
+  says it makes conduit pipe.
+- **The other seven are named as missing.** None files an annual report with the SEC. Zekelman
+  withdrew a 2018 registration; Southwire's only filings are for a 2013–14 tender offer; Dura-Line's
+  record holds one private-offering notice; Mitsubishi's and Prysmian's records register depositary
+  receipts; ABB deregistered in 2024; Haydon has no EDGAR record.
+- **Five companies the search found are left out, each with the passage that shows why:** Quanta's
+  passage is about installing conduit; Otter Tail's pipe is mainly for municipal water; Advanced
+  Drainage Systems mentions conduit once, for joint ventures in emerging markets; Worthington sells
+  light-gauge framing through a joint venture; Fastenal is a distributor.
+- **Every claim is checked against EDGAR when the data is built:** each quoted passage word for word
+  in the filing it cites, each company's filing record, each search result, each "mentions it once"
+  counted over the whole report, and that every named competitor is either in the set or on the
+  missing list. A set with a failed check is not shown. Investigate's note about Atkore's industry
+  links to the set.
+- **The risk §5.1 named was real, and larger than the code.** Atkore's industry code would have
+  compared it with battery makers, and seven of the eleven competitors it names file no annual report
+  with the SEC, so no SEC comparison can include them.
+- The check in this section is met: the Find step shows why Atkore appears, and every peer has a
+  stated reason.
+
+Next in §10: R8, product lines, regions and customers from the filing's data file.
 
 ## Appendix A. Probe log
 

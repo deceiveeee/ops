@@ -1,0 +1,178 @@
+{
+  "about": "Peer sets chosen by what companies make, where the SEC's industry code is a poor market boundary. Every quote is word for word from the filing named, and scripts/source/fetch-peer-sets.mjs checks each one, each company's filing record, and each full-text search result against EDGAR before writing anything. Research: docs/implementation-notes/studio-research-workspace-progress.md, 2026-09-13, R7.",
+  "sets": [
+    {
+      "id": "atkore",
+      "label": "Atkore's peers, by product",
+      "subject": {
+        "name": "Atkore Inc.",
+        "shortName": "Atkore",
+        "cik": "0001666138",
+        "accession": "0001628280-25-054049",
+        "document": "atkr-20250930.htm",
+        "briefProducts": ["conduit", "fittings", "electrical cable", "cable management", "metal framing", "mechanical tube"],
+        "makes": [
+          {
+            "segment": "Electrical",
+            "quote": "Significant product categories within our Electrical segment include metal electrical conduit and fittings, plastic pipe conduit and fittings, electrical cable and flexible conduit, and international cable management systems"
+          },
+          {
+            "segment": "Safety & Infrastructure",
+            "quote": "Significant product categories within our Safety & Infrastructure segment include mechanical tube, metal framing & fittings, construction services and perimeter security"
+          }
+        ],
+        "competitorsLead": "The main competitors in each of these segments are listed below:",
+        "competitorsQuote": "The main competitors in each of these segments are listed below: Electrical: Zekelman Industries, Inc., Mitsubishi Corporation, Nucor Corporation, Southwire Company, LLC, Dura-Line Corporation, and Prysmian. Safety & Infrastructure: Zekelman Industries, Inc., Eaton Corporation plc, ABB Ltd., Hubbell Incorporated, nVent Electric plc., and Haydon Corporation."
+      },
+      "peers": [
+        {
+          "name": "Nucor",
+          "cik": "0000073309",
+          "namedAs": "Nucor Corporation",
+          "foundBy": null,
+          "accession": "0001193125-26-071575",
+          "document": "nue-20251231.htm",
+          "overlap": { "lead": "Makes", "quote": "steel tubing, electrical conduit, fabricated concrete reinforcing steel" },
+          "business": { "lead": "Overall", "quote": "manufacture steel and steel products" }
+        },
+        {
+          "name": "Eaton",
+          "cik": "0001551182",
+          "namedAs": "Eaton Corporation plc",
+          "foundBy": null,
+          "accession": "0001551182-26-000007",
+          "document": "etn-20251231.htm",
+          "overlap": { "lead": "Makes", "quote": "structural support systems that are produced and sold globally" },
+          "business": { "lead": "Overall", "quote": "an intelligent power management company" }
+        },
+        {
+          "name": "Hubbell",
+          "cik": "0000048898",
+          "namedAs": "Hubbell Incorporated",
+          "foundBy": null,
+          "accession": "0001628280-26-007500",
+          "document": "hubb-20251231.htm",
+          "overlap": null,
+          "business": { "lead": "Overall", "quote": "a world-class manufacturer of electrical and utility solutions, with more than 75 brands" }
+        },
+        {
+          "name": "nVent",
+          "cik": "0001720635",
+          "namedAs": "nVent Electric plc.",
+          "foundBy": null,
+          "accession": "0001628280-26-008608",
+          "document": "nvt-20251231.htm",
+          "overlap": { "lead": "Makes", "quote": "bus systems, cable management, control buildings" },
+          "business": { "lead": "Overall", "quote": "a leading global provider of electrical connection and protection solutions" }
+        },
+        {
+          "name": "Westlake",
+          "cik": "0001262823",
+          "namedAs": null,
+          "foundBy": "electrical conduit",
+          "accession": "0001262823-26-000016",
+          "document": "wlk-20251231.htm",
+          "overlap": { "lead": "Makes", "quote": "conduit pipe products under the Westlake Pipe & Fittings brand name" },
+          "business": { "lead": "Its two segments", "quote": "Housing and Infrastructure Products (HIP) and Performance and Essential Materials (PEM)" }
+        }
+      ],
+      "missing": [
+        {
+          "namedAs": "Zekelman Industries, Inc.",
+          "ciks": ["0001742916"],
+          "note": "It registered to list its shares in 2018, then withdrew the registration.",
+          "needsForms": [{ "form": "S-1", "year": 2018 }, { "form": "RW" }]
+        },
+        {
+          "namedAs": "Mitsubishi Corporation",
+          "ciks": ["0000877197", "0000926800", "0000067091"],
+          "note": "Its three SEC records hold ownership reports and registrations of its depositary receipts.",
+          "needsForms": [{ "form": "SC 13G" }, { "form": "F-6EF" }]
+        },
+        {
+          "namedAs": "Southwire Company, LLC",
+          "ciks": ["0001594413"],
+          "note": "Its only SEC filings are for a tender offer, in 2013 and 2014.",
+          "needsForms": [{ "form": "SC TO-C", "year": 2013 }, { "form": "SC TO-T", "year": 2014 }],
+          "onlyFormsStartingWith": ["SC TO"]
+        },
+        {
+          "namedAs": "Dura-Line Corporation",
+          "ciks": ["0001541708"],
+          "note": "Its SEC record, under Dura-Line Holdings, holds one private-offering notice, from 2012.",
+          "needsForms": [{ "form": "D", "year": 2012 }],
+          "onlyFormsStartingWith": ["D"]
+        },
+        {
+          "namedAs": "Prysmian",
+          "ciks": ["0001437672"],
+          "note": "Its SEC filings register its depositary receipts.",
+          "needsForms": [{ "form": "F-6EF" }],
+          "onlyFormsStartingWith": ["F-6"]
+        },
+        {
+          "namedAs": "ABB Ltd.",
+          "ciks": ["0001091587"],
+          "note": "It stopped reporting to the SEC in 2024. Its last annual report covered 2023.",
+          "needsForms": [{ "form": "20-F", "year": 2024 }, { "form": "15F-12B", "year": 2024 }]
+        },
+        {
+          "namedAs": "Haydon Corporation",
+          "ciks": [],
+          "companySearch": "Haydon",
+          "note": "EDGAR's company search finds no company of that name.",
+          "needsForms": []
+        }
+      ],
+      "leftOut": [
+        {
+          "name": "Quanta Services",
+          "cik": "0001050915",
+          "foundBy": "electrical conduit",
+          "accession": "0001050915-25-000005",
+          "document": "pwr-20241231.htm",
+          "why": "The passage is about installing conduit for utilities, not making it.",
+          "quote": "specializing in trenching and underground pipeline and electrical conduit installation"
+        },
+        {
+          "name": "Otter Tail",
+          "cik": "0001466593",
+          "foundBy": "PVC conduit",
+          "accession": "0001466593-26-000008",
+          "document": "ottr-20251231.htm",
+          "why": "Its PVC pipe is mainly for municipal water, and its report mentions conduit once, in a lawsuit's allegation.",
+          "quote": "pipe primarily used in municipal water infrastructure",
+          "mentions": { "word": "conduit", "count": 1, "quote": "PVC conduit pipe in violation of United States federal and state antitrust laws" }
+        },
+        {
+          "name": "Advanced Drainage Systems",
+          "cik": "0001604028",
+          "foundBy": "PVC conduit",
+          "accession": "0001604028-25-000012",
+          "document": "wms-20250331.htm",
+          "why": "Its report mentions conduit once, about joint ventures making it in emerging markets.",
+          "quote": "manufacturing and selling HDPE corrugated pipe and PVC conduit in emerging markets",
+          "mentions": { "word": "conduit", "count": 1, "quote": "manufacturing and selling HDPE corrugated pipe and PVC conduit in emerging markets" }
+        },
+        {
+          "name": "Worthington Enterprises",
+          "cik": "0000108516",
+          "foundBy": "metal framing",
+          "accession": "0001193125-26-325872",
+          "document": "wor-20260531.htm",
+          "why": "Its metal framing is light-gauge framing, sold through a joint venture rather than by Worthington itself.",
+          "quote": "light gauge metal framing products, respectively, through our unconsolidated joint ventures"
+        },
+        {
+          "name": "Fastenal",
+          "cik": "0000815556",
+          "foundBy": "metal framing",
+          "accession": "0000815556-26-000009",
+          "document": "fast-20251231.htm",
+          "why": "It sells metal framing and strut as a distributor.",
+          "quote": "Fastenal was founded as a distributor of fasteners and related industrial and construction supplies"
+        }
+      ]
+    }
+  ]
+}

@@ -134,6 +134,11 @@ test.describe("filling the seven from a filing", () => {
     // SIC 3690 is mostly battery and EV-charging makers. Comparing Atkore with
     // semiconductors without saying so was the dead end this removes.
     await expect(page.getByRole("main")).toContainText("not one of the five industries Studio has researched");
+    // And it sends the learner to the competitors Atkore's own annual report names, chosen by product.
+    await expect(page.getByRole("link", { name: "See Atkore’s competitors, chosen by what they make →" })).toHaveAttribute(
+      "href",
+      "/studio/industry?set=atkore",
+    );
   });
 
   test("keeps every source across a reload", async ({ page }) => {

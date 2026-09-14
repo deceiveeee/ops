@@ -1385,3 +1385,109 @@ R6 in the research roadmap, the last of the six items listed before or alongside
 
 Commit R6. Then, from the roadmap, Phase 2, starting with R7: a peer set for Atkore. The smaller
 alternative is shortening the open catalogue card in Research, now 2.70 screens at 1440 for VTI.
+
+## 2026-09-13: Atkore's peers, chosen by product
+
+R7 in the research roadmap, the first item of Phase 2. R6 is committed as `eb05c4d`.
+
+### Built
+
+- **The industry view offers "Atkore's peers, by product".** It says why Atkore is there: the SEC files
+  it under industry code 3690, where it lists mostly battery and EV-charger makers, so the set is
+  chosen by what Atkore's own annual report says it makes, with that passage one click away. Each peer
+  has a row: its filing, why it is in, what its annual report says it makes, and what the company
+  mostly does. The seven competitors no SEC filing covers are named in a sentence, with the reason for
+  each one click away, and so are the five companies a search found but left out. Choosing the set
+  hides the SEC-industry share figures, which mean nothing for a hand-chosen set.
+- **The set.** Atkore's 10-K names eleven main competitors across its two segments. Nucor, Eaton,
+  Hubbell and nVent file annual reports and are in. Westlake, which Atkore does not name, is in because
+  its own report says it makes conduit pipe; a full-text search for "electrical conduit" found it.
+  Missing: Zekelman, Mitsubishi, Southwire, Dura-Line, Prysmian, ABB and Haydon. Left out: Quanta,
+  Otter Tail, Advanced Drainage Systems, Worthington and Fastenal. The eight product phrases searched
+  were "electrical conduit", "PVC conduit", "metal-clad cable", "electrical metallic tubing", "cable
+  tray", "metal framing", "HDPE conduit" and "armored cable", in 10-Ks filed from 1 January 2025.
+- **`lib/studio-project/peer-sets.ts`**, pure and unit-tested. It reads a filing's text so a quote can
+  be found word for word; reads the competitor list a company prints into names by segment, keeping
+  "Industries, Inc." whole; checks every named competitor is accounted for exactly once; tells from a
+  filing history whether a company still files annual reports; and counts a word over a whole report.
+- **`scripts/source/fetch-peer-sets.mjs`**, from `peer-sets-manifest.json`. Before writing anything it
+  checks against EDGAR: Atkore's latest annual report is the one quoted and holds every quoted passage;
+  every competitor it names is in the set or on the missing list; each peer still files annual
+  reports, its latest is the one quoted, and it holds the passages quoted from it; each company found
+  by search is found by that search again; each missing company files no annual report under any SEC
+  record given, and the filings its note describes exist; each reason that says a word appears once is
+  counted over the whole report; and the short list of what Atkore makes uses only its own words. It
+  writes `lib/studio-project/data/peer-sets.json` and `docs/source-audits/studio-peer-sets.md`. A set
+  with a failed check is not shown.
+- **Investigate's note** about a company in an industry Studio has not researched links to the set
+  when there is one: "See Atkore's competitors, chosen by what they make". The industry view opens on
+  the set from `?set=atkore`.
+
+### Found and fixed on the way
+
+- **A quote copied from the fixture did not match the live filing.** Atkore's report closes an italic
+  span just before "Infrastructure:"; the fixture, rebuilt from extracted paragraphs, reads
+  "Infrastructure :". The script caught it. Text reading now drops a space before closing punctuation,
+  so both read alike, and the manifest quotes the live filing's spelling.
+- **A form the script required for Southwire did not exist.** Its 2013 filing is the tender-offer
+  notice; the offer itself was filed on 6 January 2014. The note was right and the required forms were
+  wrong. They are now the filings as dated.
+- **Two reasons said "only" on the strength of a partial read.** "Conduit" was then counted over the
+  whole of Otter Tail's and Advanced Drainage Systems' reports: once each, in a lawsuit's allegation and
+  in a joint-venture note. The reasons now say exactly that, and the script counts again on every run.
+- **The first passage script matched nothing.** A shell heredoc collapsed `\\s` to `\s`, which a
+  JavaScript string reads as a plain "s", so "electrical conduit" never matched and 26 MB were read for
+  nothing. Scripts with patterns are now written with the Write tool, and the rewrite tested its own
+  pattern before making any request.
+- **The set was too long, and its chip pushed the industry view over budget.** The first version was
+  2.47 screens at 1440, and the industry view went from 1.46 to 1.51 because the new chip wrapped to a
+  second row. Passages went behind "Its own words" and "Why each is missing", peers became rows, and the
+  heading's description became one line: 1.55. A wrapped "Annual report, 2025" was making most rows a
+  line taller; with a shorter link and tighter spacing, 1.42. A browser test now fails if either view is
+  over 1.5 at 1440. It failed on the industry view at 1.512 on the first build, and on the set at 1.552
+  on the second.
+
+### Verified
+
+- `tsc` 0; lint clean on every changed file. Vitest 59 files, 749 tests, 19 new: 12 on the rules, 7
+  checking the set against Atkore's own report in the fixture.
+- **The checks can fail.** Ten deliberate breaks each failed at least one test. Five in the rules:
+  splitting "Inc." from its name, counting a deregistration from before the latest annual report,
+  letting a space before a colon matter, accepting a list whose end cannot be found, and treating inline
+  tags as word breaks. Five in the data: dropping Haydon, leaving Westlake with no reason, changing a
+  word in Atkore's quote, recording a failed check, and putting a left-out company in the set. The files
+  were restored and compared after each. The word count and the short product list came after that run
+  and have their own tests.
+- **The check this roadmap item names is met.** The Find step shows why Atkore appears, in its own
+  report's words, and every peer has a stated reason with a filing to check it in. The browser tests
+  and the data test both require it.
+- **The source script ran clean against EDGAR**: every passage, filing record, search result and count
+  confirmed, 13.19 MB read.
+- Playwright on a production build of the final code: **121 passed, 4 skipped, none failed**, with six
+  new checks, and the Investigate test now requires the link to the set.
+- Six widths across every workspace route: problems none. The industry view is 1.48 screens at 1440.
+  Atkore's set is 1.42 at 1440, 1.48 at 1280, 1.44 at 1024 and 2.58 at 390; with the left-out list open,
+  1.71 at 1440.
+
+### Known limits
+
+- **One set, for Atkore.** Any other company whose industry code Studio has not researched still gets
+  only the note that says so.
+- **Hand-chosen, then checked, not discovered.** A competitor that Atkore does not name and none of the
+  eight searches finds is absent without a word. Hubbell is in on Atkore's naming alone: its own report
+  describes no overlapping product in words a search finds, and the set says so.
+- **No figures yet.** Revenue, margins and returns for the peers are R10's peer screen. Investigate
+  still compares Atkore's figures with semiconductors, and says so.
+- **A missing company's record is matched by name**, as EDGAR's company search returns it: Dura-Line
+  Corporation to Dura-Line Holdings, for instance. No corporate relationship is stated beyond that.
+- **The set goes stale** when Atkore or a peer files a new annual report. Atkore's next covers the year
+  to 30 September 2026. The script then reports a problem, and Studio hides the set until the manifest
+  is reviewed and the script run again.
+- The industry heading's description was shortened to fit the extra chip row, from "who competes and
+  how much of the split has changed" to "Look at the industry before deciding whether any one company is
+  worth your time".
+
+### Next concrete action
+
+Commit R7. Then R8: product lines, regions and customers from Atkore's filing data file, checked by the
+shares reconciling to total revenue.

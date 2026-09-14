@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
+import peerSets from "@/lib/studio-project/data/peer-sets.json";
+import { allProblems, type PeerSetEntry } from "@/lib/studio-project/peer-sets";
+import PeerSetView from "./PeerSetView";
 import { Panel, Stat, StageHeading, TableScroll } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 
@@ -161,8 +164,15 @@ function AdvantagePlane({ earners }: { earners: Earner[] }) {
   );
 }
 
-export default function IndustryView() {
+/**
+ * Peer sets chosen by product, for companies whose SEC industry code is a poor
+ * market boundary. A set with any failed check is not offered at all.
+ */
+const PEER_SETS = (peerSets.sets as unknown as PeerSetEntry[]).filter((set) => allProblems(set).length === 0);
+
+export default function IndustryView({ initialSet = null }: { initialSet?: string | null }) {
   const [sic, setSic] = useState(industries.industries[0].sic);
+  const [setId, setSetId] = useState<string | null>(PEER_SETS.some((set) => set.id === initialSet) ? initialSet : null);
   const [view, setView] = useState<"shares" | "movement" | "returns">("shares");
   const [showAll, setShowAll] = useState(false);
 
@@ -171,6 +181,7 @@ export default function IndustryView() {
     [sic],
   );
 
+  const chosenSet = PEER_SETS.find((set) => set.id === setId) ?? null;
   const shown = industry.leaders.reduce((sum, leader) => sum + leader.share, 0);
   const widest = Math.max(...industry.leaders.map((leader) => leader.share), 0.01);
   const movers = industry.instability?.rows.filter((row) => row.name !== "Other") ?? [];
@@ -212,8 +223,7 @@ export default function IndustryView() {
       </nav>
 
       <StageHeading as="h1" title="Who is in this industry, and what has moved">
-        Look at who competes and how much of the split has changed, before deciding whether any
-        one of them is worth your time.
+        Look at the industry before deciding whether any one company is worth your time.
       </StageHeading>
 
       <div className="flex flex-wrap gap-2">
@@ -221,11 +231,14 @@ export default function IndustryView() {
           <button
             key={entry.sic}
             type="button"
-            onClick={() => setSic(entry.sic)}
-            aria-pressed={entry.sic === sic}
+            onClick={() => {
+              setSic(entry.sic);
+              setSetId(null);
+            }}
+            aria-pressed={!chosenSet && entry.sic === sic}
             className={cn(
               "rounded-full border px-4 py-2 text-[13px] transition-colors",
-              entry.sic === sic
+              !chosenSet && entry.sic === sic
                 ? "border-accent-cyan/50 bg-accent-cyan/10 text-white"
                 : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/25 hover:text-slate-200",
             )}
@@ -233,8 +246,29 @@ export default function IndustryView() {
             {entry.label}
           </button>
         ))}
+        {PEER_SETS.map((set) => (
+          <button
+            key={set.id}
+            type="button"
+            onClick={() => setSetId(set.id)}
+            aria-pressed={setId === set.id}
+            className={cn(
+              "rounded-full border px-4 py-2 text-[13px] transition-colors",
+              setId === set.id
+                ? "border-accent-cyan/50 bg-accent-cyan/10 text-white"
+                : "border-accent-cyan/25 bg-white/[0.02] text-slate-300 hover:border-accent-cyan/50 hover:text-white",
+            )}
+          >
+            {set.label}
+          </button>
+        ))}
       </div>
 
+      {/* A chosen set has no revenue shares: its companies sell too much else for one market. */}
+      {chosenSet ? (
+        <PeerSetView set={chosenSet} />
+      ) : (
+        <>
       <Panel>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Stat
@@ -464,6 +498,8 @@ export default function IndustryView() {
           </Panel>
         }
       />
+        </>
+      )}
     </div>
   );
 }
