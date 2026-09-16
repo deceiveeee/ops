@@ -191,7 +191,7 @@ statistics, optimisation, matrix or RNG dependency; every numeric routine here i
 
 | Module | Provides |
 | --- | --- |
-| `lib/fixed-income.ts` | Complete bond engine: cash-flow schedules, price from YTM, YTM by bracketed bisection, Macaulay and modified duration, convexity, portfolio duration. Gap: **no accrued interest or day-count** |
+| `lib/fixed-income.ts` | Complete bond engine: cash-flow schedules, price from YTM, YTM by bracketed bisection, Macaulay and modified duration, convexity, portfolio duration. Gap closed 2026-09-15 by `lib/studio-project/bond-cash-flows.ts`: actual/actual day count, accrued interest, appendix B's price formula and the settlement-date schedule, checked against Treasury's published figures |
 | `lib/risk-return.ts` | Mean, geometric mean, sample variance and SD, covariance, correlation, annualisation, portfolio expected return |
 | `lib/allocation-policy.ts` | Integer basis-point allocation, stress contribution as weight × loss, position ceiling from a loss budget. Tested |
 | `lib/operating-plan.ts` | Drift against target bands, one-sided turnover, three rebalance methods. Tested |
@@ -211,8 +211,9 @@ exported rather than rewritten.
 
 **Absent entirely, and required:**
 
-- Quantiles, percentiles, median — **so winsorization and the whole z-score screening layer
-  must be built from nothing**
+- Quantiles, percentiles, median — **built from nothing on 2026-09-15** in
+  `lib/studio-project/screen.ts` (interpolated quantiles, winsorizing, sample standard deviation, z-scores,
+  shared places), to the conventions in `studio-quantitative-methods.md` §1
 - Covariance and correlation *matrices* from a returns panel; only pairwise exists
 - General n×n linear algebra, Cholesky, eigendecomposition
 - Constrained optimisation of any kind

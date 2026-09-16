@@ -105,6 +105,10 @@ Price-based inputs were measured as of **2025-11-17 after extended hours** and h
 These must be settled in a written method spec before any OPS screen is built. The source
 does not answer them.
 
+**Settled for OPS's own peer screen on 2026-09-15**, in `studio-quantitative-methods.md` §1.2, which answers
+all seven and works the result by hand in §1.4. They stay unresolved *for the published method recorded
+above*, which OPS does not reproduce.
+
 1. Winsorization at the 5th/95th percentiles of a **ten-name** peer group clips at roughly the
    single most extreme observation at each end. The team says so themselves — strategy p5
    states z-scores are "primarily used for ranking rather than precise standardized distance

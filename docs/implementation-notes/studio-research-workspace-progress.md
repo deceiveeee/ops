@@ -1589,3 +1589,566 @@ R8 in the research roadmap. R7 is committed as `87f6b73`.
 
 Commit R8. Then R9: input-cost series, each tied to an input the filing itself names, checked by every
 series citing that passage.
+
+## 2026-09-13: what Atkore's inputs cost, each index tied to the passage naming its input
+
+R9 in the research roadmap. R8 is committed as `1ded065`.
+
+### Built
+
+- **An "Input costs" tab in the company-report reader, on Atkore's annual report for the year to 30
+  September 2025**, after "Where revenue comes from". A learner can:
+  - read what the report says its input costs did in fiscal 2024 and 2025, for the whole company and each
+    segment, as the report's own words, each opening the whole sentence marked in the report, where it can
+    be kept as evidence;
+  - set beside that the nearest producer price index for each raw material the report names, with how near
+    it is, a link to the passage naming the input, and its change by fiscal year: steel mill products
+    −8.2% and −2.5%, copper and copper alloy rod, bar and shapes +3.9% and +12.3%, thermoplastic resins
+    −4.3% and −0.5%, for fiscal 2024 and 2025 against the year before;
+  - see the three indexes month by month, rebased so fiscal 2023's average is 100, because their own base
+    periods, 1982 and December 2003, make their raw numbers incomparable;
+  - read, on the page, that moving the same way is not proof and moving differently is not disproof, and why.
+- **The roadmap's check, every series cites that passage, is enforced three times**: when the data is built,
+  against the live filing on EDGAR; in the data test, against the fixture copy; and when the page is drawn,
+  against the copy being read, where an index or sentence whose passage cannot be found is not shown and the
+  page says how many were not.
+- **`lib/studio-project/input-costs.ts`**, pure and unit-tested: BLS months, with preliminary months marked
+  and BLS's annual average left out; fiscal years; an average only over all twelve months; year-on-year
+  change; rebasing; naming a word only as a word; and placing a sentence in the management's discussion by
+  the headings above it, so its year and segment are read, not assumed.
+- **`scripts/source/fetch-input-costs.mjs`** with `input-costs-manifest.json` writes
+  `lib/studio-project/data/input-costs.json` and `docs/source-audits/studio-input-costs.md`: one BLS query for
+  eight series, three chosen and five considered and not chosen; each series' BLS page, for its title and
+  base period; and Atkore's filing record and report from EDGAR, 2.79 MB. A newer annual report, a title
+  that differs from BLS's, a missing or preliminary month in a compared year, or a mention of input costs
+  not accounted for is written as a problem, and Studio then shows no tab.
+
+### What the evidence shows (inferred, not a finding about Atkore)
+
+- **Fiscal 2024.** The report says cost of sales fell partly on "lower input costs of steel, copper and PVC
+  resin of $103.1 million". Steel and resin indexes fell, 8.2% and 4.3%; every copper index checked rose:
+  rod, bar and shapes 3.9%, the wider mill group 3.9%, wire and cable 5.1%. The sentence names the three
+  together, so it need not mean each one fell. That is the kind of thing a learner should notice and weigh.
+- **Fiscal 2025.** Electrical's earnings fell on "lower average selling prices and higher input costs";
+  Safety & Infrastructure's rose on "decreases in input costs outpacing decreases in selling prices".
+  In Atkore's own words (R7), Electrical makes metal and plastic conduit and electrical cable, and Safety &
+  Infrastructure mechanical tube and metal framing. Copper rose 12.3% and steel fell 2.5%, and only
+  Electrical makes cable, so the two sentences can both be true. The indexes do not show that they are.
+- **The resin choice changes nothing**: the narrower BLS index with the same title moved identically.
+
+### Found and fixed on the way
+
+- **The script's accounting caught a selective first manifest.** It found four mentions of input costs the
+  manifest did not account for: two table rows, and the two fiscal 2024 segment sentences, one of them saying
+  Safety & Infrastructure's input costs were higher. Leaving those out would have shown only the sentences
+  that agree. All are now accounted for: the sentences shown, and the table rows listed with why, since their
+  4.7% and 0.5% are the sentences' $103.1m of $2,179.3m and $10.1m of $2,124.2m.
+- **The fixture stops before fiscal 2024's segment results**, so those two sentences are not in the test
+  copy. The page shows the four it finds and says two were not found, and the tests name which two rather
+  than skipping them.
+- **Over the screen budget.** The first version was 1,857px at 1440 on the fixture and 1,897px live, against
+  1,350: six whole sentences inside the table's year columns took 325px, and each index's note on how near
+  it is 140 to 160px a row. Each sentence is now shown as its words about costs, checked to be the passage's
+  own and to mention input costs, linking to the whole sentence, in two columns of their own. That second
+  version still came to 1,420px live, so the index notes became one line and the chart 120px tall.
+  Now 1,299px live, with all six sentences, and within 1,350 on the fixture copy in the browser test.
+- **On a phone, the changes were off the screen, and no check caught it; a screenshot did.** The table kept
+  the page from scrolling sideways by scrolling inside itself, which put every change past the right edge at
+  390, and the chart, which scrolls too, was cut off where the years compared begin. The table now fits, with
+  its year headings on two lines, and the chart opens on its latest months. A browser check for both was
+  added and failed against the build before the fix: the first change ended at 432px on a 390px screen, and
+  the chart's right edge sat at 560px in a frame ending at 374px.
+- **Three unit tests failed first, all in the tests**: a missing month miscounted, and two exact comparisons
+  of floating-point results.
+- **One test could not fail.** Its case for "the line a passage starts in is not a heading" gave the same
+  answer with the rule removed; it was replaced by one that does not.
+
+### Verified
+
+- `tsc` 0; lint clean on every changed file. Vitest, with the other session's `tmp/` copy excluded: 62 files, 795 tests, 24 of them new in `lib/studio-project/input-costs.test.ts` and `input-costs.data.test.ts`.
+- **The checks can fail.** 20 of 20 deliberate breaks, in the rules and in the built data, each failed
+  at least one test, and each file was restored and compared afterwards.
+- Playwright on a production build: 136 passed, 4 skipped, none failed, with seven Input costs checks among them.
+- The Input costs tab at six widths, live from EDGAR with all six sentences: 1.44 screens at 1440 and 1920 (1,299px), 1.59 at 1280, 1.76 at 1024, 1.82 at 768 and 2.84 at 390, with no sideways scroll, one page heading and no page errors at any width. At 390 it rose from 2.73 once the table stopped scrolling inside itself and fitted the screen.
+- Six widths across every workspace route: problems none. At 1440 the Input costs tab's first control is 292px down; the only failed requests are Vercel's analytics scripts, which a local build does not serve.
+
+### Known limits
+
+- **One report.** The indexes are chosen by hand for Atkore's fiscal 2025 annual report. Any other report,
+  Atkore's next included, offers no tab until the manifest is reviewed and the script run again.
+- **No index is for exactly what Atkore buys**: BLS has none for PVC or HDPE resin alone, and steel mill
+  products covers far more than Atkore buys. Each says so on the page.
+- **Fiscal-year averages of monthly prices**, with no allowance for inventory, contracts or timing, which the
+  page gives as reasons moving together proves nothing.
+- **Demand is not built.** The roadmap row pairs input costs with Census construction spending; that half
+  is still to do.
+- **Evidence for and against is kept with the reader's Keep button**, as any passage is. There is no screen
+  yet that sets explanations side by side, and the tab is not linked from Investigate.
+- **The chart's last four months are preliminary**, as fetched; BLS may revise them. The years compared are
+  final.
+- **Below 1440 the tab runs past a screen and a half**, as several workspace pages do: the budget is held
+  at 1440, and each width's height is under Verified. Below 1280 the guidance and the definition of a price
+  index sit above the tab's content rather than beside it, so its first link is lower on the page.
+
+### Next concrete action
+
+Commit R9. Then R10: the peer screen with its working shown; valuation with sensitivities; bond cash flows
+and accrued interest, checked against handoff §12 cases 3, 4 and 5.
+
+## 2026-09-14: competitors and input costs for any company, replacing the Atkore-only versions
+
+R7 (committed as `87f6b73`) and R9 (the entry above, not committed) were built for Atkore alone: a hand-picked
+peer set on the Industry page, an Input costs tab on one Atkore report, and "such as ATKR" in Investigate. The
+user rejected that on 2026-09-14, since a learner researching any other company got nothing from them. Atkore
+is now the test fixture only, and every screen built here has to work for whichever company a learner picks.
+
+### What a learner can do now
+
+- **On any company's annual report, a Competitors tab** lists the companies the report itself names in its
+  words about competition, each with what the SEC's list of companies says of it and a link to where the
+  report names it. The learner counts the ones that belong, and counting keeps that passage as the reason.
+  Where a report names none, as Apple's, Walmart's and Netflix's do not, the tab says so, shows where the
+  report writes about competition, and lets the learner add a company by its ticker.
+- **On any company's annual report, an Input costs tab** lists what the report mentions from a checked
+  library of 31 US producer price indexes, with the sentences, those about buying first. A mention is not a
+  purchase, so nothing is linked until the learner says a sentence shows the company buys the input. Then
+  the index's change by fiscal year, a chart restated to a common base, and the caution that moving
+  together is not proof appear beside it.
+- **Investigate names no company.** Its ticker box says "Its ticker symbol", its messages say what a ticker
+  is, and its note on an industry Studio has not researched links to the company's own reports, where the
+  Competitors tab is.
+- **The Industry page** keeps its industries by SEC code, without the Atkore set.
+
+### How it works, and what it rests on
+
+- **Research first: how eight annual reports name competitors** (25.9 MB of latest 10-Ks). Atkore lists
+  them by segment, one line each, after "listed below:"; Caterpillar in long lists ending "Co., Ltd." and
+  "AG"; Delta as airline names with no "Inc."; Coca-Cola names PepsiCo mid-sentence. Apple, Walmart and
+  Netflix name none. No free database lists competitors.
+- **`lib/filings/competitors.ts`**, pure and unit-tested: passages about competition ("competitive" does not
+  count), names read as runs of capitalised words, and a name offered only when it is plainly a company:
+  it ends in a company word, or it is two words or more and exactly one company's name in EDGAR's ticker
+  file once "Inc." and the like are set aside. Nothing is matched on being close, the company itself is
+  never offered, and where two companies share a name none is chosen.
+- **`lib/studio-project/input-costs.ts`, reworked**: the library, whole-word mentions with excluded phrases
+  ("commercial paper" is not paper), the sentence around each mention, buying words first, and a fiscal
+  year read from any report's period end, 52- and 53-week years included.
+- **`scripts/source/fetch-input-cost-library.mjs`** with `input-cost-library-manifest.json` writes
+  `lib/studio-project/data/input-cost-library.json` and `docs/source-audits/studio-input-cost-library.md`: two
+  BLS queries and 31 series pages. Every title matched its BLS page, and every index has unbroken months
+  from January 2017 to August 2026, the last four preliminary. It writes the data only if every check passes.
+- **Storage**: a company investigation gains `inputs` and `peers`, each resting on a kept passage (a
+  competitor added by ticker has none). Investigate's autosave carries them; letting a passage go takes an
+  input linked through it; a restored backup whose link rests on a passage that is not kept is refused.
+  `/api/studio/company-lookup` looks a ticker up for adding a competitor.
+- **Removed**: the Atkore peer set (its view, module, data, script, manifest, audit page and tests, all in
+  git history at `87f6b73`) and the uncommitted Atkore-only input-cost script, manifest, data and audit page.
+
+### Found on the way
+
+- **Atkore's own named competitors first gave no suggestions.** Its report puts "listed below:" and each
+  segment's list on lines of their own. Lists are now followed through the lines that carry them, and stop
+  at the next heading.
+- **Three misreads in Caterpillar's lists**, fixed: "Part of Doosan Group", "Siemens Energy AG." with a
+  sentence's full stop, and names on two lines run together. One is left: "Australia and New Zealand Banking
+  Group Limited" reads as "New Zealand Banking Group Limited", because that "and" cannot be told from a
+  list's.
+- **The first three mentions of steel would have hidden the sentence that shows Atkore buys it.** Sentences
+  with words about buying now come first.
+- **Investigate's autosave would have wiped every link.** It rebuilds a company's record from its own page
+  and carried over only kept passages. It now carries inputs and competitors too, and a test fails if not.
+- **Over the screen budget with an index linked**: 1,387px at 1440 against 1,350, most of it a one-column list
+  of mentioned inputs, 48px a row, each carrying its index's full title. Rows now hold the input and its count,
+  in two columns from 1024px, with the title inside the opened row.
+- **A heading counted as a passage about competition.** Apple's report sets "Competition" on a line of its
+  own, and the tab for a report that names nobody offered that one word as the first place to read. A
+  passage now needs four words or more; seen in a screenshot of the live tab, with a test added.
+- **Two checks could not fail.** Of 24 deliberate breaks, two first went unnoticed: a line break no longer
+  ending a name, because every multi-line case in the tests ended its lines on a colon or a stop; and a
+  sentence split at "Inc. is", because the only case put the mention before "Inc.". A test was added for
+  each, and every break, 25 with the one added for headings, now fails a test.
+- **Two existing reader bugs, flagged as separate tasks and not fixed here**: the Business section is not
+  found in Nucor's and Hubbell's latest 10-Ks, and extracted text keeps character codes such as
+  "Nestl&#233;".
+
+### Verified
+
+- `tsc` 0; lint clean on every changed file. Vitest, with the other session's `tmp/` copy excluded: 62 files, 800 tests.
+- **The checks can fail.** 25 of 25 deliberate breaks, in the competitor and input-cost rules, the
+  storage and validation of links, and the library data, each failed at least one test, and each file was
+  restored and compared afterwards.
+- The affected browser specs on a production build: 52 checks across the seven affected specs, 51 passed at first; the one failure, the Input costs tab at 1,387px with an index linked, is under Found on the way.
+- Playwright, the full suite on a production build: 137 passed, 4 skipped, none failed, the Input costs budget check with an index linked among them.
+- **Live, on reports fetched from EDGAR:** both tabs on the latest annual reports of Atkore, Caterpillar, Apple and Coca-Cola, at six widths each, with no sideways scroll, one page heading and no page errors anywhere. The Competitors tab offered 10 names for Atkore, 45 for Caterpillar and 10 for Coca-Cola, and for Apple said it names none; the Input costs tab found 7, 6, 1 and 11 inputs. At 1440 the Competitors tab is 1,309px (952px for Apple) and the Input costs tab 1,154px, or 1,224px live with steel linked, against 1,350.
+- Six widths across every workspace route: problems none, with both new tabs among the routes; each workspace page's first control within the top half at 1440, and the only failed requests Vercel's analytics scripts, which a local build does not serve.
+
+### Known limits
+
+- **Suggestions miss some competitors.** A name with no company word that is not exactly one company's name
+  in the ticker file is not offered ("Alaska Airlines" is listed as Alaska Air Group), nor is a single bare
+  word ("Prysmian"). The learner can add them by ticker.
+- **Being in the SEC's ticker file is not proof of annual reports.** ABB and Siemens Energy are listed for
+  shares traded over the counter, and the tab says only what the list says.
+- **Only the Business section is read for competitors**, and only reports this reader can split into
+  sections.
+- **The library is 31 indexes.** An input outside it gets no suggestion, and a word can mean something else
+  in a report ("pulp" in fruit juice); the learner decides.
+- **Fiscal-year changes need the library's months**, which start in January 2017, so reports for fiscal
+  years before 2019 show none.
+- **The Industry page does not list a learner's competitors**, and their figures are not yet set side by
+  side; that is R10's peer screen.
+- **Demand**, from Census construction spending, is still not built.
+
+### Next concrete action
+
+Commit this work, with R9, when the user asks. Then R10: the peer screen with its working shown; valuation
+with sensitivities; bond cash flows and accrued interest, checked against handoff §12 cases 3, 4 and 5.
+
+## 2026-09-15: the peer screen, with its working shown (R10, the first of its three parts)
+
+R10 asks for three things: the peer screen with its working shown, valuation with sensitivities, and bond
+cash flows with accrued interest. This is the first, and it rests on the Competitors tab built the day
+before: a learner counts the companies a report names, and can now set them beside it on the same measures.
+
+**The method was written before the code.** `studio-research-coverage.md` §2 records a published screen and
+then lists seven things it never states — the quantile convention, the winsorization limits, sample or
+population standard deviation, zero variance, undefined ratios, weights when a measure is missing, and
+ties — each of which changes the answer. Those are settled in `docs/source-audits/studio-quantitative-methods.md`
+§1, worked by hand in §1.4, and `screen.ts` implements that file and nothing else.
+
+### What a learner can do now
+
+- **On any company's annual report, a Side by side tab** sets the company against the competitors they
+  counted, on five measures read from each company's own latest annual filing: return on capital, profit
+  kept from sales, sales per dollar of capital, profit left after everything, and borrowings against equity.
+  The first three are the decomposition Investigate already computes for the learner's own company, from the
+  same code, so the numbers mean the same thing on both screens.
+- **They can read every step.** "How this order was worked out" names the figures, the measures, what
+  winsorizing did and to whom, the average and spread of each measure, how a score is turned round for the
+  one measure counted better when lower, and how the scores are averaged over the measures a company has.
+- **They see what is not there.** A figure the SEC does not hold, a ratio that is not defined, a bank whose
+  accounting means something else: each shows as a dash with its reason rather than a zero, and the row says
+  how many of the five measures its combined number rests on.
+- **They are told what the comparison cannot carry.** That the combined number ranks these companies on
+  these measures for one year and is not a distance or a verdict; that changing who is in the list changes
+  every number; that the years compared do not always line up, with a company whose newest tagged year is
+  far older than the report's marked on its own row.
+- **Nothing happens until they ask.** The tab reads nothing from the SEC until the learner presses the
+  button, and says so; with no competitors counted it points at the tab where they are counted.
+
+### How it works
+
+- `lib/studio-project/screen.ts` is the arithmetic and nothing else: quantiles by interpolation, winsorizing
+  at the 10th and 90th percentiles but only from four companies up, sample standard deviation, ties sharing a
+  place, weights rescaled over the measures a company holds, and every intermediate value returned so the
+  page can show it rather than assert it.
+- `lib/studio-project/peer-measures.ts` turns the seven figures into the five measures, reusing `roic.ts` for
+  the three that decompose a return, with the same effective tax rate rule Investigate uses.
+- `app/api/studio/peer-figures/route.ts` reads company facts for up to ten companies, one after another, and
+  returns only the figures and their tags. Company facts run to megabytes a company — Atkore's is 2.3 MB — so
+  the server reads them and the browser does the arithmetic on the small answer it is shown.
+
+### Found on the way
+
+- **Large companies do not tag what a screen needs.** Measured across ten: three tag no operating profit
+  Studio will read (Nucor, Deere, Eaton) and three no borrowings that exclude finance leases (Nucor, Deere,
+  Coca-Cola). All ten tag net income, so the bottom line became the fifth measure — coarser, and labelled
+  as such, but it is what keeps such a company in the comparison instead of showing an empty row.
+- **How hard a company works its capital needs no profit figure**, and was waiting on one anyway because it
+  was lifted out of the return's decomposition. Worked out on its own, Eaton went from two measures to three.
+- **Winsorizing a group of three pulls every company towards the middle.** The live screen showed both
+  companies of a two-company measure "pulled in", which is clipping where there is no outlier to clip. The
+  limits now apply only from four companies up, and the surface says which of the two happened.
+- **A table's width leaked into the page.** At 390 the page came out 585px wide while the table itself sat
+  still inside its scrolling box. The browser was counting the table's width as the page's; `contain: paint`
+  on the box stops it. The check was written first and failed before the fix.
+- **ABB's newest US-accounting year is 2023** while the companies beside it filed for 2025, and it led the
+  order. A row whose year ended more than 370 days before the report's year now says so in amber.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest, with the other sessions' `tmp/` copies excluded: 64 files, 827 tests.
+- **The checks can fail.** 14 of 14 deliberate breaks — each convention in the method file, and each
+  refusal in the measures — failed at least one test, and every file was restored and compared afterwards.
+  The two browser checks that could not be broken that way were checked by hand: the phone one failed before
+  its fix, and the older-year one failed with its rule switched off.
+- The tab's own browser spec: 10 checks, every score in it worked out by hand from a fixed payload rather
+  than from the page.
+- Playwright, the full suite on a production build: 157 passed, 5 skipped, none failed. An earlier run of the same suite
+  reported four failures in `studio-reader` and `studio-overview`; each passed twice on its own afterwards
+  and the final run was clean, so they are the suite's known contention under load rather than this work.
+- **Live, on reports fetched from EDGAR:** the tab on the latest annual reports of Atkore, Caterpillar and Coca-Cola, at six widths each, with competitors counted through the page itself: 5, 3 and 3 companies compared, no sideways scroll, one page heading and no page errors anywhere. At 1440 it is 1,278px, 1,139px and 1,219px against the 1,350 budget, and 1,721px at 390.
+- Six widths across every workspace route: no page over its height budget, and the new tab among the routes. Two problems, neither in this work: the Overview and Research pages now put their first control at 494px and 464px, past half a screen at 1440. Both pages are being changed by another session in this same working tree.
+
+### Known limits
+
+- **One year, and not always the same year.** Each company's own latest annual period is used; the tab says
+  when the years differ and marks one far older, but it does not restate them onto a common year.
+- **Ten companies at a time**, the learner's own included.
+- **A competitor with no SEC number cannot be compared**, which is most of the private ones a report names.
+- **An IFRS filer has nothing to read**, as in Investigate: `metrics.ts` reads `us-gaap` only.
+- **A company scored on fewer measures can still lead the order.** The count sits beside its number in amber,
+  and the working explains it, but the arithmetic does not hold it back.
+- **No prices**, so no valuation measure — earnings yield and the rest need a dated price Studio does not
+  hold for an arbitrary company.
+- **The other two parts of R10 are not built**: valuation with sensitivities, and bond cash flows with
+  accrued interest.
+
+### Next concrete action
+
+Commit this work — R9, the any-company rework and the peer screen — when the user asks. Then the rest of R10:
+valuation with sensitivities, and bond cash flows with accrued interest, against handoff §12 cases 4 and 5.
+
+## 2026-09-15: a bond on the day you settle (R10, the second of its three parts)
+
+Studio has had a bond engine since the fixed-income lessons — cash flows, price from yield, duration —
+and no day count, so it could not say what a bond costs on a particular day. The catalog's Treasury
+note carried `accruedInterestPer100: null`, the buying worksheet warned that its total was
+incomplete, and both were telling the truth. This is the part that was missing.
+
+**The rule is the issuer's, not a textbook's.** 31 CFR part 356, appendix B (retrieved 2026-09-15
+from eCFR) gives the day count and the price formula, and Treasury's own auction record for this
+note gives four published figures to check them against. Both are in
+`docs/source-audits/studio-quantitative-methods.md` §2.
+
+### What a learner can do now
+
+- **Put a settlement date against the note** at `/studio/portfolio/bond` and see what leaves the
+  account that day: the loan itself at the quoted price, the interest built up since the last
+  payment, and a broker's fee, added beside the price rather than inside it.
+- **See the day count that produced it** — "31 of 184 days since 15 August 2026" — so the figure is
+  a rule they can follow rather than a number to accept.
+- **See what the bond pays afterwards**: how many payments are left, what each one is, when the last
+  one comes with the face value, and everything still to come.
+- **See the yield their price implies**, worked out by the issuer's own formula.
+- **Carry the interest figure into What to buy**, where the worksheet has always been able to hold
+  one and never able to work one out. The bond's row there now links here.
+- **Be refused rather than misled**: a date before interest starts, a date after maturity, a price
+  no yield can produce, a face value below the smallest piece on offer.
+
+### How it works
+
+- `lib/studio-project/bond-cash-flows.ts`: the payment schedule counted back from maturity, the
+  period a settlement date falls in, accrued interest on actual days, appendix B's price formula
+  with **simple** interest on the part-period, yield by bisection, and money rounded once in cents.
+- `setAccruedInterest` in `operations.ts` writes the figure against the position that holds the
+  bond, and null puts it back to unknown rather than zero.
+- The catalog gains one fact it was missing: the note's dated date, 2026-08-15, from the auction
+  record. It is two days before the note was issued, which is exactly why a buyer at issue already
+  owed two days of interest.
+
+### Found on the way
+
+- **A textbook's discounting is not the issuer's.** Compounding the part-period as `v^(r/s)` gives
+  99.540981 where Treasury charged 99.540696 — $2.85 on a million, and a price nobody paid. Appendix
+  B divides by `1 + (r/s)(i/2)` instead, and the tests hold the code to Treasury's number.
+- **Treasury cuts its published yields to three decimals rather than rounding them.** The
+  reopening's price implies 4.834993% and is published as 4.834%; pricing at a literal 4.834% gives
+  98.368792 against the 98.361116 that was paid. Recorded in the method file so the next person does
+  not read it as a disagreement.
+- **Deriving the dated date from the price date would have been wrong.** This note was priced at
+  auction on 2026-08-12, three days before interest starts, so a derivation would have put the
+  schedule six months out. It is a stated fact in the catalog instead.
+- **A rounding break survived the first set of checks.** Stepping the face value down when rounding
+  each part to the cent tips the total over the budget could be removed without failing a test,
+  because no case in the suite reached the half-cent boundary. One was worked out and added, and the
+  break then failed.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest, with the other sessions' `tmp/` copies excluded: 65 files, 851 tests.
+- **Against the issuer's own figures**, not Studio's: accrued interest of 0.25136 and 3.89606 per
+  $1,000 at this note's two auctions, and prices of 99.540696 and 98.361116 whose implied yields are
+  what Treasury published. A third check prices a coupon date against the lessons' own bond engine,
+  which shares no code with this one, and the two agree to nine decimals.
+- **The checks can fail.** 11 of 11 deliberate breaks — 30/360 in place of actual days, a
+  month-end schedule, a settlement on a payment date, compounding the part-period, counting the
+  part-period twice, folding interest into the price, overspending a budget by the rounding, and
+  three more — each failed at least one test, and every file was restored and compared afterwards.
+- The page's own browser spec: 9 checks, every figure in it Treasury's.
+- Playwright, the full suite on a production build: 166 passed, 5 skipped, none failed.
+- The page at six widths: 1,270px at 1440 against the 1,350 budget, its first control 273px down, one page heading, no sideways scroll at any of six widths, and 2,430px at 390.
+
+### Known limits
+
+- **Semiannual Treasury notes and bonds with a regular first period only.** A short or long first
+  period, a floating rate note, an inflation-protected security and a corporate issue on 30/360 each
+  have their own rule; each is refused rather than approximated.
+- **One issue.** The catalog holds a single Treasury note, so the page has one bond to work on.
+- **Settlement is the learner's to choose.** Studio does not know a broker's settlement convention,
+  and says so beside the figure.
+- **2,430px at 390.** It is a worksheet with five inputs and eight figures, and on a phone that is
+  2.7 screens — the tallest page in Studio, though within the range the risk and review pages
+  already occupy.
+- **No credit analysis.** The handoff also asks for issuer strength, refinancing and call terms for
+  a corporate bond; none of that is here, and no corporate bond is either.
+
+### Next concrete action
+
+Commit this work — R9, the any-company rework, the peer screen and this — when the user asks. Then
+the last part of R10: valuation with sensitivities, against handoff §12 case 4.
+## 2026-09-15: what a price assumes (R10, the last of its three parts)
+
+The third part of R10 is valuation with sensitivities. What the handoff asks for is not a price
+target — it asks for sourced inputs before editable assumptions, named scenarios, sensitivity
+tables, and "a reverse question about what assumptions the observed price requires", with the
+warning that uncertainty must not disappear into a single confident number. So the reverse question
+is the headline: a learner puts in the price someone is asking and reads back the growth it is
+buying.
+
+### What a learner can do now
+
+- **On any company's annual report, a "What a price assumes" tab** reads the company's own figures —
+  operating profit, the tax it actually paid, borrowings, cash and shares — and values the business
+  standing still.
+- **Change the three assumptions that matter**: the growth they would assume, what new money earns,
+  and what money costs, the last from Studio's sourced industry table with the industry picked by
+  the learner.
+- **Put in a price and see what it assumes.** "This price assumes 6.8% growth, every year, for
+  ever" is a sentence a learner can argue with; "$230 is 15% overvalued" is not.
+- **See how little it takes to move it**: a grid of value per share across four growth rates and
+  three costs of capital, with a cell left empty wherever the business cannot pay for that growth.
+- **See where every figure came from**, tag by tag, including the caveats: the share count is the
+  year's diluted average, and the return on new money is last year's, which is a choice.
+
+### How it works
+
+- `lib/studio-project/valuation.ts` holds the model — `NOPAT × (1 − g/ROC) ÷ (r − g)` — the bridge
+  from the whole business to one share, the closed-form reverse question and the grid. Every refusal
+  carries its reason.
+- The figures come from the same SEC route the peer screen uses, which now also reads the share
+  count; the cost of capital comes from the existing Damodaran table; the return on new money starts
+  from the company's own return on capital, computed by `roic.ts`.
+- Conventions and their reasons: `docs/source-audits/studio-quantitative-methods.md` §3.
+
+### Found on the way
+
+- **The model had to be chosen by what is sourced, not by what is standard.** A multi-stage DCF with
+  a terminal value is the textbook answer, and the audited session marks terminal-value mechanics as
+  deferred, so a multi-stage model would have put four unsourced assumptions on the screen. The
+  single-stage model the session does verify is what got built, and §3 says why.
+- **The closed-form reverse question has roots the model refuses.** A price of 900 for a business
+  worth 1,200 standing still comes back as 30% growth, which is an artefact of the rearrangement.
+  Every root is now substituted back and rejected if it does not reproduce the price.
+- **An empty box read as a zero left the whole page blank.** The cost-of-capital field falls back to
+  the sourced figure when empty, and an empty string parsed to 0 instead of null, so every value came
+  out as "no answer" until it was found by driving the page.
+- **Atkore is the honest worst case.** Its 1.4% return on capital last year means every growth row
+  refuses: growth bought at 1.4% costs more than it earns. That is correct, and it needed a line
+  explaining the empty cells rather than leaving a learner to think the tab was broken.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest, with the other sessions' `tmp/` copies excluded: 66 files, 868 tests.
+- **Against the project's own audited figures**: the five cases in
+  `damodaran-session-5-valuation-basics.md` §"Independently verified calculations", including the
+  neutrality of growth at a return equal to the cost of capital, and the 1,000 and 1,333.33 either
+  side of it.
+- **The checks can fail.** 11 of 11 deliberate breaks — growth taken for free, the
+  reinvestment rate inverted, the lenders added instead of paid, cash dropped from the bridge, a
+  receipt divided instead of multiplied, the reverse question left unchecked, and five more — each
+  failed at least one test, and the file was restored and compared every time.
+- The tab's own browser spec: 10 checks against a fixed payload whose arithmetic is worked by hand
+  in the file's own comments.
+- Playwright, the full suite on a production build: 176 passed, 5 skipped, none failed.
+- Live: the tab on Apple's and Atkore's latest annual reports at six widths each, no sideways scroll, one page heading and no page errors. At 1440 it is 1,164px for Apple and 1,276px for Atkore against the 1,350 budget, and 1,957px and 2,196px at 390. Apple at $230 a share reads as 6.8% growth for ever; Atkore, on a 1.4% return on capital, is worth $1.38 a share standing still and refuses every growth row, which is the honest answer at those assumptions
+
+### Known limits
+
+- **One growth rate, for ever.** No stages, no fade, no terminal switch. Deliberate, and stated.
+- **No multiples.** Peer multiples need a price for every peer, which Studio does not hold; the peer
+  screen compares what companies earn instead.
+- **The price is the learner's.** Studio holds no live prices, so what a share costs today comes from
+  their broker, as everywhere else in Studio.
+- **The share count is a yearly average**, not what is in issue today.
+- **A loss-making year cannot be valued** by this model at all, which is most of what a beginner
+  will meet in a bad year for a cyclical company.
+- **Financial companies are out of scope** for the same reason the return on capital is: their
+  accounting puts a different meaning on both the profit and the capital.
+
+### Next concrete action
+
+R10 is complete: the peer screen, the bond worksheet and this. Commit the four pieces — R9, the
+any-company rework, and R10's three parts — when the user asks. R10 was the last item in §10's Phase 2;
+after it the roadmap turns to Phase 3, portfolio construction, which needs price histories Studio does not
+hold for an arbitrary company. The nearer piece of work is the gap this phase measured: three of ten large
+companies tag no operating profit this reader will accept, and three no borrowings that exclude finance
+leases, which weakens the peer screen, the valuation tab and Investigate together.
+
+## 2026-09-15: borrowings for the companies that report debt and leases on one line
+
+R10's peer screen and valuation tab both start from Investigate's seven figures, and building them
+made a gap measurable: of ten large companies, three tag no borrowing figure Studio will read. A
+company with no borrowings has no invested capital, so it scores on almost nothing — Nucor came out
+on one of the peer screen's five measures.
+
+### What a learner can do now
+
+- **Borrowings resolve for a company that reports debt and finance leases on one line**, as long as
+  it also tags the lease, because the lease can then be taken out. Nucor's figure is $6,863m where
+  it was empty before, and on the peer screen it now scores on three of the five measures instead
+  of one, moving from last place to second.
+- **Nothing changes for a company that tags no lease to take out.** Coca-Cola and Exxon still show
+  an empty box, and the reason now says exactly why: no lease-free figure, and no lease tagged on
+  its own to subtract from a combined one.
+
+### How it works
+
+- `prefill.ts` reads a lease-free tag first, as before. Only where none covers the year does it try
+  the combined route, and only where the filer states the lease itself: the figure that includes
+  current maturities less the whole lease, or the noncurrent figure less the noncurrent lease plus
+  the instalment due this year.
+- The provenance says what happened — "long-term borrowings and finance leases, less the finance
+  leases, plus the instalment due within the year, plus short-term borrowings" — so a learner
+  checking against the balance sheet can follow it.
+
+### Found on the way
+
+- **How common the shape is, measured rather than guessed.** In the SEC's CY2025Q4I frame, 2,770
+  filers tag a lease-free borrowing figure, 218 tag only a combined one, and 148 of those — 68% —
+  also tag the lease. So the rule reaches 148 filers and the other 70 keep their empty box.
+- **AT&T is the check on the rule itself.** It tags both shapes: 136,100 of debt and leases, 1,382
+  of finance leases, and 134,718 of lease-free debt. The subtraction reproduces its own figure to
+  the dollar, and because the lease-free tag is read first, the provenance still names that tag.
+- **The two shapes are not interchangeable.** Chevron's combined tag already includes the 2,345 due
+  within the year; adding the instalment again would have made its borrowings 41,658 instead of
+  39,313, which is exactly the "total debt of 40,758 less 1,445 of finance leases" its own report
+  states.
+- **Deere still cannot be read**, and that is a different gap: it tags no long-term borrowing
+  figure at all, lease-free or combined, so there is nothing to subtract from.
+- **Operating profit is still missing for Nucor, Eaton and Deere.** They tag no
+  `OperatingIncomeLoss`, and deriving one from total costs is the subtraction `metrics.ts` already
+  refuses to make — Deere's total costs include interest, so revenue less costs is its pre-tax
+  profit, not an operating one.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest, with the other sessions' `tmp/` copies excluded: 66 files, 873 tests.
+- **Against three companies' own filings**, each with a different tagging shape: Nucor's debt note
+  ($258m of finance leases inside $6,999m, and short-term borrowings of $122m it splits into $33m
+  and $89m), Chevron's total debt of $40,758m less $1,445m of leases, and AT&T's own lease-free
+  figure of $134,718m.
+- **The checks can fail.** 7 of 7 deliberate breaks — the leases left inside, a missing
+  lease treated as zero, the whole lease taken off the noncurrent part, the instalment dropped or
+  double-counted, the subtraction reversed, and a combined tag preferred over a lease-free one —
+  each failed at least one test, and the file was restored and compared every time.
+- Playwright, the full suite on a production build: 176 passed, 5 skipped, none failed.
+- **Live, through the app:** Nucor's borrowings read $6,863,000,000 from
+  `LongTermDebtAndCapitalLeaseObligations + FinanceLeaseLiabilityNoncurrent + LongTermDebtCurrent +
+  ShortTermBorrowings`, and its peer-screen row moved from "on 1 of 5 measures" to "on 3 of 5".
+
+### Known limits
+
+- **148 filers gain a figure, not all of them.** The 70 that tag no lease keep an empty box.
+- **A filer that tags neither shape is untouched**, which is Deere's case.
+- **The figure is a carrying value**, as the balance sheet reports it, not the principal a debt note
+  totals: Nucor's own note gives $6.93bn of principal against the $6.74bn of long-term debt carried,
+  the difference being the unamortized discount netted against it.
+- **Operating profit remains the larger gap** for the same three companies, and it needs its own
+  measurement and its own source before anything derives one.
+
+### Next concrete action
+
+Commit this with the rest when the user asks. The operating-profit gap is the next piece of the same
+work: measure how many filers tag no `OperatingIncomeLoss`, and decide per shape what, if anything,
+can be read instead without inventing a subtraction.

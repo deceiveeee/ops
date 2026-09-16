@@ -4,12 +4,19 @@ import FilingPassages, { type PageParagraph } from "@/components/studio/FilingPa
 import { Notice, Panel, StageHeading } from "@/components/studio/shared";
 import StudioAside from "@/components/studio/workspace/StudioAside";
 import { CONTEXT_CHARS } from "@/lib/filings/anchor";
-import { archivePath, fetchFilingDocument, fetchFilings, filingIndexUrl, secUserAgent } from "@/lib/filings/edgar";
+import { archivePath, fetchCompanyTickers, fetchFilingDocument, fetchFilings, filingIndexUrl, secUserAgent } from "@/lib/filings/edgar";
 import { findInSections } from "@/lib/filings/find";
 import { pageForOffset, paginate, paragraphsOf } from "@/lib/filings/pages";
 import { revenueFromFiling } from "@/lib/filings/revenue-source";
 import { extractFilingSections } from "@/lib/filings/sections";
 import RevenueView from "@/components/studio/RevenueView";
+import CompetitorsView from "@/components/studio/CompetitorsView";
+import InputCostsView from "@/components/studio/InputCostsView";
+import PeersView from "@/components/studio/PeersView";
+import WorthView from "@/components/studio/WorthView";
+import { filerIndex, suggestCompetitors } from "@/lib/filings/competitors";
+import libraryData from "@/lib/studio-project/data/input-cost-library.json";
+import { fiscalYearFor, suggestInputs, type InputCostLibrary } from "@/lib/studio-project/input-costs";
 
 export const metadata: Metadata = {
   title: "Company report · Studio — Investing Studio",
@@ -43,6 +50,22 @@ const HITS_PER_VIEW = 8;
  */
 const REVENUE_TAB = { id: "revenue", label: "Where revenue comes from" };
 const ANNUAL_FORMS = new Set(["10-K", "10-K/A"]);
+
+/**
+ * Who the report says the company competes with, read from its own words and matched to the SEC's
+ * list of companies, for the learner to count. Offered on every annual report.
+ */
+const COMPETITORS_TAB = { id: "competitors", label: "Competitors" };
+/**
+ * What the inputs a report mentions have cost, from Studio's checked library of price indexes, each
+ * linked by the learner through a sentence showing the company buys it. Offered on every annual report.
+ */
+const PEERS_TAB = { id: "side-by-side", label: "Side by side" };
+const WORTH_TAB = { id: "worth", label: "What a price assumes" };
+const INPUTS_TAB = { id: "inputs", label: "Input costs" };
+const LIBRARY = libraryData as unknown as InputCostLibrary;
+/** Where a report says what it buys and what its costs did; the financial statements only tabulate. */
+const INPUT_SECTIONS = new Set(["business", "risk-factors", "mdna", "market-risk"]);
 
 /** How keeping works, said once beside the reading rather than under every page. */
 const KEEP_HOW = "Keep saves a paragraph to your investigation of this company. Select some words in it first to keep just those.";
@@ -135,8 +158,17 @@ export default async function CompanyReportPage({
   const companyName = (list.ok ? list.name : "") || ticker || "Company";
   const kind = filing ? KIND[filing.form] ?? "report" : "report";
   const current = sections.find((section) => section.id === wanted) ?? sections[0];
-  const extraTabs = filing && ANNUAL_FORMS.has(filing.form) ? [REVENUE_TAB] : [];
-  const revenue = extraTabs.length && wanted === REVENUE_TAB.id ? await revenueFromFiling(cik, accession, doc) : null;
+  const annual = Boolean(filing && ANNUAL_FORMS.has(filing.form));
+  const extraTabs = annual ? [REVENUE_TAB, COMPETITORS_TAB, PEERS_TAB, WORTH_TAB, INPUTS_TAB] : [];
+  const revenue = annual && wanted === REVENUE_TAB.id ? await revenueFromFiling(cik, accession, doc) : null;
+  const business = sections.find((section) => section.id === "business");
+  // EDGAR's ticker file is fetched only for the tab that matches names against it.
+  const tickerFile = annual && wanted === COMPETITORS_TAB.id ? await fetchCompanyTickers() : null;
+  const competitors = tickerFile
+    ? business
+      ? suggestCompetitors(business, tickerFile.ok ? filerIndex(tickerFile.json) : new Map(), { cik, name: companyName })
+      : { passages: [], suggestions: [] }
+    : null;
 
   /** A link to somewhere in this same report, keeping which document and ticker. */
   const hrefFor = (extra: Record<string, string | number | undefined>, hash = "") => {
@@ -146,6 +178,17 @@ export default async function CompanyReportPage({
       if (value !== undefined && value !== "") search.set(key, String(value));
     }
     return `?${search.toString()}${hash}`;
+  };
+
+  /** This report, as the tabs that keep passages from it need it. */
+  const reportRef = {
+    cik,
+    accession,
+    document: doc,
+    form: filing?.form ?? "",
+    filed: filing?.filingDate ?? "",
+    companyName,
+    sic: list.ok ? list.sic : "",
   };
 
   const facts = [
@@ -185,6 +228,37 @@ export default async function CompanyReportPage({
               source={revenue}
               dataFileUrl={revenue.dataFile ? archivePath(cik, accession, revenue.dataFile) : null}
               tabs={<SectionTabs sections={sections} extraTabs={extraTabs} current={REVENUE_TAB.id} hrefFor={hrefFor} />}
+            />
+          ) : competitors ? (
+            <CompetitorsView
+              filing={reportRef}
+              readerQuery={hrefFor({})}
+              businessFound={Boolean(business)}
+              passages={competitors.passages}
+              suggestions={competitors.suggestions}
+              tickerFile={Boolean(tickerFile?.ok)}
+              tabs={<SectionTabs sections={sections} extraTabs={extraTabs} current={COMPETITORS_TAB.id} hrefFor={hrefFor} />}
+            />
+          ) : annual && wanted === PEERS_TAB.id ? (
+            <PeersView
+              filing={reportRef}
+              competitorsHref={hrefFor({ section: COMPETITORS_TAB.id })}
+              tabs={<SectionTabs sections={sections} extraTabs={extraTabs} current={PEERS_TAB.id} hrefFor={hrefFor} />}
+            />
+          ) : annual && wanted === WORTH_TAB.id ? (
+            <WorthView
+              filing={reportRef}
+              tabs={<SectionTabs sections={sections} extraTabs={extraTabs} current={WORTH_TAB.id} hrefFor={hrefFor} />}
+            />
+          ) : annual && wanted === INPUTS_TAB.id ? (
+            <InputCostsView
+              filing={reportRef}
+              readerQuery={hrefFor({})}
+              fiscal={fiscalYearFor(filing?.reportDate ?? "")}
+              suggestions={suggestInputs(sections.filter((section) => INPUT_SECTIONS.has(section.id)), LIBRARY.series)}
+              library={LIBRARY.series}
+              builtOn={LIBRARY.builtOn}
+              tabs={<SectionTabs sections={sections} extraTabs={extraTabs} current={INPUTS_TAB.id} hrefFor={hrefFor} />}
             />
           ) : current ? (
             <SectionView

@@ -708,18 +708,20 @@ Each item names what the learner gains and the check that proves it.
     **Done 2026-09-13 (§13).**
   - Milestones: M4 and M5.
 
-**Phase 2, with the Atkore journey as its acceptance test:**
+**Phase 2, with the Atkore journey as its acceptance test:** Atkore is the test case, not the audience; since
+2026-09-14 every screen built here must work for whichever company a learner picks.
 - **R7. A peer set for Atkore, chosen deliberately.** SIC 3690 is mostly batteries and EV chargers
   (§5.1). Build the set from companies whose filings describe the same products (full-text
   search), record why each is in, and name the private competitors that are missing. Check: the
   Find step can show why Atkore appears, and every peer has a stated reason.
-  **Done 2026-09-13 (§13).**
+  **Done 2026-09-13; replaced 2026-09-14 by a Competitors tab for any company (§13).**
 - **R8. Product lines, regions and customers** from the filing's data file. Check: the shares
   reconcile to total revenue. **Done 2026-09-13 (§13).**
 - **R9. Input-cost series,** each tied to an input the filing itself names. Check: every series
-  cites that passage.
+  cites that passage. **Done 2026-09-13; reworked for any company 2026-09-14 (§13).**
 - **R10. The peer screen with its working shown; valuation with sensitivities; bond cash flows and
-  accrued interest.** Checks: handoff §12 cases 3, 4 and 5.
+  accrued interest.** Checks: handoff §12 cases 3, 4 and 5. **All three done 2026-09-15 (§13), against
+  cases 3, 5 and 4.**
 
 **Phase 3:** portfolio construction (M6–M7) with the shortlisted libraries.
 
@@ -978,6 +980,119 @@ from, read from the filing's data file".
   nothing is shown as shares.
 
 Next in §10: R9, input-cost series, each tied to an input the filing itself names.
+
+### R9, done 2026-09-13
+
+**The company-report reader has an "Input costs" tab on Atkore's annual report: what the report says its
+input costs did, beside the nearest price index for each raw material it names, each index citing the
+passage that names its input.** Detail in the ledger entry "2026-09-13: what Atkore's inputs cost, each index
+tied to the passage naming its input".
+
+- **Inputs as the report lists them**: steel, copper, PVC resin and HDPE. Stand-ins from BLS: steel mill
+  products; copper and copper alloy rod, bar and shapes; thermoplastic resins. None is exactly what Atkore
+  buys, and each says how near it is.
+- **The check is enforced three times**: when the data is built, against the live filing; in tests, against
+  the fixture copy; and when the page is drawn, where anything whose passage is not found is not shown.
+- **Every mention of input costs in the management's discussion is shown or listed with why not.** The first
+  manifest missed two sentences, one saying Safety & Infrastructure's input costs rose in fiscal 2024, and
+  the script refused it.
+- **The risk this section's row names, choosing the wrong series**, is shown rather than hidden: five series
+  considered and not chosen sit beside the chosen three on `studio-input-costs.md`. The resin choice changes
+  nothing; every copper index checked rose in fiscal 2024, the year the report credits lower steel, copper
+  and PVC resin costs together.
+- **"Moving the same way is not proof"** is said on the page, with why.
+- The check in this section is met: every series cites that passage. Demand, from Census construction
+  spending, is not built.
+
+Next in §10: R10, the peer screen with its working shown; valuation with sensitivities; bond cash flows and
+accrued interest.
+
+### R7 and R9, reworked for any company, 2026-09-14
+
+**Both were built for Atkore alone, so a learner researching any other company got nothing from them. The
+reader now has a Competitors tab and an Input costs tab on every annual report, and Atkore is only the test
+fixture.** Detail in the ledger entry "2026-09-14: competitors and input costs for any company, replacing the
+Atkore-only versions".
+
+- **Competitors, replacing R7's hand-picked set**: the companies a report names in its words about
+  competition, matched to the SEC's list of companies on an exact name only, and counted by the learner with
+  the passage as the reason, or added by ticker. On Atkore's report it offers ten of the eleven names R7
+  started from; the eleventh, Prysmian, is written as one bare word. On Apple's, Walmart's and Netflix's it
+  offers none, and says so.
+- **Input costs, replacing R9's Atkore-only tab**: a checked library of 31 BLS producer price indexes,
+  suggested wherever a report uses their words and linked by the learner through a sentence that shows a
+  purchase. R9's check, that every series cites the passage naming its input, now holds in storage: an index
+  is linked only through a kept passage, and a backup that breaks this is refused.
+- **What R7 and R9 found still stands**, in their ledger entries: most competitors Atkore names file no annual
+  report with the SEC, and BLS has no index for PVC or HDPE resin alone.
+- The Industry page's Atkore set and Investigate's "such as ATKR" are gone.
+
+Next in §10: R10, the peer screen with its working shown; valuation with sensitivities; bond cash flows and
+accrued interest.
+
+### R10's peer screen, 2026-09-15
+
+**A learner can now set the company they are reading beside the competitors it names, on five measures read
+from each company's own filings, with every step of the arithmetic on the page.** Detail in the ledger entry
+"2026-09-15: the peer screen, with its working shown".
+
+- **The method is written down first.** The seven questions §2 lists as unresolved are answered in
+  `studio-quantitative-methods.md` §1.2 and worked by hand in §1.4: interpolated quantiles, winsorizing at the
+  10th and 90th percentiles from four companies up, sample standard deviation, zero variance and undefined
+  ratios reported rather than zeroed, weights rescaled over the measures a company has, ties sharing a place.
+- **Handoff §12 case 3 is met**: a manually worked peer group, a measure whose direction runs the other way,
+  the winsorization convention stated and shown, equal values and zero variance, missing observations,
+  undefined ratios from negative equity and non-positive capital, and explicit weight handling — each with a
+  test, and each with a deliberate break that fails one.
+- **What the filings hold, measured across ten large companies:** three tag no operating profit this reader
+  will accept and three no borrowings that exclude finance leases, while all ten tag net income. The measure
+  set carries that finding rather than working around it.
+- The published screen in §2 is still not reproduced: five of its nine inputs need a dated price or twelve
+  quarters of history.
+
+Next in §10: the rest of R10, valuation with sensitivities and bond cash flows with accrued interest.
+
+### R10's bond worksheet, 2026-09-15
+
+**A learner can now put a settlement date against Studio's Treasury note and see what it costs that
+day and what it pays afterwards.** Detail in the ledger entry "2026-09-15: a bond on the day you
+settle".
+
+- **Sources:** 31 CFR part 356, appendix B, for the day count and the price formula; Treasury's own
+  auction record for the note's terms and for four published figures to check against. Both
+  retrieved 2026-09-15, both recorded in `studio-quantitative-methods.md` §2.
+- **Handoff §12 case 5 is met** for the issue type Studio holds: cash-flow dates, a price/yield round
+  trip under a stated convention, the coupon-date and settlement boundaries, accrued interest,
+  quoted against paid prices, increments and minimums, and a duration-style cross-check against the
+  lessons' own engine. What is not met is the corporate half of §F5 — no corporate bond, no credit
+  analysis, no 30/360.
+- **The gap the catalog declared is closed**: accrued interest is no longer an unstated amount
+  missing from a bond's total. The catalog still states none, because it depends on the settlement
+  date, and the worksheet takes the figure the learner works out.
+
+Next in §10: the last part of R10, valuation with sensitivities.
+
+### R10's valuation, 2026-09-15
+
+**A learner can now ask what a price assumes about a company, rather than being handed a price
+target.** Detail in the ledger entry "2026-09-15: what a price assumes".
+
+- **Source:** the project's own audit of Damodaran session 5, whose independently verified
+  calculations are the test oracle. The model is the single-stage one that audit supports;
+  multi-stage and terminal-value mechanics are marked deferred there and are therefore not built.
+- **Handoff §12 case 4 is met**: units and share bases stated and tested, the enterprise-to-equity
+  bridge reconciled both ways, invalid terminal assumptions refused with reasons, sensitivity
+  direction checked in a controlled case where growth adds, removes and changes nothing, and the
+  depositary-receipt conversion tested at TSMC's five to one.
+- **§F4's reverse question is the headline**, and the surface refuses to reduce the answer to one
+  confident number.
+
+With this, R10's three parts are done: the peer screen, the bond worksheet and the valuation.
+With R10 done, §10's Phase 2 is complete. Phase 3 is portfolio construction, which waits on price
+histories; the nearer work is the concept coverage this phase measured as missing.
+
+
+
 
 ## Appendix A. Probe log
 
