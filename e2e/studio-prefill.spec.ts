@@ -47,7 +47,7 @@ const ATKORE = {
   missing: [] as unknown[],
 };
 
-const tickerBox = (page: Page) => page.getByPlaceholder("Its ticker, such as ATKR");
+const tickerBox = (page: Page) => page.getByPlaceholder("Its ticker symbol");
 const fillButton = (page: Page) => page.getByRole("button", { name: "Fill these from the SEC" });
 const filed = (page: Page, label: string) => page.getByLabel(`${label}, as the company filed it`, { exact: true });
 
@@ -134,10 +134,10 @@ test.describe("filling the seven from a filing", () => {
     // SIC 3690 is mostly battery and EV-charging makers. Comparing Atkore with
     // semiconductors without saying so was the dead end this removes.
     await expect(page.getByRole("main")).toContainText("not one of the five industries Studio has researched");
-    // And it sends the learner to the competitors Atkore's own annual report names, chosen by product.
-    await expect(page.getByRole("link", { name: "See Atkore’s competitors, chosen by what they make →" })).toHaveAttribute(
+    // And it sends the learner to the company's own reports, where an annual report's Competitors tab reads who it names.
+    await expect(page.getByRole("link", { name: "Find the competitors its own annual report names →" })).toHaveAttribute(
       "href",
-      "/studio/industry?set=atkore",
+      "/studio/filings?ticker=ATKR",
     );
   });
 

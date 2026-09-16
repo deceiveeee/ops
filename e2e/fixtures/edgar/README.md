@@ -66,6 +66,21 @@ lengths in the table above, wrap headings in `<div>` and paragraphs in `<p>` wit
 escaped, and check that all seven sections still extract and the PVC resin offsets in the tests
 still hold.
 
+## EDGAR's ticker file, trimmed
+
+**`https___www.sec.gov_files_company_tickers.json`**
+
+- **Source:** `https://www.sec.gov/files/company_tickers.json`, fetched on 14 September 2026 with the project's
+  declared User-Agent, when it listed 10,422 tickers.
+- **Trimmed to eight rows, copied exactly with their original keys:** Atkore itself, and the rows for the
+  companies Atkore's annual report names as competitors that the file lists: Eaton, Nucor, nVent, Hubbell, ABB
+  (under two tickers, one company) and Prysmian.
+- **What reads it:** the reader's Competitors tab, which matches the names a report gives against it
+  (`lib/filings/competitors.ts`), and `/api/studio/company-lookup`, which adds a company by ticker.
+  `e2e/studio-competitors.spec.ts` works out what the tab should show from this file and the annual report
+  above, by the same rules. Prysmian is listed but not offered: Atkore names it as the single word
+  "Prysmian", and a name without a company word is offered only when it is two words or more.
+
 ## Atkore Inc., the same annual report's XBRL data
 
 **`https___www.sec.gov_Archives_edgar_data_1666138_000162828025054049_index.json`**,

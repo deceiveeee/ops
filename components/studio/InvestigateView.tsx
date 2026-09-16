@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
-import peerSetsData from "@/lib/studio-project/data/peer-sets.json";
-import { allProblems, type PeerSetEntry } from "@/lib/studio-project/peer-sets";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
 import { TREASURY_RATE, estimate, forSic, industryNames, forIndustry, longDate } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
@@ -49,10 +47,6 @@ const RESEARCHED = industriesData.industries.map((entry) => ({
   ),
 }));
 
-/** A peer set chosen by what the company makes, where one has been built and passed its checks. */
-const PEER_SETS = (peerSetsData.sets as unknown as PeerSetEntry[]).filter((set) => allProblems(set).length === 0);
-const peerSetFor = (cik: string | undefined) =>
-  cik ? (PEER_SETS.find((set) => Number(set.subject.cik) === Number(cik)) ?? null) : null;
 
 const SECTOR_BY_SIC: Record<string, RoicSector> = {
   "3674": "general", "7372": "general", "5331": "general", "4011": "transport", "2834": "general",
@@ -267,8 +261,8 @@ export default function InvestigateView() {
       setLookup({
         kind: "error",
         message: typed
-          ? `Studio looks companies up by ticker symbol, and "${typed}" is not one. Atkore's is ATKR.`
-          : "Type the company's ticker symbol first — Atkore's is ATKR.",
+          ? `Studio looks companies up by ticker symbol, the short code its shares trade under, and "${typed}" is not one.`
+          : "Type the company's ticker symbol first: the short code its shares trade under.",
       });
       return;
     }
@@ -604,7 +598,7 @@ export default function InvestigateView() {
                 value={company}
                 onChange={(event) => setCompany(event.target.value)}
                 onBlur={() => void flush()}
-                placeholder="Its ticker, such as ATKR"
+                placeholder="Its ticker symbol"
                 className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
             </label>
@@ -692,14 +686,15 @@ export default function InvestigateView() {
                   {source.sicDescription ? `, ${source.sicDescription.toLowerCase()}` : null} — not one of
                   the five industries Studio has researched. The peers and the cost of capital below are{" "}
                   {researched.label.toLowerCase()}, so read the comparison with that in mind.
-                  {peerSetFor(source.cik) ? (
+                  {/* Any company's annual report has a Competitors tab reading who it names. */}
+                  {source.ticker ? (
                     <>
                       {" "}
                       <Link
-                        href={`/studio/industry?set=${peerSetFor(source.cik)!.id}`}
+                        href={`/studio/filings?ticker=${encodeURIComponent(source.ticker)}`}
                         className="text-accent-cyan underline underline-offset-2"
                       >
-                        See {peerSetFor(source.cik)!.subject.shortName}&rsquo;s competitors, chosen by what they make →
+                        Find the competitors its own annual report names →
                       </Link>
                     </>
                   ) : null}

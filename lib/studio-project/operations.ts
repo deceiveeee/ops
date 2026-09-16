@@ -6,7 +6,9 @@ import {
   type EvidenceRole,
   type FigureInvestigation,
   type FigureSource,
+  type InputLink,
   type KeptPassage,
+  type PeerLink,
   type PortfolioAlternative,
   type StudioProject,
 } from "./schema";
@@ -108,6 +110,9 @@ export function saveInvestigation(
      * keystroke — silently, and long after the learner kept them.
      */
     ...(existing?.passages ? { passages: existing.passages } : {}),
+    // The same goes for inputs and competitors linked in the reader, which rest on those passages.
+    ...(existing?.inputs ? { inputs: existing.inputs } : {}),
+    ...(existing?.peers ? { peers: existing.peers } : {}),
   };
   const investigations = existing
     ? project.investigations.map((item) => (item.id === existing.id ? record : item))
@@ -198,7 +203,11 @@ export function updatePassage(
   };
 }
 
-/** Let one passage go. The figures and every other passage stay. */
+/**
+ * Let one passage go. The figures and every other passage stay. An input linked
+ * through it goes with it, because the link rested on it; a competitor stays a
+ * competitor and only loses the passage that named it.
+ */
 export function removePassage(
   project: StudioProject,
   investigationId: string,
@@ -212,8 +221,130 @@ export function removePassage(
     updatedAt: now,
     investigations: project.investigations.map((item) =>
       item.id === investigationId
-        ? touch({ ...item, passages: item.passages!.filter((kept) => kept.id !== passageId) }, now)
+        ? touch(
+            {
+              ...item,
+              passages: item.passages!.filter((kept) => kept.id !== passageId),
+              ...(item.inputs ? { inputs: item.inputs.filter((link) => link.passageId !== passageId) } : {}),
+              ...(item.peers ? { peers: item.peers.map((peer) => (peer.passageId === passageId ? { ...peer, passageId: "" } : peer)) } : {}),
+            },
+            now,
+          )
         : item,
+    ),
+  };
+}
+
+/**
+ * The id of a passage already kept against an investigation, matched the way a
+ * second press on Keep is: the same filing, section, place and words.
+ */
+export function keptPassageId(
+  project: StudioProject,
+  investigationId: string,
+  passage: Pick<PassageEdit, "accession" | "sectionId" | "offset" | "quote">,
+): string | null {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  const kept = (target?.passages ?? []).find(
+    (item) => item.accession === passage.accession && item.sectionId === passage.sectionId && item.offset === passage.offset && item.quote === passage.quote,
+  );
+  return kept?.id ?? null;
+}
+
+/**
+ * Tie an input to a price index through a kept passage.
+ *
+ * A passage not kept against this investigation links nothing, because the link
+ * would rest on nothing. The same index through the same passage twice is one link.
+ */
+export function linkInput(
+  project: StudioProject,
+  investigationId: string,
+  link: Pick<InputLink, "seriesId" | "passageId">,
+  id: string = makeId("inp"),
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.passages?.some((kept) => kept.id === link.passageId)) return project;
+  if ((target.inputs ?? []).some((existing) => existing.seriesId === link.seriesId && existing.passageId === link.passageId)) return project;
+  const added: InputLink = { id, savedAt: now, seriesId: link.seriesId, passageId: link.passageId };
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, inputs: [...(item.inputs ?? []), added] }, now) : item,
+    ),
+  };
+}
+
+/** Undo one input link. The passage stays kept. */
+export function unlinkInput(
+  project: StudioProject,
+  investigationId: string,
+  linkId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.inputs?.some((link) => link.id === linkId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, inputs: item.inputs!.filter((link) => link.id !== linkId) }, now) : item,
+    ),
+  };
+}
+
+/** What a caller supplies to count a company as a competitor. */
+export type PeerEdit = Omit<PeerLink, "id" | "savedAt">;
+
+/**
+ * Count a company as a competitor.
+ *
+ * The same SEC company twice, or the same name twice where neither has an SEC
+ * number, is one competitor. A passage given as where it was named must be kept
+ * against this investigation.
+ */
+export function addPeer(
+  project: StudioProject,
+  investigationId: string,
+  peer: PeerEdit,
+  id: string = makeId("peer"),
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target || !peer.name.trim()) return project;
+  if (peer.passageId && !target.passages?.some((kept) => kept.id === peer.passageId)) return project;
+  const cik = bareCik(peer.cik);
+  const name = peer.name.trim().toLowerCase();
+  const already = (target.peers ?? []).some((existing) =>
+    cik ? bareCik(existing.cik) === cik : !existing.cik && existing.name.trim().toLowerCase() === name,
+  );
+  if (already) return project;
+  const added: PeerLink = { id, savedAt: now, name: peer.name.trim(), cik: peer.cik, ticker: peer.ticker, passageId: peer.passageId };
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, peers: [...(item.peers ?? []), added] }, now) : item,
+    ),
+  };
+}
+
+/** No longer count a company as a competitor. Any passage that named it stays kept. */
+export function removePeer(
+  project: StudioProject,
+  investigationId: string,
+  peerId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.peers?.some((peer) => peer.id === peerId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, peers: item.peers!.filter((peer) => peer.id !== peerId) }, now) : item,
     ),
   };
 }
@@ -396,6 +527,44 @@ export function addPosition(
       );
     }),
   };
+}
+
+/**
+ * Record the accrued interest a learner worked out for a bond, per $100 of face
+ * value, against the position that holds it.
+ *
+ * The buying worksheet already knows what to do with this figure — it adds it
+ * beside the price rather than inside it — but until now nothing could produce
+ * one, because it depends on the day the learner settles. Null puts the
+ * worksheet back to saying the total is incomplete, which is the honest state
+ * when there is no figure.
+ */
+export function setAccruedInterest(
+  project: StudioProject,
+  instrumentId: string,
+  per100: number | null,
+  alternativeId?: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const targetId = alternativeId ?? workingAlternative(project)?.id;
+  if (!targetId) return project;
+  if (per100 !== null && (!Number.isFinite(per100) || per100 < 0 || per100 > 100_000)) return project;
+  let changed = false;
+  const alternatives = project.alternatives.map((alternative) => {
+    if (alternative.id !== targetId) return alternative;
+    if (!alternative.positions.some((position) => position.instrumentId === instrumentId)) return alternative;
+    changed = true;
+    return touch(
+      {
+        ...alternative,
+        positions: alternative.positions.map((position) =>
+          position.instrumentId === instrumentId ? { ...position, accruedInterestPer100: per100 } : position,
+        ),
+      },
+      now,
+    );
+  });
+  return changed ? { ...project, updatedAt: now, alternatives } : project;
 }
 
 /**

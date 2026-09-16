@@ -4,9 +4,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
-import peerSets from "@/lib/studio-project/data/peer-sets.json";
-import { allProblems, type PeerSetEntry } from "@/lib/studio-project/peer-sets";
-import PeerSetView from "./PeerSetView";
 import { Panel, Stat, StageHeading, TableScroll } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 
@@ -164,15 +161,8 @@ function AdvantagePlane({ earners }: { earners: Earner[] }) {
   );
 }
 
-/**
- * Peer sets chosen by product, for companies whose SEC industry code is a poor
- * market boundary. A set with any failed check is not offered at all.
- */
-const PEER_SETS = (peerSets.sets as unknown as PeerSetEntry[]).filter((set) => allProblems(set).length === 0);
-
-export default function IndustryView({ initialSet = null }: { initialSet?: string | null }) {
+export default function IndustryView() {
   const [sic, setSic] = useState(industries.industries[0].sic);
-  const [setId, setSetId] = useState<string | null>(PEER_SETS.some((set) => set.id === initialSet) ? initialSet : null);
   const [view, setView] = useState<"shares" | "movement" | "returns">("shares");
   const [showAll, setShowAll] = useState(false);
 
@@ -181,7 +171,6 @@ export default function IndustryView({ initialSet = null }: { initialSet?: strin
     [sic],
   );
 
-  const chosenSet = PEER_SETS.find((set) => set.id === setId) ?? null;
   const shown = industry.leaders.reduce((sum, leader) => sum + leader.share, 0);
   const widest = Math.max(...industry.leaders.map((leader) => leader.share), 0.01);
   const movers = industry.instability?.rows.filter((row) => row.name !== "Other") ?? [];
@@ -231,14 +220,11 @@ export default function IndustryView({ initialSet = null }: { initialSet?: strin
           <button
             key={entry.sic}
             type="button"
-            onClick={() => {
-              setSic(entry.sic);
-              setSetId(null);
-            }}
-            aria-pressed={!chosenSet && entry.sic === sic}
+            onClick={() => setSic(entry.sic)}
+            aria-pressed={entry.sic === sic}
             className={cn(
               "rounded-full border px-4 py-2 text-[13px] transition-colors",
-              !chosenSet && entry.sic === sic
+              entry.sic === sic
                 ? "border-accent-cyan/50 bg-accent-cyan/10 text-white"
                 : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/25 hover:text-slate-200",
             )}
@@ -246,29 +232,8 @@ export default function IndustryView({ initialSet = null }: { initialSet?: strin
             {entry.label}
           </button>
         ))}
-        {PEER_SETS.map((set) => (
-          <button
-            key={set.id}
-            type="button"
-            onClick={() => setSetId(set.id)}
-            aria-pressed={setId === set.id}
-            className={cn(
-              "rounded-full border px-4 py-2 text-[13px] transition-colors",
-              setId === set.id
-                ? "border-accent-cyan/50 bg-accent-cyan/10 text-white"
-                : "border-accent-cyan/25 bg-white/[0.02] text-slate-300 hover:border-accent-cyan/50 hover:text-white",
-            )}
-          >
-            {set.label}
-          </button>
-        ))}
       </div>
 
-      {/* A chosen set has no revenue shares: its companies sell too much else for one market. */}
-      {chosenSet ? (
-        <PeerSetView set={chosenSet} />
-      ) : (
-        <>
       <Panel>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Stat
@@ -498,8 +463,6 @@ export default function IndustryView({ initialSet = null }: { initialSet?: strin
           </Panel>
         }
       />
-        </>
-      )}
     </div>
   );
 }

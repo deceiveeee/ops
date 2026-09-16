@@ -252,6 +252,21 @@ export async function resolveTicker(symbol: string): Promise<EdgarResult<{ compa
   return { ok: true, company };
 }
 
+/**
+ * EDGAR's whole ticker file, parsed: every company with a ticker, by SEC number
+ * and name. Cached for a day, like the lookup above. The Competitors tab matches
+ * the companies a report names against it.
+ */
+export async function fetchCompanyTickers(): Promise<EdgarResult<{ json: unknown }>> {
+  const res = await secFetch("https://www.sec.gov/files/company_tickers.json", 86_400);
+  if (!res.ok) return res;
+  try {
+    return { ok: true, json: JSON.parse(res.body) };
+  } catch {
+    return { ok: false, reason: "fetch-failed", message: "EDGAR's ticker file could not be read." };
+  }
+}
+
 /** A company's recent readable filings, and the industry SEC files it under. Cached for an hour. */
 export async function fetchFilings(
   cik: string,

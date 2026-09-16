@@ -110,6 +110,47 @@ export interface FigureInvestigation {
    * before the reader could keep a passage.
    */
   passages?: KeptPassage[];
+  /**
+   * Inputs the learner decided the company buys, each tied to a price index
+   * through a passage of its own report they kept. Absent on every record saved
+   * before 2026-09-14.
+   */
+  inputs?: InputLink[];
+  /**
+   * Companies the learner counts as competitors. Absent on every record saved
+   * before 2026-09-14.
+   */
+  peers?: PeerLink[];
+}
+
+/**
+ * An input the learner decided the company buys, and the price index standing
+ * in for it.
+ *
+ * It points at a kept passage rather than carrying a quote of its own, so the
+ * evidence for the link is a passage the learner can also mark for or against
+ * the business in Investigate, and letting that passage go lets the link go.
+ */
+export interface InputLink {
+  id: string;
+  savedAt: string;
+  /** A series id in lib/studio-project/data/input-cost-library.json. */
+  seriesId: string;
+  /** The kept passage showing the company buys it. */
+  passageId: string;
+}
+
+/** A company the learner counts as a competitor. */
+export interface PeerLink {
+  id: string;
+  savedAt: string;
+  /** As the report names it, or as EDGAR names it when added by ticker. */
+  name: string;
+  /** The SEC's number for it, or empty when no company filing with the SEC goes by that name. */
+  cik: string;
+  ticker: string;
+  /** The kept passage naming it, or empty when the learner added it by ticker. */
+  passageId: string;
 }
 
 /**

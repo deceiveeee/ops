@@ -186,7 +186,7 @@ test.describe("keeping a passage", () => {
 
   test("goes to an existing investigation of the company rather than starting another", async ({ page }) => {
     await page.goto("/studio/investigate");
-    await page.getByPlaceholder("Its ticker, such as ATKR").fill("Atkore Inc.");
+    await page.getByPlaceholder("Its ticker symbol").fill("Atkore Inc.");
     await page.getByLabel("Revenue", { exact: true }).fill("2850378000");
     await expect.poll(async () => (await stored(page)).length).toBe(1);
 

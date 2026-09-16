@@ -76,7 +76,7 @@ export function validateStudioProject(value: unknown): string[] {
     if (!list(value.investigations, 10_000)) issues.push("The project needs an investigation list with at most 10,000 companies.");
     else for (const investigation of value.investigations) {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct", "source", "passages"])
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "figures", "riskFreePct", "source", "passages", "inputs", "peers"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
         // null means "use the published rate", which is different from zero.
@@ -148,6 +148,42 @@ export function validateStudioProject(value: unknown): string[] {
             || !(typeof passage.offset === "number" && Number.isInteger(passage.offset) && passage.offset >= 0)
             || !choice(passage.role, ["supports", "challenges", "context"]) || !text(passage.note)) {
             issues.push("A kept passage contains missing, repeated, or invalid fields.");
+          }
+        }
+      }
+      /*
+       * Linked inputs and competitors each point at a kept passage. Checked, because a link
+       * to a passage that is not there would show an index or a competitor as resting on
+       * words the report was never seen to use.
+       */
+      const keptIds = new Set(
+        Array.isArray(investigation.passages)
+          ? (investigation.passages as unknown[]).filter(object).map((passage) => passage.id).filter((value): value is string => typeof value === "string")
+          : [],
+      );
+      if (investigation.inputs !== undefined) {
+        if (!list(investigation.inputs, 200)) issues.push("A company investigation can link at most 200 inputs.");
+        else for (const link of investigation.inputs) {
+          if (!object(link)
+            || !keys(link, ["id", "savedAt", "seriesId", "passageId"])
+            || !uniqueId(link.id) || !timestamp(link.savedAt)
+            || !id(link.seriesId) || !text(link.seriesId, 40)
+            || !id(link.passageId) || !keptIds.has(link.passageId)) {
+            issues.push("A linked input contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
+          }
+        }
+      }
+      if (investigation.peers !== undefined) {
+        if (!list(investigation.peers, 200)) issues.push("A company investigation can list at most 200 competitors.");
+        else for (const peer of investigation.peers) {
+          if (!object(peer)
+            || !keys(peer, ["id", "savedAt", "name", "cik", "ticker", "passageId"])
+            || !uniqueId(peer.id) || !timestamp(peer.savedAt)
+            || !text(peer.name, 300) || !peer.name.trim()
+            || !text(peer.cik, 20) || !/^\d*$/.test(peer.cik)
+            || !text(peer.ticker, 20)
+            || !text(peer.passageId, 200) || (peer.passageId !== "" && !keptIds.has(peer.passageId))) {
+            issues.push("A competitor contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
           }
         }
       }
