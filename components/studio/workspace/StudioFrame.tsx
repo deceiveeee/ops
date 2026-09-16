@@ -8,6 +8,8 @@ import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import type { StudioMode } from "@/lib/studio-project/schema";
 import { GuidancePanel, Notice, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
+import StudioIcon from "./StudioIcon";
+import styles from "./studio-design.module.css";
 import { WorkspaceProvider, useWorkspace } from "./WorkspaceProvider";
 
 /**
@@ -87,10 +89,11 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
   const { setAsideSlot } = useWorkspace();
   const guidance = guidanceFor(pathname);
   const stagePage = STAGE_PAGES.some((base) => within(pathname, base));
+  const integratedGuide = pathname === "/studio/goals" || pathname === "/studio/research";
   const toolPage = TOOL_PAGES.some((base) => within(pathname, base));
 
   let aside: ReactNode = null;
-  if (stagePage && guidance) {
+  if (stagePage && guidance && !integratedGuide) {
     aside = (
       <div className="space-y-4">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
@@ -112,7 +115,7 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
       <Problems />
       {/* Narrow screens keep the definition above the work, where a first-time
           learner meets it before the questions that use it. */}
-      {stagePage && guidance ? (
+      {stagePage && guidance && !integratedGuide ? (
         <div className="mb-5 space-y-4 xl:hidden">
           <Strip />
           <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
@@ -127,11 +130,11 @@ function Layout({
   pathname, bar, aside, children,
 }: { pathname: string; bar: ReactNode; aside?: ReactNode; children: ReactNode }) {
   return (
-    <div className="studio-app mx-auto w-full max-w-[1400px] px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+    <div className={cn("studio-app mx-auto w-full max-w-[1400px] px-4 pb-16 pt-6 sm:px-6 lg:px-8", styles.frame)}>
       <div className="lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-8">
         <Sidebar pathname={pathname} />
         <div className="min-w-0">
-          <div className="flex min-h-[3.25rem] flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-[var(--ops-divider)] pb-4">
+          <div className={cn("flex min-h-[3.25rem] flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-[var(--ops-divider)] pb-4", styles.projectBar)}>
             {bar}
           </div>
           <div className={cn("mt-6", aside ? "xl:grid xl:grid-cols-[minmax(0,1fr)_17rem] xl:items-start xl:gap-8" : undefined)}>
@@ -163,12 +166,14 @@ function SectionLinks({ pathname }: { pathname: string }) {
               aria-current={active ? (pathname === section.href ? "page" : "true") : undefined}
               className={cn(
                 "flex min-h-11 items-center rounded-lg px-3 text-[15px] font-medium transition-colors",
+                styles.navLink,
                 focusRing,
                 active
                   ? "bg-[var(--ops-accent-soft)] text-[var(--ops-accent-strong)]"
                   : "text-[var(--ops-text-secondary)] hover:bg-[var(--ops-surface-2)] hover:text-[var(--ops-text-primary)]",
               )}
             >
+              <StudioIcon name={section.key} />
               {section.label}
             </Link>
           </li>
@@ -181,9 +186,9 @@ function SectionLinks({ pathname }: { pathname: string }) {
 function Sidebar({ pathname }: { pathname: string }) {
   return (
     <div className="hidden lg:block">
-      <div className="sticky top-[5.5rem]">
+      <div className={cn("sticky top-[5.5rem]", styles.sidebar)}>
         <nav aria-label="Studio sections">
-          <p className="px-3 pb-2 text-[12px] font-medium text-[var(--ops-text-tertiary)]">Studio</p>
+          <p className={cn("px-3 pb-4 text-[12px] font-medium", styles.sidebarLabel)}><StudioIcon name="overview" /> Your workspace</p>
           <SectionLinks pathname={pathname} />
         </nav>
         <p className="mt-6 px-3 text-[12px] leading-5 text-[var(--ops-text-tertiary)]">
@@ -267,7 +272,7 @@ function ProjectBar({ pathname }: { pathname: string }) {
           <SaveState />
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className={cn("flex flex-wrap items-center gap-2", styles.projectActions)}>
         <ProjectMenu />
         <ModeSwitch />
       </div>
@@ -318,7 +323,7 @@ function ModeSwitch() {
         role="group"
         aria-label="Which portfolio"
         aria-describedby={hint}
-        className="inline-flex rounded-full border border-[var(--ops-divider)] bg-[var(--ops-surface-2)] p-1"
+        className={cn("inline-flex rounded-full border border-[var(--ops-divider)] bg-[var(--ops-surface-2)] p-1", styles.modeSwitch)}
       >
         {MODES.map((option) => {
           const on = option.value === mode;
