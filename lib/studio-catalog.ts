@@ -102,6 +102,13 @@ export type StudioBondTerms = {
   couponPct: number;
   maturity: string;
   /**
+   * When interest starts to accrue, which is not always the issue date: this
+   * note is dated 15 August 2026 and was issued on the 17th, so a buyer at
+   * issue already owed two days of interest. From the issuer's own auction
+   * record (`dated_date`).
+   */
+  datedDate: string;
+  /**
    * Per $100 of face value, at a stated settlement date. Null when no reviewed
    * source states it — the worksheet then excludes it and says the total is
    * incomplete, which is true, rather than silently treating it as zero.
@@ -457,9 +464,11 @@ const TREASURY_10Y: StudioInstrument = {
     cusip: "91282CRF0",
     couponPct: 4.625,
     maturity: "2036-08-15",
-    // Accrued interest depends on the settlement date, and the auction record
-    // states it only for issue-date settlement. Any other date needs its own
-    // figure, so the worksheet excludes it and says the total is incomplete.
+    datedDate: "2026-08-15",
+    // Accrued interest depends on the settlement date, so no catalog entry can
+    // state it: the auction record gives it for issue-date settlement only. It
+    // is worked out for a date the learner picks on /studio/portfolio/bond, by
+    // the issuer's own rule, and carried into the worksheet from there.
     accruedInterestPer100: null,
   },
   sources: [
@@ -612,9 +621,9 @@ export const CATALOG_GAPS: readonly StudioCatalogGap[] = [
   },
   {
     kind: "bond",
-    missing: "More individual bonds, and accrued interest for the one that is here",
+    missing: "More individual bonds",
     whyItMatters:
-      "The catalog holds a single Treasury note. There are no corporate or municipal bonds, and no issue states accrued interest for a settlement date you choose, so a bond's estimated total here is short by exactly that unstated amount.",
+      "The catalog holds a single Treasury note, and there are no corporate or municipal bonds. Its accrued interest is no longer a gap: since 2026-09-15 it is worked out for any settlement date from the issue's own terms, by the rule in 31 CFR part 356, appendix B, and carried into the buying worksheet.",
     whatItNeeds:
       "Per-issue terms from each issuer's official source, and an accrual basis worked out for the settlement date rather than for the auction.",
   },

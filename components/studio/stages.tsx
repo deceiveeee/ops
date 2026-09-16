@@ -763,6 +763,15 @@ export function BuyStage(props: StageProps) {
                   ))}
                 </ul>
               ) : null}
+
+              {isBond ? (
+                <p className="mt-3 text-[13px] leading-6 text-slate-400">
+                  <Link href="/studio/portfolio/bond" className="text-accent-cyan underline underline-offset-2 hover:text-white">
+                    Work out the interest built up by the day you settle
+                  </Link>{" "}
+                  and bring the figure back here, so this total is not short by it.
+                </p>
+              ) : null}
             </Panel>
           );
         })}
