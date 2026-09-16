@@ -25,9 +25,11 @@ const DATE = String.raw`\d{1,2} [A-Z][a-z]+ 20\d\d`;
 
 async function openCard(page: Page, symbol: string) {
   await page.goto("/studio/research");
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
   const toggle = page.getByRole("main").getByRole("button").filter({ hasText: new RegExp(`^${symbol}`) }).first();
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  if (symbol !== "AAPL") await page.getByRole("button", { name: "Returns and costs", exact: true }).click();
   return toggle.locator("xpath=..");
 }
 

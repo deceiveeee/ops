@@ -5,13 +5,15 @@ import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { addEvidence, removeEvidence, setCandidateStatus, updateCandidate } from "@/lib/studio-project/operations";
 import { exportProjectText } from "@/lib/studio-project/workspace";
 import { downloadFile } from "../shared";
-import { BuildStage, BuyStage, GoalStage, ResearchStage, ReviewStage, RiskStage, type StageProps } from "../stages";
+import { BuildStage, BuyStage, ReviewStage, RiskStage, type StageProps } from "../stages";
+import GoalsWorkspace from "./GoalsWorkspace";
+import ResearchWorkspace from "./ResearchWorkspace";
 import { WorkWaiting } from "./StudioFrame";
 import { useWorkspace } from "./WorkspaceProvider";
 
 const STAGES = {
-  goal: GoalStage,
-  research: ResearchStage,
+  goal: GoalsWorkspace,
+  research: ResearchWorkspace,
   build: BuildStage,
   risk: RiskStage,
   buy: BuyStage,
@@ -19,10 +21,9 @@ const STAGES = {
 } as const;
 
 /**
- * One of the existing stage forms, running on the workspace's saved project.
+ * A working page running on the workspace's saved project.
  *
- * The forms themselves are unchanged. What changes is underneath: edits go to
- * the working portfolio in the versioned project store through the adapter, and
+ * Edits go to the working portfolio in the versioned project store through the adapter, and
  * the downloads carry the whole project, including research not in the
  * portfolio, rather than the single-portfolio record the wizard kept.
  */

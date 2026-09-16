@@ -65,7 +65,9 @@ async function stored(page: Page): Promise<StoredCandidate[]> {
 }
 
 const openCard = async (page: Page, symbol: string) => {
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
   await page.getByRole("button", { expanded: false }).filter({ hasText: new RegExp(`^${symbol}`) }).first().click();
+  await page.getByRole("button", { name: "Your record", exact: true }).click();
   await expect(page.getByRole("heading", { name: /Your record/ })).toBeVisible();
 };
 

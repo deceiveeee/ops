@@ -14,6 +14,7 @@ import { expect, test, type Page } from "@playwright/test";
  */
 
 async function addToPortfolio(page: Page, symbol: string) {
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
   const card = page.getByRole("button", { expanded: false }).filter({ hasText: new RegExp(`^${symbol}`) }).first().locator("xpath=..");
   await card.getByRole("button", { name: "Add to portfolio" }).click();
   await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
