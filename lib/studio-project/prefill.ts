@@ -146,6 +146,17 @@ function direct(
  *    different from what every other company's figure means, Exxon's borrowings
  *    come back missing and the learner is told why.
  *
+ * **Where the leases can be taken out, they are** (added 2026-09-15). A filer
+ * that tags only the combined figure often also tags the finance lease itself,
+ * and subtracting one from the other gives exactly what the box asks for.
+ * Measured across every filer in the SEC's CY2025Q4I frame: 2,770 tag a
+ * lease-free borrowing figure, 218 tag only a combined one, and 148 of those —
+ * 68% — also tag the lease. Nucor is one of them, and its own debt note is the
+ * check: finance leases of $258m inside $6,999m of debt and leases, leaving
+ * $6,741m, and short-term borrowings of $122m that the note itself breaks into
+ * $33m at Nucor Trading and $89m at NJSM. The other 70, Coca-Cola and Exxon
+ * among them, tag no lease to take out, so they stay missing and say so.
+ *
  * A missing figure is never a zero. A company with no borrowings is a real
  * thing, and saying so is the learner's call, not an inference from an absent
  * tag.
@@ -157,6 +168,15 @@ const DEBT_COMBINED = ["DebtLongtermAndShorttermCombinedAmount"] as const;
 const DEBT_LONG_TOTAL = ["LongTermDebt", "LongTermNotesAndLoans", "LongTermNotesPayable", "SeniorNotes"] as const;
 /** Long-term borrowing excluding that instalment, which must then be added. */
 const DEBT_LONG_NONCURRENT = ["LongTermDebtNoncurrent"] as const;
+/**
+ * Long-term borrowing with finance leases inside it. Read only when no lease-free
+ * tag covers the year, and only together with the lease that comes out of it.
+ */
+const DEBT_WITH_LEASES_TOTAL = ["LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities"] as const;
+const DEBT_WITH_LEASES_NONCURRENT = ["LongTermDebtAndCapitalLeaseObligations"] as const;
+/** The lease to subtract, in the same shape as the figure it comes out of. */
+const LEASES_TOTAL = ["FinanceLeaseLiability", "CapitalLeaseObligations"] as const;
+const LEASES_NONCURRENT = ["FinanceLeaseLiabilityNoncurrent", "CapitalLeaseObligationsNoncurrent"] as const;
 const DEBT_CURRENT_INSTALMENT = ["LongTermDebtCurrent"] as const;
 /**
  * Short-term borrowing. `ShortTermBorrowings` is the total where a company
@@ -181,13 +201,28 @@ function borrowings(facts: CompanyFacts, periodEnd: string): SuppliedFigure | Mi
 
   const total = resolveConcepts(facts, DEBT_LONG_TOTAL, periodEnd);
   const noncurrent = total ? null : resolveConcepts(facts, DEBT_LONG_NONCURRENT, periodEnd);
-  const instalment = noncurrent ? resolveConcepts(facts, DEBT_CURRENT_INSTALMENT, periodEnd) : null;
   const long = total ?? noncurrent;
-  if (!long) {
+
+  // No lease-free tag: the leases can still come out of a combined one, where the
+  // filer states them. Never assumed, and never where the subtraction would leave
+  // nothing, which would mean the two tags do not describe the same thing.
+  const combinedWhole = long ? null : resolveConcepts(facts, DEBT_WITH_LEASES_TOTAL, periodEnd);
+  const leaseWhole = combinedWhole ? resolveConcepts(facts, LEASES_TOTAL, periodEnd) : null;
+  const combinedRest = long || combinedWhole ? null : resolveConcepts(facts, DEBT_WITH_LEASES_NONCURRENT, periodEnd);
+  const leaseRest = combinedRest ? resolveConcepts(facts, LEASES_NONCURRENT, periodEnd) : null;
+  const lessLeases =
+    combinedWhole && leaseWhole && combinedWhole.value > leaseWhole.value
+      ? { from: combinedWhole, lease: leaseWhole, value: combinedWhole.value - leaseWhole.value, whole: true }
+      : combinedRest && leaseRest && combinedRest.value > leaseRest.value
+        ? { from: combinedRest, lease: leaseRest, value: combinedRest.value - leaseRest.value, whole: false }
+        : null;
+
+  const instalment = noncurrent || (lessLeases && !lessLeases.whole) ? resolveConcepts(facts, DEBT_CURRENT_INSTALMENT, periodEnd) : null;
+  if (!long && !lessLeases) {
     return {
       key: "totalDebt",
-      reason: `No borrowing figure that excludes finance leases is tagged for the year ending ${periodEnd}. Some companies report debt and leases on one line; Studio's figure leaves leases out, so read the debt note and type what you want to use. If the company has no borrowings, enter 0.`,
-      tried: [...DEBT_COMBINED, ...DEBT_LONG_TOTAL, ...DEBT_LONG_NONCURRENT],
+      reason: `No borrowing figure that excludes finance leases is tagged for the year ending ${periodEnd}, and no finance lease is tagged on its own to take out of a combined one. Some companies report debt and leases together; Studio's figure leaves leases out, so read the debt note and type what you want to use. If the company has no borrowings, enter 0.`,
+      tried: [...DEBT_COMBINED, ...DEBT_LONG_TOTAL, ...DEBT_LONG_NONCURRENT, ...DEBT_WITH_LEASES_TOTAL, ...DEBT_WITH_LEASES_NONCURRENT],
     };
   }
 
@@ -203,10 +238,11 @@ function borrowings(facts: CompanyFacts, periodEnd: string): SuppliedFigure | Mi
     // short-term borrowing; only the second belongs in "where this came from".
   ).filter((part) => part.value !== 0);
 
-  const parts = [long, ...(instalment ? [instalment] : []), ...shortParts];
-  const value = parts.reduce((sum, part) => sum + part.value, 0);
+  const added = [...(instalment ? [instalment] : []), ...shortParts];
+  const longValue = long ? long.value : (lessLeases as NonNullable<typeof lessLeases>).value;
+  const value = added.reduce((sum, part) => sum + part.value, longValue);
   const named = [
-    "long-term borrowings",
+    long ? "long-term borrowings" : "long-term borrowings and finance leases, less the finance leases",
     ...(instalment ? ["the instalment due within the year"] : []),
     ...(shortParts.length ? ["short-term borrowings"] : []),
   ];
@@ -214,9 +250,12 @@ function borrowings(facts: CompanyFacts, periodEnd: string): SuppliedFigure | Mi
   return {
     key: "totalDebt",
     value,
-    concepts: parts.map((part) => part.concept),
-    addedUp: parts.length > 1 ? named.join(", plus ") : null,
-    ...provenance(long),
+    concepts: [
+      ...(long ? [long.concept] : [lessLeases!.from.concept, lessLeases!.lease.concept]),
+      ...added.map((part) => part.concept),
+    ],
+    addedUp: long && added.length === 0 ? null : named.join(", plus "),
+    ...provenance(long ?? lessLeases!.from),
   };
 }
 

@@ -40,7 +40,7 @@ here, each producing a plausible number rather than an error.
 | MSFT | $40,294m | LongTermDebt |
 | NVDA | $8,468m | LongTermDebt |
 | COST | $5,788m | LongTermDebtNoncurrent + LongTermDebtCurrent |
-| XOM | not supplied | no lease-free borrowing tag is filed |
+| XOM | not supplied | a combined tag, and no finance lease tagged to take out of it |
 | PFE | $64,795m | LongTermDebtNoncurrent + LongTermDebtCurrent + OtherShortTermBorrowings |
 | UNP | $31,814m | LongTermDebt |
 | NEE | $95,619m | LongTermDebtNoncurrent + LongTermDebtCurrent + CommercialPaper + OtherShortTermBorrowings |
@@ -48,6 +48,10 @@ here, each producing a plausible number rather than an error.
 | FITB | $14,515m | LongTermDebt + ShortTermBorrowings |
 | PGR | $6,897m | DebtLongtermAndShorttermCombinedAmount |
 | PLD | $35,037m | LongTermDebt |
+| NUE | $6,863m | LongTermDebtAndCapitalLeaseObligations − FinanceLeaseLiabilityNoncurrent + LongTermDebtCurrent + ShortTermBorrowings |
+| CVX | $39,313m | LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities − FinanceLeaseLiability + ShortTermBorrowings |
+| T | $134,718m | LongTermDebt |
+| KO | not supplied | a combined tag, and no finance lease tagged to take out of it |
 
 The rules, each checked against the table above:
 
@@ -64,10 +68,21 @@ The rules, each checked against the table above:
    used alone where filed. Otherwise commercial paper, other short-term borrowings and notes
    payable are summed, and a part tagged as zero is left out of the provenance because it added
    nothing — Pfizer files commercial paper of zero beside $157m of other short-term borrowing.
-5. **Lease-inclusive tags are refused.** Exxon files only
+5. **Lease-inclusive tags are never supplied as they stand.** Exxon files only
    `LongTermDebtAndCapitalLeaseObligations`, which bundles $2.7bn of finance leases in with the
    debt. Supplying it would mean something different from the box's own definition and from every
    other company's figure, so the box stays empty and says why.
+6. **Finance leases are taken out where the filer states them** (added 2026-09-15). Where no
+   lease-free tag covers the year, the combined tag is read together with the lease itself: the
+   figure including current maturities less the whole lease, or the noncurrent figure less the
+   noncurrent lease plus the instalment due. Measured in the SEC's CY2025Q4I frame: 2,770 filers
+   tag a lease-free figure, 218 only a combined one, and 148 of those also tag the lease. Three
+   filings check it. Nucor's note puts $258m of finance leases inside $6,999m of debt and leases
+   and $122m in short-term borrowings, giving $6,863m. Chevron's combined tag already includes the
+   $2,345m due this year, so nothing is added back: its own "total debt, including finance lease
+   liabilities" of $40,758m less $1,445m of leases is the $39,313m supplied. AT&T tags both shapes
+   at once — 136,100 − 1,382 = 134,718, exactly its lease-free tag — so the subtraction is checked
+   against a filer's own answer, and the lease-free tag is still the one read.
 
 ## What this cannot do
 
