@@ -79,9 +79,39 @@
 .teaching-visual-data caption { text-align:left; font-size:12px; padding-block:10px; color:var(--ops-text-secondary); }
 .teaching-visual-data :is(th,td) { padding:8px; border-bottom:1px solid var(--ops-divider); text-align:left; font-weight:400; }
 .teaching-visual-data td { text-align:right; }
+.course-card-teaching-visual { padding:24px 24px 0; }
+.course-card-teaching-visual .teaching-visual { border-radius:12px; background:var(--ops-surface-2); border:0; }
+.course-card-start-label { display:inline-block; margin-top:16px; font-size:13px; font-weight:600; color:var(--ops-accent-strong); }
+.course-opening-visual { margin-bottom:32px; }
+.loss-recovery-bars { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; align-items:end; margin-top:24px; }
+.loss-recovery-column { min-width:0; text-align:center; }
+.loss-recovery-column > strong { display:block; font-size:21px; font-weight:500; font-variant-numeric:tabular-nums; }
+.loss-recovery-column > span { display:block; margin-top:8px; font-size:12px; line-height:1.5; }
+.loss-recovery-track { display:flex; align-items:end; justify-content:center; height:105px; border-bottom:1px solid var(--ops-control-border); margin-top:8px; }
+.loss-recovery-track > div { width:min(60px,75%); background:var(--ops-accent-strong); border-radius:4px 4px 0 0; }
+.loss-recovery-track > div[data-step="1"] { background:#9b5a24; }
+.loss-recovery-track > div[data-step="2"] { background:#347169; }
+.company-results-chart { margin-top:22px; padding-top:20px; border-top:1px solid var(--ops-divider); }
+.company-results-chart figcaption { display:flex; flex-direction:column; gap:4px; }
+.company-results-chart figcaption strong { font-size:15px; font-weight:600; }
+.company-results-chart figcaption span { font-size:12px; line-height:1.6; color:var(--ops-text-secondary); }
+.company-results-row { margin-top:14px; }
+.company-results-row > div:first-child { display:flex; justify-content:space-between; font-size:14px; font-variant-numeric:tabular-nums; }
+.company-results-row strong { font-weight:500; }
+.company-results-track { height:14px; margin-top:6px; background:var(--ops-surface-2); }
+.company-results-track > div { height:100%; background:var(--ops-accent-strong); transform-origin:left; transition:transform 200ms ease; }
+.company-results-track > div[data-year="2024"] { background:#757d89; }
+.company-results-axis { display:flex; justify-content:space-between; font-size:12px; margin-top:6px; color:var(--ops-text-secondary); }
+.company-results-takeaway { font-size:16px; font-weight:600; margin-top:14px; }
+.company-results-definition { font-size:13px; line-height:1.65; color:var(--ops-text-secondary); margin-top:6px; }
 @media (max-width:767px) {
   .teaching-visual { padding:20px; }
+  .course-card-teaching-visual { padding:16px 16px 0; }
   .rate-history-observation { grid-template-columns:1fr; gap:8px; min-height:110px; }
+  .loss-recovery-bars { gap:12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .company-results-track > div { transition:none; }
 }
 .cash-demo { min-width:0; background:var(--ops-surface); border:1px solid var(--ops-divider); border-radius:16px; padding:28px; box-shadow:0 12px 36px -24px rgb(0 0 0 / .18); }
 .cash-demo-intro h2 { font-family:var(--font-sans),sans-serif; font-size:22px; line-height:1.3; letter-spacing:-.025em; margin-top:10px; }

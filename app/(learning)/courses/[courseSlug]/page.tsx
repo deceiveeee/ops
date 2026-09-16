@@ -7,6 +7,8 @@ import ModuleSection from "@/components/courses/ModuleSection";
 import CourseRail from "@/components/courses/CourseRail";
 import PortfolioBuilderPath from "@/components/courses/PortfolioBuilderPath";
 import Button from "@/components/ui/Button";
+import FedRateChart from "@/components/marketing/FedRateChart";
+import LossRecoveryVisual from "@/components/marketing/LossRecoveryVisual";
 
 export function generateStaticParams() {
   return courses.map((c) => ({ courseSlug: c.slug }));
@@ -161,6 +163,9 @@ export default function CoursePage({ params }: { params: { courseSlug: string } 
 
             {/* Right — statistics + course flow visual */}
             <div className="lg:border-l lg:border-white/10 lg:pl-16">
+              <div className="course-opening-visual">
+                {isPortfolioBuilder ? <LossRecoveryVisual /> : <FedRateChart compact />}
+              </div>
               {/* Stats — large readable numbers */}
               <div className="grid grid-cols-3 gap-6">
                 {isPortfolioBuilder ? (
