@@ -43,7 +43,7 @@ test("search and filters find every investment and recover from no matches", asy
   await search.fill("TSM");
   await expect(page.getByRole("button", { expanded: false }).filter({ hasText: /^TSM/ })).toBeVisible();
   await page.getByRole("button", { name: "Bonds", exact: true }).click();
-  await expect(page.getByText("No investment matches that search in this library.")).toBeVisible();
+  await expect(page.getByText("None of the 8 investments in this library matches that search.")).toBeVisible();
   await page.getByRole("button", { name: "Clear the search and filters" }).click();
   await expect(search).toHaveValue("");
   await expect(page.getByRole("button", { name: "All", exact: true })).toHaveAttribute("aria-pressed", "true");

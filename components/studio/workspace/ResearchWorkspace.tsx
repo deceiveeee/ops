@@ -6,6 +6,7 @@ import { CATALOG_GAPS, STUDIO_CATALOG, type StudioInstrument } from "@/lib/studi
 import { addStudioHolding, removeStudioHolding } from "@/lib/studio";
 import type { StageProps } from "../stages";
 import ResearchRecord from "../ResearchRecord";
+import CompanySearch, { companiesFound, useCompanySearch } from "./CompanySearch";
 import ResearchFacts from "./ResearchFacts";
 import StudioIcon from "./StudioIcon";
 import WorkspaceNotes from "./WorkspaceNotes";
@@ -17,11 +18,15 @@ const FILTERS = [
 ] as const;
 const kindName = { fund: "Fund", stock: "Stock", bond: "Bond" };
 const PAGE_SIZE = 3;
+/** The library's own tickers, so a company already in it is not offered twice. */
+const LIBRARY_TICKERS: ReadonlySet<string> = new Set(STUDIO_CATALOG.map((item) => item.symbol.toUpperCase()));
 
 export default function ResearchWorkspace({ plan, update, record, investigations = [] }: StageProps) {
   const [filter, setFilter] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [all, setAll] = useState(false);
+  /** Whether the companies at the SEC are open when the library already has matches of its own. */
+  const [companiesOpen, setCompaniesOpen] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const [view, setView] = useState<"facts" | "record">("facts");
   const [factSection, setFactSection] = useState<"risks" | "returns" | "details">("risks");
@@ -32,6 +37,12 @@ export default function ResearchWorkspace({ plan, update, record, investigations
     && `${item.symbol} ${item.name}`.toLowerCase().includes(query.trim().toLowerCase()));
   const current = STUDIO_CATALOG.find(item => item.id === openId);
   const visible = all ? matches : matches.slice(0, PAGE_SIZE);
+  const search = useCompanySearch(query, LIBRARY_TICKERS);
+  // With two or more of the library's own investments listed, the companies at
+  // the SEC wait behind one button beside "Show all": both lists open at once
+  // took a phone to 1.63 screens for "vanguard".
+  const companiesFolded = matches.length >= 2 && !companiesOpen;
+  const foldedCompanies = companiesFolded && search.active ? search.companies.length : 0;
   const choose = (id: string) => {
     setOpenId(id); setView("facts"); setFactSection("risks");
     requestAnimationFrame(() => headingRef.current?.focus());
@@ -79,8 +90,8 @@ export default function ResearchWorkspace({ plan, update, record, investigations
           <Link href="/studio/filings"><StudioIcon name="report" /><span><strong>Find its annual report →</strong><small>Go to the original source</small></span></Link>
         </nav>
         <section className={styles.investmentLibrary} aria-labelledby="investment-library-heading">
-          <div className={styles.libraryHeading}><div><h2 id="investment-library-heading">Find your next question.</h2><p>Choose an investment to read its facts and keep your reasoning.</p></div>
-            <label className={styles.search}><StudioIcon name="research" /><span className="sr-only">Find an investment</span><input ref={searchRef} type="search" value={query} onChange={event => { setQuery(event.target.value); setAll(false); }} placeholder="Name or symbol" /></label>
+          <div className={styles.libraryHeading}><div><h2 id="investment-library-heading">Find your next question.</h2><p>Choose an investment to read its facts and keep your reasoning, or search for any company.</p></div>
+            <label className={styles.search}><StudioIcon name="research" /><span className="sr-only">Find an investment or a company</span><input ref={searchRef} type="search" value={query} onChange={event => { setQuery(event.target.value); setAll(false); setCompaniesOpen(false); }} placeholder="Name or ticker" /></label>
           </div>
           <div className={styles.libraryFilters}><div role="group" aria-label="Investment type">{FILTERS.map(item => <button key={item.id} type="button" aria-pressed={filter === item.id} onClick={() => { setFilter(item.id); setAll(false); }}>{item.label}</button>)}</div><span role="status">{matches.length} {matches.length === 1 ? "investment" : "investments"}</span></div>
           <div className={styles.investmentList}>
@@ -90,9 +101,13 @@ export default function ResearchWorkspace({ plan, update, record, investigations
               </button>
               {addButton(instrument)}
             </article>)}
-            {matches.length === 0 && <div className={styles.noMatches}><p>No investment matches that search in this library.</p><button type="button" onClick={() => { setQuery(""); setFilter("all"); searchRef.current?.focus(); }}>Clear the search and filters</button></div>}
+            {matches.length === 0 && <div className={`${styles.noMatches} ${query.trim().length >= 2 ? styles.whileSearching : ""}`}><p>None of the {STUDIO_CATALOG.length} investments in this library matches that search.</p><button type="button" onClick={() => { setQuery(""); setFilter("all"); searchRef.current?.focus(); }}>Clear the search and filters</button></div>}
           </div>
-          {matches.length > PAGE_SIZE && <button type="button" className={styles.showAll} aria-expanded={all} onClick={() => setAll(value => !value)}>{all ? "Show fewer investments" : `Show all ${matches.length} investments`}<StudioIcon name="arrow" /></button>}
+          {(matches.length > PAGE_SIZE || foldedCompanies > 0) && <div className={styles.libraryFooter}>
+            {matches.length > PAGE_SIZE && <button type="button" className={styles.showAll} aria-expanded={all} onClick={() => setAll(value => !value)}>{all ? "Show fewer investments" : `Show all ${matches.length} investments`}<StudioIcon name="arrow" /></button>}
+            {foldedCompanies > 0 && <button type="button" className={styles.showAll} aria-expanded={false} onClick={() => setCompaniesOpen(true)}>{`Show ${companiesFound(foldedCompanies)}`}<StudioIcon name="arrow" /></button>}
+          </div>}
+          {!companiesFolded && <CompanySearch search={search} />}
         </section>
         <details className={styles.libraryGaps}><summary>What you cannot research here yet <span aria-hidden="true">+</span></summary><ul>{CATALOG_GAPS.map(gap => <li key={gap.missing}><strong>{gap.missing}.</strong> {gap.whyItMatters}</li>)}</ul></details>
       </>}

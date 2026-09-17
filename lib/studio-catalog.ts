@@ -613,11 +613,11 @@ export const CATALOG_GAPS: readonly StudioCatalogGap[] = [
   },
   {
     kind: "stock",
-    missing: "More company shares, and any company's financial results",
+    missing: "More company shares you can add to a portfolio",
     whyItMatters:
-      "Two companies are here, both large and both already inside funds in this library. Neither carries revenue, profit, debt or a valuation, so nothing here supports judging whether a share is worth its price — only what the company is and what it says can go wrong.",
+      "Two companies are in this library, both large and both already inside funds here. Any other company can be found with the search above, and its reports, competitors, figures and what its price assumes worked out from its own filings. It cannot be added to a portfolio, because a holding needs a dated price and Studio has checked prices only for the investments listed here.",
     whatItNeeds:
-      "A per-company filing review for each addition, and a separate decision about whether Studio should carry financial statement figures at all, which is a much larger source commitment than identity and risk.",
+      "A dated price for each added company's shares, from a source Studio may show, checked company by company.",
   },
   {
     kind: "bond",

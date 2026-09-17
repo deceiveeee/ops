@@ -2152,3 +2152,230 @@ on one of the peer screen's five measures.
 Commit this with the rest when the user asks. The operating-profit gap is the next piece of the same
 work: measure how many filers tag no `OperatingIncomeLoss`, and decide per shape what, if anything,
 can be read instead without inventing a subtraction.
+
+## 2026-09-16: any company from Research's search, and a report reader that reads quarterly reports and tables
+
+The user saw Research's eight investments, asked where searching for any company was, and sent a
+screenshot of Netflix's quarterly report whose Risk factors tab was "just random phrases". Both were
+real. R10 had never been a search: the any-company tools existed, but only on pages a learner had to
+know to open, and Research's search box filtered the eight and said nothing matched "Netflix".
+
+### What was wrong with the report
+
+- **The reader only knew the annual layout.** A 10-Q numbers its Items differently (Part I: Item 1
+  statements, Item 2 management's discussion, Item 3 market risk; Part II: Item 1 legal, Item 1A risk
+  factors, Item 2 share sales and buybacks). Read with 10-K numbers, only "Item 1A. Risk Factors"
+  matched in Netflix's report for the quarter to 30 June 2026, and six of seven sections were "not
+  found".
+- **A section ended only at the next section OPS reads.** So that Risk factors tab ran from its single
+  sentence to the end of the document: the buyback table, Other information, Exhibits. The same rule
+  ran every annual report's Risk factors through Unresolved Staff Comments, Cybersecurity and
+  Properties, and Financial statements through Items 9–16.
+- **Tables became loose lines.** A row became a line, and a heading cell holding its own block of
+  markup became several, each with a Keep button: "Period", "Average Price Paid per Share (2)",
+  "(in thousands)", "April 1 - 30, 2026 16,922,312 $ 97.47 …".
+- **Page furniture became paragraphs**: bare page numbers, "Table of Contents", Apple's "Apple Inc. |
+  Q3 2026 Form 10-Q | 23", each with a Keep button.
+
+### How it works now
+
+- `lib/filings/sections.ts`: `QUARTERLY_SECTIONS` beside the annual list, chosen by the form or, when
+  the filing list does not say, by the document's `dei:DocumentType` tag or its cover. Titles tell
+  Part I's and Part II's Item 1 and Item 2 apart. A section ends at the next Item heading of any kind.
+  Headings must start a line (every real one measured does; NVIDIA's `Refer to "Item 1A. Risk
+  Factors - …"` does not). A quarterly contents entry that lists statements before its page number is
+  recognised as contents. An annual Item 8 that only points elsewhere (NVIDIA, Netflix) is read from
+  Item 15 to the end, where the statements are. Part II Item 2 is labelled "Buybacks".
+- `lib/filings/tables.ts`: a table of figures keeps its rows and columns. A column starts where a value
+  starts in the body; a lone "$" joins the figure after it and ")" or "%" the figure before; a heading
+  spans the columns that start under it; two starts are one column when a cell at the first reaches
+  over the second and no row fills both (Netflix's "$" + 12,559,938 beside a 33.4% that fills both).
+  Bullets, paragraph cells, merged rows and single rows stay text.
+- `filingToText` puts each table row on one line, its cells a space apart, and records where the rows
+  are, so search, kept passages, Competitors and Input costs read the same text as before.
+- `lib/filings/pages.ts`: rows are sized as table rows (33px), a page breaks between rows, a table opens
+  only with its headings and first figures together, and a page that continues a table repeats its
+  headings. `sectionPages` is the one paging that search, passage lookup and the reader all use. Page
+  furniture is skipped as paragraphs but stays in the text, so no offset moves.
+- `FilingPassages` draws a table as a table, with one "Keep table" for its rows on the page; figures
+  align right and do not wrap, headings wrap, and a wide table scrolls inside its own frame.
+- `lib/filings/company-search.ts` and `/api/studio/company-search`: EDGAR's ticker file searched on the
+  server by exact ticker, ticker prefix, name word, then name contains (spaces ignored, so "JP Morgan"
+  finds JPMORGAN), in EDGAR's own order, one row per company. Research shows up to three "Other
+  companies" under the library, each one line with "Reports" and "Investigate" (named for the company
+  to assistive technology), and says they cannot go in a portfolio yet. When two or more of the
+  library's own investments match, the companies wait behind one "Show N companies at the SEC" button
+  beside "Show all": both lists open took a phone to 1.63 screens for "vanguard".
+  `/studio/investigate?ticker=` reopens a company already investigated or starts one and looks its
+  figures up, then takes the ticker out of the address.
+- The Research gap note no longer says no company's financial results are available; it says why a
+  searched company cannot be added (no checked dated price).
+
+### Found on the way
+
+- **The SEC's ticker file, measured 2026-09-16:** 798 KB, 10,422 tickers for 8,022 companies, ordered
+  from the largest down (NVIDIA, Apple, Alphabet, Microsoft first). Alphabet alone is listed four times.
+- **Nine real filings checked by hand** (the 10-Q and 10-K of Netflix, Apple, Coca-Cola and NVIDIA, and
+  Atkore's 10-Q): every section now starts at its heading and ends at the next Item; 426 tables parsed
+  with every row's text equal to its line; extraction takes 17–110ms.
+- **Netflix's quarterly report has no "Item 1." heading before its statements**, so Financial
+  statements is honestly reported not found there.
+- **A ticker left in Investigate's address came back after a delete.** Deleting the company and
+  reloading `?ticker=nflx` started it again. The ticker is now removed with `history.replaceState` as
+  soon as it is read; `router.replace` was tried first and lost to a quick reload in the e2e test,
+  which is how the test showed it can fail.
+
+### Verified
+
+- `tsc` 0; lint clean on every changed file.
+- Vitest, excluding other sessions' `tmp/` copies: 68 files, 897 tests.
+- **The checks can fail.** 22 deliberate breaks across sections, tables, pages and company search:
+  every one failed at least one test after the page-break tests were tightened (three had passed
+  under the first, looser versions); each file was restored afterwards.
+- Playwright, the full suite on a production build: 180 passed, 5 skipped, none failed, including four
+  new company-search tests.
+- **Research with a search, at 390, 768, 1024, 1280, 1440 and 1920** for "", "netflix", "coca",
+  "apple", "vanguard" and "etf": 1.20–1.49 screens, nothing sideways; company links 44px tall on phones.
+- In the browser at 1440: Netflix's quarterly report opens on management's discussion; Risk factors is
+  its one sentence; Buybacks is a five-column table under its own headings; Apple's quarterly income
+  statement reads as a statement. Searching "netflix" in Research finds NETFLIX INC, "Reports"
+  lists its filings, and "Investigate" fills all seven figures; a second visit reopened the same
+  record (the test record was deleted afterwards).
+
+### Known limits
+
+- A 20-F or 40-F is still read with the annual numbering, which does not fit it.
+- A searched company cannot be added to a portfolio: that needs a dated price for its shares.
+- A passage kept from text an old section wrongly swallowed (for example Properties inside Risk
+  factors) will no longer be found in that section.
+- **The report reader fits the budget only at 1440 and 1920.** Measured today: 1.39–1.48 screens there,
+  but 1.48–1.59 at 1280, 1.55–1.78 at 768–1024 and 1.81–2.42 at 390, and a management's-discussion
+  page with no table at all is among the tallest, so this is the paging model's calibration at 1440
+  (pages.ts), not the tables. Tables scroll sideways inside their own frame at 390, by design.
+- No end-to-end test opens a quarterly report or a table: the EDGAR fixtures are Atkore's 10-K, rebuilt
+  from paragraphs. Unit tests cover both on miniatures of Netflix's markup.
+
+## 2026-09-16: reports that read as documents, not a column of quotations
+
+After the tables work the user said every company's filing still looked like "gibberish random
+quotes". Opening Apple, Netflix, Coca-Cola and NVIDIA showed why, and it was true of all of them.
+
+### What was wrong
+
+- **Character codes shown as text.** Only seven references were decoded, so Apple's "iPhone &#174;",
+  "iPhone Air&#8482;" and every risk-factor bullet ("&#8226; our ability…") reached the page as code.
+  Paragraphs showing a code, measured across nine reports: NVIDIA 10-K 111, Netflix 10-K 68,
+  Coca-Cola 10-K 57, Atkore 10-Q 40, Apple 10-K 25.
+- **Sentences split where the printed page turned.** The markup closes a block at the page foot, so
+  Coca-Cola's "…to produce finished" and "beverages. The finished beverages…" were two passages.
+- **Subheadings as passages.** "Products", "iPhone", "COMPETITION", "(In millions)" were paragraphs,
+  each with its own Keep button, and a Keep button after every paragraph made the page a column of
+  quotations.
+
+### How it reads now
+
+- `lib/filings/entities.ts` decodes every numeric reference and the named ones filings use, in one
+  pass (so "&amp;#174;" stays literal). Quotes and dashes still become straight quotes and a hyphen,
+  as search and kept passages have always relied on. A space before ®, ™ or ℠ is dropped.
+- `stitchPageBreaks` in `sections.ts` joins a line of 60+ characters that does not end a sentence to
+  the next text line when that line starts in lower case, turning the break and any page number or
+  "Table of Contents" between into spaces, so the text keeps its length and no offset moves. Shorter
+  lines are headings and are never joined (Apple's "iPhone" above "iPhone net sales…").
+- `isSubheading` in `pages.ts`: short, has words, no figures, does not end a sentence (or is in
+  capitals). The reader draws these as headings with no Keep button.
+- Keep buttons wait until the paragraph is pointed at, or the button is reached from the keyboard;
+  on a device without hover they stay visible. Each is held on a line with its paragraph's last word,
+  and its word is drawn by CSS, so a hidden button never leaves a blank line and the paragraph's text
+  is only its text.
+
+### Found on the way
+
+- **Decoding broke Coca-Cola's annual report entirely.** It names Coca-Cola İçecek; "İ" lower-cases to
+  two characters, the case-folding helper noticed the length change and fell back to case-sensitive
+  matching, and none of Coca-Cola's upper-case headings were found. Folding now touches only A–Z.
+- After the change, across the nine reports: no paragraph shows a character code, and the lower-case
+  continuations left are headings ("iPhone"), table footnotes, a numbered list item and one Coca-Cola
+  sentence broken before a bracket.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest: 69 files, 906 tests. Playwright, full suite on a production build: 180
+  passed, 5 skipped, none failed.
+- **The checks can fail.** 9 deliberate breaks (codes left as code, decoding twice, no stitching,
+  headings joined, stitching changing length, full lower-casing, and each of the heading rules) each
+  failed at least one test; files restored.
+- In the browser at 1440: Apple's Business opens "Company Background" as a heading, then its
+  paragraph, "Products", "iPhone", and "iPhone® is the Company's line of smartphones…"; Netflix's opens
+  ABOUT US, BUSINESS SEGMENTS, COMPETITION as headings; NVIDIA's risk factors show "•" bullets under
+  their headings. Keep buttons measured at opacity 0 until hovered, 1 on the hovered paragraph only,
+  and none alone on a line.
+
+### Known limits
+
+- A kept passage whose quote contains a character code ("&#174;") will not be found again in the
+  decoded text, and says so.
+- A heading is recognised by shape. A short line without a full stop that is really a sentence
+  fragment would be drawn as a heading.
+
+## 2026-09-16: the reader measured across 38 companies, and the layouts that failed
+
+The user asked whether, once pushed, no report would show garbled text anywhere. Nine reports from five
+companies could not answer that, so the latest 10-K and 10-Q (or 20-F/40-F) of 38 companies were fetched
+and measured the way the reader shows them: sections found, character codes, sentences split across
+lines, rows of figures shown as loose text, and short scraps that are neither headings nor sentences.
+
+### What the first measurement found
+
+- Tables with a cell merged down a column were all left as text, cell by cell, so lone "$", ")" and "-"
+  lines: 55 such tables in IBM's quarterly report, 20 in Exxon's. Exxon's quarterly report was 56% scraps.
+- One footnote longer than 300 characters rejected a whole table of figures (Exxon's segment table).
+- Tables of a single row went through cell by cell: Johnson & Johnson's "$" then "11.1".
+- Running page headers read as passages or as new sections: "Alphabet Inc." 90 times; Mastercard's
+  "PART I / ITEM 1. BUSINESS" on every page ended its Business tab after one page; Microsoft's bare
+  "Item 7" did the same once bare Items could be headings.
+- Separators other than a full stop were not recognised: Costco "Item 1A-Risk Factors", J&J "Item 1 -
+  Financial statements", Shopify "Item 1: Business". Each read as no sections at all.
+- Microsoft's markup splits words inside its headings ("ITEM 1A. RIS K FACTORS"), which is why its
+  Business and Risk factors tabs had always been missing.
+- Intel, GE and McDonald's annual reports have no Item headings in the body, only a cross-reference index
+  at the end. The old reader built its sections out of that index: Intel's "Risk factors" was 149
+  characters of page references, GE's "Business" 33.
+- Rows of dashes and underscores (Home Depot, Ford) showed as passages.
+
+### What changed
+
+- `tables.ts`: merged-down cells occupy their columns in the rows below; a table is rejected for long
+  cells only when it has fewer than eight figures for each; a table that is not drawn as one keeps each
+  row on one line (`tableLines`).
+- `sections.ts`: Item markers accept ".", ":", "-" or a same-line space; titles are compared with spaces
+  ignored; a candidate heading must have something under it; contents and index entries ending in page
+  ranges ("24-31", "Pages 37 - 51", "Not applicable") are rejected, while a figure such as "33,460,252"
+  is not read as pages; repeated company names and Part/Item page headers become spaces (the first Item
+  header is kept only when the report has no other heading for that Item); bare "Item 7" lines and
+  separator rows are page furniture.
+
+### Measured afterwards, on the same 71 US reports
+
+- 48 open every section; 5 open none and say so: McDonald's 10-K, Intel's 10-K and 10-Q, GE's 10-K and
+  10-Q, all laid out only through a cross-reference index. Foreign 20-F and 40-F reports open none.
+- Across 44,611 paragraphs: 2 with a character code (Pfizer), 1 split sentence, 16 rows of figures shown as
+  a line of text rather than a table (readable rows such as Bank of America's "Equity securities
+  10 - 40 %").
+- Scraps above 2%: Alphabet 10-K 9.1% (numbered list markers "3.", "4." on their own lines), Crocs 10-K
+  6.2% and Disney 10-K 4.6% (exhibit numbers and short bullets), IBM 10-K 4.2%, Deckers 10-K 2.3%,
+  Walmart 10-Q 2.3%.
+- Against the reader as it was this morning, the only reports with fewer sections are Intel's and GE's,
+  whose earlier sections were the index scraps described above.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest: 69 files, 916 tests. Playwright, full suite on a production build: 180
+  passed, 5 skipped, none failed.
+- 10 deliberate breaks of the new rules each failed at least one test; one test had to be tightened
+  first, because sentence stitching also covered its case.
+
+### Known limits
+
+- Reports organised by a cross-reference index, and all 20-F and 40-F reports, show the "read it at the
+  SEC" notice rather than sections.
+- 38 companies are a sample of about 8,000 with tickers; other layouts will exist.

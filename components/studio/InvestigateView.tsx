@@ -11,7 +11,7 @@ import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
 import { newInvestigationId, removeInvestigation, removePassage, saveInvestigation, updatePassage } from "@/lib/studio-project/operations";
 import { latestInvestigation, type EvidenceRole, type FigureSource, type KeptPassage } from "@/lib/studio-project/schema";
 import type { MissingFigure, SuppliedFigure } from "@/lib/studio-project/prefill";
-import { FILING_SECTIONS } from "@/lib/filings/sections";
+import { sectionLabel as labelForSection } from "@/lib/filings/sections";
 import { Field, Panel, StageHeading } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
@@ -60,6 +60,8 @@ const median = (values: number[]): number => {
 
 /** How long typing settles before a save. Short enough to survive a stray click. */
 const SAVE_DELAY_MS = 600;
+/** A ticker as the company lookup accepts one. */
+const TICKER = /^[A-Z0-9.-]{1,12}$/;
 
 /** A date as a person writes it, for a filing period a learner has to recognise. */
 const readableDate = (iso: string): string => {
@@ -80,6 +82,8 @@ const PASSAGE_ROLES: { value: EvidenceRole; label: string; tone: string }[] = [
 
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
+  /** A ticker from the address to look up as soon as it is in the company box. */
+  const [autoFill, setAutoFill] = useState<string | null>(null);
   const [sic, setSic] = useState(RESEARCHED[0].sic);
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
@@ -141,8 +145,25 @@ export default function InvestigateView() {
     if (hydrated.current || project.status !== "ready" || !project.project) return;
     hydrated.current = true;
     // Overview links name the company to open; otherwise reopen the one last touched.
-    const wanted = new URLSearchParams(window.location.search).get("company");
-    const saved = project.project.investigations.find((item) => item.id === wanted) ?? latestInvestigation(project.project);
+    const params = new URLSearchParams(window.location.search);
+    const wanted = params.get("company");
+    // Research's company search names a ticker: reopen that company if it has
+    // been investigated, or start on it and look its figures up.
+    const ticker = params.get("ticker")?.trim().toUpperCase() ?? "";
+    // The ticker is an instruction, carried out once. Left in the address, a
+    // reload after deleting the company started it again (found 2026-09-16).
+    // Replaced at once rather than through the router, whose navigation had not
+    // finished when a quick reload came.
+    if (params.has("ticker")) window.history.replaceState(window.history.state, "", window.location.pathname);
+    const byTicker = TICKER.test(ticker)
+      ? project.project.investigations.find((item) => item.source?.ticker.toUpperCase() === ticker)
+      : undefined;
+    if (TICKER.test(ticker) && !byTicker) {
+      setCompany(ticker);
+      setAutoFill(ticker);
+      return;
+    }
+    const saved = byTicker ?? project.project.investigations.find((item) => item.id === wanted) ?? latestInvestigation(project.project);
     if (!saved) return;
     idRef.current = saved.id;
     setInvestigationId(saved.id);
@@ -335,6 +356,13 @@ export default function InvestigateView() {
     setCouldNotFill(body.missing ?? []);
     setLookup({ kind: "idle" });
   }, [company, entries, source]);
+
+  // A ticker arriving from Research's search is looked up once it is in the box.
+  useEffect(() => {
+    if (autoFill === null || company !== autoFill) return;
+    setAutoFill(null);
+    void fill();
+  }, [autoFill, company, fill]);
 
   /** A blank sheet. Nothing is written until something is actually entered. */
   const startNew = useCallback(async () => {
@@ -932,7 +960,7 @@ export default function InvestigateView() {
           </p>
           <ul className="mt-3 space-y-4">
             {passages.map((passage) => {
-              const sectionLabel = FILING_SECTIONS.find((item) => item.id === passage.sectionId)?.label ?? passage.sectionId;
+              const sectionLabel = labelForSection(passage.sectionId, passage.form);
               return (
                 <li key={passage.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
                   <blockquote className="line-clamp-4 border-l-2 border-accent-cyan/40 pl-3 text-[14px] leading-6 text-slate-200">
