@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { locate } from "@/lib/filings/anchor";
 import { fetchFilingDocument, secUserAgent } from "@/lib/filings/edgar";
-import { pageForOffset, paginate } from "@/lib/filings/pages";
-import { FILING_SECTIONS, extractFilingSections } from "@/lib/filings/sections";
+import { pageForOffset, sectionPages } from "@/lib/filings/pages";
+import { SECTION_IDS, extractFilingSections } from "@/lib/filings/sections";
 
 /**
  * Where a kept passage is now, in a freshly fetched copy of its filing.
@@ -26,7 +26,6 @@ export const runtime = "nodejs";
 const CIK = /^\d{1,10}$/;
 const ACCESSION = /^\d{10}-\d{2}-\d{6}$/;
 const DOCUMENT = /^[A-Za-z0-9._-]{1,200}$/;
-const SECTION_IDS = new Set<string>(FILING_SECTIONS.map((section) => section.id));
 
 type Body = {
   cik?: unknown;
@@ -98,6 +97,6 @@ export async function POST(request: Request) {
     sectionId,
     start: located.start,
     end: located.end,
-    page: pageForOffset(paginate(section.text), located.start),
+    page: pageForOffset(sectionPages(section), located.start),
   });
 }

@@ -16,6 +16,9 @@
  * worse than one that admits it could not tell.
  */
 
+import { decodeEntities } from "./entities";
+import { parseTable, rowText, tableLines, type ParsedTable } from "./tables";
+
 export type FilingSectionId =
   | "business"
   | "risk-factors"
@@ -31,68 +34,177 @@ export type FilingSectionSpec = {
   marker: string;
   /** Short label for the reader. */
   label: string;
-  /** Enough of the official title to tell a real heading from a stray match. */
-  titlePrefix: string;
+  /**
+   * The official title, or the ways filers write it, each long enough to tell a
+   * real heading from a stray match. Quarterly reports are the reason for more
+   * than one: Coca-Cola writes "Financial Statements", Netflix "Consolidated
+   * Financial Statements", Apple "Condensed Consolidated Financial Statements".
+   */
+  titles: readonly string[];
   /** What the course teaches a learner to look for here. */
   lens: string;
 };
 
 /**
- * The seven sections OPS reads. Deliberately not every Item in the form: the
- * reader teaches how to read a filing, and a beginner opening all twenty items
- * learns less than one opening the seven that carry the business.
+ * The seven sections OPS reads in an annual report. Deliberately not every
+ * Item in the form: the reader teaches how to read a filing, and a beginner
+ * opening all twenty items learns less than one opening the seven that carry
+ * the business.
  */
 export const FILING_SECTIONS: readonly FilingSectionSpec[] = [
   {
     id: "business",
     marker: "Item 1.",
     label: "Business",
-    titlePrefix: "Business",
+    titles: ["Business"],
     lens: "What the company actually sells, to whom, and how it says it makes money. Read this before any number.",
   },
   {
     id: "risk-factors",
     marker: "Item 1A.",
     label: "Risk factors",
-    titlePrefix: "Risk Factors",
+    titles: ["Risk Factors"],
     lens: "What management is required to admit could go wrong. Written by lawyers, but the ordering and any newly added risk are informative.",
   },
   {
     id: "legal",
     marker: "Item 3.",
     label: "Legal proceedings",
-    titlePrefix: "Legal Proceedings",
+    titles: ["Legal Proceedings"],
     lens: "Litigation large enough to matter. Often a cross-reference to the notes rather than a disclosure in itself.",
   },
   {
     id: "market",
     marker: "Item 5.",
     label: "Market for the shares",
-    titlePrefix: "Market for Registrant",
+    titles: ["Market for Registrant"],
     lens: "Share count, buybacks and dividends — what the company did with capital that could have been yours.",
   },
   {
     id: "mdna",
     marker: "Item 7.",
     label: "Management's discussion",
-    titlePrefix: "Management",
+    titles: ["Management"],
     lens: "The company explaining its own results. Compare what it emphasises against what the statements show.",
   },
   {
     id: "market-risk",
     marker: "Item 7A.",
     label: "Market risk",
-    titlePrefix: "Quantitative and Qualitative",
+    titles: ["Quantitative and Qualitative"],
     lens: "Exposure to rates, currencies and prices, stated in the company's own terms.",
   },
   {
     id: "financials",
     marker: "Item 8.",
     label: "Financial statements",
-    titlePrefix: "Financial Statements",
+    titles: ["Financial Statements"],
     lens: "The audited statements and their notes. The notes are where the accounting choices live.",
   },
 ];
+
+/**
+ * The same sections in a quarterly report, which numbers its Items differently.
+ *
+ * Form 10-Q has two parts that restart at Item 1: Part I holds the financial
+ * statements (Item 1), management's discussion (Item 2) and market risk
+ * (Item 3); Part II holds legal proceedings (Item 1), risk factors (Item 1A)
+ * and share sales and buybacks (Item 2). Read with the annual numbering, only
+ * "Item 1A. Risk Factors" matched, so on Netflix's report for the quarter to
+ * 30 June 2026 the Risk factors tab ran from its one sentence to the end of the
+ * document: the buyback table cell by cell, then the exhibits. The titles tell
+ * the two Item 1s and the two Item 2s apart, and the list is in document order
+ * because the extractor takes each section after the one before it.
+ *
+ * There is no Business section: a quarterly report does not describe the
+ * business again.
+ */
+export const QUARTERLY_SECTIONS: readonly FilingSectionSpec[] = [
+  {
+    id: "financials",
+    marker: "Item 1.",
+    label: "Financial statements",
+    titles: [
+      "Financial Statements",
+      "Consolidated Financial Statements",
+      "Condensed Consolidated Financial Statements",
+      "Condensed Financial Statements",
+    ],
+    lens: "The quarter's statements and their notes. Unlike an annual report's, they are not audited.",
+  },
+  {
+    id: "mdna",
+    marker: "Item 2.",
+    label: "Management's discussion",
+    titles: ["Management"],
+    lens: "The company explaining the quarter's results. Compare what it emphasises against what the statements show.",
+  },
+  {
+    id: "market-risk",
+    marker: "Item 3.",
+    label: "Market risk",
+    titles: ["Quantitative and Qualitative"],
+    lens: "Exposure to rates, currencies and prices, stated in the company's own terms. Often a note that nothing has changed since the annual report.",
+  },
+  {
+    id: "legal",
+    marker: "Item 1.",
+    label: "Legal proceedings",
+    titles: ["Legal Proceedings"],
+    lens: "Litigation large enough to matter. Often a cross-reference to the notes rather than a disclosure in itself.",
+  },
+  {
+    id: "risk-factors",
+    marker: "Item 1A.",
+    label: "Risk factors",
+    titles: ["Risk Factors"],
+    lens: "Only what has changed since the annual report, so a single sentence saying nothing has changed is normal. The full list is in the annual report.",
+  },
+  {
+    id: "market",
+    marker: "Item 2.",
+    label: "Buybacks",
+    titles: ["Unregistered Sales"],
+    lens: "The shares the company bought back each month of the quarter, the average price it paid, and how much its buyback plan still allows. Any shares it sold outside a public offering are reported here too.",
+  },
+];
+
+export type FilingLayout = "annual" | "quarterly";
+
+const SPECS: Record<FilingLayout, readonly FilingSectionSpec[]> = {
+  annual: FILING_SECTIONS,
+  quarterly: QUARTERLY_SECTIONS,
+};
+
+/** Every section id either layout can produce, for checking one that comes back from a browser. */
+export const SECTION_IDS: ReadonlySet<string> = new Set([...FILING_SECTIONS, ...QUARTERLY_SECTIONS].map((spec) => spec.id));
+
+/**
+ * Which layout a filing uses. The form, when the caller knows it, decides.
+ * Otherwise the document says: an inline XBRL filing tags its own form type,
+ * and an older one names it on the cover. Anything that is not a quarterly
+ * report is read with the annual numbering, as every report was before.
+ */
+export function layoutOf(html: string, form?: string): FilingLayout {
+  if (form) return /^10-Q/i.test(form.trim()) ? "quarterly" : "annual";
+  const tagged = html.match(/name="dei:DocumentType"[^>]*>(?:\s*<[^>]+>)*\s*([^<\s]+)/i)?.[1];
+  if (tagged) return /^10-Q/i.test(tagged) ? "quarterly" : "annual";
+  return /form\s+10-Q/i.test(filingToPlainText(html.slice(0, 20_000))) ? "quarterly" : "annual";
+}
+
+/** A kept passage's section, named as the report it came from names it. */
+export function sectionLabel(sectionId: string, form?: string): string {
+  const specs = form && /^10-Q/i.test(form.trim()) ? QUARTERLY_SECTIONS : FILING_SECTIONS;
+  return specs.find((spec) => spec.id === sectionId)?.label ?? sectionId;
+}
+
+/** A table of figures inside some text: where its rows are, and its columns. */
+export type TextTable = ParsedTable & {
+  /** Offset of the first row's first character; each row is one line. */
+  start: number;
+  /** Offset one past the last row's last character. */
+  end: number;
+};
 
 export type ExtractedSection = {
   id: FilingSectionId;
@@ -102,6 +214,8 @@ export type ExtractedSection = {
   at: number;
   /** The section body, trimmed. */
   text: string;
+  /** Its tables of figures, with offsets in `text`. */
+  tables: TextTable[];
 };
 
 export type SectionResult = {
@@ -117,18 +231,187 @@ export type SectionResult = {
  * survive as their own lines.
  */
 export function filingToPlainText(html: string): string {
-  return html
+  return filingToText(html).text;
+}
+
+/** Private-use characters that cannot occur in a filing, marking where a table's rows begin and end. */
+const TABLE_OPEN = "\uE000";
+const TABLE_NUMBER_END = "\uE001";
+const TABLE_CLOSE = "\uE002";
+const escapeText = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/**
+ * The plain text, and where in it each table of figures sits.
+ *
+ * A table of figures becomes one line per row, its cells a space apart, so
+ * search, kept passages and the Competitors and Input costs tabs read it as they
+ * read any text. Its columns travel beside the text rather than inside it, so
+ * the reader can draw it as a table without a character of the text changing.
+ */
+export function filingToText(html: string): { text: string; tables: TextTable[] } {
+  const parsed: ParsedTable[] = [];
+  const marked = html
     .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<table\b[\s\S]*?<\/table>/gi, (source) => {
+      const table = parseTable(source);
+      if (!table) {
+        const lines = tableLines(source);
+        return lines ? `\n${lines.map(escapeText).join("\n")}\n` : source;
+      }
+      parsed.push(table);
+      const rows = table.rows.map((row) => escapeText(rowText(row))).join("\n");
+      return `\n${TABLE_OPEN}${parsed.length - 1}${TABLE_NUMBER_END}\n${rows}\n${TABLE_CLOSE}\n`;
+    });
+  const flat = toPlain(marked);
+
+  const tables: TextTable[] = [];
+  let text = "";
+  let from = 0;
+  let open: { index: number; start: number } | null = null;
+  for (const marker of flat.matchAll(/\uE000(\d+)\uE001\n?|\n?\uE002/g)) {
+    text += flat.slice(from, marker.index);
+    from = marker.index + marker[0].length;
+    if (marker[1] !== undefined) {
+      open = { index: Number(marker[1]), start: text.length };
+    } else if (open) {
+      const start = open.start + (text.slice(open.start).length - text.slice(open.start).trimStart().length);
+      tables.push({ ...parsed[open.index], start, end: text.length });
+      open = null;
+    }
+  }
+  text += flat.slice(from);
+  return { text: stitchPageBreaks(blankRunningHeaders(text, tables), tables), tables };
+}
+
+/** A company's name as a page header prints it: "Alphabet Inc.", "THE COCA-COLA COMPANY AND SUBSIDIARIES". */
+const COMPANY_NAME_LINE =
+  /^[A-Za-z0-9][\w&.,'’ -]{0,60}\b(inc|incorporated|corporation|corp|company|co|ltd|limited|plc|llc|l\.?p|n\.?v|s\.?a|ag|se|holdings|group)\.?(\s+and\s+(its\s+)?(consolidated\s+)?subsidiaries)?$/i;
+/** How often a name must repeat on its own line to be a running header rather than a heading. */
+const RUNNING_HEADER_MIN = 5;
+
+/**
+ * The company's name printed at the top of every page, taken out of the reading.
+ *
+ * Alphabet's annual report repeats "Alphabet Inc." on a line of its own 90
+ * times and Tesla's quarterly report repeats "Tesla, Inc.", each one a
+ * passage in the reader between the paragraphs it interrupts. A short line that
+ * is a company's name and recurs five or more times is a header; its characters
+ * become spaces, so the text keeps its length and every offset.
+ */
+function blankRunningHeaders(text: string, tables: readonly { start: number; end: number }[]): string {
+  const lines: { start: number; end: number; text: string }[] = [];
+  let cursor = 0;
+  for (const raw of text.split("\n")) {
+    lines.push({ start: cursor, end: cursor + raw.length, text: raw.trim() });
+    cursor += raw.length + 1;
+  }
+  const inTable = (at: number) => tables.some((table) => at >= table.start && at < table.end);
+  const counts = new Map<string, number>();
+  for (const line of lines) {
+    if (line.text && (COMPANY_NAME_LINE.test(line.text) || PAGE_ITEM_LINE.test(line.text))) {
+      counts.set(line.text, (counts.get(line.text) ?? 0) + 1);
+    }
+  }
+  const headers = new Set([...counts].filter(([, count]) => count >= RUNNING_HEADER_MIN).map(([name]) => name));
+  if (!headers.size) return text;
+  const chars = text.split("");
+  const itemOf = (line: string) => line.match(/^item\s*(\d{1,2}[a-c]?)/i)?.[1].toLowerCase();
+  const seen = new Set<string>();
+  for (const line of lines) {
+    if (!headers.has(line.text) || inTable(line.start)) continue;
+    // A repeated Item keeps its first appearance only when the report has no
+    // other heading for that Item, since it may then be where the section
+    // starts. Mastercard's has its own "Item 1. Business", so every "ITEM 1.
+    // BUSINESS" at a page top goes.
+    const item = itemOf(line.text);
+    const otherHeading = item !== undefined && lines.some((other) =>
+      other.text !== line.text && itemOf(other.text) === item && !ENDS_IN_PAGES.test(other.text) && !headers.has(other.text));
+    const keep = item !== undefined && !otherHeading && !seen.has(line.text);
+    seen.add(line.text);
+    if (keep) continue;
+    for (let at = line.start; at < line.end; at++) chars[at] = " ";
+  }
+  return chars.join("");
+}
+
+/**
+ * The Part and Item a page belongs to, printed at its top. Mastercard's annual
+ * report heads every page "PART I" and "ITEM 1. BUSINESS", and each of those was
+ * read as the start of a new section, so its Business tab ended after one page.
+ */
+const PAGE_ITEM_LINE = /^(part\s+[ivx]+|item\s*\d{1,2}[a-c]?\s*[.:\-–—]?\s*[a-z][^\n]{0,90})$/i;
+
+/**
+ * What a printed page puts at its foot rather than in its text: a bare page
+ * number, the "Table of Contents" link back, and footers such as Apple's
+ * "Apple Inc. | Q3 2026 Form 10-Q | 23". Each arrived as a paragraph of its own
+ * with a Keep button, and on Netflix's quarterly report a lone "26" was what took
+ * the first page of management's discussion over the screen budget.
+ */
+const PAGE_FURNITURE = /^(\d{1,3}|table of contents|[-_=*.\s]{3,}|item\s*\d{1,2}[a-c]?(\s*,\s*\d{1,2}[a-c]?)*|.{0,60}\|\s*(q[1-4]\s+)?\d{4}\s+form\s+(10-k|10-q)\s*\|\s*\d{1,3})$/i;
+
+export function isPageFurniture(line: string): boolean {
+  return PAGE_FURNITURE.test(line.trim());
+}
+
+/** A line that finishes a sentence, a clause or a heading. */
+const ENDS_SENTENCE = /[.:;!?)\]"']$/;
+/** A line that carries on a sentence: it starts in lower case. */
+const CARRIES_ON = /^[a-z]/;
+/**
+ * Shorter than this and a line without a full stop is a heading, not half a
+ * sentence. Apple's "iPhone" sits above a paragraph that starts "iPhone net
+ * sales", and must not be joined to it.
+ */
+const SENTENCE_LINE_MIN = 60;
+
+/**
+ * A sentence the printed page broke in two, put back together.
+ *
+ * Where a filing's printed page ended mid-sentence, the markup closes the block
+ * and opens another after the page number, so the reader showed Coca-Cola's
+ * "…to produce finished" and "beverages. The finished beverages are…" as two
+ * passages, each with a Keep button. Measured on 2026-09-16: 47 such breaks in
+ * NVIDIA's annual report, 34 in Coca-Cola's, 19 in Netflix's.
+ *
+ * The line breaks, and the page number and "Table of Contents" between them,
+ * become spaces rather than being removed, so the text keeps its length and
+ * every offset — a kept passage, a search hit, a table — still points where it
+ * did. The reader and search both treat a run of spaces as one.
+ */
+function stitchPageBreaks(text: string, tables: readonly { start: number; end: number }[]): string {
+  const lines: { start: number; end: number; text: string }[] = [];
+  let cursor = 0;
+  for (const raw of text.split("\n")) {
+    lines.push({ start: cursor, end: cursor + raw.length, text: raw.trim() });
+    cursor += raw.length + 1;
+  }
+  const inTable = (at: number) => tables.some((table) => at >= table.start && at < table.end);
+  const chars = text.split("");
+  let changed = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.text.length < SENTENCE_LINE_MIN || ENDS_SENTENCE.test(line.text) || inTable(line.start)) continue;
+    let j = i + 1;
+    while (j < lines.length && (!lines[j].text || isPageFurniture(lines[j].text))) j++;
+    const next = lines[j];
+    if (!next || !CARRIES_ON.test(next.text) || inTable(next.start)) continue;
+    const resumes = next.start + (next.end - next.start - text.slice(next.start, next.end).trimStart().length);
+    for (let at = line.end; at < resumes; at++) chars[at] = " ";
+    changed = true;
+  }
+  return changed ? chars.join("") : text;
+}
+
+function toPlain(html: string): string {
+  return html
     .replace(/<\/(p|div|tr|h[1-6]|li|table)>/gi, "\n")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;|&#160;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&#8217;|&rsquo;|&#146;/gi, "'")
-    .replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/gi, '"')
-    .replace(/&#8212;|&mdash;|&#8211;|&ndash;/gi, "-")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
+    .replace(/[\s\S]+/, decodeEntities)
+    // Filers wrap a trademark sign in its own element, which left "iPhone ® is".
+    .replace(/[ \t]+([®™℠])/g, "$1")
+    .replace(/([®™℠])[ \t]+([.,;:])/g, "$1$2")
     .replace(/[ \t]+/g, " ")
     .replace(/\n\s*\n+/g, "\n")
     .trim();
@@ -145,13 +428,15 @@ type Hit = { spec: FilingSectionSpec; at: number };
  * Matching case-sensitively found three of Coca-Cola's seven sections and
  * mis-sliced one.
  *
- * `toLowerCase` is length-preserving for the Latin text these markers use, but
- * not for every script, so the length is checked before the folded copy is
- * trusted for offsets.
+ * Only A to Z are folded. The markers and titles are plain ASCII, and folding
+ * anything else can change the text's length and so every offset after it:
+ * Coca-Cola's annual report names Coca-Cola İçecek, whose "İ" lower-cases to
+ * two characters. An earlier version noticed the change in length and fell
+ * back to matching case-sensitively, which found none of Coca-Cola's upper-case
+ * headings once that letter was decoded rather than left as "&#304;".
  */
 function searchable(text: string): string {
-  const lower = text.toLowerCase();
-  return lower.length === text.length ? lower : text;
+  return text.replace(/[A-Z]+/g, (letters) => letters.toLowerCase());
 }
 
 /**
@@ -171,7 +456,68 @@ function isContentsLine(rest: string): boolean {
   // "1 Item 1A. Risk Factors 4 ..." and never looked like a bare number. Every
   // contents entry was then accepted as a heading, which left one section
   // swallowing 272,000 characters while the others collapsed to nothing.
-  return /^[.\u2026\s]*\d{1,4}(\s|$)/.test(rest);
+  // GE and Intel close their annual reports with a cross-reference index whose
+  // entries give page ranges: "Item 1A. Risk Factors 24-31", "Pages 37 - 51".
+  return /^[.\u2026\s]*(pages?\s+)?\d{1,4}(\s*[-\u2013]\s*\d{1,4}|\s*,\s+\d{1,4}|\s+,\s*\d{1,4})*(\s|$)/i.test(rest);
+}
+
+/**
+ * Where every Item heading starts, whether or not it is a section OPS reads.
+ *
+ * Measured across the annual and quarterly reports of Netflix, Apple,
+ * Coca-Cola, NVIDIA and Atkore, every real heading starts a line and every
+ * cross-reference sits inside one ("\u2026under the heading Risk Factors in Part I,
+ * Item 1A."). "Item 2.02" is an 8-K item number that turns up in exhibit lists,
+ * not a heading.
+ */
+const LINE_MARKER = /(^|\n)[ \t]*(item\s*\d{1,2}[a-c]?(?:\s*[.:\-–—](?!\d)|[ \t]+(?=[a-z])))/g;
+
+function itemStarts(lower: string): number[] {
+  const out: number[] = [];
+  for (const match of lower.matchAll(LINE_MARKER)) out.push(match.index + match[0].length - match[2].length);
+  return out;
+}
+
+/** Longest line a contents entry runs to: NVIDIA's quarterly entries reach 110 characters. */
+const CONTENTS_LINE_MAX = 160;
+
+/**
+ * Whether the text between a title and the next Item is a list of page numbers.
+ *
+ * A quarterly report's contents lists the statements under Item 1 before
+ * giving a page: Atkore's reads "Item 1. Financial Statements (Unaudited) 2
+ * Condensed Consolidated Statements of Operations 2 \u2026", so the number does not
+ * follow the title and `isContentsLine` accepted the entry as a heading. A
+ * contents entry is short lines, at least one of them ending in a page number,
+ * up to the next Item. A real section, however short, is a sentence.
+ */
+function isContentsBlock(lower: string, titleEnd: number, starts: number[]): boolean {
+  const next = starts.find((start) => start > titleEnd) ?? lower.length;
+  if (next - titleEnd > 1_500) return false;
+  const lines = lower.slice(titleEnd, next).split("\n").map((line) => line.trim()).filter(Boolean);
+  return lines.every((line) => line.length < CONTENTS_LINE_MAX) && lines.some((line) => ENDS_IN_PAGES.test(line));
+}
+
+/**
+ * A line that ends where a contents entry or a cross-reference index gives its
+ * pages: "2", "24-31", "Pages 37 - 51", "3-5, 9-10", or "Not applicable(a)".
+ */
+// A comma between pages has a space beside it ("3-5, 9-10", "Pages 11 , 32");
+// one inside a figure does not, so "Total 33,460,252" is not a list of pages.
+const ENDS_IN_PAGES = /(^|\s)(pages?\s+)?\d{1,4}(\s*[-–]\s*\d{1,4}|\s*,\s+\d{1,4}|\s+,\s*\d{1,4})*$|not applicable\s*(\([a-z]\))?$/i;
+
+/**
+ * Whether a section has anything under its heading.
+ *
+ * Mastercard's annual report lists "Item 1. Business" and "Item 1A. Risk
+ * factors" one under the other with no pages, and GE's ends with an index of
+ * one-line entries; each became a tab holding only its own heading. A section
+ * has a body when a line of text follows the heading, or when the heading's
+ * line runs on long enough to hold a sentence of its own.
+ */
+function hasBody(text: string): boolean {
+  const lines = text.split("\n").map((line) => line.trim()).filter((line) => line && !isPageFurniture(line));
+  return lines.length > 1 || (lines[0]?.length ?? 0) > 140;
 }
 
 /**
@@ -181,55 +527,135 @@ function isContentsLine(rest: string): boolean {
  * filings write `Item 3. Legal Proceedings" of this report` mid-sentence, and
  * one of those must never be read as a section worth 81,000 characters.
  */
-function headingHits(text: string, lower: string, spec: FilingSectionSpec): number[] {
+function headingHits(lower: string, spec: FilingSectionSpec, starts: number[]): number[] {
   const out: number[] = [];
-  const marker = spec.marker.toLowerCase();
-  const full = spec.titlePrefix.toLowerCase();
-  const needle = full.slice(0, 14);
-  let i = 0;
-  while ((i = lower.indexOf(marker, i)) !== -1) {
-    const from = i + marker.length;
-    const after = lower.slice(from, from + 120).replace(/^\s+/, "");
-    if (after.startsWith(needle)) {
-      const consumed = after.startsWith(full) ? full.length : needle.length;
+  const number = spec.marker.match(/\d{1,2}[a-c]?/i)![0].toLowerCase();
+  // A heading starts its line. NVIDIA's Business section says `Refer to "Item
+  // 1A. Risk Factors - Risks Related to Regulatory…"`, where the quotation mark
+  // comes before the marker, and that sentence was read as the start of its risk
+  // factors 7,600 characters before the real heading.
+  //
+  // Filers separate the number from the title in more than one way: "Item 1A."
+  // (Apple), "Item 1A-Risk Factors" (Costco), "Item 1 - Financial statements"
+  // (Johnson & Johnson), "Item 1: Business" (Shopify). Matching only the full
+  // stop found no section at all in those four reports.
+  // Without punctuation the title must follow on the same line: Microsoft heads
+  // every page with a bare "Item 7", and those were read as new sections.
+  const pattern = new RegExp(`(^|\\n)[ \\t]*item\\s*${number}(?:\\s*[.:\\-–—](?!\\d)\\s*|[ \\t]+(?=[a-z]))`, "g");
+  for (const match of lower.matchAll(pattern)) {
+    const i = match.index + match[0].search(/item/);
+    const from = match.index + match[0].length;
+    const after = lower.slice(from, from + 120);
+    const lead = after.length - after.trimStart().length;
+    for (const title of spec.titles) {
+      const full = title.toLowerCase();
+      const needle = full.slice(0, 14);
+      // Microsoft's markup splits words inside its headings, "ITEM 1A. RIS K
+      // FACTORS", so the title is compared with the spaces taken out.
+      const needleEnd = endOfLetters(after, lead, needle);
+      if (needleEnd === -1) continue;
+      const fullEnd = endOfLetters(after, lead, full);
+      const consumed = fullEnd === -1 ? needleEnd : fullEnd;
       const tail = after.slice(consumed);
-      const trimmed = tail.trimStart();
-      if (!trimmed.startsWith('"') && !isContentsLine(tail)) out.push(i);
+      if (!tail.trimStart().startsWith('"') && !isContentsLine(tail) && !isContentsBlock(lower, from + consumed, starts)) {
+        out.push(i);
+      }
+      break;
     }
-    i += marker.length;
   }
   return out;
 }
 
-export function extractFilingSections(html: string): SectionResult {
-  const text = filingToPlainText(html);
+/**
+ * Where `words` ends if `text` spells it from `from` on, ignoring spaces inside
+ * the text, or -1. Spaces in `words` itself are ignored the same way.
+ */
+function endOfLetters(text: string, from: number, words: string): number {
+  const wanted = words.replace(/\s+/g, "");
+  let at = from;
+  for (const letter of wanted) {
+    while (at < text.length && /\s/.test(text[at]) && text[at] !== "\n") at++;
+    if (text[at] !== letter) return -1;
+    at++;
+  }
+  return at;
+}
 
+/**
+ * An annual report's Item 8 that only points elsewhere.
+ *
+ * NVIDIA's reads, in full, "The information required by this Item is set forth
+ * in our Consolidated Financial Statements and Notes thereto included in this
+ * Annual Report on Form 10-K", and the statements sit inside Item 15. Netflix's
+ * say they are "included immediately following Part IV", after Item 16. Ending
+ * Item 8 at Item 9 left the Financial statements tab one sentence long, where
+ * before the section had run on to the end of the document and so, by
+ * accident, reached them. Reading from Item 15 to the end keeps them in reach
+ * for both, under a heading that says where they are.
+ */
+const POINTER_MAX = 600;
+const EXHIBITS = /(^|\n)[ \t]*item\s*15\s*[.:\-–—]?\s*exhibits/g;
+
+export function extractFilingSections(html: string, form?: string): SectionResult {
+  const { text, tables } = filingToText(html);
   const lower = searchable(text);
+  const layout = layoutOf(html, form);
+  const specs = SPECS[layout];
+  const starts = itemStarts(lower);
 
   // The first heading occurrence, taken in document order so a later
   // cross-reference cannot claim a section that has already started.
   const chosen: Hit[] = [];
   let floor = 0;
-  for (const spec of FILING_SECTIONS) {
-    const at = headingHits(text, lower, spec).find((candidate) => candidate >= floor);
+  // Every heading starts a line, so the next line-start Item is where a candidate would end.
+  const nextStart = (at: number) => starts.find((start) => start > at) ?? text.length;
+  for (const spec of specs) {
+    const at = headingHits(lower, spec, starts).find(
+      (candidate) => candidate >= floor && hasBody(text.slice(candidate, nextStart(candidate))),
+    );
     if (at === undefined) continue;
     chosen.push({ spec, at });
     floor = at + 1;
   }
 
-  const sections: ExtractedSection[] = chosen.map((hit, index) => {
-    const next = chosen[index + 1]?.at ?? text.length;
+  // A section ends at the next Item heading of any kind. Ending only at the
+  // next section OPS reads ran Risk factors on through Unresolved Staff
+  // Comments, Cybersecurity and Properties, and Financial statements through
+  // every Item after it to the signatures.
+  const boundaries = [...new Set([...starts, ...chosen.map((hit) => hit.at)])].sort((a, b) => a - b);
+  const endOf = (at: number) => boundaries.find((boundary) => boundary > at) ?? text.length;
+
+  const sections: ExtractedSection[] = chosen.map((hit) => {
+    let at = hit.at;
+    let end = endOf(at);
+    if (layout === "annual" && hit.spec.id === "financials" && end - at < POINTER_MAX) {
+      // Not an index entry for Item 15 ("Exhibits and Financial Statement Schedules 75-78").
+      const lineAt = (start: number) => text.slice(start, text.indexOf("\n", start) === -1 ? text.length : text.indexOf("\n", start)).trim();
+      const exhibits = [...lower.matchAll(EXHIBITS)]
+        .map((match) => match.index + match[0].search(/item/))
+        .find((start) => start > end && !ENDS_IN_PAGES.test(lineAt(start)));
+      if (exhibits !== undefined) {
+        at = exhibits;
+        end = text.length;
+      }
+    }
+    const raw = text.slice(at, end);
+    const body = raw.trim();
+    const base = at + raw.length - raw.trimStart().length;
     return {
       id: hit.spec.id,
       label: hit.spec.label,
       lens: hit.spec.lens,
-      at: hit.at,
-      text: text.slice(hit.at, next).trim(),
+      at,
+      text: body,
+      tables: tables
+        .filter((table) => table.start >= base && table.end <= base + body.length)
+        .map((table) => ({ ...table, start: table.start - base, end: table.end - base })),
     };
   });
 
   const found = new Set(sections.map((s) => s.id));
-  const missing = FILING_SECTIONS.filter((s) => !found.has(s.id)).map((s) => ({
+  const missing = specs.filter((s) => !found.has(s.id)).map((s) => ({
     id: s.id,
     label: s.label,
   }));

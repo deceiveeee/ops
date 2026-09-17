@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import FilingPassages, { type PageParagraph } from "@/components/studio/FilingPassages";
+import FilingPassages, { type PageParagraph, type PageTable } from "@/components/studio/FilingPassages";
 import { Notice, Panel, StageHeading } from "@/components/studio/shared";
 import StudioAside from "@/components/studio/workspace/StudioAside";
 import { CONTEXT_CHARS } from "@/lib/filings/anchor";
 import { archivePath, fetchCompanyTickers, fetchFilingDocument, fetchFilings, filingIndexUrl, secUserAgent } from "@/lib/filings/edgar";
 import { findInSections } from "@/lib/filings/find";
-import { pageForOffset, paginate, paragraphsOf } from "@/lib/filings/pages";
+import { pageForOffset, paragraphsOf, sectionPages } from "@/lib/filings/pages";
 import { revenueFromFiling } from "@/lib/filings/revenue-source";
 import { extractFilingSections } from "@/lib/filings/sections";
 import RevenueView from "@/components/studio/RevenueView";
@@ -150,14 +150,19 @@ export default async function CompanyReportPage({
     );
   }
 
-  const { sections, missing, plainTextLength } = extractFilingSections(fetched.html);
   // What the filing is and when it was filed, from the company's own filing list,
-  // so the page can say it plainly. Older filings fall outside that list.
+  // so the page can say it plainly. Older filings fall outside that list, and
+  // then the document itself says whether it is a quarterly report.
   const list = await fetchFilings(cik);
   const filing = list.ok ? list.filings.find((entry) => entry.accession === accession) : undefined;
+  const { sections, missing, plainTextLength } = extractFilingSections(fetched.html, filing?.form);
   const companyName = (list.ok ? list.name : "") || ticker || "Company";
   const kind = filing ? KIND[filing.form] ?? "report" : "report";
-  const current = sections.find((section) => section.id === wanted) ?? sections[0];
+  // A quarterly report has no Business section and opens with its statements, so
+  // without a section asked for it opens on management's account of the quarter.
+  const current = sections.find((section) => section.id === wanted)
+    ?? sections.find((section) => section.id === "business" || section.id === "mdna")
+    ?? sections[0];
   const annual = Boolean(filing && ANNUAL_FORMS.has(filing.form));
   const extraTabs = annual ? [REVENUE_TAB, COMPETITORS_TAB, PEERS_TAB, WORTH_TAB, INPUTS_TAB] : [];
   const revenue = annual && wanted === REVENUE_TAB.id ? await revenueFromFiling(cik, accession, doc) : null;
@@ -372,7 +377,7 @@ function SectionView({
   hrefFor: HrefFor;
 }) {
   const heading = paragraphsOf(section.text)[0]?.text ?? section.label;
-  const pages = paginate(section.text);
+  const pages = sectionPages(section);
   // A link to a place wins over a page number: the place is what was asked for.
   const number = at !== null
     ? pageForOffset(pages, at)
@@ -380,10 +385,38 @@ function SectionView({
   const page = pages[number - 1];
   const highlight = at !== null && length !== null && length > 0 ? { start: at, end: at + length } : null;
 
-  const paragraphs: PageParagraph[] = (page?.paragraphs ?? []).map((paragraph) => ({
-    ...paragraph,
-    before: section.text.slice(Math.max(0, paragraph.start - CONTEXT_CHARS), paragraph.start),
-    after: section.text.slice(paragraph.end, paragraph.end + CONTEXT_CHARS),
+  // A table's rows on this page travel as one block, kept and marked together,
+  // with its headings in front when the page opens part of the way down it.
+  // A table is numbered by its first row on the page, which no other block shares.
+  const blocks: { index: number; start: number; end: number; tableIndex?: number; table?: PageTable }[] = [];
+  for (const paragraph of page?.paragraphs ?? []) {
+    const place = paragraph.table;
+    if (!place) {
+      blocks.push({ index: paragraph.index, start: paragraph.start, end: paragraph.end });
+      continue;
+    }
+    const source = section.tables[place.index];
+    const row = { ...source.rows[place.row], start: paragraph.start, end: paragraph.end };
+    const last = blocks[blocks.length - 1];
+    if (last?.table && last.tableIndex === place.index) {
+      last.table.rows.push(row);
+      last.end = paragraph.end;
+      continue;
+    }
+    const repeated = source.rows.filter((item) => item.header).map((item) => ({ ...item, start: null, end: null }));
+    blocks.push({
+      index: paragraph.index,
+      start: paragraph.start,
+      end: paragraph.end,
+      tableIndex: place.index,
+      table: { columns: source.columns, rows: [...(place.row > 0 && !row.header ? repeated : []), row] },
+    });
+  }
+  const paragraphs: PageParagraph[] = blocks.map(({ tableIndex: _table, ...block }) => ({
+    ...block,
+    text: section.text.slice(block.start, block.end),
+    before: section.text.slice(Math.max(0, block.start - CONTEXT_CHARS), block.start),
+    after: section.text.slice(block.end, block.end + CONTEXT_CHARS),
   }));
 
   return (
@@ -551,7 +584,7 @@ function FindForm({ doc, ticker, query }: { doc: string; ticker?: string; query:
         <input
           name="q"
           defaultValue={query}
-          placeholder="PVC resin, supplier, lease"
+          placeholder="A word or phrase"
           autoComplete="off"
           className="mt-1 block min-h-11 w-60 max-w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
         />

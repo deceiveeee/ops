@@ -16,7 +16,7 @@
  */
 
 import type { ExtractedSection } from "./sections";
-import { paginate, pageForOffset } from "./pages";
+import { pageForOffset, sectionPages } from "./pages";
 
 /** Shorter than this and a query matches nearly everything; longer and it is a paste. */
 export const MIN_QUERY = 2;
@@ -73,7 +73,7 @@ export function findInSections(sections: ExtractedSection[], rawQuery: string): 
   let total = 0;
 
   for (const section of sections) {
-    const pages = paginate(section.text);
+    const pages = sectionPages(section);
     const pattern = queryPattern(query);
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(section.text)) !== null) {

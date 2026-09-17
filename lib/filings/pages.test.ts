@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { fixtureFileName } from "./edgar";
-import { PAGE_PX, estimateHeight, pageForOffset, paginate, paragraphHeight, paragraphsOf } from "./pages";
+import { PAGE_PX, estimateHeight, isSubheading, pageForOffset, paginate, paragraphHeight, paragraphsOf } from "./pages";
 import { extractFilingSections } from "./sections";
+import { parseTable, rowText } from "./tables";
 
 /**
  * Paging runs on Atkore's own 10-K text, trimmed to size (see
@@ -32,6 +33,31 @@ describe("paragraphs", () => {
       expect(paragraph.text).toBe(paragraph.text.trim());
     }
     expect(paragraphs[0].text).toMatch(/^Item 1\./);
+  });
+
+  it("leaves out page numbers, contents links and running footers, without moving any offset", () => {
+    const text = "Item 2. Management's Discussion\nRevenue grew.\n26\nTable of Contents\nApple Inc. | Q3 2026 Form 10-Q | 23\nCosts fell 12% in 2026.";
+    const paragraphs = paragraphsOf(text);
+    expect(paragraphs.map((p) => p.text)).toEqual(["Item 2. Management's Discussion", "Revenue grew.", "Costs fell 12% in 2026."]);
+    expect(text.slice(paragraphs[2].start, paragraphs[2].end)).toBe("Costs fell 12% in 2026.");
+    // A lone year is not a page number: it has four digits.
+    expect(paragraphsOf("Heading\n2026").map((p) => p.text)).toEqual(["Heading", "2026"]);
+  });
+
+  it("tells a heading from a sentence, a bullet and a row of figures", () => {
+    for (const heading of ["Products", "iPhone", "COMPETITION", "Wearables, Home and Accessories", "(In millions)", "ATKORE INC.", "Cost of sales:"]) {
+      expect(isSubheading(heading), heading).toBe(true);
+    }
+    for (const line of [
+      "The Company designs, manufactures and markets smartphones.",
+      "None.",
+      "• EMEA",
+      "Revenue $ 1,234",
+      "Operating margin 33.4%",
+      "iPhone® is the Company's line of smartphones based on its iOS operating system and it runs on",
+    ]) {
+      expect(isSubheading(line), line).toBe(false);
+    }
   });
 
   it("finds offsets past lines that carry stray spaces", () => {
@@ -92,6 +118,56 @@ describe("pages", () => {
     const pages = paginate(table);
     expect(pages.length).toBeGreaterThan(1);
     for (const page of pages) expect(estimateHeight(page.paragraphs)).toBeLessThanOrEqual(PAGE_PX);
+  });
+
+  describe("a table of figures", () => {
+    const rows = 40;
+    const table = parseTable(
+      `<table><tr><td></td><td>2026</td><td>2025</td></tr>${Array.from({ length: rows }, (_, i) => `<tr><td>Segment ${i}</td><td>1,${String(100 + i)}</td><td>2,${String(100 + i)}</td></tr>`).join("")}</table>`,
+    )!;
+    const intro = "Revenue by segment was as follows:";
+    const lines = table.rows.map(rowText);
+    const text = ["Item 2. Management's Discussion", intro, ...lines, "Revenue rose in every segment."].join("\n");
+    const start = text.indexOf(lines[0]);
+    const tables = [{ ...table, start, end: start + lines.join("\n").length }];
+
+    it("marks each row with its table and its place in it", () => {
+      const rowsFound = paragraphsOf(text, tables).filter((paragraph) => paragraph.table);
+      expect(rowsFound).toHaveLength(rows + 1);
+      expect(rowsFound.map((paragraph) => paragraph.table!.row)).toEqual(Array.from({ length: rows + 1 }, (_, i) => i));
+    });
+
+    /** Which table rows each page holds, as [first, last]. */
+    const rowSpans = (pages: ReturnType<typeof paginate>) =>
+      pages.map((page) => {
+        const rowsOnPage = page.paragraphs.filter((paragraph) => paragraph.table).map((paragraph) => paragraph.table!.row);
+        return rowsOnPage.length ? [rowsOnPage[0], rowsOnPage[rowsOnPage.length - 1]] : [];
+      });
+
+    it("breaks between rows, sized as table rows, repeating the headings' height on a page that continues it", () => {
+      // Worked by hand from the model. Page 1: the intro (32px), then the table
+      // opens with gap, space and Keep row, and its heading (12 + 52 + 33) and
+      // fourteen rows of 33px, 591 in all. Page 2 opens part of the way down, so
+      // it pays the space, the repeated heading and a row (52 + 33 + 33) and holds
+      // fifteen rows, 580. Sized as paragraphs, or without the repeated heading,
+      // these spans move.
+      const pages = paginate(text, PAGE_PX, tables);
+      expect(rowSpans(pages)).toEqual([[0, 14], [15, 29], [30, 40]]);
+      expect(pages[2].paragraphs.at(-1)!.text).toBe("Revenue rose in every segment.");
+      expect(pages.flatMap((page) => page.paragraphs).map((paragraph) => paragraph.index)).toEqual(paragraphsOf(text).slice(1).map((paragraph) => paragraph.index));
+    });
+
+    it("never ends a page on a table's headings", () => {
+      // A 17-line paragraph is 480px, which leaves room for the heading row's 97px
+      // but not for the heading and a first row together.
+      const long = "word ".repeat(301).trim();
+      const crowded = ["Item 2. Management's Discussion", long, ...lines].join("\n");
+      const at = crowded.indexOf(lines[0]);
+      const pages = paginate(crowded, PAGE_PX, [{ ...table, start: at, end: at + lines.join("\n").length }]);
+      expect(pages[0].paragraphs).toHaveLength(1);
+      expect(pages[1].paragraphs[0].table).toEqual({ index: 0, row: 0 });
+      for (const page of pages) expect(table.rows[page.paragraphs.at(-1)!.table?.row ?? 1].header).toBe(false);
+    });
   });
 
   it("numbers pages from 1 and gives each its span in the section text", () => {

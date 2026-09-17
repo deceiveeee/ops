@@ -10,7 +10,7 @@ const DOC = "https://www.sec.gov/Archives/edgar/data/1666138/000162828025054049/
 const html = readFileSync(join(process.cwd(), "e2e", "fixtures", "edgar", fixtureFileName(DOC)), "utf8");
 const sections = extractFilingSections(html).sections;
 
-const section = (text: string): ExtractedSection => ({ id: "business", label: "Business", lens: "", at: 0, text });
+const section = (text: string): ExtractedSection => ({ id: "business", label: "Business", lens: "", at: 0, text, tables: [] });
 
 describe("finding a phrase in Atkore's 10-K", () => {
   it("finds PVC resin in each section that mentions it, on the page it is on", () => {
