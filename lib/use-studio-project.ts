@@ -5,14 +5,19 @@ import { createProjectSession, type ProjectSession, type ProjectSessionState, ty
 import { createIndexedDbProjectStorage } from "./studio-project/storage";
 import type { StudioMode, StudioProject } from "./studio-project/schema";
 
-const INITIAL: ProjectSessionState = { status: "loading", project: null, savedProject: null, revision: null, dirty: false, externalChange: false, error: null, recoveryRaw: null };
+const INITIAL: ProjectSessionState = { status: "loading", project: null, savedProject: null, revision: null, dirty: false, externalChange: false, error: null, recoveryRaw: null, migrationNotes: [] };
 const notReady = (): SessionResult => ({ ok: false, code: "unavailable", error: "Wait for the project to open before changing it." });
 
 /**
  * The workspace owns a v2 session, including research and alternatives. Render status,
  * dirty and externalChange alongside project; showing an edit is not a save.
+ *
+ * `mode` may be null while the chosen portfolio is still being read from the
+ * browser. No session is opened until it is known, because opening one writes a
+ * record when none exists — guessing would leave an empty practice portfolio
+ * behind every time someone with a personal one opened Studio.
  */
-export function useStudioProject(mode: StudioMode, options: {
+export function useStudioProject(mode: StudioMode | null, options: {
   /**
    * Pages that keep this same session open, such as the workspace's other
    * sections. Moving between them loses nothing, so it is not leaving Studio
@@ -20,13 +25,14 @@ export function useStudioProject(mode: StudioMode, options: {
    */
   internal?: (pathname: string) => boolean;
 } = {}) {
-  const [snapshot, setSnapshot] = useState({ mode, state: INITIAL });
+  const [snapshot, setSnapshot] = useState<{ mode: StudioMode | null; state: ProjectSessionState }>({ mode, state: INITIAL });
   const current = useRef<{ mode: StudioMode; session: ProjectSession } | null>(null);
   const pending = useRef(0);
   const [pendingCount, setPendingCount] = useState(0);
   const internal = useRef(options.internal);
   internal.current = options.internal;
   useEffect(() => {
+    if (!mode) return;
     const session = createProjectSession(createIndexedDbProjectStorage(), mode);
     current.current = { mode, session };
     setSnapshot({ mode, state: session.getSnapshot() });

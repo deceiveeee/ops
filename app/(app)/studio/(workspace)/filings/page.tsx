@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Notice, Panel, StageHeading } from "@/components/studio/shared";
-import { fetchFilings, resolveTicker, secUserAgent } from "@/lib/filings/edgar";
+import { fetchFilings, isAnnual, resolveTicker, secUserAgent } from "@/lib/filings/edgar";
 
 export const metadata: Metadata = {
   title: "Company reports · Studio — Investing Studio",
@@ -126,11 +126,26 @@ export default async function CompanyReportsPage({
               This company files with the SEC, but not an annual or quarterly report this reader can open.
             </p>
           ) : (
-            <ul className="mt-3 divide-y divide-white/8">
-              {filings.filings.map((filing) => (
+            (() => {
+              /*
+               * The annual report first, and everything else behind a disclosure.
+               *
+               * Equal rows said every filing was as good a place to start as any,
+               * which is not true: the business description, the risk factors and
+               * the audited statements are in the annual report, and it is the
+               * document Investigate asks for figures from. A beginner opening the
+               * latest quarterly instead finds an update to a story they have not
+               * read. The rest is disclosed rather than dropped: comparing two
+               * years, or reading what changed last quarter, is real work.
+               */
+              const annual = filings.filings.find((filing) => isAnnual(filing.form));
+              const rest = filings.filings.filter((filing) => filing !== annual);
+              const href = (filing: (typeof filings.filings)[number]) =>
+                `/studio/filings/${lookup.company.cik}/${filing.accession}?doc=${encodeURIComponent(filing.primaryDocument)}&ticker=${lookup.company.ticker}`;
+              const row = (filing: (typeof filings.filings)[number]) => (
                 <li key={filing.accession}>
                   <Link
-                    href={`/studio/filings/${lookup.company.cik}/${filing.accession}?doc=${encodeURIComponent(filing.primaryDocument)}&ticker=${lookup.company.ticker}`}
+                    href={href(filing)}
                     className="flex min-h-11 flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2 text-[14px] transition-colors hover:text-accent-cyan focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]"
                   >
                     <span className="font-semibold text-white">
@@ -142,8 +157,39 @@ export default async function CompanyReportsPage({
                     ) : null}
                   </Link>
                 </li>
-              ))}
-            </ul>
+              );
+              return (
+                <>
+                  {annual ? (
+                    <Link
+                      href={href(annual)}
+                      className="mt-3 block rounded-xl border border-accent-cyan/40 bg-accent-cyan/[0.06] p-4 transition-colors hover:border-accent-cyan/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]"
+                    >
+                      <span className="block text-[12px] font-semibold text-accent-cyan">Start here</span>
+                      <span className="mt-1 block text-[16px] font-semibold text-white">
+                        {KIND[annual.form] ?? "Annual report"} ({annual.form}), filed {annual.filingDate}
+                      </span>
+                      <span className="mt-1 block text-[13px] leading-6 text-slate-400">
+                        What the business says it does, the risks management is required to admit, and the audited
+                        numbers{annual.reportDate ? ` for the year ending ${annual.reportDate}` : ""}.
+                      </span>
+                    </Link>
+                  ) : null}
+                  {rest.length > 0 ? (
+                    <details className="group mt-3">
+                      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[14px] font-semibold text-accent-cyan focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+                        <span>
+                          {annual ? "Earlier and quarterly reports" : "Reports this reader can open"} ({rest.length})
+                        </span>
+                        <span className="text-[13px] font-normal text-slate-500 group-open:hidden">Show</span>
+                        <span className="hidden text-[13px] font-normal text-slate-500 group-open:inline">Hide</span>
+                      </summary>
+                      <ul className="mt-1 divide-y divide-white/8">{rest.map(row)}</ul>
+                    </details>
+                  ) : null}
+                </>
+              );
+            })()
           )}
         </Panel>
       ) : null}

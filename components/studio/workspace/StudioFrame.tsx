@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
-import type { StudioMode } from "@/lib/studio-project/schema";
+import { STUDIO_MODES } from "@/lib/studio-mode";
 import { GuidancePanel, Notice, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
 import StudioIcon from "./StudioIcon";
@@ -54,10 +54,6 @@ function guidanceFor(pathname: string): StudioGuidanceKey | null {
   return null;
 }
 
-const MODES: { value: StudioMode; label: string }[] = [
-  { value: "practice", label: "Practice" },
-  { value: "personal", label: "Your own" },
-];
 
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]";
@@ -325,7 +321,7 @@ function ModeSwitch() {
         aria-describedby={hint}
         className={cn("inline-flex rounded-full border border-[var(--ops-divider)] bg-[var(--ops-surface-2)] p-1", styles.modeSwitch)}
       >
-        {MODES.map((option) => {
+        {STUDIO_MODES.map((option) => {
           const on = option.value === mode;
           return (
             <button
@@ -356,6 +352,7 @@ function ModeSwitch() {
  */
 function Problems() {
   const { session, error, project, report } = useWorkspace();
+  const [migrationSeen, setMigrationSeen] = useState(false);
   const name = project?.name.trim() || "Studio portfolio";
   const downloadDraft = () => {
     const backup = session.exportBackup();
@@ -425,6 +422,27 @@ function Problems() {
     notices.push(
       <Notice key="error" tone="red" title="That change was not saved">
         {error}
+      </Notice>,
+    );
+  }
+  /*
+   * What bringing an older record forward did to it, said once, by the screen
+   * that did it. A portfolio that quietly comes back in a different shape is how
+   * someone stops trusting that it came back at all -- particularly when every
+   * holding is now marked chosen, which they never said.
+   */
+  if (session.migrationNotes.length > 0 && !migrationSeen) {
+    notices.push(
+      <Notice key="migrated" tone="slate" title="This portfolio was brought forward from an older version of Studio">
+        <ul className="space-y-1">
+          {session.migrationNotes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
+        Nothing was lost: the original is still saved in this browser exactly as it was.
+        <Actions>
+          <ActionButton onClick={() => setMigrationSeen(true)}>Got it</ActionButton>
+        </Actions>
       </Notice>,
     );
   }

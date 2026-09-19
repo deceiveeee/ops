@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { StudioGuidance } from "@/lib/studio-guidance";
 
@@ -14,7 +14,7 @@ export const pct = (value: number, digits = 1) => `${value.toFixed(digits)}%`;
 
 export function Panel({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:p-6", className)}>
+    <div className={cn("rounded-2xl border border-st-hair bg-st-paper p-5 sm:p-6", className)}>
       {children}
     </div>
   );
@@ -40,7 +40,7 @@ export function StageHeading({
  * A plain controlled input is not safe once saving is asynchronous: React puts
  * the old value back between keystrokes, so typing "253" quickly while a save
  * is still in flight can store "23". Keystrokes stay local until the queued
- * edits settle, exactly as Field does.
+ * edits settle, through the same buffer as Field (useBufferedInput below).
  */
 export function NumberInput({
   id, value, onChange, min, max, className,
@@ -52,35 +52,8 @@ export function NumberInput({
   max?: number;
   className?: string;
 }) {
-  const [input, setInput] = useState(String(value));
-  const [settled, setSettled] = useState(0);
-  const focused = useRef(false);
-  const pending = useRef(0);
-  useEffect(() => {
-    if (!focused.current && pending.current === 0) setInput(String(value));
-  }, [value, settled]);
-  const edit = (raw: string) => {
-    setInput(raw);
-    pending.current += 1;
-    void Promise.resolve(onChange(raw)).finally(() => {
-      pending.current -= 1;
-      setSettled((count) => count + 1);
-    });
-  };
-  return (
-    <input
-      id={id}
-      type="number"
-      inputMode="decimal"
-      min={min}
-      max={max}
-      value={input}
-      onFocus={() => { focused.current = true; }}
-      onBlur={() => { focused.current = false; setSettled((count) => count + 1); }}
-      onChange={(event) => edit(event.currentTarget.value)}
-      className={className}
-    />
-  );
+  const buffered = useBufferedInput(value, onChange);
+  return <input id={id} type="number" inputMode="decimal" min={min} max={max} className={className} {...buffered} />;
 }
 
 /** Hands the learner a file made in the browser. Nothing is uploaded anywhere. */
@@ -99,27 +72,33 @@ export function downloadFile(name: string, text: string, type: string) {
  * Studio can be entered without taking Investment Foundations, so a term has to
  * be explained where it is first used. The worked example and glossary sit in a
  * disclosure so the explanation does not push the actual work off the screen.
+ *
+ * Not a card. As a tinted bordered panel this outranked the step heading
+ * directly beneath it -- the page opened twice, and the louder of the two
+ * openings was the preamble rather than the task. A rule and quieter type say
+ * the same thing without competing, and remove one box from a screen that had
+ * boxes inside boxes.
  */
 export function GuidancePanel({ guidance }: { guidance: StudioGuidance }) {
   return (
-    <Panel className="border-accent-cyan/25 bg-accent-cyan/[0.05]">
-      <div className="ops-caption text-[12px] text-accent-cyan">Before you start</div>
-      <p className="ops-body mt-2 text-[15px] leading-7 text-slate-200">{guidance.definition}</p>
+    <div className="border-l-2 border-st-blue-edge pl-4 sm:pl-5">
+      <div className="ops-caption text-[12px] text-st-blue">Before you start</div>
+      <p className="ops-body mt-2 text-[15px] leading-7 text-st-sub">{guidance.definition}</p>
       {/* Only the definition stays open. The screen budget caps preamble at half
           a viewport, and the learner has to be able to act without scrolling. */}
       <details className="group mt-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[13px] font-semibold text-accent-cyan">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[13px] font-semibold text-st-blue">
           <span>How to do this, with an example</span>
-          <span className="text-[12px] font-normal text-slate-400 group-open:hidden">Show</span>
-          <span className="hidden text-[12px] font-normal text-slate-400 group-open:inline">Hide</span>
+          <span className="text-[12px] font-normal text-st-muted group-open:hidden">Show</span>
+          <span className="hidden text-[12px] font-normal text-st-muted group-open:inline">Hide</span>
         </summary>
-        <p className="ops-body mt-3 text-[14px] leading-6 text-slate-300">{guidance.action}</p>
-        <p className="ops-body mt-3 text-[14px] leading-6 text-slate-300">{guidance.example}</p>
+        <p className="ops-body mt-3 text-[14px] leading-6 text-st-sub">{guidance.action}</p>
+        <p className="ops-body mt-3 text-[14px] leading-6 text-st-sub">{guidance.example}</p>
         <dl className="mt-3 space-y-2">
           {guidance.terms.map((term) => (
             <div key={term.term} className="text-[14px] leading-6">
-              <dt className="inline font-semibold text-white">{term.term}: </dt>
-              <dd className="inline text-slate-400">{term.definition}</dd>
+              <dt className="inline font-semibold text-st-ink">{term.term}: </dt>
+              <dd className="inline text-st-muted">{term.definition}</dd>
             </div>
           ))}
         </dl>
@@ -130,7 +109,7 @@ export function GuidancePanel({ guidance }: { guidance: StudioGuidance }) {
                 href={source.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[13px] text-slate-400 underline decoration-white/20 underline-offset-2 hover:text-accent-cyan"
+                className="text-[13px] text-st-muted underline decoration-white/20 underline-offset-2 hover:text-st-blue"
               >
                 {source.label}
               </a>
@@ -138,8 +117,52 @@ export function GuidancePanel({ guidance }: { guidance: StudioGuidance }) {
           ))}
         </ul>
       </details>
-    </Panel>
+    </div>
   );
+}
+
+/**
+ * Keystrokes stay local until the saves they queued have settled.
+ *
+ * Browser storage acknowledges an edit asynchronously, so a control bound
+ * straight to the saved value fights the person typing: the second character
+ * of "60" arrives while the write for "6" is still in flight, and when that
+ * write lands it re-renders the input back to the older value. Holding the
+ * text locally while anything is pending, and while the control has focus,
+ * means a save can never move the cursor or overwrite what is being typed.
+ *
+ * Returned as props to spread onto an input or textarea, so there is one
+ * implementation of this rather than one per control that needs it. Nothing
+ * here is specific to a schema; it is the same shape whether the write
+ * underneath resolves immediately or after a round trip to a database.
+ */
+export function useBufferedInput(value: string | number, onChange: (value: string) => unknown) {
+  const [input, setInput] = useState(String(value));
+  const [settled, setSettled] = useState(0);
+  const focused = useRef(false);
+  const pending = useRef(0);
+  useEffect(() => {
+    if (!focused.current && pending.current === 0) setInput(String(value));
+  }, [value, settled]);
+  return {
+    value: input,
+    onFocus: () => {
+      focused.current = true;
+    },
+    onBlur: () => {
+      focused.current = false;
+      setSettled((count) => count + 1);
+    },
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const raw = event.currentTarget.value;
+      setInput(raw);
+      pending.current += 1;
+      void Promise.resolve(onChange(raw)).finally(() => {
+        pending.current -= 1;
+        setSettled((count) => count + 1);
+      });
+    },
+  };
 }
 
 type FieldProps = {
@@ -162,48 +185,58 @@ export function Field({
 }: FieldProps) {
   const id = useId();
   const hintId = `${id}-hint`;
-  // Browser storage acknowledges edits asynchronously. Keep keystrokes local
-  // until the queued edits settle, so an earlier save cannot move the cursor
-  // or replace the text being typed with an older value.
-  const [input, setInput] = useState(String(value));
-  const [settled, setSettled] = useState(0);
-  const focused = useRef(false);
-  const pending = useRef(0);
-  useEffect(() => {
-    if (!focused.current && pending.current === 0) setInput(String(value));
-  }, [value, settled]);
-  const edit = (raw: string) => {
-    setInput(raw); pending.current += 1;
-    void Promise.resolve(onChange(raw)).finally(() => {
-      pending.current -= 1; setSettled((count) => count + 1);
-    });
-  };
-  const focus = () => { focused.current = true; };
-  const blur = () => { focused.current = false; setSettled((count) => count + 1); };
+  const buffered = useBufferedInput(value, onChange);
   const inputClass =
-    "min-h-11 w-full rounded-lg border border-white/12 bg-white/[0.03] px-3 py-2 text-[15px] text-white placeholder:text-slate-500 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40";
+    "min-h-11 w-full rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge";
+  /*
+   * A unit belongs inside the control it qualifies, not beside it.
+   *
+   * Sitting outside, an affix was a flex sibling: it took width from the input,
+   * so a row of "same" fields rendered at four different widths depending on
+   * whether each had a `$` or a `%`. Inside, every control in a row is the
+   * width of its column and the row finally has a rhythm. The padding scales
+   * with the affix because a symbol and the word "years" need different room.
+   */
+  const affix = "pointer-events-none absolute inset-y-0 flex items-center text-[15px] text-st-muted";
+  const pad = (text: string | undefined, side: "l" | "r") => {
+    if (!text) return undefined;
+    if (text.length <= 1) return side === "l" ? "pl-7" : "pr-7";
+    if (text.length <= 3) return side === "l" ? "pl-10" : "pr-10";
+    return side === "l" ? "pl-16" : "pr-16";
+  };
   return (
-    <div>
-      <label htmlFor={id} className="block text-[13px] font-semibold text-white">
+    /*
+     * `mt-auto` on the control is what makes a row of these line up. Labels and
+     * hints are different heights from field to field -- one has a hint, its
+     * neighbour does not, a third wraps to two lines -- so while the control
+     * simply followed them in flow, four fields on one row sat at three
+     * different heights.
+     *
+     * Deliberately without `h-full`. A grid stretches its direct children to
+     * the row height already, which is the extra space `mt-auto` distributes;
+     * `h-full` additionally resolved against auto-height parents when a field
+     * was nested inside a wrapper, and pushed the control clean out of its
+     * cell and over the row below. Left to `mt-auto` alone, a nested field just
+     * has no slack to distribute and stays exactly where it was.
+     */
+    <div className="flex flex-col">
+      <label htmlFor={id} className="block text-[13px] font-semibold text-st-ink">
         {label}
       </label>
       {hint ? (
-        <p id={hintId} className="mt-1 text-[12px] leading-5 text-slate-500">
+        <p id={hintId} className="mt-1 text-[12px] leading-5 text-st-faint">
           {hint}
         </p>
       ) : null}
-      <div className="mt-1.5 flex items-center gap-2">
-        {prefix ? <span className="text-[15px] text-slate-400">{prefix}</span> : null}
+      <div className={cn("relative flex items-center", multiline ? "mt-1.5" : "mt-auto pt-1.5")}>
+        {prefix ? <span className={cn(affix, "left-3")}>{prefix}</span> : null}
         {multiline ? (
           <textarea
             id={id}
-            rows={2}
-            value={input}
-            onFocus={focus}
-            onBlur={blur}
+            rows={3}
+            {...buffered}
             placeholder={placeholder}
             aria-describedby={hint ? hintId : undefined}
-            onChange={(event) => edit(event.currentTarget.value)}
             className={cn(inputClass, "resize-y")}
           />
         ) : (
@@ -211,19 +244,21 @@ export function Field({
             id={id}
             type={type}
             inputMode={type === "number" ? "decimal" : undefined}
-            value={input}
-            onFocus={focus}
-            onBlur={blur}
+            {...buffered}
             min={min}
             max={max}
             step={step}
             placeholder={placeholder}
             aria-describedby={hint ? hintId : undefined}
-            onChange={(event) => edit(event.currentTarget.value)}
-            className={cn(inputClass, type === "number" && "tabular-nums")}
+            className={cn(
+              inputClass,
+              type === "number" && "tabular-nums",
+              pad(prefix, "l"),
+              pad(suffix, "r"),
+            )}
           />
         )}
-        {suffix ? <span className="text-[15px] text-slate-400">{suffix}</span> : null}
+        {suffix ? <span className={cn(affix, "right-3")}>{suffix}</span> : null}
       </div>
     </div>
   );
@@ -233,16 +268,18 @@ export function Choice<T extends string>({
   label, value, options, onChange,
 }: { label: string; value: T; options: { value: T; label: string }[]; onChange: (value: T) => void }) {
   const id = useId();
+  // Bottom-aligned for the same reason as Field, and without `h-full` for the
+  // same reason too: it only holds when the control is a direct grid child.
   return (
-    <div>
-      <label htmlFor={id} className="block text-[13px] font-semibold text-white">
+    <div className="flex flex-col">
+      <label htmlFor={id} className="block text-[13px] font-semibold text-st-ink">
         {label}
       </label>
       <select
         id={id}
         value={value}
         onChange={(event) => onChange(event.currentTarget.value as T)}
-        className="mt-1.5 min-h-11 w-full rounded-lg border border-white/12 bg-ink-900 px-3 py-2 text-[15px] text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+        className="mt-auto min-h-11 w-full rounded-lg border border-st-bound bg-st-canvas px-3 py-2 text-[15px] text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -259,15 +296,15 @@ export function Notice({
   tone = "amber", title, children,
 }: { tone?: "amber" | "green" | "red" | "slate"; title?: string; children: ReactNode }) {
   const tones = {
-    amber: "border-accent-amber/30 bg-accent-amber/[0.07] text-accent-amber",
-    green: "border-accent-green/30 bg-accent-green/[0.07] text-accent-green",
-    red: "border-accent-red/30 bg-accent-red/[0.07] text-accent-red",
-    slate: "border-white/12 bg-white/[0.03] text-slate-300",
+    amber: "border-st-warn-edge bg-st-warn-soft text-st-warn",
+    green: "border-st-good-edge bg-st-good-soft text-st-good",
+    red: "border-st-bad-edge bg-st-bad-soft text-st-bad",
+    slate: "border-st-bound bg-st-paper text-st-sub",
   } as const;
   return (
     <div className={cn("rounded-xl border p-4", tones[tone])} role={tone === "red" ? "alert" : undefined}>
       {title ? <div className="text-[14px] font-semibold">{title}</div> : null}
-      <div className={cn("text-[14px] leading-6", title && "mt-1", tone !== "slate" && "text-slate-200")}>{children}</div>
+      <div className={cn("text-[14px] leading-6", title && "mt-1", tone !== "slate" && "text-st-body")}>{children}</div>
     </div>
   );
 }
@@ -275,9 +312,9 @@ export function Notice({
 export function Stat({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div>
-      <div className="ops-caption text-[11px] text-slate-500">{label}</div>
-      <div className="mt-1 text-[18px] font-semibold tabular-nums text-white">{value}</div>
-      {detail ? <div className="mt-0.5 text-[12px] leading-5 text-slate-500">{detail}</div> : null}
+      <div className="ops-caption text-[11px] text-st-faint">{label}</div>
+      <div className="mt-1 text-[18px] font-semibold tabular-nums text-st-ink">{value}</div>
+      {detail ? <div className="mt-0.5 text-[12px] leading-5 text-st-faint">{detail}</div> : null}
     </div>
   );
 }
@@ -295,8 +332,8 @@ export function TableScroll({ children }: { children: ReactNode }) {
 export function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-2">
-      <dt className="text-[13px] text-slate-500">{label}</dt>
-      <dd className="text-[13px] text-slate-300">{value}</dd>
+      <dt className="text-[13px] text-st-faint">{label}</dt>
+      <dd className="text-[13px] text-st-sub">{value}</dd>
     </div>
   );
 }

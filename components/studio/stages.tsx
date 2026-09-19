@@ -21,6 +21,18 @@ import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-proje
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
 
+/**
+ * A holding's ticker, or a company's name where the learner added it themselves.
+ *
+ * Read from the calculation, which resolved every holding against the project's
+ * own list, rather than from Studio's eight: a company the learner investigated
+ * and holds is not among them, and would otherwise show as its stored id.
+ */
+const symbolOf = (calculation: StudioCalculation, instrumentId: string) =>
+  calculation.rows.find((row) => row.holding.instrumentId === instrumentId)?.instrument?.symbol
+  ?? findStudioInstrument(instrumentId)?.symbol
+  ?? instrumentId;
+
 /** What a change reports. The workspace's saves finish later, so it may arrive as a promise. */
 export type StageResult = { ok: true } | { ok: false; error: string; conflict: boolean };
 type Reported = StageResult | Promise<StageResult>;
@@ -643,7 +655,7 @@ export function RiskStage(props: StageProps) {
               {calculation.overlaps.slice(0, 8).map((overlap) => (
                 <li key={overlap.label} className="text-[14px] leading-6 text-slate-300">
                   <span className="tabular-nums text-white">{pct(overlap.portfolioWeightPct, 2)}</span> {overlap.label},
-                  held through {overlap.instrumentIds.map((id) => findStudioInstrument(id)?.symbol ?? id).join(" and ")}
+                  held through {overlap.instrumentIds.map((id) => symbolOf(calculation, id)).join(" and ")}
                 </li>
               ))}
             </ul>
@@ -864,7 +876,7 @@ export function ReviewStage(props: StageProps) {
               .map((row) => (
                 <li key={row.instrumentId} className="text-[14px] leading-6 text-slate-300">
                   <span className="tabular-nums text-white">{usd(row.amount)}</span> toward{" "}
-                  {findStudioInstrument(row.instrumentId)?.symbol ?? row.instrumentId}
+                  {symbolOf(calculation, row.instrumentId)}
                 </li>
               ))}
             <li className="text-[14px] leading-6 text-slate-400">

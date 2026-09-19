@@ -2,17 +2,16 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { calculateStudio, type StudioCalculation, type StudioPlan } from "@/lib/studio";
-import { STUDIO_CATALOG } from "@/lib/studio-catalog";
+import { STUDIO_MODE_KEY } from "@/lib/studio-mode";
+import { STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { importProjectBackup } from "@/lib/studio-project/backup";
 import type { StudioMode, StudioProject } from "@/lib/studio-project/schema";
 import type { SessionResult } from "@/lib/studio-project/session";
 import { createIndexedDbProjectStorage } from "@/lib/studio-project/storage";
-import { applyPlanChange, projectToPlan } from "@/lib/studio-project/workspace";
+import { applyPlanChange, projectCatalog, projectToPlan } from "@/lib/studio-project/workspace";
 import { useStudioProject } from "@/lib/use-studio-project";
 import type { StageResult } from "../stages";
 
-/** The practice/personal choice a learner made last, kept between visits. */
-export const STUDIO_MODE_KEY = "ops-studio-mode";
 
 /**
  * Pages that share the workspace's open project.
@@ -34,6 +33,12 @@ export interface Workspace {
   /** The stage forms' view of the working portfolio. Null until the project opens. */
   plan: StudioPlan | null;
   calculation: StudioCalculation | null;
+  /**
+   * Studio's eight and the companies this learner added from their own
+   * investigations. Every holding is resolved through it: a company missing
+   * from it would drop out of the portfolio's sums without a word.
+   */
+  catalog: readonly StudioInstrument[];
   updatePlan: (change: (plan: StudioPlan) => StudioPlan) => Promise<StageResult>;
   /** A change that did not save, stated until the next one succeeds. */
   error: string | null;
@@ -133,7 +138,8 @@ function OpenProject({
   const [asideSlot, setAsideSlot] = useState<HTMLElement | null>(null);
   const project = session.project;
   const plan = useMemo(() => (project ? projectToPlan(project) : null), [project]);
-  const calculation = useMemo(() => (plan ? calculateStudio(plan, STUDIO_CATALOG) : null), [plan]);
+  const catalog = useMemo(() => (project ? projectCatalog(project) : STUDIO_CATALOG), [project]);
+  const calculation = useMemo(() => (plan ? calculateStudio(plan, catalog) : null), [plan, catalog]);
 
   // A failed write must not look like a successful one, so every result is
   // surfaced rather than assumed.
@@ -175,6 +181,7 @@ function OpenProject({
     project,
     plan,
     calculation,
+    catalog,
     error,
     report,
     updatePlan: async (change) => report(await session.update((current) => applyPlanChange(current, change))),

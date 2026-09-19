@@ -1,7 +1,6 @@
 "use client";
 
 import { exportStudioCsv } from "@/lib/studio";
-import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { addEvidence, removeEvidence, setCandidateStatus, updateCandidate } from "@/lib/studio-project/operations";
 import { exportProjectText } from "@/lib/studio-project/workspace";
 import { downloadFile } from "../shared";
@@ -72,7 +71,7 @@ export default function WorkspaceStage({ stage, eyebrow }: { stage: keyof typeof
         downloadFile(`${fileName}${backup.saved ? "" : " (unsaved draft)"}.json`, backup.raw, "application/json");
       },
       downloadText: () => downloadFile(`${fileName}.txt`, exportProjectText(project), "text/plain"),
-      downloadCsv: () => downloadFile(`${fileName}.csv`, exportStudioCsv(plan, STUDIO_CATALOG), "text/csv"),
+      downloadCsv: () => downloadFile(`${fileName}.csv`, exportStudioCsv(plan, workspace.catalog), "text/csv"),
       restore: async (text) => report(await session.importBackup(text)),
       startAgain: async () => report(await session.reset()),
     },

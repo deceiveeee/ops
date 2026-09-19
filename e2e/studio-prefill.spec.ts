@@ -131,9 +131,13 @@ test.describe("filling the seven from a filing", () => {
     await fillButton(page).click();
     await expect(filed(page, "Revenue")).toHaveValue("2850378000");
 
-    // SIC 3690 is mostly battery and EV-charging makers. Comparing Atkore with
+    // SIC 3690 is mostly battery and EV-charging makers, which Studio cannot
+    // match to one of its researched industries. Comparing Atkore with
     // semiconductors without saying so was the dead end this removes.
-    await expect(page.getByRole("main")).toContainText("not one of the five industries Studio has researched");
+    await expect(page.getByRole("main")).toContainText("cannot match to an industry by itself");
+    // The cost of capital still works, against whichever industry is chosen; what
+    // is missing is the median to place the company against, and it says so.
+    await expect(page.getByRole("main")).toContainText("Studio has not built peer figures for this industry");
     // And it sends the learner to the company's own reports, where an annual report's Competitors tab reads who it names.
     await expect(page.getByRole("link", { name: "Find the competitors its own annual report names →" })).toHaveAttribute(
       "href",

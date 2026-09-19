@@ -6,6 +6,7 @@ import "./globals.css";
 import "./refresh.css";
 import SiteShell from "@/components/layout/SiteShell";
 import { SessionProvider } from "@/lib/supabase/session";
+import { GUEST_ONLY_BETA } from "@/lib/beta";
 import { ProgressProvider } from "@/lib/progress/store";
 import { OnboardingProvider } from "@/lib/onboarding/store";
 import { getSiteUrl } from "@/lib/site-url";
@@ -42,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="min-h-screen font-sans antialiased">
-        <SessionProvider guestOnly>
+        <SessionProvider guestOnly={GUEST_ONLY_BETA}>
           <OnboardingProvider>
             <ProgressProvider>
               <SiteShell>{children}</SiteShell>

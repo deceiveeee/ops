@@ -1,11 +1,15 @@
 /**
  * Public beta boundary.
  *
- * Accounts, the placeholder Studio, and catalog-only lesson records remain in
- * the repository for later work, but they are not part of the product OPS is
- * advertising in this release.
+ * Accounts are now offered and optional, so this no longer closes the auth
+ * routes. Catalog-only lesson records are still withheld below: a route that
+ * renders nothing is worse than one that is not advertised.
+ *
+ * Turning this back on would make /privacy false as written -- that page states
+ * there are no accounts and no cookies, and Supabase's session cookie makes the
+ * second claim untrue the moment anyone signs in. Change them together.
  */
-export const GUEST_ONLY_BETA = true;
+export const GUEST_ONLY_BETA = false;
 
 export const BETA_HIDDEN_LESSON_SLUGS: ReadonlySet<string> = new Set([
   "calls-and-puts",

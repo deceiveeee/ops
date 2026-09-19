@@ -78,8 +78,19 @@ export default function CashFlowValueChapter() {
       ref={ref}
       className="relative isolate z-10 hp-atmosphere-deep h-[360vh] sm:h-[480vh] lg:h-[560vh]"
     >
-      <div className="sticky top-0 z-10 flex h-[100svh] items-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 opacity-50" aria-hidden>
+      {/*
+        * The clipping belongs to the decoration, not to the words.
+        *
+        * `overflow-hidden` sat on this pane to keep the flowing background
+        * inside it, and took the chapter's own content with it: the stack is
+        * centred in exactly one screen, so on any phone shorter than the stack
+        * it was trimmed equally at both ends — the headline vanishing upward,
+        * which reads as the section above covering it, and the chart cut off
+        * below. It failed on an iPhone SE and passed on an iPhone 14, so it
+        * could not be caught by looking at one phone.
+        */}
+      <div className="sticky top-0 z-10 flex h-[100svh] items-center pt-[68px]">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-50" aria-hidden>
           {/* Faint cash-flow stream — animated curves flowing horizontally */}
           <FlowStreamBackground reduce={!!reduce} />
         </div>
@@ -95,12 +106,12 @@ export default function CashFlowValueChapter() {
           >
             Cash flow becomes value.
           </motion.h2>
-          <p className="hp-lead mt-8">
+          <p className="hp-lead mt-8 short:mt-4">
             Future cash flows are discounted according to their timing and risk.
           </p>
 
           {/* Stage progress — minimal horizontal indicator */}
-          <div className="mt-16 flex items-center gap-4">
+          <div className="mt-16 flex items-center gap-4 short:mt-6">
             <div className="flex flex-1 items-center gap-2">
               {[0, 1, 2, 3, 4].map((i) => {
                 const stageIdx = Math.min(activeIdx, 4);
@@ -127,7 +138,7 @@ export default function CashFlowValueChapter() {
           </div>
 
           {/* The dominant stage visual */}
-          <div className="mt-14 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1fr] lg:gap-24 lg:items-center">
+          <div className="mt-14 grid grid-cols-1 gap-12 short:mt-6 short:gap-5 lg:grid-cols-[1fr_1fr] lg:gap-24 lg:items-center">
             <motion.div
               key={displayLabel + displayValue}
               initial={reduce ? false : { opacity: 0, y: 16 }}
@@ -185,7 +196,7 @@ export default function CashFlowValueChapter() {
                   </motion.span>
                 </div>
               )}
-              <p className="hp-body mt-8 max-w-[440px]">{displayNote}</p>
+              <p className="hp-body mt-8 max-w-[440px] short:mt-4">{displayNote}</p>
             </motion.div>
 
             {/* Visual side — the cash flow → PV pipeline */}

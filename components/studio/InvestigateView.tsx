@@ -6,10 +6,31 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
-import { TREASURY_RATE, estimate, forSic, industryNames, forIndustry, longDate } from "@/lib/studio-project/cost-of-capital";
-import type { RoicDecomposition, RoicSector } from "@/lib/studio-project/roic";
-import { newInvestigationId, removeInvestigation, removePassage, saveInvestigation, updatePassage } from "@/lib/studio-project/operations";
-import { latestInvestigation, type EvidenceRole, type FigureSource, type KeptPassage } from "@/lib/studio-project/schema";
+import {
+  TREASURY_RATE,
+  estimate,
+  forIndustry,
+  industryForSic,
+  industryNames,
+  investigationIndustry,
+  longDate,
+  sectorForIndustry,
+} from "@/lib/studio-project/cost-of-capital";
+import type { RoicDecomposition } from "@/lib/studio-project/roic";
+import {
+  addInvestigatedCompany,
+  addPosition,
+  newInvestigationId,
+  removeInvestigation,
+  removePassage,
+  removePosition,
+  saveInvestigation,
+  setCandidateStatus,
+  startCandidate,
+  updateCandidate,
+  updatePassage,
+} from "@/lib/studio-project/operations";
+import { isHeld, latestInvestigation, type CandidateInvestigation, type EvidenceRole, type FigureSource, type KeptPassage, type LearnerInstrument } from "@/lib/studio-project/schema";
 import type { MissingFigure, SuppliedFigure } from "@/lib/studio-project/prefill";
 import { sectionLabel as labelForSection } from "@/lib/filings/sections";
 import { Field, Panel, StageHeading } from "./shared";
@@ -46,11 +67,38 @@ const RESEARCHED = industriesData.industries.map((entry) => ({
     typeof row.roic === "number" && typeof row.nopatMargin === "number" && typeof row.capitalTurnover === "number",
   ),
 }));
+/**
+ * The researched peer sets, found by the industry the learner picked.
+ *
+ * Two lists of different sizes meet here. Ninety-six industries have a
+ * published cost of capital, which is the figure the whole investigation turns
+ * on, and five of them have peer figures built from filings. Offering only the
+ * five meant a company in any other industry could not be read against its own
+ * cost of capital: the scarcer fact was gating the commoner one.
+ */
+const PEERS_BY_INDUSTRY = new Map(
+  RESEARCHED.flatMap((entry) => {
+    const name = industryForSic(entry.sic);
+    return name ? ([[name, entry]] as const) : [];
+  }),
+);
 
+/**
+ * Where someone starts before they have said what the business does: the whole
+ * market, rather than whichever industry sorts first. Financials are left out
+ * because their cost of capital is built on a different capital structure.
+ */
+const DEFAULT_INDUSTRY = "Total Market (without financials)";
 
-const SECTOR_BY_SIC: Record<string, RoicSector> = {
-  "3674": "general", "7372": "general", "5331": "general", "4011": "transport", "2834": "general",
-};
+/**
+ * The two a company the learner found can be. A bond issue or a fund is
+ * something Studio researches and carries, not something someone types seven
+ * figures into an annual report for.
+ */
+const ASSET_CLASSES = [
+  { value: "us-equity" as const, label: "A US-listed company" },
+  { value: "international-equity" as const, label: "Listed outside the US" },
+];
 
 const median = (values: number[]): number => {
   const sorted = [...values].sort((a, b) => a - b);
@@ -84,7 +132,11 @@ export default function InvestigateView() {
   const [company, setCompany] = useState("");
   /** A ticker from the address to look up as soon as it is in the company box. */
   const [autoFill, setAutoFill] = useState<string | null>(null);
-  const [sic, setSic] = useState(RESEARCHED[0].sic);
+  const [industry, setIndustry] = useState(DEFAULT_INDUSTRY);
+  const [assetClass, setAssetClass] = useState<LearnerInstrument["assetClass"]>("us-equity");
+  const [decisionNote, setDecisionNote] = useState<string | null>(null);
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
   const [openHint, setOpenHint] = useState<FigureKey | null>(null);
@@ -124,8 +176,8 @@ export default function InvestigateView() {
    * depends on `flush`, so its timer would be cleared and restarted each time,
    * which is the one way to make an autosave that never fires.
    */
-  const editRef = useRef({ company, sic, entries, riskFree, source });
-  editRef.current = { company, sic, entries, riskFree, source };
+  const editRef = useRef({ company, industry, entries, riskFree, source });
+  editRef.current = { company, industry, entries, riskFree, source };
   const sessionRef = useRef(project);
   sessionRef.current = project;
   /*
@@ -168,9 +220,9 @@ export default function InvestigateView() {
     idRef.current = saved.id;
     setInvestigationId(saved.id);
     setCompany(saved.company);
-    // An industry Studio no longer researches would leave the select showing
-    // one thing and reading against another, so it falls back rather than lies.
-    if (RESEARCHED.some((entry) => entry.sic === saved.sic)) setSic(saved.sic);
+    // A record saved before the industry could be chosen carries only a SIC,
+    // and reopens against the industry that SIC was read with.
+    setIndustry(investigationIndustry(saved) ?? DEFAULT_INDUSTRY);
     setEntries(saved.figures as Entries);
     setRiskFree(saved.riskFreePct === null ? "" : String(saved.riskFreePct));
     setSource(saved.source ?? null);
@@ -192,7 +244,11 @@ export default function InvestigateView() {
     const result = await session.update((current) =>
       saveInvestigation(current, {
         company: edit.company,
-        sic: edit.sic,
+        industry: edit.industry,
+        // Only where peers exist, because that is all a SIC is used for here.
+        // Storing one for an industry with no peer figures would imply a
+        // comparison that cannot be made.
+        sic: PEERS_BY_INDUSTRY.get(edit.industry)?.sic ?? "",
         figures: edit.entries as Record<string, number>,
         riskFreePct: rate !== null && Number.isFinite(rate) ? rate : null,
         source: edit.source,
@@ -209,7 +265,7 @@ export default function InvestigateView() {
     setDraft(true);
     const timer = setTimeout(() => void flush().finally(() => setDraft(false)), SAVE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [company, sic, entries, riskFree, source, flush, setDraft]);
+  }, [company, industry, entries, riskFree, source, flush, setDraft]);
 
   // Leaving for another section inside the typing pause would drop the last
   // edit. The workspace keeps the session open, so write it on the way out.
@@ -240,7 +296,9 @@ export default function InvestigateView() {
     idRef.current = target.id;
     setInvestigationId(target.id);
     setCompany(target.company);
-    if (RESEARCHED.some((entry) => entry.sic === target.sic)) setSic(target.sic);
+    setIndustry(investigationIndustry(target) ?? DEFAULT_INDUSTRY);
+    setRejecting(false);
+    setDecisionNote(null);
     setEntries(target.figures as Entries);
     setRiskFree(target.riskFreePct === null ? "" : String(target.riskFreePct));
     setSource(target.source ?? null);
@@ -350,9 +408,11 @@ export default function InvestigateView() {
     // EDGAR's name for the company, which is the one on the filing the figures
     // came from, so the two agree on screen.
     if (body.entityName) setCompany(body.entityName);
-    // Only where Studio has actually researched that industry. Where it has not,
-    // the select keeps what it had and the page says so rather than pretending.
-    if (body.sic && RESEARCHED.some((entry) => entry.sic === body.sic)) setSic(body.sic);
+    // Where the SEC's code is one of the industries Studio has peers for, it
+    // names the industry. Otherwise the select keeps what it had, and the page
+    // says so rather than pretending to know.
+    const named = body.sic ? industryForSic(body.sic) : null;
+    if (named) setIndustry(named);
     setCouldNotFill(body.missing ?? []);
     setLookup({ kind: "idle" });
   }, [company, entries, source]);
@@ -376,6 +436,9 @@ export default function InvestigateView() {
     setCouldNotFill([]);
     setLookup({ kind: "idle" });
     setOpenHint(null);
+    setRejecting(false);
+    setRejectReason("");
+    setDecisionNote(null);
     setSaveNote({ kind: "idle" });
   }, [flush]);
 
@@ -400,6 +463,71 @@ export default function InvestigateView() {
     if (next) await open(next.id);
     else await startNew();
   }, [open, startNew]);
+
+  /*
+   * Where the research becomes a decision.
+   *
+   * Studio would investigate any business and hold any of eight, and those were
+   * different sets, so reading a company's annual report ended on a screen the
+   * portfolio could not see. Holding it records the company as the learner's own
+   * instrument; deciding against it records a reason on a candidate, which
+   * exists whether or not anything holds it. They are the two honest ends of the
+   * same piece of work, not a success and a failure.
+   *
+   * Held is read from the portfolio, not from the instrument having been added
+   * once: a company taken out in Portfolio is not held, and can be added again.
+   */
+  const ownId = investigationId ? `own-${investigationId}` : null;
+  const heldNow = Boolean(ownId && project.project && isHeld(project.project, ownId));
+  const decided = ownId ? project.project?.candidates.find((candidate) => candidate.instrumentId === ownId) : undefined;
+  const against = decided?.status === "rejected" ? decided.rejectedBecause : null;
+  const canDecide = Boolean(investigationId) && company.trim() !== "" && project.status === "ready";
+
+  const hold = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    // Anything typed since the last save goes in first, so the holding is added
+    // against the figures on screen rather than the ones from a moment ago.
+    await flush();
+    setDecisionNote(null);
+    const result = await sessionRef.current.update((current) => {
+      const withInstrument = addInvestigatedCompany(current, id, assetClass);
+      return isHeld(withInstrument, `own-${id}`) ? withInstrument : addPosition(withInstrument, `own-${id}`);
+    });
+    if (!result.ok) setDecisionNote(`Not added: ${result.error}`);
+  }, [assetClass, flush]);
+
+  const decideAgainst = useCallback(async () => {
+    const id = idRef.current;
+    const reason = rejectReason.trim();
+    if (!id || !reason) return;
+    await flush();
+    setDecisionNote(null);
+    const instrumentId = `own-${id}`;
+    const result = await sessionRef.current.update((current) =>
+      setCandidateStatus(removePosition(startCandidate(current, instrumentId), instrumentId), instrumentId, "rejected", reason),
+    );
+    if (result.ok) {
+      setRejecting(false);
+      setRejectReason("");
+    } else {
+      setDecisionNote(`Not recorded: ${result.error}`);
+    }
+  }, [flush, rejectReason]);
+
+  const reconsider = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    const result = await sessionRef.current.update((current) => setCandidateStatus(current, `own-${id}`, "researching"));
+    if (!result.ok) setDecisionNote(`Not changed: ${result.error}`);
+  }, []);
+
+  /** Why this company is owned, on the candidate the portfolio already keeps for it. */
+  const note = (patch: Partial<Pick<CandidateInvestigation, "why" | "mainRisk" | "whatWouldChangeMyMind">>) => {
+    const id = idRef.current;
+    if (!id) return undefined;
+    return sessionRef.current.update((current) => updateCandidate(current, `own-${id}`, patch));
+  };
 
   /*
    * Passages kept from this company’s filings, read from the saved project
@@ -461,11 +589,17 @@ export default function InvestigateView() {
     router.push(`${reader}&section=${answer.sectionId}&at=${answer.start}&len=${answer.end - answer.start}${moved}#passage`);
   };
 
-  const researched = RESEARCHED.find((entry) => entry.sic === sic)!;
-  const sector = SECTOR_BY_SIC[sic] ?? "general";
+  /*
+   * Peers are a bonus, not a requirement. Five industries have them and
+   * ninety-six do not, so this is usually undefined, which the checks and the
+   * reading allow for: without it the learner loses the comparison with a
+   * median, not the answer.
+   */
+  const researched = PEERS_BY_INDUSTRY.get(industry);
+  const sector = sectorForIndustry(industry);
 
   const peerContext: PeerContext | undefined = useMemo(() => {
-    if (researched.peers.length < 5) return undefined;
+    if (!researched || researched.peers.length < 5) return undefined;
     return {
       industry: researched.label.toLowerCase(),
       medianMargin: median(researched.peers.map((p) => p.nopatMargin)),
@@ -474,7 +608,7 @@ export default function InvestigateView() {
     };
   }, [researched]);
 
-  const industryCost = forSic(sic) ?? forIndustry(industryNames()[0])!;
+  const industryCost = forIndustry(industry) ?? forIndustry(DEFAULT_INDUSTRY)!;
   const typedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
   const learnerRate = typedRate !== undefined && Number.isFinite(typedRate) ? typedRate : undefined;
   // With nothing typed, the rate is the Treasury's latest 10-year auction, dated and
@@ -633,18 +767,25 @@ export default function InvestigateView() {
             <label className="block">
               <span className="ops-caption text-[11px] text-slate-500">Industry</span>
               <select
-                value={sic}
-                onChange={(event) => setSic(event.target.value)}
+                value={industry}
+                onChange={(event) => setIndustry(event.target.value)}
                 className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white focus:border-accent-cyan/50 focus:outline-none"
               >
-                {RESEARCHED.map((entry) => (
-                  <option key={entry.sic} value={entry.sic} className="bg-slate-900">
-                    {entry.label}
+                {industryNames().map((name) => (
+                  <option key={name} value={name} className="bg-slate-900">
+                    {name}
                   </option>
                 ))}
               </select>
             </label>
           </div>
+          {/* Said rather than left to be noticed: an absent comparison would
+              otherwise read as the learner's figures being wrong. */}
+          <p className="mt-2 text-[12px] leading-5 text-slate-500">
+            {researched
+              ? `Studio has figures for ${researched.peers.length} companies in this industry, so your result is placed against them below.`
+              : "Studio has not built peer figures for this industry, so there is no median to compare against. The return on capital and what the money costs are still worked out in full."}
+          </p>
 
           {/*
             * The lookup replaces the paragraph that used to sit here, rather
@@ -708,12 +849,13 @@ export default function InvestigateView() {
                 * (2026-09-10). It shares this block rather than taking one of
                 * its own, which on a phone is 50px of border and padding.
                 */}
-              {source.sic && !RESEARCHED.some((entry) => entry.sic === source.sic) ? (
+              {source.sic && !industryForSic(source.sic) ? (
                 <p className="mt-2 border-t border-accent-cyan/20 pt-2 text-[12px] leading-5 text-accent-amber">
                   The SEC files it under {source.sic}
-                  {source.sicDescription ? `, ${source.sicDescription.toLowerCase()}` : null} — not one of
-                  the five industries Studio has researched. The peers and the cost of capital below are{" "}
-                  {researched.label.toLowerCase()}, so read the comparison with that in mind.
+                  {source.sicDescription ? `, ${source.sicDescription.toLowerCase()}` : null}, which Studio
+                  cannot match to an industry by itself. The cost of capital below is{" "}
+                  {industry === DEFAULT_INDUSTRY ? "the whole market's" : `${industry}'s`}: choose the industry
+                  that fits the business best.
                   {/* Any company's annual report has a Competitors tab reading who it names. */}
                   {source.ticker ? (
                     <>
@@ -944,6 +1086,166 @@ export default function InvestigateView() {
           )}
         </div>
       </div>
+
+      {canDecide ? (
+        <Panel>
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div>
+              <h3 className="text-[15px] font-semibold text-white">Put it in your portfolio</h3>
+              {heldNow ? (
+                <>
+                  <p className="mt-2 text-[13px] leading-6 text-slate-400">
+                    {company.trim()} is in your portfolio. Choose how much to hold in{" "}
+                    <Link href="/studio/portfolio" className="text-accent-cyan hover:underline">
+                      Portfolio
+                    </Link>
+                    .
+                  </p>
+                  {/*
+                    * Asked in the same words as any other holding, and kept on the
+                    * company's own page rather than in the library of eight, which
+                    * is where its figures and its filings already are.
+                    */}
+                  <div className="mt-3 space-y-3">
+                    <Field
+                      label="Why it belongs"
+                      value={decided?.why ?? ""}
+                      onChange={(value) => note({ why: value })}
+                      multiline
+                    />
+                    <Field
+                      label="The main risk I accept"
+                      value={decided?.mainRisk ?? ""}
+                      onChange={(value) => note({ mainRisk: value })}
+                      multiline
+                    />
+                    <Field
+                      label="What would change my mind"
+                      value={decided?.whatWouldChangeMyMind ?? ""}
+                      onChange={(value) => note({ whatWouldChangeMyMind: value })}
+                      multiline
+                    />
+                  </div>
+                </>
+              ) : against !== null ? (
+                <p className="mt-2 text-[13px] leading-6 text-slate-400">
+                  You decided against it. Put it back on the table to hold it after all.
+                </p>
+              ) : (
+                <>
+                  <p className="mt-2 text-[13px] leading-6 text-slate-400">
+                    It joins at 0%, so nothing moves until you choose how much to hold in Portfolio.
+                    These figures stay here.
+                  </p>
+                  {/* Asked, not guessed: an investment of unknown kind is dealt no fall in the
+                      scenario test, which quietly understates the loss rather than showing an error. */}
+                  <fieldset className="mt-3">
+                    <legend className="text-[12px] text-slate-500">Where it trades (sets which fall the scenario test applies)</legend>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {ASSET_CLASSES.map((option) => (
+                        <label
+                          key={option.value}
+                          className={cn(
+                            "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3.5 text-[13px] focus-within:ring-2 focus-within:ring-accent-cyan/40",
+                            assetClass === option.value
+                              ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
+                              : "border-white/12 bg-white/[0.03] text-slate-300",
+                          )}
+                        >
+                          <input
+                            type="radio"
+                            name="asset-class"
+                            className="sr-only"
+                            checked={assetClass === option.value}
+                            onChange={() => setAssetClass(option.value)}
+                          />
+                          {option.label}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <button
+                    type="button"
+                    onClick={() => void hold()}
+                    className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white hover:border-accent-cyan/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                  >
+                    Add {company.trim()} to your portfolio
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Deciding against it is a result, not the absence of one: the conclusion a
+                learner can check later against what actually happened. */}
+            <div>
+              <h3 className="text-[15px] font-semibold text-white">Or decide against it</h3>
+              {against !== null ? (
+                <>
+                  <p className="mt-2 text-[13px] leading-6 text-slate-300">{against}</p>
+                  <button
+                    type="button"
+                    onClick={() => void reconsider()}
+                    className="mt-1 inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline"
+                  >
+                    Put it back on the table
+                  </button>
+                </>
+              ) : rejecting ? (
+                <>
+                  <div className="mt-2">
+                    <Field
+                      label="Why it is not for you"
+                      hint="Kept with these figures, so you can check later whether it still holds."
+                      value={rejectReason}
+                      onChange={setRejectReason}
+                      placeholder="It earns less than its capital costs and I could not see that changing"
+                      multiline
+                    />
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={!rejectReason.trim()}
+                      onClick={() => void decideAgainst()}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-3.5 text-[13px] font-semibold text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Record this decision
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRejecting(false);
+                        setRejectReason("");
+                      }}
+                      className="inline-flex min-h-11 items-center px-2 text-[13px] text-slate-400"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="mt-2 text-[13px] leading-6 text-slate-400">
+                    A business can be worth reading and still not worth owning. Say why, and it is kept.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setRejecting(true)}
+                    className="mt-1 inline-flex min-h-11 items-center text-[13px] text-slate-300 underline underline-offset-2 hover:text-white"
+                  >
+                    Decide against {company.trim()}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          {decisionNote ? (
+            <p role="alert" className="mt-3 text-[13px] leading-6 text-accent-amber">
+              {decisionNote}
+            </p>
+          ) : null}
+        </Panel>
+      ) : null}
 
       {/*
         * Passages kept while reading this company’s reports, beside the reading

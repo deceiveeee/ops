@@ -150,6 +150,40 @@ html {
         max-width: 1100px;
         text-wrap: balance;
     }
+    /*
+     * Short screens get a smaller headline.
+     *
+     * The homepage chapters are pinned to exactly one screen, so the headline
+     * competes for height with the visual it introduces. At the 38px floor it
+     * took three lines and 114px out of a 640px phone, which is what pushed
+     * these chapters past the screen they are pinned to. Keyed on height
+     * rather than width because that is the dimension that runs out: an
+     * iPhone SE and an iPhone 14 are nearly the same width.
+     */
+    @media (max-height: 900px) {
+        .hp-section {
+            font-size: clamp(30px, 5vw, 80px);
+        }
+    }
+    /*
+     * A second step for the smallest phones still in use — an iPhone SE is
+     * 667px tall and older Androids 640px. Once the header has taken 68px of
+     * that, a chapter has about 570px for a headline, a sentence, a progress
+     * row, a figure and a chart. The supporting copy comes down with the
+     * headline so the proportions hold rather than the words simply crowding.
+     */
+    @media (max-height: 700px) {
+        .hp-section {
+            font-size: clamp(26px, 5vw, 80px);
+        }
+        .hp-lead {
+            font-size: 15px;
+        }
+        .hp-body {
+            font-size: 15px;
+            line-height: 1.4;
+        }
+    }
     /* Supporting sentence — readable editorial, NOT whisper gray. */
     .hp-lead {
         font-family: var(--font-sans), Arial, "Helvetica Neue", Helvetica, system-ui, sans-serif;
@@ -493,6 +527,67 @@ html {
 .site-main {
   flex: 1;
   min-width: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   STUDIO SEMANTIC TOKENS
+
+   Components say what a colour means — text-st-muted, border-st-hair — and
+   never which colour it is. Every route shares the one light system, so the
+   tokens hold its light values wherever they are read.
+
+   hair and bound are two tokens on purpose. A hairline groups and carries no
+   contrast duty. A boundary is what tells someone an input is an input, and
+   has to clear 3:1 — #85858c at 3.66:1, where the hairline sits at 1.34:1 and
+   would fail if it ever did that job.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root, .ops-theme-light {
+    --st-canvas: #f5f5f7;
+    --st-paper: #ffffff;
+    --st-side: #f0f1f3;
+    --st-select: #e8f1fc;
+
+    --st-ink: #1d1d1f;
+    --st-body: #2c2d33;
+    --st-sub: #3f4046;
+    --st-muted: #62646c;
+    --st-faint: #68686d;
+
+    --st-blue: #0066cc;
+    --st-hair: #dedee3;
+    --st-bound: #85858c;
+
+    --st-good: #236847;
+    --st-warn: #865500;
+    --st-bad: #b42318;
+
+    /* Edges are the full state colour, not a wash of it: an edge is what
+       identifies a control, so it has to clear 3:1 rather than tint. */
+    --st-blue-soft: #e8f1fc;
+    --st-blue-edge: #0066cc;
+    --st-good-soft: #e6f2ec;
+    --st-good-edge: #236847;
+    --st-warn-soft: #f8f0e2;
+    --st-warn-edge: #865500;
+    --st-bad-soft: #fbebe9;
+    --st-bad-edge: #b42318;
+}
+
+/* Apple asks for an increased-contrast option for every custom colour, and
+   the two thinnest pairs — action blue on the sidebar at 4.93:1 and on a
+   selected row at 4.88:1 — are exactly what it is for. Grounds are left alone
+   so nothing reflows. */
+@media (prefers-contrast: more) {
+    :root, .ops-theme-light {
+        --st-body: #2c2d33;
+        --st-sub: #34353b;
+        --st-muted: #4a4c54;
+        --st-faint: #55565d;
+        --st-blue: #00458f;
+        --st-hair: #b9b9c0;
+        --st-bound: #5c5d65;
+    }
 }
 
 /* ═══════════════════════════════════════════════════════════════════

@@ -56,7 +56,14 @@ the reader opens it, marked, with a note that it moved.
 
 A minimal filing index rather than the real one, which runs to megabytes and lists years of forms
 the reader never opens. Its values were read from the live index on 11 September 2026: the name
-"Atkore Inc.", SIC 3690 with its description, and this one 10-K with its filing and report dates.
+"Atkore Inc." and SIC 3690 with its description.
+
+Its filing list was read again from the live index on 19 September 2026 and now holds Atkore's eight
+most recent annual and quarterly reports, each with the accession, document, filing date and report
+date EDGAR gives. Real entries rather than invented ones, because what they are for is the shape of
+a company's filing history: the list page leads on the annual report and folds the rest away, which
+one filing cannot show. Only the FY2025 10-K's own document is stored here, so a test may point at
+another report's address but must not open it.
 
 ## Regenerating
 

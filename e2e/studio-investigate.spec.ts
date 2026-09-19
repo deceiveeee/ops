@@ -40,6 +40,16 @@ async function stored(page: Page): Promise<StoredRow[]> {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
+    /*
+     * Opening a database that does not exist creates an empty one, so between
+     * clearing storage and the app's first save there is a moment where the
+     * store genuinely is not there. That is zero investigations, not a fault —
+     * reading it as one made this throw instead of answering.
+     */
+    if (!db.objectStoreNames.contains("projects")) {
+      db.close();
+      return [];
+    }
     const rows = await new Promise<Record<string, string>[]>((resolve) => {
       const request = db.transaction("projects").objectStore("projects").getAll();
       request.onsuccess = () => resolve(request.result);
@@ -248,4 +258,153 @@ test("deleting asks first, and keeps the work when refused", async ({ page }) =>
   await expect(page.getByRole("button", { name: /^Ampere Instruments/ })).toHaveCount(0);
   await expect(companyBox(page)).toHaveValue("");
   await expect.poll(async () => (await stored(page)).length, { timeout: 10_000 }).toBe(0);
+});
+
+const industryPicker = (page: Page) => page.getByLabel("Industry");
+
+/**
+ * Any company, not five industries' worth.
+ *
+ * The picker used to offer only the industries Studio had built peer figures
+ * for, so a company in any other one could not be investigated at all — the
+ * scarcer fact was gating the commoner one. Cost of capital is published for
+ * every industry here, and it is the figure the whole investigation turns on.
+ */
+test("a company in any industry can be investigated", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openEmpty(page);
+
+  await expect(industryPicker(page).locator("option")).toHaveCount(96);
+  // One with peer figures and one without, to show the list is not the old five.
+  await expect(industryPicker(page).locator("option", { hasText: "Semiconductor" }).first()).toBeAttached();
+  await expect(industryPicker(page).locator("option", { hasText: "Air Transport" }).first()).toBeAttached();
+
+  await industryPicker(page).selectOption("Air Transport");
+  await expect(page.getByText(/Studio has not built peer figures for this industry/)).toBeVisible();
+
+  // The answer still arrives in full: a cost of capital to judge a return by.
+  await expect(page.getByRole("heading", { name: "What the money costs" })).toBeVisible();
+  await expect(page.getByText(/%/).first()).toBeVisible();
+
+  // And an industry that does have peers says so rather than staying silent.
+  await industryPicker(page).selectOption("Semiconductor");
+  await expect(page.getByText(/Studio has figures for \d+ companies in this industry/)).toBeVisible();
+});
+
+/**
+ * Opening the picker means a learner can now choose a bank, and return on
+ * capital is not a meaningful measure for one. The failure this guards against
+ * is not a missing answer, it is a confident wrong one.
+ */
+test("a bank is refused rather than mismeasured", async ({ page }) => {
+  test.setTimeout(90_000);
+  await openEmpty(page);
+
+  await companyBox(page).fill("Northgate Savings");
+  await industryPicker(page).selectOption("Banks (Regional)");
+  const values = ["5200", "780", "690", "165", "900", "2600", "180"];
+  for (let index = 0; index < values.length; index += 1) {
+    await figureBoxes(page).nth(index).fill(values[index]);
+  }
+  await figureBoxes(page).nth(values.length - 1).blur();
+
+  /*
+   * Said twice, on purpose: once as a stop above the figures, and once where
+   * the return itself would have appeared. Someone who scrolled straight to the
+   * answer needs it as much as someone reading from the top.
+   */
+  const refusal = page.getByText(/Return on capital is not a meaningful measure for a bank/);
+  await expect(refusal.first()).toBeVisible();
+  await expect(refusal).toHaveCount(2);
+  // Its own explanation, not a generic refusal.
+  await expect(page.getByText(/Borrowing is its raw material rather than its funding/).first()).toBeVisible();
+
+  // The same figures in an ordinary industry are measured, so the refusal is
+  // about the industry rather than about the numbers being unusable.
+  await industryPicker(page).selectOption("Air Transport");
+  await expect(refusal).toHaveCount(0);
+});
+
+/**
+ * The bridge between researching a company and owning one.
+ *
+ * These were separate activities that could not reach each other: Studio would
+ * investigate any business and would hold any of eight, so the work of reading
+ * an annual report ended on a screen the portfolio could not see. This walks
+ * the whole way across, because every step of it is new and the last one — the
+ * portfolio actually computing with a company Studio does not carry — is the
+ * one that used to be impossible.
+ */
+test("a company you investigated can be held in the portfolio", async ({ page }) => {
+  test.setTimeout(120_000);
+  // Wide enough for the summary panel, which is where the portfolio's own
+  // figures are and so where a holding that failed to resolve would show.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openEmpty(page);
+  await enter(page, "Nordic Pulp", "4200");
+
+  await page.getByRole("radio", { name: "A US-listed company" }).check();
+  await page.getByRole("button", { name: /Add Nordic Pulp to your portfolio/ }).click();
+  await expect(page.getByText(/Nordic Pulp is in your portfolio/)).toBeVisible();
+
+  // The reason it is owned is asked for in the same words as any other holding,
+  // on the company's own page, where its figures and its filings already are.
+  await page.getByLabel("Why it belongs").fill("It earns more than its capital costs.");
+  await page.reload();
+  await expect(page.getByLabel("Why it belongs")).toHaveValue("It earns more than its capital costs.", { timeout: 15_000 });
+
+  // It arrives owning nothing: how much to hold is a decision of its own.
+  await page.goto("/studio/portfolio");
+  const weight = page.getByLabel("Nordic Pulp target percentage");
+  await expect(weight).toBeVisible({ timeout: 15_000 });
+  await expect(weight).toHaveValue("0");
+
+  await weight.fill("100");
+  // The figures that prove the calculation resolved it. An unresolved holding
+  // does not error, it silently zeroes every target in the portfolio.
+  const summary = page.getByRole("complementary", { name: "About this page" });
+  await expect(summary.getByText("Assigned", { exact: true }).locator("xpath=following-sibling::div[1]")).toHaveText(
+    "100.0%",
+  );
+  await expect(page.getByRole("main")).toContainText("Nordic Pulp");
+});
+
+
+
+/**
+ * A company read and turned down, which never reaches the portfolio at all.
+ *
+ * This is the case the whole record was built for and the one nothing could
+ * reach: a business worth the afternoon it took to read and not worth owning.
+ * The figures stay under the investigation and the judgement becomes a
+ * candidate, which is what that record is for — `FigureInvestigation` says in
+ * its own comment that it is quantitative and that conclusions belong on a
+ * candidate, so nothing new had to be stored to hold this.
+ */
+test("a company you read and turned down is kept, with the reason", async ({ page }) => {
+  test.setTimeout(120_000);
+  await openEmpty(page);
+  await enter(page, "Meridian Freight", "3100");
+
+  await page.getByRole("button", { name: /Decide against Meridian Freight/ }).click();
+  await page.getByLabel("Why it is not for you").fill("It earns less than its capital costs.");
+  await page.getByRole("button", { name: "Record this decision" }).click();
+
+  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
+
+  // The figures are still the learner's, filed under the same investigation.
+  expect(await stored(page)).toHaveLength(1);
+  await page.reload();
+  await expect(figureBoxes(page).first()).toHaveValue("3100", { timeout: 15_000 });
+  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
+
+  // And it is findable from the overview, by name rather than by a stored id.
+  await page.goto("/studio");
+  await expect(page.getByRole("link", { name: /Meridian Freight/ }).first()).toBeVisible({ timeout: 15_000 });
+
+  // Reversible: the reason survives being reconsidered.
+  await page.goto(INVESTIGATE);
+  await expect(page.getByRole("button", { name: "Put it back on the table" })).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Put it back on the table" }).click();
+  await expect(page.getByRole("button", { name: /Decide against Meridian Freight/ })).toBeVisible();
 });

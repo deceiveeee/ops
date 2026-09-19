@@ -2634,3 +2634,66 @@ sections. Each was looked at in its own text before any change. Three different 
 
 - GE prints "*Non-GAAP Financial Measure" at the foot of each page, and it shows under its buyback
   table. It explains the asterisks in GE's discussion, so it is not hidden.
+
+## 2026-09-19: merging main, which had rebuilt the same Studio separately
+
+`main` gained fifteen commits on 7-9 September, the days this branch started: its own workspace, its
+own filing reader, research for any company, one portfolio at a time, an optional account, and fixes
+for a migration that threw its own result away and a weight box that lost a digit to its own save.
+This branch rebuilt the same surfaces its own way and went further. Merging them was a product
+decision, taken by the user: this branch's Studio and reader are the base, and everything `main` has
+that it lacks is carried into them. Nineteen files conflicted.
+
+### Kept from this branch
+
+- The workspace as pages (`/studio/goals`, `/research`, `/portfolio`, `/review`, `/investigate`,
+  `/studio/filings`) rather than one screen with a `?view=` destination, and the report reader inside
+  it. `main`'s `StudioWorkspace`, its `/filings` pages and its Studio entry page are gone with it.
+- One light system on every route, so navigation never changes the theme (`main` kept a dark homepage
+  and lit only Studio and the reader; its `--st-*` tokens are kept and now hold their light values
+  everywhere, because code carried over uses them).
+- Its own versions of what `main` fixed where it already had one: the portfolio switch that refuses
+  to change while a save is in flight, Investigate sharing the workspace's session (so a company is
+  filed against the portfolio on screen), backups taken from the stored record, and a number box that
+  keeps typing while a write is open -- now through `main`'s `useBufferedInput`, so there is one
+  implementation rather than two.
+
+### Carried over from main
+
+- Accounts are offered again, never required: the header gains Sign in, an account menu and the sync
+  chip, governed by the same `GUEST_ONLY_BETA` flag as the middleware, and the privacy policy is
+  `main`'s rewritten one under this branch's product name.
+- What a migration did to an older record is now said once, by the screen that did it
+  (`session.migrationNotes`, shown in the workspace frame's notices and dismissible).
+- A company the learner investigated can be held: `projectCatalog` adds it to the eight so the
+  portfolio resolves it (an unresolved holding silently zeroes every target), the workspace and its
+  downloads compute against that list, and a held company is named rather than shown as `own-inv-…`.
+  This is data compatibility as much as a feature: `main` is live, so learners' saved projects can
+  already hold one.
+- A company can be turned down with a reason, and reconsidered, from its own page.
+- Any of the 96 industries with a published cost of capital can be chosen, instead of the five with
+  peer figures; the page says when an industry has no peers, and the SEC's own code names the industry
+  where it maps to one.
+- The company-reports list opens on the annual report, named, with everything else one disclosure away.
+- `main`'s fix that a weight box must not lose a digit, as tests over this branch's number box.
+
+### Changed while merging
+
+- `InvestigationEdit.industry` is optional and a stored one is kept, so a screen that does not choose
+  an industry (the reader starting an investigation from a filing) cannot erase it.
+- Holding a company reads "held" from the portfolio's positions rather than from the instrument having
+  been added once, so a company removed in Portfolio can be added again -- `main`'s version was
+  idempotent and would have done nothing.
+- Where the reason a company is owned is asked: `main` asked on its Research step, which in this branch
+  is the library of eight, so it is asked on the company's own page instead, where its figures are.
+
+### Tests
+
+- `main`'s specs for screens this branch replaced were rewritten against its pages rather than dropped:
+  the migration spec (the record brought forward, the original left byte for byte, the notice said
+  once), the portfolio-switch spec, the workspace baseline (work across the sections surviving a
+  reload, the overview's next step, a weight's consequence), the filing list, and the Investigate
+  additions.
+- Dropped as already covered here: `main`'s "research leads with any company" and "a company named in
+  the address" (this branch's `studio-company-search.spec.ts`), and its homepage small-screen spec,
+  whose sticky chapters this branch's homepage does not have (`visual-refresh.spec.ts` covers phones).
