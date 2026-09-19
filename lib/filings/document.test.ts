@@ -107,6 +107,19 @@ describe("a filing, read as the blocks its company made", () => {
     }
   });
 
+  it("draws part of a paragraph, its emphasis opened again across the cut, and marks within it", () => {
+    const [block] = blocksOf("<p>Revenue grew <b>in every region, led by the Americas</b>, where <i>streaming</i> rose.</p>") as TextBlock[];
+    const from = block.text.indexOf("every");
+    const to = block.text.indexOf(" rose");
+    const html = renderText(block, null, "", { from, to });
+    expect(shown(html)).toBe(block.text.slice(from, to));
+    // The bold that began before the cut is opened again; the italic inside it closes as written.
+    expect(html.startsWith("<strong>every region")).toBe(true);
+    expect(drawn(html).querySelector("em")?.textContent).toBe("streaming");
+    const at = block.text.indexOf("Americas");
+    expect(marked(renderText(block, { from: at, to: at + "Americas".length }, "", { from, to }))).toBe("Americas");
+  });
+
   it("puts the Keep button on the paragraph's last word, and nothing more", () => {
     const paragraph = atkore.blocks.find((block): block is TextBlock => block.kind === "text" && block.text.length > 200)!;
     const html = renderText(paragraph, null, KEEP_SLOT);

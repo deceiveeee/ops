@@ -54,6 +54,8 @@ export type TextBlock = {
    * is what tells the entry from a heading, and is never drawn.
    */
   furniture: boolean;
+  /** The page number this block prints, when it is a page's footer. */
+  page: number | null;
   start: number;
   end: number;
 };
@@ -81,6 +83,8 @@ export type FilingDocument = {
   blocks: DocumentBlock[];
   /** The blocks' texts, one to a line. */
   text: string;
+  /** The printed page numbers found, in order, each with the block that ends its page. */
+  pages: { number: number; block: number }[];
 };
 
 /** Elements that start a new block. Anything else is inline and is unwrapped to its content. */
@@ -101,9 +105,19 @@ const attr = (node: Element, name: string) => node.attrs.find((item) => item.nam
  * filing has millions of elements, and held in WeakMaps instead these made
  * garbage collection a sixth of the time taken to read one.
  */
-type Noted = Element & { opsStyle?: Readonly<Record<string, string>>; opsHasBlock?: boolean; opsText?: string };
+type Noted = Element & { opsHasBlock?: boolean; opsCell?: Written };
+
+/** What writing an element produced, kept so a table cell is written once however often it is read. */
+type Written = { text: string; html: string; bold: number };
 
 const NO_STYLE: Readonly<Record<string, string>> = Object.freeze({});
+
+/**
+ * Styles read so far, by the attribute's text. A filing repeats a few hundred
+ * style strings across a million elements, so each is read once; kept on the
+ * elements instead, the cache made the engine slow to reach every node.
+ */
+const stylesSeen = new Map<string, Readonly<Record<string, string>>>();
 
 /**
  * The only properties the reader looks at. Filers' style attributes make up
@@ -112,16 +126,16 @@ const NO_STYLE: Readonly<Record<string, string>> = Object.freeze({});
 const WANTED_STYLE =
   /(?:^|;)\s*(display|font-weight|font-style|vertical-align|padding-left|padding-right|margin-left|margin-right|text-align|text-indent|top|border-bottom|border-top)\s*:\s*([^;]*)/gi;
 
-function styleOf(node: Noted): Readonly<Record<string, string>> {
-  if (node.opsStyle) return node.opsStyle;
+function styleOf(node: Element): Readonly<Record<string, string>> {
   const raw = attr(node, "style");
-  let style = NO_STYLE;
-  if (raw) {
+  if (!raw) return NO_STYLE;
+  let style = stylesSeen.get(raw);
+  if (!style) {
     const own: Record<string, string> = {};
     for (const [, name, value] of raw.matchAll(WANTED_STYLE)) own[name.toLowerCase()] = value.trim().toLowerCase();
     style = own;
+    stylesSeen.set(raw, style);
   }
-  node.opsStyle = style;
   return style;
 }
 
@@ -182,6 +196,16 @@ class Writer {
     this.last = text[text.length - 1];
     this.glued = false;
     if (bold) this.boldChars += text.length;
+  }
+
+  /** A table cell already written on its own, which starts clean as a cell does here. */
+  append(cell: Written) {
+    if (!cell.text) return;
+    this.text += cell.text;
+    this.html += cell.html;
+    this.last = cell.text[cell.text.length - 1];
+    this.glued = false;
+    this.boldChars += cell.bold;
   }
 
   /** One space, however many the source had, and none at the start of a line. */
@@ -430,16 +454,18 @@ const AMOUNT = /\d{1,3}(,\d{3})+|\d\.\d/;
 const HEADINGS_MAX = 400;
 
 /** A cell's text, written once and remembered, since a table is read more than once. */
-function cellText(cell: Noted): string {
-  let text = cell.opsText;
-  if (text === undefined) {
+function written(cell: Noted): Written {
+  if (!cell.opsCell) {
     const probe = new Writer();
     writeInline(cell, probe, { bold: false });
     probe.finish();
-    text = probe.text;
-    cell.opsText = text;
+    cell.opsCell = { text: probe.text, html: probe.html, bold: probe.boldChars };
   }
-  return text;
+  return cell.opsCell;
+}
+
+function cellText(cell: Noted): string {
+  return written(cell).text;
 }
 
 /** A figure: an amount, a percentage, a bracketed negative, or a dash standing for nil. */
@@ -522,7 +548,7 @@ const CLOSES_FIGURE = /^(\)|%|\)%|%\))$/;
 /** One row of a table, its cells a space apart in the text. */
 function writeRow(cells: Element[], target: Writer) {
   target.tag("<tr>");
-  let written = false;
+  let wrote = false;
   let previous = "";
   for (const cell of cells) {
     const style = styleOf(cell);
@@ -541,14 +567,14 @@ function writeRow(cells: Element[], target: Writer) {
     target.tag(`<td${span > 1 ? ` colspan="${span}"` : ""}${down > 1 ? ` rowspan="${down}"` : ""}${classes.length ? ` class="${classes.join(" ")}"` : ""}${css.length ? ` style="${css.join(";")}"` : ""}>`);
     const text = cellText(cell);
     if (text) {
-      if (written) {
+      if (wrote) {
         if (OPENS_FIGURE.test(previous) || CLOSES_FIGURE.test(text)) target.glue();
         else target.virtual(" ");
       }
       const before = target.length;
-      writeInline(cell, target, { bold: false });
+      target.append(written(cell));
       target.trimEnd();
-      written = target.length > before || written;
+      wrote = target.length > before || wrote;
       previous = text;
     }
     target.tag("</td>");
@@ -612,7 +638,9 @@ function writeText(block: Pick<RawText, "runs" | "bullet">, writer: Writer) {
       if (before && here && (OPENS_FIGURE.test(cellText(before)) || CLOSES_FIGURE.test(cellText(here)))) writer.glue();
       else writer.space();
     }
-    for (const node of run) writeInline(node, writer, { bold: false });
+    const cell = cellOf(run);
+    if (cell) writer.append(written(cell));
+    else for (const node of run) writeInline(node, writer, { bold: false });
   });
 }
 
@@ -628,18 +656,125 @@ function measureText(raw: RawText): ReadBlock | null {
     text,
     bold: writer.boldChars / Math.max(1, text.replace(/\s/g, "").length),
     furniture: isPageFurniture(text),
+    page: null,
     start: 0,
     end: 0,
   };
 }
 
 /**
+ * A short line with a page number at one end, the way a page's footer prints
+ * it: "23", "4.", "2025 FORM 10-K 23", "24 2025 FORM 10-K", "Risk Factors 47",
+ * "McDonald's Corporation 2025 Annual Report 26".
+ */
+const PAGE_MARK = /^(?:.{0,70}?\s)?(\d{1,3})\.?$|^(\d{1,3})\s.{0,70}$/;
+/** Fewer footers than this in sequence and the numbers are not a document's pages. */
+const PAGE_RUN_MIN = 5;
+/** Printed pages are longer than this, in characters, taken at the median. */
+const PAGE_CHARS_MIN = 800;
+/** No page, however empty, is shorter than this. */
+const PAGE_STEP_CHARS = 150;
+/** Nor shorter than this share of the document's typical page. */
+const PAGE_STEP_SHARE = 1 / 12;
+/** Longest words a footer printing once carries beside its number. */
+const FOOTER_LABEL_MAX = 50;
+
+/**
+ * The document's printed page numbers, found as the longest run of footers
+ * whose numbers rise one to three at a time. They are page furniture, so they
+ * are never drawn, and they are how a report laid out by a cross-reference index
+ * ("Item 1A. Risk Factors 24-31") is read: GE, Intel and McDonald's head their
+ * sections in their own words and give the Items only in that index.
+ *
+ * A list of short numbered lines ("Note 1", "Note 2") also rises one at a time,
+ * so the run must also be spread like pages, most footers a page's length apart.
+ */
+function withPageNumbers(blocks: ReadBlock[]): ReadBlock[] {
+  const candidates: { index: number; number: number; at: number }[] = [];
+  let at = 0;
+  blocks.forEach((block, index) => {
+    if (block.kind === "text" && block.text.length <= 80) {
+      const match = block.text.match(PAGE_MARK);
+      if (match) candidates.push({ index, number: Number(match[1] ?? match[2]), at });
+    }
+    at += block.text.length + 1;
+  });
+  /** The longest run, each footer one to three pages after the one before it and at least `apart` characters on. */
+  const longestRun = (apart: number) => {
+    const length = candidates.map(() => 1);
+    const previous = candidates.map(() => -1);
+    candidates.forEach((candidate, i) => {
+      for (let j = Math.max(0, i - 60); j < i; j += 1) {
+        const step = candidate.number - candidates[j].number;
+        // On a tie the nearer footer wins: it is the page just before.
+        if (step >= 1 && step <= 3 && candidate.at - candidates[j].at >= apart && length[j] + 1 >= length[i]) {
+          length[i] = length[j] + 1;
+          previous[i] = j;
+        }
+      }
+    });
+    const found: typeof candidates = [];
+    for (let last = length.indexOf(Math.max(0, ...length)); last !== -1; last = previous[last]) found.unshift(candidates[last]);
+    return found;
+  };
+  // Bank of America's cover lists "Preferred Stock, Series 1", "Series 2" a few
+  // lines apart, and they made its first two pages, pushing out the real page
+  // 1. No two footers are that close for a document's typical page, so the run
+  // is taken again with each footer at least a fraction of a page after the last.
+  const first = longestRun(PAGE_STEP_CHARS);
+  const firstGaps = first.slice(1).map((footer, i) => footer.at - first[i].at).sort((a, b) => a - b);
+  const typical = firstGaps[Math.floor(firstGaps.length / 2)] ?? 0;
+  const chain = longestRun(Math.max(PAGE_STEP_CHARS, typical * PAGE_STEP_SHARE));
+  // A footnote that begins with its number can fall into the run, or a cover's
+  // address ("1 Meta Way, Menlo Park, California"). Footers repeat their words
+  // from page to page ("2025 FORM 10-K"), or name a short section once in plain
+  // words ("Overview and Our Strategy 3" at Intel), without figures or commas.
+  const label = (index: number) => blocks[index].text.replace(/^\d{1,3}\s|\s\d{1,3}\.?$|^\d{1,3}\.?$/g, "").trim().toLowerCase();
+  const labels = new Map<string, number>();
+  for (const footer of chain) labels.set(label(footer.index), (labels.get(label(footer.index)) ?? 0) + 1);
+  const run = chain.filter((footer) => {
+    const words = label(footer.index);
+    return words === "" || (labels.get(words) ?? 0) > 1 || (words.length <= FOOTER_LABEL_MAX && !/[\d.;:,]/.test(words));
+  });
+  if (run.length < PAGE_RUN_MIN) return blocks;
+  const gaps = run.slice(1).map((footer, i) => footer.at - run[i].at).sort((a, b) => a - b);
+  if (gaps[Math.floor(gaps.length / 2)] < PAGE_CHARS_MIN) return blocks;
+  for (const footer of run) {
+    const block = blocks[footer.index] as TextBlock;
+    block.furniture = true;
+    block.page = footer.number;
+  }
+  return blocks;
+}
+
+/**
  * What a printed page puts at its foot rather than in its text: a bare page
  * number, as "23", "4." (Alphabet), "F-12" or "F- 1" (Crocs), "Page 7" or
  * "- 7 -"; the "Table of Contents" link back, a rule of dashes, a bare "Item 7"
- * at a page top, and footers such as Apple's "Apple Inc. | Q3 2026 Form 10-Q | 23".
+ * at a page top, footers such as Apple's "Apple Inc. | Q3 2026 Form 10-Q | 23"
+ * or Canadian Natural's "…Limited 2025 40-F 7", and the lines EDGAR puts at the
+ * top of an exhibit to name it: "EX-99.1", "EX-1 ANNUAL INFORMATION FORM",
+ * "Exhibit 1.3", its file's name.
  */
-const PAGE_FURNITURE = /^(\d{1,3}\.?|[a-z]-\s?\d{1,3}|page\s+\d{1,3}(\s+of\s+\d{1,3})?|-\s*\d{1,3}\s*-|(\d{1,3}\s+)?table of contents(\s+\d{1,3})?|[-_=*.\s]{3,}|item\s*\d{1,2}[a-c]?(\s*,\s*\d{1,2}[a-c]?)*|.{0,60}\|\s*(q[1-4]\s+)?\d{4}\s+form\s+(10-k|10-q)\s*\|\s*\d{1,3}|\d{1,3}\s*\|?\s*.{0,40}\b(20\d\d\s+)?form\s+10-[kq]|.{0,40}\b20\d\d\s+form\s+10-[kq]\s*\|?\s*\d{1,3})$/i;
+const FORMS = String.raw`(10-k|10-q|20-f|40-f)`;
+const PAGE_FURNITURE = new RegExp(
+  `^(${[
+    String.raw`\d{1,3}\.?`,
+    String.raw`[a-z]\s?-\s?\d{1,3}`,
+    String.raw`page\s+\d{1,3}(\s+of\s+\d{1,3})?`,
+    String.raw`-\s*\d{1,3}\s*-`,
+    String.raw`(\d{1,3}\s+)?table of contents(\s+\d{1,3})?`,
+    String.raw`[-_=*.\s]{3,}`,
+    String.raw`item\s*\d{1,2}[a-f]?(\s*,\s*\d{1,2}[a-f]?)*`,
+    String.raw`.{0,60}\|\s*(q[1-4]\s+)?\d{4}\s+form\s+${FORMS}\s*\|\s*\d{1,3}`,
+    String.raw`\d{1,3}\s*\|?\s*.{0,40}\b(20\d\d\s+)?form\s+${FORMS}`,
+    String.raw`.{0,60}\b20\d\d\s+(form\s+)?${FORMS}\s*\|?\s*\d{1,3}`,
+    String.raw`ex-\d{1,3}(\.\d{1,3})?(\s.{0,80})?`,
+    String.raw`exhibit\s+\d{1,3}(\.\d{1,3})?`,
+    String.raw`[\w.-]+\.html?`,
+  ].join("|")})$`,
+  "i",
+);
 
 export function isPageFurniture(line: string): boolean {
   return PAGE_FURNITURE.test(line.trim());
@@ -649,11 +784,13 @@ export function isPageFurniture(line: string): boolean {
 const COMPANY_NAME_LINE =
   /^[A-Za-z0-9][\w&.,'’ -]{0,60}\b(inc|incorporated|corporation|corp|company|co|ltd|limited|plc|llc|l\.?p|n\.?v|s\.?a|ag|se|holdings|group)\.?(\s+and\s+(its\s+)?(consolidated\s+)?subsidiaries)?$/i;
 /** The Part and Item a page belongs to, printed at its top, as Mastercard heads every page. */
-const PAGE_ITEM_LINE = /^(part\s+[ivx]+|item\s*\d{1,2}[a-c]?\s*[.:\-–—]?\s*[a-z][^\n]{0,90})$/i;
+const PAGE_ITEM_LINE = /^(part\s+[ivx]+|item\s*\d{1,2}[a-f]?\s*[.:\-–—]?\s*[a-z][^\n]{0,90})$/i;
 /** How often a line must repeat to be a running header rather than a heading. */
 const RUNNING_HEADER_MIN = 5;
 /** A line that ends where a contents entry or a cross-reference index gives its pages. */
-export const ENDS_IN_PAGES = /(^|\s)(pages?\s+)?\d{1,4}(\s*[-–]\s*\d{1,4}|\s*,\s+\d{1,4}|\s+,\s*\d{1,4})*$|not applicable\s*(\([a-z]\))?$/i;
+// Pages run to three digits: a line ending in a year, "…ended March 31, 2025
+// and 2026" in Alibaba's list of its statements, does not end in a page.
+export const ENDS_IN_PAGES = /(^|\s)(pages?\s+)?\d{1,3}(\s*[-–]\s*\d{1,3}|\s*,\s+\d{1,3}|\s+,\s*\d{1,3})*$|not applicable\s*(\([a-z]\))?$/i;
 
 /** A line that finishes a sentence, a clause or a heading. */
 const ENDS_SENTENCE = /[.:;!?)\]"']$/;
@@ -674,7 +811,7 @@ function withoutRunningHeaders(blocks: ReadBlock[]): ReadBlock[] {
   }
   const headers = new Set([...counts].filter(([, count]) => count >= RUNNING_HEADER_MIN).map(([line]) => line));
   if (!headers.size) return blocks;
-  const itemOf = (line: string) => line.match(/^item\s*(\d{1,2}[a-c]?)/i)?.[1].toLowerCase();
+  const itemOf = (line: string) => line.match(/^item\s*(\d{1,2}[a-f]?)/i)?.[1].toLowerCase();
   const seen = new Set<string>();
   return blocks.filter((block) => {
     if (block.kind !== "text" || !headers.has(block.text)) return true;
@@ -728,33 +865,114 @@ function withSentencesJoined(blocks: ReadBlock[]): ReadBlock[] {
   return out;
 }
 
+/**
+ * The filing with what the reader never looks at taken out before it is parsed:
+ * every style property but the dozen it reads, and the XBRL facts filed out of
+ * sight in `<ix:header>`. Style attributes are half or more of a filing's
+ * bytes, 57% of JPMorgan's 13 MB annual report and 78% of Microsoft's, and
+ * parsing them was the largest part of reading a report.
+ */
+function lean(html: string): string {
+  return html
+    .replace(/<ix:header[\s>][\s\S]*?<\/ix:header>/gi, "")
+    .replace(/\sstyle\s*=\s*(["'])([\s\S]*?)\1/gi, (_, quote: string, style: string) => {
+      const kept = [...style.matchAll(WANTED_STYLE)].map(([, name, value]) => `${name}:${value.trim()}`);
+      return kept.length ? ` style=${quote}${kept.join(";")}${quote}` : "";
+    });
+}
+
 export function readDocument(html: string): FilingDocument {
   const raw: RawBlock[] = [];
-  collect(parse(html), raw);
+  stylesSeen.clear();
+  collect(parse(lean(html)), raw);
   const measured = raw
     .map((block) => (block.kind === "table" ? measureTable(block.node) : measureText(block)))
     .filter((block): block is ReadBlock => block !== null);
   // What is kept is plain data, so the parsed filing can be let go.
-  const blocks: DocumentBlock[] = withSentencesJoined(withoutRunningHeaders(measured)).map((block) => {
+  const blocks: DocumentBlock[] = withSentencesJoined(withPageNumbers(withoutRunningHeaders(measured))).map((block) => {
     if (block.kind === "table") return block;
     const { runs: _runs, ...text } = block;
     return text;
   });
+  stylesSeen.clear();
   let at = 0;
-  for (const block of blocks) {
+  const pages: FilingDocument["pages"] = [];
+  blocks.forEach((block, index) => {
     block.start = at;
     block.end = at + block.text.length;
     at = block.end + 1;
+    if (block.kind === "text" && block.page !== null) pages.push({ number: block.page, block: index });
+  });
+  return { blocks, text: blocks.map((block) => block.text).join("\n"), pages };
+}
+
+/**
+ * Several documents read as one, in order, with the block each begins at: a
+ * Canadian company's annual report comes as a cover document and exhibits.
+ */
+export function joinDocuments(documents: readonly FilingDocument[]): { document: FilingDocument; starts: number[] } {
+  const blocks: DocumentBlock[] = [];
+  const pages: FilingDocument["pages"] = [];
+  const starts: number[] = [];
+  let at = 0;
+  for (const part of documents) {
+    starts.push(blocks.length);
+    for (const page of part.pages) pages.push({ number: page.number, block: blocks.length + page.block });
+    for (const block of part.blocks) {
+      blocks.push({ ...block, start: at + block.start, end: at + block.end });
+    }
+    if (part.blocks.length) at += part.text.length + 1;
   }
-  return { blocks, text: blocks.map((block) => block.text).join("\n") };
+  return { document: { blocks, text: blocks.map((block) => block.text).join("\n"), pages }, starts };
+}
+
+/**
+ * The HTML of one stretch of text, `from` up to `to`, with the markup open
+ * across its edges opened again and closed, so a paragraph too tall for a page
+ * can be drawn a page at a time.
+ */
+function slice(html: string, from: number, to: number): string {
+  const out: string[] = [];
+  const open: string[] = [];
+  let position = 0;
+  let started = false;
+  let at = 0;
+  while (at < html.length && position < to) {
+    if (html[at] === "<") {
+      const close = html.indexOf(">", at) + 1;
+      const tag = html.slice(at, close);
+      const name = tag.match(/^<\/?([a-z]+)/)?.[1] ?? "";
+      if (tag.startsWith("</")) {
+        const opened = open.findLastIndex((candidate) => candidate.startsWith(`<${name}`));
+        if (opened !== -1) open.splice(opened, 1);
+      } else if (name !== "br") open.push(tag);
+      if (started) out.push(tag);
+      at = close;
+      continue;
+    }
+    const end = html[at] === "&" ? html.indexOf(";", at) + 1 : at + 1;
+    if (position >= from) {
+      if (!started) {
+        out.push(...open);
+        started = true;
+      }
+      out.push(html.slice(at, end));
+    }
+    position += 1;
+    at = end;
+  }
+  for (const tag of [...open].reverse()) out.push(`</${tag.match(/^<([a-z]+)/)?.[1]}>`);
+  return out.join("");
 }
 
 /**
  * A paragraph as HTML, with a stretch of it marked. `slot` is placed inside the
- * paragraph's last word, held on one line with it, for the Keep button.
+ * paragraph's last word, held on one line with it, for the Keep button. `part`
+ * draws only some of it, offsets into its text, for a paragraph split between pages.
  */
-export function renderText(block: TextBlock, mark: Mark | null = null, slot = ""): string {
-  const drawn = mark ? withMark(block.html, mark) : block.html;
+export function renderText(block: TextBlock, mark: Mark | null = null, slot = "", part?: { from: number; to: number }): string {
+  const whole = mark ? withMark(block.html, mark) : block.html;
+  const drawn = part ? slice(whole, part.from, part.to) : whole;
   if (!slot) return drawn;
   // The Keep button rides on the last word, so it never waits on a line of its own.
   // Closing tags after the word stay outside the span that holds them together.

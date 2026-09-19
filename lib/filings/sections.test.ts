@@ -377,6 +377,60 @@ describe("filing section extraction", () => {
     expect(new Set(indexes).size).toBe(indexes.length);
   });
 
+  it("does not take a page's own footer for a contents entry's page number", () => {
+    // Alibaba's Item 18 is a short list, and the page's number came right after it.
+    const page = (n: number, content: string) => `${content}<p>${n}</p>`;
+    const html = [
+      `<div>FORM 10-K</div>`,
+      page(1, `<p>${body("cover", 60)}</p>`),
+      page(2, `<div>Item 7. Management's Discussion and Analysis</div><p>${body("mdna", 60)}</p>`),
+      page(3, `<div>Item 8. Financial Statements and Supplementary Data</div><p>The statements filed with this report:</p><p>• Consolidated Balance Sheets</p><p>• Consolidated Statements of Income</p>`),
+      page(4, `<div>Item 9. Changes in and Disagreements with Accountants</div><p>${body("nine", 60)}</p>`),
+      page(5, `<p>${body("ten", 60)}</p>`),
+      page(6, `<p>${body("eleven", 60)}</p>`),
+    ].join("");
+    const r = extractFilingSections(html);
+    expect(r.document.pages.map((p) => p.number)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(r.sections.map((s) => s.id)).toEqual(["mdna", "financials"]);
+    expect(r.sections[1].text).toContain("Consolidated Statements of Income");
+  });
+
+  describe("a foreign company's annual report, Form 20-F", () => {
+    // TSMC's headings ("ITEM 3.KEY INFORMATION", no space after the stop) and
+    // Alibaba's Item 18, a list of statements whose lines end in years.
+    const twentyF = `
+      <div>FORM 20-F</div>
+      <div>ITEM 3. KEY INFORMATION 3</div><div>ITEM 4. INFORMATION ON THE COMPANY 14</div>
+      <div>ITEM 5. OPERATING AND FINANCIAL REVIEWS AND PROSPECTS 26</div><div>ITEM 16E. PURCHASES OF EQUITY SECURITIES BY THE ISSUER 76</div>
+      <div>ITEM 18. FINANCIAL STATEMENTS 83</div>
+      <div>ITEM 3.KEY INFORMATION</div><p>${body("risk", 80)}</p>
+      <div>ITEM 4.INFORMATION ON THE COMPANY</div><p>${body("business", 80)}</p>
+      <div>ITEM 5.OPERATING AND FINANCIAL REVIEWS AND PROSPECTS</div><p>${body("review", 80)}</p>
+      <div>ITEM 11.QUANTITATIVE AND QUALITATIVE DISCLOSURES ABOUT MARKET RISKS</div><p>${body("rates", 30)}</p>
+      <div>ITEM 16E.PURCHASES OF EQUITY SECURITIES BY THE ISSUER AND AFFILIATED PURCHASERS</div><p>Not applicable.</p>
+      <div>ITEM 18.FINANCIAL STATEMENTS</div><p>The following financial statements are filed as part of this annual report:</p>
+      <p>• Consolidated Income Statements for the years ended March 31, 2024, 2025 and 2026</p>
+      <p>• Consolidated Balance Sheets as of March 31, 2025 and 2026</p>
+      <div>ITEM 19.EXHIBITS</div><p>${body("exhibits", 30)}</p>
+      <div>INDEX TO CONSOLIDATED FINANCIAL STATEMENTS</div><p>${body("statements", 100)}</p>`;
+
+    it("reads it by its own Item numbers", () => {
+      expect(layoutOf(twentyF)).toBe("foreign");
+      expect(layoutOf("<div>Annual report</div>", "20-F")).toBe("foreign");
+      const r = extractFilingSections(twentyF, "20-F");
+      expect(r.sections.map((s) => s.id)).toEqual(["risk-factors", "business", "mdna", "market-risk", "market", "financials"]);
+      expect(r.sections.find((s) => s.id === "business")!.text).toContain("business-body-0");
+      expect(r.sections.find((s) => s.id === "business")!.text).not.toContain("review-body-0");
+      expect(sectionLabel("mdna", "20-F")).toBe("Operating review");
+    });
+
+    it("reads the statements Item 18 points to, and does not take its list of statements for a contents list", () => {
+      const statements = extractFilingSections(twentyF, "20-F").sections.find((s) => s.id === "financials")!;
+      expect(statements.text).toMatch(/^INDEX TO CONSOLIDATED FINANCIAL STATEMENTS/);
+      expect(statements.text).toContain("statements-body-99");
+    });
+  });
+
   it("strips markup and entities without gluing words together", () => {
     const text = filingToPlainText(
       "<p>Revenue&nbsp;grew</p><p>9.8%&#8212;a slowdown</p><div>See&amp;compare</div>",

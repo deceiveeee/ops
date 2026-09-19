@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { readDocument, type TextBlock } from "./document";
 import { fixtureFileName } from "./edgar";
-import { GAP_PX, PAGE_PX, isHeadingBlock, isSubheading, pageForOffset, paginate, paragraphHeight, sectionHeading, sectionPages, textHeight, type Page } from "./pages";
+import { DEFAULT_FIT, GAP_PX, PAGE_PX, isHeadingBlock, isSubheading, pageForOffset, paginate, paragraphHeight, sectionHeading, sectionPages, textHeight, type Page } from "./pages";
 import { extractFilingSections, type ExtractedSection } from "./sections";
 
 /**
@@ -26,11 +26,11 @@ const business = sections.find((section) => section.id === "business")!;
 const isHeading = (item: Page["items"][number], section: ExtractedSection) =>
   isHeadingBlock(document.blocks[section.blocks[item.block].index]);
 
-/** A page's estimated height, for a section of paragraphs and headings. */
+/** A page's estimated height, for a section of paragraphs and headings, a part of a split paragraph by its own length. */
 const heightOf = (items: Page["items"], section: ExtractedSection) =>
   items.reduce((sum, item, index) => {
     const block = document.blocks[section.blocks[item.block].index] as TextBlock;
-    return sum + (index ? GAP_PX : 0) + textHeight(block);
+    return sum + (index ? GAP_PX : 0) + (item.chars ? paragraphHeight(item.chars.to - item.chars.from) : textHeight(block));
   }, 0);
 
 describe("headings", () => {
@@ -79,29 +79,45 @@ describe("the height model, against the reader as measured at 1440", () => {
 });
 
 describe("pages", () => {
-  it("puts every block under the heading on exactly one page, in order, and leaves out page numbers", () => {
+  it("puts every block under the heading on the pages, in order, a split paragraph's parts covering it exactly, and leaves out page numbers", () => {
     for (const section of sections) {
       const expected = section.blocks
         .map((place, position) => ({ position, block: document.blocks[place.index] }))
         .filter(({ position, block }) => position > 0 && !(block.kind === "text" && block.furniture))
         .map(({ position }) => position);
-      const paged = sectionPages(section, document).flatMap((page) => page.items.map((item) => item.block));
-      expect(paged, section.id).toEqual(expected);
+      const items = sectionPages(section, document).flatMap((page) => page.items);
+      expect([...new Set(items.map((item) => item.block))], section.id).toEqual(expected);
+      for (const position of expected) {
+        const parts = items.filter((item) => item.block === position && item.chars);
+        if (!parts.length) continue;
+        const text = document.blocks[section.blocks[position].index].text;
+        expect(parts.map((part) => text.slice(part.chars!.from, part.chars!.to)).join(" ")).toBe(text);
+      }
     }
     // The fixture's contents keep their page numbers in the text, where they
     // tell entries from headings; none of them is drawn.
     expect(document.blocks.some((block) => block.kind === "text" && block.furniture)).toBe(true);
   });
 
-  it("never splits a paragraph, and runs over the budget only when one paragraph is taller than a page", () => {
+  it("splits only a paragraph taller than a page, after a sentence, and keeps every page within the budget", () => {
+    let split = 0;
     for (const section of sections) {
       for (const page of sectionPages(section, document)) {
-        if (heightOf(page.items, section) > PAGE_PX) {
-          // The headings above it come with it.
-          expect(page.items.filter((item) => !isHeading(item, section))).toHaveLength(1);
+        expect(heightOf(page.items, section), `${section.id} page ${page.number}`).toBeLessThanOrEqual(PAGE_PX);
+        for (const item of page.items.filter((entry) => entry.chars)) {
+          const block = document.blocks[section.blocks[item.block].index] as TextBlock;
+          // Taller than a page, or unable to follow its heading whole.
+          const underHeading = page.items.indexOf(item) > 0 && page.items.slice(0, page.items.indexOf(item)).every((entry) => isHeading(entry, section));
+          expect(textHeight(block) > PAGE_PX || underHeading).toBe(true);
+          if (item.chars!.to < block.text.length) {
+            split += 1;
+            expect(block.text.slice(0, item.chars!.to), "a part ends a sentence").toMatch(/[.;:!?]["')\]]?$/);
+          }
         }
       }
     }
+    // The fixture's longest paragraphs are taller than a page at 1440 once.
+    expect(split).toBeGreaterThan(0);
   });
 
   it("fills each page: the next paragraph, with any headings above it, would not have fitted", () => {
@@ -132,11 +148,11 @@ describe("pages", () => {
     );
     const mdna = result.sections.find((item) => item.id === "mdna")!;
     const texts = sectionPages(mdna, result.document).map((page) => page.items.map((item) => mdna.text.slice(item.start, item.end).slice(0, 26)));
-    expect(texts).toEqual([
-      ["Revenue grew in every regi"],
-      ["Forward-Looking Statements", tall.slice(0, 26)],
-      ["Results of Operations", "Revenue grew."],
-    ]);
+    // The tall paragraph is split between pages, so its heading and its first
+    // lines fit after the paragraph before, and the heading stays with them.
+    expect(texts[0]).toEqual(["Revenue grew in every regi", "Forward-Looking Statements", tall.slice(0, 26)]);
+    expect(texts.slice(1, -1).every((page) => page.length === 1)).toBe(true);
+    expect(texts.at(-1)!.slice(-2)).toEqual(["Results of Operations", "Revenue grew."]);
 
     // The same for a table whose first row alone is taller than a page. A row
     // that long is a caption, not headings, so later pages do not repeat it.
@@ -218,6 +234,45 @@ describe("pages", () => {
     const heading = readDocument("<div>Item 3. Legal Proceedings</div>");
     expect(paginate({ blocks: [{ index: 0, start: 0, end: 25 }] }, heading)).toEqual([]);
     expect(pageForOffset([], 500)).toBe(1);
+  });
+});
+
+describe("pages sized to the reader's room", () => {
+  it("holds less on a phone's narrow column and short room, and nothing is lost", () => {
+    const wide = sectionPages(business, document, DEFAULT_FIT);
+    const phone = sectionPages(business, document, { lineChars: 50, pagePx: 428, headingFirst: true });
+    expect(phone.length).toBeGreaterThan(wide.length * 2);
+    const blocks = (pages: Page[]) => [...new Set(pages.flatMap((page) => page.items.map((item) => item.block)))];
+    expect(blocks(phone)).toEqual(blocks(wide));
+  });
+
+  it("splits a paragraph that cannot follow its heading whole, rather than run over the page", () => {
+    // Intel's "Our Strategy" and its 652 characters, on a phone: 47 characters
+    // to a line and 412px of room, where the two together need 444.
+    const strategy = "For more than 50 years, we have contributed to the advancement of computing technology. ".repeat(7).trim();
+    const html = `<div>Item 1. Business</div><p>${"We design and make semiconductors for computers. ".repeat(6)}</p><p>Our Strategy</p><p>${strategy}</p><div>Item 1A. Risk Factors</div><p>${"Risk. ".repeat(40)}</p>`;
+    const result = extractFilingSections(html);
+    const section = result.sections.find((item) => item.id === "business")!;
+    const fit = { lineChars: 47, pagePx: 412, headingFirst: false };
+    const pages = sectionPages(section, result.document, fit);
+    const opening = pages.find((page) => page.items.some((item) => section.text.slice(item.start, item.end) === "Our Strategy"))!;
+    // The heading, then the first part of its paragraph, and the page within its room.
+    expect(opening.items.at(-1)!.chars?.from).toBe(0);
+    const height = opening.items.reduce((sum, item, index) => {
+      const block = result.document.blocks[section.blocks[item.block].index] as TextBlock;
+      return sum + (index ? GAP_PX : 0) + (item.chars ? paragraphHeight(item.chars.to - item.chars.from, 47) : textHeight(block, 47));
+    }, 0);
+    expect(height).toBeLessThanOrEqual(412);
+  });
+
+  it("keeps room on the first page for the section's heading drawn over it", () => {
+    // Eight two-line paragraphs fill a page at 1440 to within 36px; the heading's 38 does not fit beside them.
+    const sentence = "The Company designs and sells products to customers around the world, and ";
+    const html = `<div>Item 1. Business</div>${Array.from({ length: 12 }, (_, i) => `<p>${sentence}${sentence.slice(0, 85)}number ${String(i).padStart(2, "0")}.</p>`).join("")}<div>Item 1A. Risk Factors</div><p>${"Risk. ".repeat(40)}</p>`;
+    const result = extractFilingSections(html);
+    const section = result.sections.find((item) => item.id === "business")!;
+    expect(sectionPages(section, result.document, DEFAULT_FIT)[0].items).toHaveLength(8);
+    expect(sectionPages(section, result.document, { ...DEFAULT_FIT, headingFirst: true })[0].items).toHaveLength(7);
   });
 });
 

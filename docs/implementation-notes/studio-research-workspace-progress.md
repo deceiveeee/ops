@@ -2464,3 +2464,97 @@ text and then guessed where its paragraphs, tables and headings had been; every 
   statements tab is missing, as it was before.
 - The first open of a very large report takes one to two seconds.
 - Reports organised by a cross-reference index, and 20-F and 40-F reports, still show the notice.
+
+## 2026-09-18: the reader's known limits, fixed
+
+The user asked for the problems listed on 2026-09-17 to be fixed: reports laid out by a cross-reference
+index, foreign companies' reports, Netflix's quarterly statements, pages too long for most screens, and a
+slow first open of large reports.
+
+### Reports laid out by a cross-reference index
+
+- `document.ts` now finds a report's printed page numbers: the longest run of short lines with a number at
+  one end ("24 2025 FORM 10-K", "Risk Factors 47", "McDonald's Corporation 2025 Annual Report 26") rising
+  one to three pages at a time, spread like pages (median gap 800 characters, each step at least 150 and at
+  least a twelfth of a typical page). A footnote or a cover line that begins with a number is not a footer:
+  a label printed once must be a few plain words, without figures or commas. The run is page furniture, and
+  `FilingDocument.pages` gives the block that ends each page. Found in 97 of 98 cached documents; the one
+  without is Shopify's 40-F cover document, which prints none.
+- `cross-reference.ts` reads an Items index ("Item 1A. Risk Factors 24-31", "Pages 37-51", "Page 27", with
+  Intel's sub-entries under an Item) and, for a section the Item headings do not find, takes its pages:
+  from the section's own heading on its first page, or the page top; a page another section runs into, or
+  one several Items start on, without this section's heading, is left out rather than shown under the wrong
+  name. It stops at the heading of the next Item, not of an Item that sits within its given pages.
+- A quarterly report's contents serves the same way: Netflix's statements, which follow its contents with
+  no Item 1 heading, now open (62,688 characters, to the discussion's heading).
+- Result, sections opened against 2026-09-17: Intel 10-K 0 to 7, McDonald's 10-K 0 to 7, GE 10-K 0 to 5,
+  Intel 10-Q 0 to 5, GE 10-Q 0 to 3; Oracle 10-K 6 to 7, Bank of America 10-K 6 to 7 and 10-Q 4 to 6, Boeing,
+  JPMorgan and Procter & Gamble 10-Q 5 to 6. GE gives its market section and market risk as pages inside its
+  discussion and notes with no heading of their own, and those stay "not found".
+
+### Foreign companies' reports
+
+- 20-F: a layout of its own (risks under Item 3, business Item 4, operating review Item 5, market risk
+  Item 11, buybacks Item 16E, statements Item 18). An Item 18 that only points to statements set after the
+  exhibits ("starting on page F-1", TSMC) is followed to their own index or the auditor's report. TSMC,
+  Alibaba and Shopify's 20-F open all six.
+- 40-F: `forty-f.ts` reads the cover document and the exhibits that carry the report (EX-1, EX-2 and EX-99
+  of 50 KB or more, listed from the filing's index page by `fetchFilingParts`), finds the annual information
+  form, the discussion and the statements by their titles wherever they are filed, and the form's sections
+  by the headings Canada's Form 51-102F2 sets, each running to the next such heading. Shopify, Suncor: 6 of
+  7; Royal Bank: 7; Canadian Natural: 5. `readReport` in `reading.ts` does this for the page and the
+  passage-finding route alike.
+
+### Pages that fit the screen
+
+- The frame around a page's text took 1,131px of a phone's 1,266px budget. On narrow screens the guidance
+  and the note of sections not found now sit behind one "What to look for" line; the section's heading opens
+  the first page only (kept for screen readers on the others); the SEC reference and length show from 640px.
+- `ReaderFit` measures the text column and the room the frame leaves under 1.5 screens and sends them in a
+  cookie (`fit.ts`); the server pages to them, and the page is paged again at the same place when they
+  differ. Characters to a line come from the width less six for the wrap (a phone's 358px holds 47, not 50).
+  A tab drawn out of sight, which reports a window of nothing, is not measured. A resize is paged for only
+  when the width changes: a phone's browser changes the window's height as its address bar slides away
+  under a scrolling thumb, by more than a page is paged again for, and the page was fetched again mid-read.
+- A paragraph taller than a page, or unable to follow its heading whole, is split after a sentence into
+  parts of at least three lines, each drawn and kept as a paragraph of its own.
+- Measured on a production build, five report pages at each of 390, 768, 1024, 1280, 1440 and 1920: all
+  within 1.5 screens (largest 1.46), none scrolls sideways.
+
+### Speed
+
+- Style attributes are 52-78% of a filing's bytes; all but the dozen properties the reader uses, and the
+  hidden `ix:header`, are taken out before parsing. Styles are cached by their text, table cells written once.
+- Best of three, reading only, against the document reader as committed in `6d3c674`: JPMorgan 10-K 1.2 s
+  (1.7), Microsoft 10-K 0.6 s (1.0), Apple 10-K 0.13 s (0.18); Netflix 10-Q 0.14 s. Still slower than the
+  passage reader it replaced (0.7, 0.14 and 0.05 s), which picked out passages rather than reading the
+  whole document. A page turn reads from the cache of the last four reports, in about 0.13 s.
+
+### Found on the way
+
+- Alibaba's Item 18, a list of its statements, was read as contents: its own page footer, and lines ending
+  in a year ("…ended March 31, 2025 and 2026"), were taken for page references. Footers no longer count as
+  contents lines, and a page reference runs to three digits. Procter & Gamble's quarterly risk factors, a
+  short pointer to its annual report, opened in the same audit.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest: 71 files, 956 tests. Playwright, full suite: 180 passed, 5 skipped.
+- A new Playwright test pages a section at 390 by 844 and holds it to 1.5 screens once the reader has
+  measured, is not fetched again for a change of height alone, and is paged again when the phone turns.
+- 32 deliberate breaks of the new rules (page numbers, the index reader, 20-F, 40-F, the fit, splitting),
+  run on 2026-09-19 against the finished code: every one failed at least one unit test, and every file
+  came back byte for byte. One break had to be re-aimed first, its target rewritten since it was made.
+- Audit of 97 cached reports: 78 open every section and none opens nothing; drawn text matches the
+  searched text in every paragraph and table part, and every mark lands on its stretch, including 23,564
+  paragraph parts at a phone's size.
+
+### Known limits
+
+- A report opens sized for 1440 until the browser has measured once; then it is paged again at the same place.
+- 40-F reports are recognised by headings, which vary; where a filer's differ, a section is "not found".
+- Not found: GE's market and market-risk sections; market risk in Shopify's and Suncor's 40-F; risk
+  factors and market risk in Canadian Natural's. Of the 97 cached reports, 19 are without one to three
+  sections, most often "Market for the shares" in an annual report (Amazon, Chevron, Disney, IBM, Pfizer,
+  Starbucks) or risk factors in a quarterly one (Johnson & Johnson, ExxonMobil, Ford, IBM).
+- Canadian Natural's discussion ends with a stray footer line ("…2025 40-F 7").

@@ -16,7 +16,9 @@
  * worse than one that admits it could not tell.
  */
 
-import { ENDS_IN_PAGES, isPageFurniture, readDocument, type FilingDocument } from "./document";
+import { entryFor, readIndex, sectionFromIndex } from "./cross-reference";
+import { ENDS_IN_PAGES, isPageFurniture, joinDocuments, readDocument, type FilingDocument } from "./document";
+import { fortyFSections } from "./forty-f";
 
 export type FilingSectionId =
   | "business"
@@ -168,32 +170,89 @@ export const QUARTERLY_SECTIONS: readonly FilingSectionSpec[] = [
   },
 ];
 
-export type FilingLayout = "annual" | "quarterly";
+/**
+ * The same sections in a foreign company's annual report, Form 20-F, which
+ * numbers its Items its own way: risks under Item 3, "Key Information", in its
+ * part D; the business in Item 4; the discussion of results in Item 5,
+ * "Operating and Financial Review and Prospects"; market risk in Item 11;
+ * buybacks in Item 16E. Legal proceedings sit inside Item 8 and are not read
+ * apart. Listed in document order, as the extractor takes them.
+ */
+export const FOREIGN_SECTIONS: readonly FilingSectionSpec[] = [
+  {
+    id: "risk-factors",
+    marker: "Item 3.",
+    label: "Risk factors",
+    titles: ["Key Information"],
+    lens: "What management is required to admit could go wrong, in part D of Item 3. The earlier parts are often marked reserved or not applicable.",
+  },
+  {
+    id: "business",
+    marker: "Item 4.",
+    label: "Business",
+    titles: ["Information on the Company"],
+    lens: "What the company actually sells, to whom, and how it says it makes money. Read this before any number.",
+  },
+  {
+    id: "mdna",
+    marker: "Item 5.",
+    label: "Operating review",
+    titles: ["Operating and Financial Review"],
+    lens: "The company explaining its own results, as a foreign company's report calls it. Compare what it emphasises against what the statements show.",
+  },
+  {
+    id: "market-risk",
+    marker: "Item 11.",
+    label: "Market risk",
+    titles: ["Quantitative and Qualitative"],
+    lens: "Exposure to rates, currencies and prices, stated in the company's own terms.",
+  },
+  {
+    id: "market",
+    marker: "Item 16E.",
+    label: "Buybacks",
+    titles: ["Purchases of Equity Securities"],
+    lens: "The shares the company and its affiliates bought back during the year, and at what price.",
+  },
+  {
+    id: "financials",
+    marker: "Item 18.",
+    label: "Financial statements",
+    titles: ["Financial Statements"],
+    lens: "The audited statements and their notes. A foreign company may report under IFRS rather than US accounting rules; the notes say which.",
+  },
+];
+
+export type FilingLayout = "annual" | "quarterly" | "foreign";
 
 const SPECS: Record<FilingLayout, readonly FilingSectionSpec[]> = {
   annual: FILING_SECTIONS,
   quarterly: QUARTERLY_SECTIONS,
+  foreign: FOREIGN_SECTIONS,
 };
 
-/** Every section id either layout can produce, for checking one that comes back from a browser. */
-export const SECTION_IDS: ReadonlySet<string> = new Set([...FILING_SECTIONS, ...QUARTERLY_SECTIONS].map((spec) => spec.id));
+/** Every section id any layout can produce, for checking one that comes back from a browser. */
+export const SECTION_IDS: ReadonlySet<string> = new Set([...FILING_SECTIONS, ...QUARTERLY_SECTIONS, ...FOREIGN_SECTIONS].map((spec) => spec.id));
+
+const layoutOfForm = (form: string): FilingLayout => (/^10-Q/i.test(form.trim()) ? "quarterly" : /^20-F/i.test(form.trim()) ? "foreign" : "annual");
 
 /**
  * Which layout a filing uses. The form, when the caller knows it, decides.
  * Otherwise the document says: an inline XBRL filing tags its own form type,
- * and an older one names it on the cover. Anything that is not a quarterly
- * report is read with the annual numbering, as every report was before.
+ * and an older one names it on the cover. Anything that is neither a quarterly
+ * report nor a foreign company's is read with the annual numbering.
  */
 export function layoutOf(html: string, form?: string): FilingLayout {
-  if (form) return /^10-Q/i.test(form.trim()) ? "quarterly" : "annual";
+  if (form) return layoutOfForm(form);
   const tagged = html.match(/name="dei:DocumentType"[^>]*>(?:\s*<[^>]+>)*\s*([^<\s]+)/i)?.[1];
-  if (tagged) return /^10-Q/i.test(tagged) ? "quarterly" : "annual";
-  return /form\s+10-Q/i.test(filingToPlainText(html.slice(0, 20_000))) ? "quarterly" : "annual";
+  if (tagged) return layoutOfForm(tagged);
+  const cover = filingToPlainText(html.slice(0, 20_000));
+  return /form\s+10-Q/i.test(cover) ? "quarterly" : /form\s+20-F/i.test(cover) ? "foreign" : "annual";
 }
 
 /** A kept passage's section, named as the report it came from names it. */
 export function sectionLabel(sectionId: string, form?: string): string {
-  const specs = form && /^10-Q/i.test(form.trim()) ? QUARTERLY_SECTIONS : FILING_SECTIONS;
+  const specs = SPECS[form ? layoutOfForm(form) : "annual"];
   return specs.find((spec) => spec.id === sectionId)?.label ?? sectionId;
 }
 
@@ -280,7 +339,7 @@ function isContentsLine(rest: string): boolean {
  * Item 1A."). "Item 2.02" is an 8-K item number that turns up in exhibit lists,
  * not a heading.
  */
-const LINE_MARKER = /(^|\n)[ \t]*(item\s*\d{1,2}[a-c]?(?:\s*[.:\-–—](?!\d)|[ \t]+(?=[a-z])))/g;
+const LINE_MARKER = /(^|\n)[ \t]*(item\s*\d{1,2}[a-f]?(?:\s*[.:\-–—](?!\d)|[ \t]+(?=[a-z])))/g;
 
 function itemStarts(lower: string): number[] {
   const out: number[] = [];
@@ -300,11 +359,20 @@ const CONTENTS_LINE_MAX = 160;
  * follow the title and `isContentsLine` accepted the entry as a heading. A
  * contents entry is short lines, at least one of them ending in a page number,
  * up to the next Item. A real section, however short, is a sentence.
+ *
+ * The page's own printed number is not a contents entry's: Alibaba's Item 18
+ * is a list of its statements, and the "204" at the foot of that page made it
+ * read as contents until the document's footers were known.
  */
-function isContentsBlock(lower: string, titleEnd: number, starts: number[]): boolean {
+function isContentsBlock(lower: string, titleEnd: number, starts: number[], footers: ReadonlySet<number>): boolean {
   const next = starts.find((start) => start > titleEnd) ?? lower.length;
   if (next - titleEnd > 1_500) return false;
-  const lines = lower.slice(titleEnd, next).split("\n").map((line) => line.trim()).filter(Boolean);
+  const lines: string[] = [];
+  let offset = titleEnd;
+  for (const line of lower.slice(titleEnd, next).split("\n")) {
+    if (!footers.has(offset) && line.trim()) lines.push(line.trim());
+    offset += line.length + 1;
+  }
   return lines.every((line) => line.length < CONTENTS_LINE_MAX) && lines.some((line) => ENDS_IN_PAGES.test(line));
 }
 
@@ -329,9 +397,9 @@ function hasBody(text: string): boolean {
  * filings write `Item 3. Legal Proceedings" of this report` mid-sentence, and
  * one of those must never be read as a section worth 81,000 characters.
  */
-function headingHits(lower: string, spec: FilingSectionSpec, starts: number[]): number[] {
+function headingHits(lower: string, spec: FilingSectionSpec, starts: number[], footers: ReadonlySet<number>): number[] {
   const out: number[] = [];
-  const number = spec.marker.match(/\d{1,2}[a-c]?/i)![0].toLowerCase();
+  const number = spec.marker.match(/\d{1,2}[a-f]?/i)![0].toLowerCase();
   // A heading starts its line. NVIDIA's Business section says `Refer to "Item
   // 1A. Risk Factors - Risks Related to Regulatory…"`, where the quotation mark
   // comes before the marker, and that sentence was read as the start of its risk
@@ -359,7 +427,7 @@ function headingHits(lower: string, spec: FilingSectionSpec, starts: number[]): 
       const fullEnd = endOfLetters(after, lead, full);
       const consumed = fullEnd === -1 ? needleEnd : fullEnd;
       const tail = after.slice(consumed);
-      if (!tail.trimStart().startsWith('"') && !isContentsLine(tail) && !isContentsBlock(lower, from + consumed, starts)) {
+      if (!tail.trimStart().startsWith('"') && !isContentsLine(tail) && !isContentsBlock(lower, from + consumed, starts, footers)) {
         out.push(i);
       }
       break;
@@ -396,6 +464,19 @@ function endOfLetters(text: string, from: number, words: string): number {
  * for both, under a heading that says where they are.
  */
 const POINTER_MAX = 600;
+/** A 20-F's Item 18 may list the statements it points to, as Alibaba's does, so it runs longer. */
+const FOREIGN_POINTER_MAX = 1_500;
+/** Where statements set apart from the text begin: their own index, or the auditor's report. */
+const STATEMENTS_START = /(^|\n)[ \t]*(?:index to (?:the )?(?:consolidated )?financial statements|report of independent registered public accounting firm)[ \t]*(?:page)?[ \t]*(?=\n|$)/g;
+
+/**
+ * Words a company heads a section with in its own layout, besides the Item's
+ * title: McDonald's puts its market risk under "FINANCING AND MARKET RISK".
+ */
+const INDEX_HEADINGS: Partial<Record<FilingSectionId, readonly string[]>> = {
+  "market-risk": ["Market Risk"],
+  legal: ["Legal Matters"],
+};
 const EXHIBITS = /(^|\n)[ \t]*item\s*15\s*[.:\-–—]?\s*exhibits/g;
 
 export function extractFilingSections(html: string, form?: string): SectionResult {
@@ -405,6 +486,7 @@ export function extractFilingSections(html: string, form?: string): SectionResul
   const layout = layoutOf(html, form);
   const specs = SPECS[layout];
   const starts = itemStarts(lower);
+  const footers = new Set(document.pages.map(({ block }) => document.blocks[block].start));
 
   // The first heading occurrence, taken in document order so a later
   // cross-reference cannot claim a section that has already started.
@@ -413,7 +495,7 @@ export function extractFilingSections(html: string, form?: string): SectionResul
   // Every heading starts a line, so the next line-start Item is where a candidate would end.
   const nextStart = (at: number) => starts.find((start) => start > at) ?? text.length;
   for (const spec of specs) {
-    const at = headingHits(lower, spec, starts).find(
+    const at = headingHits(lower, spec, starts, footers).find(
       (candidate) => candidate >= floor && hasBody(text.slice(candidate, nextStart(candidate))),
     );
     if (at === undefined) continue;
@@ -431,6 +513,16 @@ export function extractFilingSections(html: string, form?: string): SectionResul
   const sections: ExtractedSection[] = chosen.map((hit) => {
     let at = hit.at;
     let end = endOf(at);
+    if (layout === "foreign" && hit.spec.id === "financials" && end - at < FOREIGN_POINTER_MAX) {
+      // A foreign company's Item 18 points to statements set after its
+      // exhibits and signatures: "Refer to the consolidated financial
+      // statements starting on page F-1" (TSMC), found by their own index.
+      const statements = [...lower.matchAll(STATEMENTS_START)].map((match) => match.index + match[1].length).find((start) => start > end);
+      if (statements !== undefined) {
+        at = statements;
+        end = text.length;
+      }
+    }
     if (layout === "annual" && hit.spec.id === "financials" && end - at < POINTER_MAX) {
       // Not an index entry for Item 15 ("Exhibits and Financial Statement Schedules 75-78").
       const lineAt = (start: number) => text.slice(start, text.indexOf("\n", start) === -1 ? text.length : text.indexOf("\n", start)).trim();
@@ -448,21 +540,23 @@ export function extractFilingSections(html: string, form?: string): SectionResul
     for (let index = first; index < document.blocks.length && (index === first || document.blocks[index].start < end); index += 1) {
       indexes.push(index);
     }
-    const base = document.blocks[first].start;
-    const last = document.blocks[indexes[indexes.length - 1]];
-    return {
-      id: hit.spec.id,
-      label: hit.spec.label,
-      lens: hit.spec.lens,
-      at: base,
-      text: text.slice(base, last.end),
-      blocks: indexes.map((index) => ({
-        index,
-        start: document.blocks[index].start - base,
-        end: document.blocks[index].end - base,
-      })),
-    };
+    return sectionOf(hit.spec, document, indexes);
   });
+
+  // What has no Item heading may still be found through the report's
+  // cross-reference index or contents, by the pages they give.
+  const unfound = specs.filter((spec) => !sections.some((section) => section.id === spec.id));
+  if (unfound.length) {
+    const entries = readIndex(text);
+    for (const spec of unfound) {
+      const entry = entryFor(entries, spec.marker.match(/\d{1,2}[a-f]?/i)![0].toLowerCase(), spec.titles);
+      const indexes = entry ? sectionFromIndex(document, entries, entry, [...spec.titles, ...(INDEX_HEADINGS[spec.id] ?? [])]) : null;
+      if (!indexes) continue;
+      const section = sectionOf(spec, document, indexes);
+      if (hasBody(section.text)) sections.push(section);
+    }
+    sections.sort((a, b) => specs.findIndex((spec) => spec.id === a.id) - specs.findIndex((spec) => spec.id === b.id));
+  }
 
   const found = new Set(sections.map((s) => s.id));
   const missing = specs.filter((s) => !found.has(s.id)).map((s) => ({
@@ -471,6 +565,56 @@ export function extractFilingSections(html: string, form?: string): SectionResul
   }));
 
   return { sections, missing, plainTextLength: text.length, document };
+}
+
+/**
+ * Whether a report is a Canadian company's annual report on Form 40-F, from
+ * its form when known, or from what the document says it is.
+ */
+export function isFortyF(html: string, form?: string): boolean {
+  if (form) return /^40-F/i.test(form.trim());
+  const tagged = html.match(/name="dei:DocumentType"[^>]*>(?:\s*<[^>]+>)*\s*([^<\s]+)/i)?.[1];
+  if (tagged) return /^40-F/i.test(tagged);
+  return /form\s+40-F/i.test(filingToPlainText(html.slice(0, 20_000)));
+}
+
+/**
+ * A 40-F's cover document and the exhibits that carry its report, read by
+ * their own headings (`lib/filings/forty-f.ts`), with the annual report's
+ * section names.
+ */
+export function extractFortyFSections(htmls: readonly string[]): SectionResult {
+  const { document, starts } = joinDocuments(htmls.map(readDocument));
+  const found = fortyFSections(document, starts);
+  const sections = FILING_SECTIONS.flatMap((spec) => {
+    const part = found.find((section) => section.id === spec.id);
+    return part && part.indexes.length ? [sectionOf(spec, document, part.indexes)] : [];
+  }).filter((section) => hasBody(section.text));
+  const missing = FILING_SECTIONS.filter((spec) => !sections.some((section) => section.id === spec.id)).map(({ id, label }) => ({ id, label }));
+  return { sections, missing, plainTextLength: document.text.length, document };
+}
+
+/**
+ * A section made of some of the document's blocks, its text theirs one to a
+ * line. Blocks usually run on from one another; a section read through an index
+ * can be several runs of pages, as Intel gives its business at pages 3-24, 33
+ * and 72-75.
+ */
+function sectionOf(spec: FilingSectionSpec, document: FilingDocument, indexes: readonly number[]): ExtractedSection {
+  let offset = 0;
+  const blocks = indexes.map((index) => {
+    const start = offset;
+    offset += document.blocks[index].text.length + 1;
+    return { index, start, end: start + document.blocks[index].text.length };
+  });
+  return {
+    id: spec.id,
+    label: spec.label,
+    lens: spec.lens,
+    at: document.blocks[indexes[0]].start,
+    text: indexes.map((index) => document.blocks[index].text).join("\n"),
+    blocks,
+  };
 }
 
 /** The block whose text holds an offset. */

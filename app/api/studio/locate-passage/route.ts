@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { locate } from "@/lib/filings/anchor";
 import { fetchFilingDocument, secUserAgent } from "@/lib/filings/edgar";
 import { pageForOffset, sectionPages } from "@/lib/filings/pages";
-import { readFiling } from "@/lib/filings/reading";
+import { readReport } from "@/lib/filings/reading";
 import { SECTION_IDS } from "@/lib/filings/sections";
 
 /**
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ found: false, reason: "filing", message: fetched.message }, { status: 200 });
   }
 
-  const read = readFiling({ cik, accession, document }, fetched.html);
+  const read = await readReport({ cik, accession, document }, fetched.html);
   const section = read.sections.find((item) => item.id === sectionId);
   if (!section) {
     return NextResponse.json({

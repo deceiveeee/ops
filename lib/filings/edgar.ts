@@ -337,6 +337,35 @@ export async function fetchFilingFile(cik: string, accession: string, name: stri
   return secFetch(archivePath(cik, accession, name), 604_800);
 }
 
+export type FilingPart = { document: string; type: string; description: string; size: number };
+
+/**
+ * The documents a filing holds, each with its type ("40-F", "EX-99.1"), from
+ * the filing's index page, which is the only place EDGAR states them. A
+ * Canadian company's annual report on Form 40-F files its annual information
+ * form, its discussion of results and its statements as exhibits beside a
+ * short cover document.
+ */
+export async function fetchFilingParts(cik: string, accession: string): Promise<EdgarResult<{ parts: FilingPart[] }>> {
+  const res = await secFetch(archivePath(cik, accession, `${accession}-index.htm`), 604_800);
+  if (!res.ok) return res;
+  return { ok: true, parts: parseFilingParts(res.body) };
+}
+
+/** The rows of a filing index page's document table: sequence, description, document, type, size. */
+export function parseFilingParts(html: string): FilingPart[] {
+  const cell = (value: string) => value.replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim();
+  const parts: FilingPart[] = [];
+  for (const [, row] of html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(([, value]) => value);
+    if (cells.length < 5) continue;
+    const document = cells[2].match(/href="[^"]*\/([^"/]+\.html?)"/i)?.[1] ?? cell(cells[2]).split(" ")[0];
+    if (!/\.html?$/i.test(document)) continue;
+    parts.push({ document, type: cell(cells[3]), description: cell(cells[1]), size: Number(cell(cells[4]).replace(/\D/g, "")) || 0 });
+  }
+  return parts;
+}
+
 /** The names of the files a filing holds, from its index. */
 export async function fetchFilingFileNames(cik: string, accession: string): Promise<EdgarResult<{ names: string[] }>> {
   const res = await secFetch(archivePath(cik, accession, "index.json"), 604_800);

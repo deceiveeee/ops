@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import FilingPassages, { type PageParagraph } from "@/components/studio/FilingPassages";
+import ReaderFit from "@/components/studio/ReaderFit";
 import { Notice, Panel, StageHeading } from "@/components/studio/shared";
 import StudioAside from "@/components/studio/workspace/StudioAside";
 import { CONTEXT_CHARS } from "@/lib/filings/anchor";
@@ -8,8 +10,9 @@ import { archivePath, fetchCompanyTickers, fetchFilingDocument, fetchFilings, fi
 import { renderTableRows, renderText, type FilingDocument } from "@/lib/filings/document";
 import { findInSections } from "@/lib/filings/find";
 import { KEEP_SLOT } from "@/lib/filings/keep-slot";
-import { isHeadingBlock, isSubheading, pageForOffset, sectionHeading, sectionPages } from "@/lib/filings/pages";
-import { readFiling } from "@/lib/filings/reading";
+import { FIT_COOKIE, fitFromCookie } from "@/lib/filings/fit";
+import { isHeadingBlock, isSubheading, pageForOffset, sectionHeading, sectionPages, type Fit } from "@/lib/filings/pages";
+import { readReport } from "@/lib/filings/reading";
 import { revenueFromFiling } from "@/lib/filings/revenue-source";
 import type { SectionResult } from "@/lib/filings/sections";
 import RevenueView from "@/components/studio/RevenueView";
@@ -158,7 +161,7 @@ export default async function CompanyReportPage({
   // then the document itself says whether it is a quarterly report.
   const list = await fetchFilings(cik);
   const filing = list.ok ? list.filings.find((entry) => entry.accession === accession) : undefined;
-  const { sections, missing, plainTextLength, document } = readFiling({ cik, accession, document: doc }, fetched.html, filing?.form);
+  const { sections, missing, plainTextLength, document } = await readReport({ cik, accession, document: doc }, fetched.html, filing?.form);
   const companyName = (list.ok ? list.name : "") || ticker || "Company";
   const kind = filing ? KIND[filing.form] ?? "report" : "report";
   // A quarterly report has no Business section and opens with its statements, so
@@ -206,11 +209,26 @@ export default async function CompanyReportPage({
   ].filter(Boolean);
 
   const searching = (query.q ?? "").trim();
+  const fit = fitFromCookie(cookies().get(FIT_COOKIE)?.value);
+  // Which view is shown: the section reader carries the note of what was not
+  // found in its own guidance, so the page does not add it under the text.
+  const showsSection = !searching && !revenue && !competitors && !(annual && [PEERS_TAB.id, WORTH_TAB.id, INPUTS_TAB.id].includes(wanted ?? "")) && Boolean(current);
+  const [firstFact, ...moreFacts] = facts;
 
   return (
     <Shell
       title={`${ticker || companyName} ${kind}`}
-      subtitle={facts.join(" · ")}
+      subtitle={
+        <>
+          {firstFact}
+          {moreFacts.map((fact) => (
+            <span key={fact} className="hidden sm:inline">
+              {firstFact ? " · " : ""}
+              {fact}
+            </span>
+          ))}
+        </>
+      }
       back={back}
       ticker={ticker}
       sourceUrl={sourceUrl}
@@ -227,6 +245,7 @@ export default async function CompanyReportPage({
             <Results
               sections={sections}
               document={document}
+              fit={fit}
               query={searching}
               view={int(query.r) ?? 1}
               hrefFor={hrefFor}
@@ -274,6 +293,8 @@ export default async function CompanyReportPage({
               section={current}
               sections={sections}
               document={document}
+              fit={fit}
+              missing={missing}
               extraTabs={extraTabs}
               filing={{
                 cik,
@@ -295,12 +316,8 @@ export default async function CompanyReportPage({
         </>
       )}
 
-      {missing.length > 0 && !searching ? (
-        <p className="text-[13px] leading-6 text-slate-500">
-          Not found in this report: {missing.map((section) => section.label).join(", ")}. Companies lay out
-          their reports differently, and this reader would rather say it could not find a section than
-          show you the wrong one.
-        </p>
+      {missing.length > 0 && !searching && !showsSection ? (
+        <p className="text-[13px] leading-6 text-slate-500">{notFound(missing)}</p>
       ) : null}
     </Shell>
   );
@@ -364,6 +381,8 @@ function SectionView({
   section,
   sections,
   document,
+  fit,
+  missing,
   extraTabs,
   filing,
   requestedPage,
@@ -375,6 +394,8 @@ function SectionView({
   section: Sections[number];
   sections: Sections;
   document: FilingDocument;
+  fit: Fit;
+  missing: { id: string; label: string }[];
   extraTabs: { id: string; label: string }[];
   filing: React.ComponentProps<typeof FilingPassages>["filing"];
   requestedPage: number | null;
@@ -384,7 +405,7 @@ function SectionView({
   hrefFor: HrefFor;
 }) {
   const heading = sectionHeading(section, document) ?? section.label;
-  const pages = sectionPages(section, document);
+  const pages = sectionPages(section, document, fit);
   // A link to a place wins over a page number: the place is what was asked for.
   const number = at !== null
     ? pageForOffset(pages, at)
@@ -401,7 +422,7 @@ function SectionView({
       ? { from: highlight.start - place.start, to: highlight.end - place.start }
       : null;
     const html = block.kind === "text"
-      ? renderText(block, marked, KEEP_SLOT)
+      ? renderText(block, marked, KEEP_SLOT, item.chars)
       : renderTableRows(block, item.rows?.from ?? 0, item.rows?.to ?? block.rowStarts.length, marked);
     return {
       index: item.block,
@@ -422,17 +443,38 @@ function SectionView({
       <SectionTabs sections={sections} extraTabs={extraTabs} current={section.id} hrefFor={hrefFor} />
 
       <section aria-labelledby={`section-${section.id}`} className="space-y-3">
-        <h2 id={`section-${section.id}`} className="text-[17px] font-semibold text-white">
+        {/*
+          * The section's heading opens its first page, and the pages are sized
+          * with it there. On later pages the tab says which section this is, so
+          * the heading is kept for screen readers alone rather than taking two or
+          * three lines of a phone's screen on every page.
+          */}
+        <h2
+          id={`section-${section.id}`}
+          data-section-heading={number === 1 ? "" : undefined}
+          className={number === 1 ? "text-[17px] font-semibold text-white" : "sr-only"}
+        >
           {heading}
         </h2>
 
-        {/* What to look for is guidance, so it sits beside the reading on wide screens. */}
+        {/*
+          * What to look for is guidance, so it sits beside the reading on wide
+          * screens. Below 1280 it is one line to open: drawn open, it took 146px
+          * of a phone's screen, and the note of sections not found another 96.
+          */}
         <StudioAside
           inline={
-            <p className="rounded-xl border border-white/12 bg-white/[0.03] p-3 text-[14px] leading-6 text-slate-300">
-              <span className="font-semibold text-white">What to look for. </span>
-              {section.lens} <span className="text-slate-400">{KEEP_HOW}</span>
-            </p>
+            <details className="group rounded-xl border border-white/12 bg-white/[0.03] text-[14px] leading-6 text-slate-300">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-3 font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+                What to look for in {section.label}
+                <span aria-hidden="true" className="text-slate-400 transition-transform group-open:rotate-180">⌄</span>
+              </summary>
+              <div className="space-y-2 px-3 pb-3">
+                <p>{section.lens}</p>
+                <p className="text-slate-400">{KEEP_HOW}</p>
+                {missing.length ? <p className="text-[13px] text-slate-500">{notFound(missing)}</p> : null}
+              </div>
+            </details>
           }
           beside={
             <Panel>
@@ -440,6 +482,7 @@ function SectionView({
               <p className="mt-2 text-[13px] leading-5 text-slate-400">{section.lens}</p>
               <h2 className="mt-4 text-[14px] font-semibold text-white">Keeping a passage</h2>
               <p className="mt-2 text-[13px] leading-5 text-slate-400">{KEEP_HOW}</p>
+              {missing.length ? <p className="mt-4 text-[13px] leading-5 text-slate-500">{notFound(missing)}</p> : null}
             </Panel>
           }
         />
@@ -451,10 +494,13 @@ function SectionView({
         ) : null}
 
         {paragraphs.length ? (
-          <FilingPassages filing={filing} paragraphs={paragraphs} highlight={highlight} />
+          <div data-reader-text="">
+            <FilingPassages filing={filing} paragraphs={paragraphs} highlight={highlight} />
+          </div>
         ) : (
           <p className="text-[14px] leading-6 text-slate-400">This section is only its heading.</p>
         )}
+        <ReaderFit used={fit} firstOffset={page?.items[0]?.start ?? null} />
 
         {pages.length > 1 ? (
           <nav aria-label="Pages of this section" className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3 text-[14px]">
@@ -483,20 +529,27 @@ function SectionView({
   );
 }
 
+/** The sections a report was read without, said plainly. */
+function notFound(missing: { label: string }[]): string {
+  return `Not found in this report: ${missing.map((section) => section.label).join(", ")}. Companies lay out their reports differently, and this reader would rather say it could not find a section than show you the wrong one.`;
+}
+
 function Results({
   sections,
   document,
+  fit,
   query,
   view,
   hrefFor,
 }: {
   sections: Sections;
   document: FilingDocument;
+  fit: Fit;
   query: string;
   view: number;
   hrefFor: HrefFor;
 }) {
-  const found = findInSections(sections, query, document);
+  const found = findInSections(sections, query, document, fit);
   if (!found.ok) return <Notice tone="slate">{found.reason}</Notice>;
 
   const views = Math.max(1, Math.ceil(found.hits.length / HITS_PER_VIEW));
@@ -609,7 +662,7 @@ function Shell({
   children,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   back: string;
   ticker?: string;
   sourceUrl: string;
@@ -646,7 +699,7 @@ function Shell({
         <div className="min-w-0 flex-1 basis-72">
           <StageHeading as="h1" title={title} />
           <p className="mt-2 text-[13px] leading-6 text-slate-500">
-            {subtitle ? `${subtitle} · ` : "Filed with the SEC · "}
+            {subtitle ? <>{subtitle} · </> : "Filed with the SEC · "}
           <a
             href={sourceUrl}
             target="_blank"

@@ -132,6 +132,33 @@ test.describe("reading a whole report", () => {
       expect.soft(height, view).toBeLessThanOrEqual(1_350);
     }
   });
+
+  test("pages a section to a phone's screen, and not again for a scrolling thumb", async ({ page }) => {
+    // Until the reader has measured its column and the room its frame leaves,
+    // a page is sized for 1440, and on a phone runs to well over the budget.
+    await page.setViewportSize({ width: 390, height: 844 });
+    let paged = 0;
+    page.on("request", (request) => {
+      if (request.url().includes("_rsc=")) paged += 1;
+    });
+    await page.goto(`${REPORT}&section=risk-factors&page=3`);
+    await expect
+      .poll(async () => (await page.context().cookies()).find((cookie) => cookie.name === "ops-reader-fit")?.value)
+      .toMatch(/^\d+x\d+$/);
+    await page.waitForLoadState("networkidle");
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(Math.floor(844 * 1.5));
+
+    // A phone's address bar sliding away as the reader scrolls changes the
+    // window's height alone, and the page is not fetched again under them.
+    const settled = paged;
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.waitForTimeout(1_000);
+    expect(paged, "paged again for a change of height alone").toBe(settled);
+
+    // Turning the phone is a new width, and the section is paged for it.
+    await page.setViewportSize({ width: 844, height: 390 });
+    await expect.poll(() => paged).toBeGreaterThan(settled);
+  });
 });
 
 test.describe("keeping a passage", () => {

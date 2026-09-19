@@ -17,7 +17,7 @@
 
 import type { FilingDocument } from "./document";
 import type { ExtractedSection } from "./sections";
-import { pageForOffset, sectionPages } from "./pages";
+import { DEFAULT_FIT, pageForOffset, sectionPages, type Fit } from "./pages";
 
 /** Shorter than this and a query matches nearly everything; longer and it is a paste. */
 export const MIN_QUERY = 2;
@@ -65,7 +65,7 @@ const toWord = (text: string, fromStart: boolean) => {
   return space > text.length - 20 ? text.slice(0, space) : text;
 };
 
-export function findInSections(sections: ExtractedSection[], rawQuery: string, document: Pick<FilingDocument, "blocks">): FindResult {
+export function findInSections(sections: ExtractedSection[], rawQuery: string, document: Pick<FilingDocument, "blocks">, fit: Fit = DEFAULT_FIT): FindResult {
   const query = rawQuery.trim().replace(/\s+/g, " ");
   if (query.length < MIN_QUERY) return { ok: false, reason: `Type at least ${MIN_QUERY} characters to search.` };
   if (query.length > MAX_QUERY) return { ok: false, reason: `Search for a phrase of up to ${MAX_QUERY} characters.` };
@@ -74,7 +74,7 @@ export function findInSections(sections: ExtractedSection[], rawQuery: string, d
   let total = 0;
 
   for (const section of sections) {
-    const pages = sectionPages(section, document);
+    const pages = sectionPages(section, document, fit);
     const text = shownText(section, document);
     const pattern = queryPattern(query);
     let match: RegExpExecArray | null;

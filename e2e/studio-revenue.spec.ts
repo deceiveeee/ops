@@ -86,9 +86,11 @@ test("keeps the report's heading readable on a phone", async ({ page }) => {
   // The facts under the heading once kept their row beside the search box at 390px, one word to a line.
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(REVENUE);
-  const facts = page.getByText(/SEC reference/).first();
+  const facts = page.getByText(/^Filed \d{4}-\d{2}-\d{2}/).first();
   await expect(facts).toBeVisible();
   expect(await facts.evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThan(280);
+  // On a phone the facts are when it was filed; its SEC reference and length wait for a wider screen.
+  await expect(page.getByText(/SEC reference/).first()).toBeHidden();
 });
 
 test("keeps the view within the screen budget at 1440", async ({ page }) => {
