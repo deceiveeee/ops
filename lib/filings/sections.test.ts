@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { extractFilingSections, filingToPlainText, filingToText, layoutOf, sectionLabel } from "./sections";
+import { extractFilingSections, filingToPlainText, layoutOf, sectionLabel } from "./sections";
 
 /**
  * Fixtures reproduce the three filing shapes found on real documents, rather
@@ -310,31 +310,6 @@ describe("filing section extraction", () => {
     expect(full?.text.startsWith("Item 8. Financial Statements")).toBe(true);
   });
 
-  describe("a sentence the printed page broke in two", () => {
-    const long = "The principal raw material used by our business is sweeteners, and suppliers deliver them to produce finished";
-
-    it("is put back together, with the page number between becoming spaces so no offset moves", () => {
-      const html = `<p>${long}</p><p>26</p><p>Table of Contents</p><p>beverages. The finished beverages are packaged.</p>`;
-      const { text } = filingToText(html);
-      const plainLines = text.split("\n").map((line) => line.trim()).filter(Boolean);
-      expect(plainLines).toHaveLength(1);
-      expect(plainLines[0].replace(/\s+/g, " ")).toBe(`${long} beverages. The finished beverages are packaged.`);
-      // Same length as the text before joining: line breaks and furniture became spaces.
-      const unjoined = filingToText(`<p>${long}.</p><p>26</p><p>Table of Contents</p><p>beverages. The finished beverages are packaged.</p>`).text;
-      expect(text.length).toBe(unjoined.length - 1);
-    });
-
-    it("leaves a heading above a paragraph that starts in lower case", () => {
-      const { text } = filingToText("<p>iPhone</p><p>iPhone net sales increased during 2025 compared to 2024.</p>");
-      expect(text.split("\n").map((line) => line.trim())).toEqual(["iPhone", "iPhone net sales increased during 2025 compared to 2024."]);
-    });
-
-    it("leaves a finished sentence and a table row alone", () => {
-      const finished = filingToText(`<p>${long}.</p><p>beverages are next.</p>`).text;
-      expect(finished.split("\n")).toHaveLength(2);
-    });
-  });
-
   it("still finds upper-case headings when the report holds a letter whose lower case is longer", () => {
     // Coca-Cola's annual report names Coca-Cola İçecek. "İ" lower-cases to two
     // characters, and matching fell back to case-sensitive, finding nothing.
@@ -375,18 +350,6 @@ describe("filing section extraction", () => {
       expect(business.text).toContain("page5-body-0");
     });
 
-    it("takes a company name repeated at the top of every page out of the reading", () => {
-      const pages = Array.from({ length: 5 }, (_, i) => `<div>Alphabet Inc.</div><p>${body(`p${i}`, 20)}</p>`).join("");
-      const { text } = filingToText(pages);
-      expect(text).not.toContain("Alphabet Inc.");
-      // Its characters became spaces: the same text with a different, unrepeated line in each place is as long.
-      const varied = Array.from({ length: 5 }, (_, i) => `<div>Header line ${i}</div><p>${body(`p${i}`, 20)}</p>`).join("");
-      expect(text.length).toBe(filingToText(varied).text.length);
-      expect(text.indexOf("p4-body-0")).toBe(filingToText(varied).text.indexOf("p4-body-0"));
-      // Four times is not a running header.
-      expect(filingToText(pages.replace(/<div>Alphabet Inc\.<\/div>/, "")).text).toContain("Alphabet Inc.");
-    });
-
     it("skips a heading with nothing under it, and an index entry that gives page ranges", () => {
       const index = `<div>Item 1. Business</div><div>Item 1A. Risk factors</div><div>Item 7. Management's Discussion and Analysis 8-23</div><div>Item 8. Financial Statements and Supplementary Data Pages 36 - 73</div>`;
       const r = extractFilingSections(`<div>FORM 10-K</div>${index}<div>Item 9. Changes</div><p>${body("nine", 20)}</p>`);
@@ -397,11 +360,21 @@ describe("filing section extraction", () => {
       const html = `<div>FORM 10-Q</div><div>Item 2. Unregistered Sales of Equity Securities</div><div>Total 33,460,252</div><div>April 16,922,312</div><div>Item 5. Other Information</div><p>None.</p>`;
       expect(extractFilingSections(html, "10-Q").sections.map((s) => s.id)).toEqual(["market"]);
     });
+  });
 
-    it("keeps each row of a table that is not drawn as one on a single line", () => {
-      const { text } = filingToText(`<p>Sales growth:</p><table><tr><td><div>$</div></td><td><div>11.1</div></td><td><div>(2.2)</div></td></tr></table>`);
-      expect(text.split("\n").map((line) => line.trim()).filter(Boolean)).toEqual(["Sales growth:", "$11.1 (2.2)"]);
-    });
+  it("gives each section whole blocks of the document, with offsets in its own text", () => {
+    const r = extractFilingSections(annualWithEveryItem);
+    for (const section of r.sections) {
+      expect(section.text.slice(section.blocks[0].start, section.blocks[0].end)).toMatch(/^Item \d/);
+      for (const place of section.blocks) {
+        const block = r.document.blocks[place.index];
+        expect(section.text.slice(place.start, place.end)).toBe(block.text);
+        expect(section.at + place.start).toBe(block.start);
+      }
+    }
+    // Consecutive sections share no block.
+    const indexes = r.sections.flatMap((section) => section.blocks.map((place) => place.index));
+    expect(new Set(indexes).size).toBe(indexes.length);
   });
 
   it("strips markup and entities without gluing words together", () => {

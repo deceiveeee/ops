@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { locate } from "@/lib/filings/anchor";
 import { fetchFilingDocument, secUserAgent } from "@/lib/filings/edgar";
 import { pageForOffset, sectionPages } from "@/lib/filings/pages";
-import { SECTION_IDS, extractFilingSections } from "@/lib/filings/sections";
+import { readFiling } from "@/lib/filings/reading";
+import { SECTION_IDS } from "@/lib/filings/sections";
 
 /**
  * Where a kept passage is now, in a freshly fetched copy of its filing.
@@ -73,7 +74,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ found: false, reason: "filing", message: fetched.message }, { status: 200 });
   }
 
-  const section = extractFilingSections(fetched.html).sections.find((item) => item.id === sectionId);
+  const read = readFiling({ cik, accession, document }, fetched.html);
+  const section = read.sections.find((item) => item.id === sectionId);
   if (!section) {
     return NextResponse.json({
       found: false,
@@ -97,6 +99,6 @@ export async function POST(request: Request) {
     sectionId,
     start: located.start,
     end: located.end,
-    page: pageForOffset(sectionPages(section), located.start),
+    page: pageForOffset(sectionPages(section, read.document), located.start),
   });
 }

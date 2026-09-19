@@ -15,6 +15,7 @@
  * decision the learner is supposed to make.
  */
 
+import type { FilingDocument } from "./document";
 import type { ExtractedSection } from "./sections";
 import { pageForOffset, sectionPages } from "./pages";
 
@@ -64,7 +65,7 @@ const toWord = (text: string, fromStart: boolean) => {
   return space > text.length - 20 ? text.slice(0, space) : text;
 };
 
-export function findInSections(sections: ExtractedSection[], rawQuery: string): FindResult {
+export function findInSections(sections: ExtractedSection[], rawQuery: string, document: Pick<FilingDocument, "blocks">): FindResult {
   const query = rawQuery.trim().replace(/\s+/g, " ");
   if (query.length < MIN_QUERY) return { ok: false, reason: `Type at least ${MIN_QUERY} characters to search.` };
   if (query.length > MAX_QUERY) return { ok: false, reason: `Search for a phrase of up to ${MAX_QUERY} characters.` };
@@ -73,16 +74,17 @@ export function findInSections(sections: ExtractedSection[], rawQuery: string): 
   let total = 0;
 
   for (const section of sections) {
-    const pages = sectionPages(section);
+    const pages = sectionPages(section, document);
+    const text = shownText(section, document);
     const pattern = queryPattern(query);
     let match: RegExpExecArray | null;
-    while ((match = pattern.exec(section.text)) !== null) {
+    while ((match = pattern.exec(text)) !== null) {
       total += 1;
       if (hits.length < MAX_LISTED) {
         const offset = match.index;
         const length = match[0].length;
-        const before = section.text.slice(Math.max(0, offset - SNIPPET), offset).replace(/\s+/g, " ");
-        const after = section.text.slice(offset + length, offset + length + SNIPPET).replace(/\s+/g, " ");
+        const before = text.slice(Math.max(0, offset - SNIPPET), offset).replace(/\s+/g, " ");
+        const after = text.slice(offset + length, offset + length + SNIPPET).replace(/\s+/g, " ");
         hits.push({
           sectionId: section.id,
           sectionLabel: section.label,
@@ -91,7 +93,8 @@ export function findInSections(sections: ExtractedSection[], rawQuery: string): 
           page: pageForOffset(pages, offset),
           before: offset > SNIPPET ? toWord(before, true) : before,
           match: match[0].replace(/\s+/g, " "),
-          after: toWord(after, false),
+          // Trimmed back to a whole word only where the snippet cut one.
+          after: offset + length + SNIPPET < text.length ? toWord(after, false) : after,
         });
       }
       // A zero-length match cannot happen with these patterns, but a loop that
@@ -101,4 +104,22 @@ export function findInSections(sections: ExtractedSection[], rawQuery: string): 
   }
 
   return { ok: true, query, hits, total };
+}
+
+/**
+ * The section's text as the reader shows it: page numbers and "Table of
+ * Contents" lines, which are never drawn, become spaces, so they are neither
+ * found nor quoted beside a hit, and every offset stays where it was.
+ */
+function shownText(section: Pick<ExtractedSection, "text" | "blocks">, document: Pick<FilingDocument, "blocks">): string {
+  const pieces: string[] = [];
+  let at = 0;
+  for (const place of section.blocks) {
+    const block = document.blocks[place.index];
+    if (block.kind !== "text" || !block.furniture) continue;
+    pieces.push(section.text.slice(at, place.start), " ".repeat(place.end - place.start));
+    at = place.end;
+  }
+  pieces.push(section.text.slice(at));
+  return pieces.join("");
 }

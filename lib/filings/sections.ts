@@ -16,8 +16,7 @@
  * worse than one that admits it could not tell.
  */
 
-import { decodeEntities } from "./entities";
-import { parseTable, rowText, tableLines, type ParsedTable } from "./tables";
+import { ENDS_IN_PAGES, isPageFurniture, readDocument, type FilingDocument } from "./document";
 
 export type FilingSectionId =
   | "business"
@@ -198,24 +197,19 @@ export function sectionLabel(sectionId: string, form?: string): string {
   return specs.find((spec) => spec.id === sectionId)?.label ?? sectionId;
 }
 
-/** A table of figures inside some text: where its rows are, and its columns. */
-export type TextTable = ParsedTable & {
-  /** Offset of the first row's first character; each row is one line. */
-  start: number;
-  /** Offset one past the last row's last character. */
-  end: number;
-};
+/** One of a section's blocks: which block of the document, and where its text sits in the section's text. */
+export type SectionBlock = { index: number; start: number; end: number };
 
 export type ExtractedSection = {
   id: FilingSectionId;
   label: string;
   lens: string;
-  /** Offset of the heading in the plain text. */
+  /** Offset of the section's first block in the document's text. */
   at: number;
-  /** The section body, trimmed. */
+  /** The section's text: its blocks' texts, one to a line. */
   text: string;
-  /** Its tables of figures, with offsets in `text`. */
-  tables: TextTable[];
+  /** Its blocks, in order; the first holds the heading. */
+  blocks: SectionBlock[];
 };
 
 export type SectionResult = {
@@ -224,197 +218,13 @@ export type SectionResult = {
   missing: { id: FilingSectionId; label: string }[];
   /** Plain text of the whole filing, for length reporting and search. */
   plainTextLength: number;
+  /** The filing as the reader draws it. */
+  document: FilingDocument;
 };
 
-/**
- * Filing HTML to plain text, keeping block boundaries as newlines so headings
- * survive as their own lines.
- */
+/** The filing's text as search and sections read it: its blocks' texts, one to a line. */
 export function filingToPlainText(html: string): string {
-  return filingToText(html).text;
-}
-
-/** Private-use characters that cannot occur in a filing, marking where a table's rows begin and end. */
-const TABLE_OPEN = "\uE000";
-const TABLE_NUMBER_END = "\uE001";
-const TABLE_CLOSE = "\uE002";
-const escapeText = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-/**
- * The plain text, and where in it each table of figures sits.
- *
- * A table of figures becomes one line per row, its cells a space apart, so
- * search, kept passages and the Competitors and Input costs tabs read it as they
- * read any text. Its columns travel beside the text rather than inside it, so
- * the reader can draw it as a table without a character of the text changing.
- */
-export function filingToText(html: string): { text: string; tables: TextTable[] } {
-  const parsed: ParsedTable[] = [];
-  const marked = html
-    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
-    .replace(/<table\b[\s\S]*?<\/table>/gi, (source) => {
-      const table = parseTable(source);
-      if (!table) {
-        const lines = tableLines(source);
-        return lines ? `\n${lines.map(escapeText).join("\n")}\n` : source;
-      }
-      parsed.push(table);
-      const rows = table.rows.map((row) => escapeText(rowText(row))).join("\n");
-      return `\n${TABLE_OPEN}${parsed.length - 1}${TABLE_NUMBER_END}\n${rows}\n${TABLE_CLOSE}\n`;
-    });
-  const flat = toPlain(marked);
-
-  const tables: TextTable[] = [];
-  let text = "";
-  let from = 0;
-  let open: { index: number; start: number } | null = null;
-  for (const marker of flat.matchAll(/\uE000(\d+)\uE001\n?|\n?\uE002/g)) {
-    text += flat.slice(from, marker.index);
-    from = marker.index + marker[0].length;
-    if (marker[1] !== undefined) {
-      open = { index: Number(marker[1]), start: text.length };
-    } else if (open) {
-      const start = open.start + (text.slice(open.start).length - text.slice(open.start).trimStart().length);
-      tables.push({ ...parsed[open.index], start, end: text.length });
-      open = null;
-    }
-  }
-  text += flat.slice(from);
-  return { text: stitchPageBreaks(blankRunningHeaders(text, tables), tables), tables };
-}
-
-/** A company's name as a page header prints it: "Alphabet Inc.", "THE COCA-COLA COMPANY AND SUBSIDIARIES". */
-const COMPANY_NAME_LINE =
-  /^[A-Za-z0-9][\w&.,'’ -]{0,60}\b(inc|incorporated|corporation|corp|company|co|ltd|limited|plc|llc|l\.?p|n\.?v|s\.?a|ag|se|holdings|group)\.?(\s+and\s+(its\s+)?(consolidated\s+)?subsidiaries)?$/i;
-/** How often a name must repeat on its own line to be a running header rather than a heading. */
-const RUNNING_HEADER_MIN = 5;
-
-/**
- * The company's name printed at the top of every page, taken out of the reading.
- *
- * Alphabet's annual report repeats "Alphabet Inc." on a line of its own 90
- * times and Tesla's quarterly report repeats "Tesla, Inc.", each one a
- * passage in the reader between the paragraphs it interrupts. A short line that
- * is a company's name and recurs five or more times is a header; its characters
- * become spaces, so the text keeps its length and every offset.
- */
-function blankRunningHeaders(text: string, tables: readonly { start: number; end: number }[]): string {
-  const lines: { start: number; end: number; text: string }[] = [];
-  let cursor = 0;
-  for (const raw of text.split("\n")) {
-    lines.push({ start: cursor, end: cursor + raw.length, text: raw.trim() });
-    cursor += raw.length + 1;
-  }
-  const inTable = (at: number) => tables.some((table) => at >= table.start && at < table.end);
-  const counts = new Map<string, number>();
-  for (const line of lines) {
-    if (line.text && (COMPANY_NAME_LINE.test(line.text) || PAGE_ITEM_LINE.test(line.text))) {
-      counts.set(line.text, (counts.get(line.text) ?? 0) + 1);
-    }
-  }
-  const headers = new Set([...counts].filter(([, count]) => count >= RUNNING_HEADER_MIN).map(([name]) => name));
-  if (!headers.size) return text;
-  const chars = text.split("");
-  const itemOf = (line: string) => line.match(/^item\s*(\d{1,2}[a-c]?)/i)?.[1].toLowerCase();
-  const seen = new Set<string>();
-  for (const line of lines) {
-    if (!headers.has(line.text) || inTable(line.start)) continue;
-    // A repeated Item keeps its first appearance only when the report has no
-    // other heading for that Item, since it may then be where the section
-    // starts. Mastercard's has its own "Item 1. Business", so every "ITEM 1.
-    // BUSINESS" at a page top goes.
-    const item = itemOf(line.text);
-    const otherHeading = item !== undefined && lines.some((other) =>
-      other.text !== line.text && itemOf(other.text) === item && !ENDS_IN_PAGES.test(other.text) && !headers.has(other.text));
-    const keep = item !== undefined && !otherHeading && !seen.has(line.text);
-    seen.add(line.text);
-    if (keep) continue;
-    for (let at = line.start; at < line.end; at++) chars[at] = " ";
-  }
-  return chars.join("");
-}
-
-/**
- * The Part and Item a page belongs to, printed at its top. Mastercard's annual
- * report heads every page "PART I" and "ITEM 1. BUSINESS", and each of those was
- * read as the start of a new section, so its Business tab ended after one page.
- */
-const PAGE_ITEM_LINE = /^(part\s+[ivx]+|item\s*\d{1,2}[a-c]?\s*[.:\-–—]?\s*[a-z][^\n]{0,90})$/i;
-
-/**
- * What a printed page puts at its foot rather than in its text: a bare page
- * number, the "Table of Contents" link back, and footers such as Apple's
- * "Apple Inc. | Q3 2026 Form 10-Q | 23". Each arrived as a paragraph of its own
- * with a Keep button, and on Netflix's quarterly report a lone "26" was what took
- * the first page of management's discussion over the screen budget.
- */
-const PAGE_FURNITURE = /^(\d{1,3}|table of contents|[-_=*.\s]{3,}|item\s*\d{1,2}[a-c]?(\s*,\s*\d{1,2}[a-c]?)*|.{0,60}\|\s*(q[1-4]\s+)?\d{4}\s+form\s+(10-k|10-q)\s*\|\s*\d{1,3})$/i;
-
-export function isPageFurniture(line: string): boolean {
-  return PAGE_FURNITURE.test(line.trim());
-}
-
-/** A line that finishes a sentence, a clause or a heading. */
-const ENDS_SENTENCE = /[.:;!?)\]"']$/;
-/** A line that carries on a sentence: it starts in lower case. */
-const CARRIES_ON = /^[a-z]/;
-/**
- * Shorter than this and a line without a full stop is a heading, not half a
- * sentence. Apple's "iPhone" sits above a paragraph that starts "iPhone net
- * sales", and must not be joined to it.
- */
-const SENTENCE_LINE_MIN = 60;
-
-/**
- * A sentence the printed page broke in two, put back together.
- *
- * Where a filing's printed page ended mid-sentence, the markup closes the block
- * and opens another after the page number, so the reader showed Coca-Cola's
- * "…to produce finished" and "beverages. The finished beverages are…" as two
- * passages, each with a Keep button. Measured on 2026-09-16: 47 such breaks in
- * NVIDIA's annual report, 34 in Coca-Cola's, 19 in Netflix's.
- *
- * The line breaks, and the page number and "Table of Contents" between them,
- * become spaces rather than being removed, so the text keeps its length and
- * every offset — a kept passage, a search hit, a table — still points where it
- * did. The reader and search both treat a run of spaces as one.
- */
-function stitchPageBreaks(text: string, tables: readonly { start: number; end: number }[]): string {
-  const lines: { start: number; end: number; text: string }[] = [];
-  let cursor = 0;
-  for (const raw of text.split("\n")) {
-    lines.push({ start: cursor, end: cursor + raw.length, text: raw.trim() });
-    cursor += raw.length + 1;
-  }
-  const inTable = (at: number) => tables.some((table) => at >= table.start && at < table.end);
-  const chars = text.split("");
-  let changed = false;
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.text.length < SENTENCE_LINE_MIN || ENDS_SENTENCE.test(line.text) || inTable(line.start)) continue;
-    let j = i + 1;
-    while (j < lines.length && (!lines[j].text || isPageFurniture(lines[j].text))) j++;
-    const next = lines[j];
-    if (!next || !CARRIES_ON.test(next.text) || inTable(next.start)) continue;
-    const resumes = next.start + (next.end - next.start - text.slice(next.start, next.end).trimStart().length);
-    for (let at = line.end; at < resumes; at++) chars[at] = " ";
-    changed = true;
-  }
-  return changed ? chars.join("") : text;
-}
-
-function toPlain(html: string): string {
-  return html
-    .replace(/<\/(p|div|tr|h[1-6]|li|table)>/gi, "\n")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/[\s\S]+/, decodeEntities)
-    // Filers wrap a trademark sign in its own element, which left "iPhone ® is".
-    .replace(/[ \t]+([®™℠])/g, "$1")
-    .replace(/([®™℠])[ \t]+([.,;:])/g, "$1$2")
-    .replace(/[ \t]+/g, " ")
-    .replace(/\n\s*\n+/g, "\n")
-    .trim();
+  return readDocument(html).text;
 }
 
 type Hit = { spec: FilingSectionSpec; at: number };
@@ -497,14 +307,6 @@ function isContentsBlock(lower: string, titleEnd: number, starts: number[]): boo
   const lines = lower.slice(titleEnd, next).split("\n").map((line) => line.trim()).filter(Boolean);
   return lines.every((line) => line.length < CONTENTS_LINE_MAX) && lines.some((line) => ENDS_IN_PAGES.test(line));
 }
-
-/**
- * A line that ends where a contents entry or a cross-reference index gives its
- * pages: "2", "24-31", "Pages 37 - 51", "3-5, 9-10", or "Not applicable(a)".
- */
-// A comma between pages has a space beside it ("3-5, 9-10", "Pages 11 , 32");
-// one inside a figure does not, so "Total 33,460,252" is not a list of pages.
-const ENDS_IN_PAGES = /(^|\s)(pages?\s+)?\d{1,4}(\s*[-–]\s*\d{1,4}|\s*,\s+\d{1,4}|\s+,\s*\d{1,4})*$|not applicable\s*(\([a-z]\))?$/i;
 
 /**
  * Whether a section has anything under its heading.
@@ -597,7 +399,8 @@ const POINTER_MAX = 600;
 const EXHIBITS = /(^|\n)[ \t]*item\s*15\s*[.:\-–—]?\s*exhibits/g;
 
 export function extractFilingSections(html: string, form?: string): SectionResult {
-  const { text, tables } = filingToText(html);
+  const document = readDocument(html);
+  const { text } = document;
   const lower = searchable(text);
   const layout = layoutOf(html, form);
   const specs = SPECS[layout];
@@ -639,18 +442,25 @@ export function extractFilingSections(html: string, form?: string): SectionResul
         end = text.length;
       }
     }
-    const raw = text.slice(at, end);
-    const body = raw.trim();
-    const base = at + raw.length - raw.trimStart().length;
+    // A section is whole blocks: from the one holding its heading to the last that starts before its end.
+    const first = blockAt(document, at);
+    const indexes: number[] = [];
+    for (let index = first; index < document.blocks.length && (index === first || document.blocks[index].start < end); index += 1) {
+      indexes.push(index);
+    }
+    const base = document.blocks[first].start;
+    const last = document.blocks[indexes[indexes.length - 1]];
     return {
       id: hit.spec.id,
       label: hit.spec.label,
       lens: hit.spec.lens,
-      at,
-      text: body,
-      tables: tables
-        .filter((table) => table.start >= base && table.end <= base + body.length)
-        .map((table) => ({ ...table, start: table.start - base, end: table.end - base })),
+      at: base,
+      text: text.slice(base, last.end),
+      blocks: indexes.map((index) => ({
+        index,
+        start: document.blocks[index].start - base,
+        end: document.blocks[index].end - base,
+      })),
     };
   });
 
@@ -660,5 +470,17 @@ export function extractFilingSections(html: string, form?: string): SectionResul
     label: s.label,
   }));
 
-  return { sections, missing, plainTextLength: text.length };
+  return { sections, missing, plainTextLength: text.length, document };
+}
+
+/** The block whose text holds an offset. */
+function blockAt(document: FilingDocument, at: number): number {
+  let low = 0;
+  let high = document.blocks.length - 1;
+  while (low < high) {
+    const middle = Math.ceil((low + high) / 2);
+    if (document.blocks[middle].start <= at) low = middle;
+    else high = middle - 1;
+  }
+  return low;
 }

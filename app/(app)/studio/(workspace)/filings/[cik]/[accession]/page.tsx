@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import FilingPassages, { type PageParagraph, type PageTable } from "@/components/studio/FilingPassages";
+import FilingPassages, { type PageParagraph } from "@/components/studio/FilingPassages";
 import { Notice, Panel, StageHeading } from "@/components/studio/shared";
 import StudioAside from "@/components/studio/workspace/StudioAside";
 import { CONTEXT_CHARS } from "@/lib/filings/anchor";
 import { archivePath, fetchCompanyTickers, fetchFilingDocument, fetchFilings, filingIndexUrl, secUserAgent } from "@/lib/filings/edgar";
+import { renderTableRows, renderText, type FilingDocument } from "@/lib/filings/document";
 import { findInSections } from "@/lib/filings/find";
-import { pageForOffset, paragraphsOf, sectionPages } from "@/lib/filings/pages";
+import { KEEP_SLOT } from "@/lib/filings/keep-slot";
+import { isHeadingBlock, isSubheading, pageForOffset, sectionHeading, sectionPages } from "@/lib/filings/pages";
+import { readFiling } from "@/lib/filings/reading";
 import { revenueFromFiling } from "@/lib/filings/revenue-source";
-import { extractFilingSections } from "@/lib/filings/sections";
+import type { SectionResult } from "@/lib/filings/sections";
 import RevenueView from "@/components/studio/RevenueView";
 import CompetitorsView from "@/components/studio/CompetitorsView";
 import InputCostsView from "@/components/studio/InputCostsView";
@@ -155,7 +158,7 @@ export default async function CompanyReportPage({
   // then the document itself says whether it is a quarterly report.
   const list = await fetchFilings(cik);
   const filing = list.ok ? list.filings.find((entry) => entry.accession === accession) : undefined;
-  const { sections, missing, plainTextLength } = extractFilingSections(fetched.html, filing?.form);
+  const { sections, missing, plainTextLength, document } = readFiling({ cik, accession, document: doc }, fetched.html, filing?.form);
   const companyName = (list.ok ? list.name : "") || ticker || "Company";
   const kind = filing ? KIND[filing.form] ?? "report" : "report";
   // A quarterly report has no Business section and opens with its statements, so
@@ -223,6 +226,7 @@ export default async function CompanyReportPage({
           {searching ? (
             <Results
               sections={sections}
+              document={document}
               query={searching}
               view={int(query.r) ?? 1}
               hrefFor={hrefFor}
@@ -269,6 +273,7 @@ export default async function CompanyReportPage({
             <SectionView
               section={current}
               sections={sections}
+              document={document}
               extraTabs={extraTabs}
               filing={{
                 cik,
@@ -301,7 +306,7 @@ export default async function CompanyReportPage({
   );
 }
 
-type Sections = ReturnType<typeof extractFilingSections>["sections"];
+type Sections = SectionResult["sections"];
 type HrefFor = (extra: Record<string, string | number | undefined>, hash?: string) => string;
 
 /**
@@ -358,6 +363,7 @@ function SectionTabs({
 function SectionView({
   section,
   sections,
+  document,
   extraTabs,
   filing,
   requestedPage,
@@ -368,6 +374,7 @@ function SectionView({
 }: {
   section: Sections[number];
   sections: Sections;
+  document: FilingDocument;
   extraTabs: { id: string; label: string }[];
   filing: React.ComponentProps<typeof FilingPassages>["filing"];
   requestedPage: number | null;
@@ -376,8 +383,8 @@ function SectionView({
   moved: string | null;
   hrefFor: HrefFor;
 }) {
-  const heading = paragraphsOf(section.text)[0]?.text ?? section.label;
-  const pages = sectionPages(section);
+  const heading = sectionHeading(section, document) ?? section.label;
+  const pages = sectionPages(section, document);
   // A link to a place wins over a page number: the place is what was asked for.
   const number = at !== null
     ? pageForOffset(pages, at)
@@ -385,39 +392,30 @@ function SectionView({
   const page = pages[number - 1];
   const highlight = at !== null && length !== null && length > 0 ? { start: at, end: at + length } : null;
 
-  // A table's rows on this page travel as one block, kept and marked together,
-  // with its headings in front when the page opens part of the way down it.
-  // A table is numbered by its first row on the page, which no other block shares.
-  const blocks: { index: number; start: number; end: number; tableIndex?: number; table?: PageTable }[] = [];
-  for (const paragraph of page?.paragraphs ?? []) {
-    const place = paragraph.table;
-    if (!place) {
-      blocks.push({ index: paragraph.index, start: paragraph.start, end: paragraph.end });
-      continue;
-    }
-    const source = section.tables[place.index];
-    const row = { ...source.rows[place.row], start: paragraph.start, end: paragraph.end };
-    const last = blocks[blocks.length - 1];
-    if (last?.table && last.tableIndex === place.index) {
-      last.table.rows.push(row);
-      last.end = paragraph.end;
-      continue;
-    }
-    const repeated = source.rows.filter((item) => item.header).map((item) => ({ ...item, start: null, end: null }));
-    blocks.push({
-      index: paragraph.index,
-      start: paragraph.start,
-      end: paragraph.end,
-      tableIndex: place.index,
-      table: { columns: source.columns, rows: [...(place.row > 0 && !row.header ? repeated : []), row] },
-    });
-  }
-  const paragraphs: PageParagraph[] = blocks.map(({ tableIndex: _table, ...block }) => ({
-    ...block,
-    text: section.text.slice(block.start, block.end),
-    before: section.text.slice(Math.max(0, block.start - CONTEXT_CHARS), block.start),
-    after: section.text.slice(block.end, block.end + CONTEXT_CHARS),
-  }));
+  // Each item on the page is one of the filing's own blocks, drawn from its own
+  // markup: a paragraph, a heading, or the rows of a table that fall on this page.
+  const paragraphs: PageParagraph[] = (page?.items ?? []).map((item) => {
+    const place = section.blocks[item.block];
+    const block = document.blocks[place.index];
+    const marked = highlight && highlight.start < item.end && highlight.end > item.start
+      ? { from: highlight.start - place.start, to: highlight.end - place.start }
+      : null;
+    const html = block.kind === "text"
+      ? renderText(block, marked, KEEP_SLOT)
+      : renderTableRows(block, item.rows?.from ?? 0, item.rows?.to ?? block.rowStarts.length, marked);
+    return {
+      index: item.block,
+      start: item.start,
+      end: item.end,
+      text: section.text.slice(item.start, item.end),
+      before: section.text.slice(Math.max(0, item.start - CONTEXT_CHARS), item.start),
+      after: section.text.slice(item.end, item.end + CONTEXT_CHARS),
+      kind: block.kind === "table" ? "table" : isHeadingBlock(block) ? "heading" : "text",
+      keepable: block.kind === "table" || !isSubheading(block.text),
+      align: block.kind === "text" ? block.align : null,
+      html,
+    };
+  });
 
   return (
     <>
@@ -487,16 +485,18 @@ function SectionView({
 
 function Results({
   sections,
+  document,
   query,
   view,
   hrefFor,
 }: {
   sections: Sections;
+  document: FilingDocument;
   query: string;
   view: number;
   hrefFor: HrefFor;
 }) {
-  const found = findInSections(sections, query);
+  const found = findInSections(sections, query, document);
   if (!found.ok) return <Notice tone="slate">{found.reason}</Notice>;
 
   const views = Math.max(1, Math.ceil(found.hits.length / HITS_PER_VIEW));

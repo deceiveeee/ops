@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { CONTEXT_CHARS, anchorFor, anchorFromParagraph, locate, type PassageAnchor } from "./anchor";
 import { fixtureFileName } from "./edgar";
-import { paragraphsOf } from "./pages";
+import { sectionPages } from "./pages";
 import { extractFilingSections } from "./sections";
 
 /**
@@ -24,7 +24,8 @@ import { extractFilingSections } from "./sections";
 
 const DOC = "https://www.sec.gov/Archives/edgar/data/1666138/000162828025054049/atkr-20250930.htm";
 const FIXTURES = join(process.cwd(), "e2e", "fixtures", "edgar");
-const sections = extractFilingSections(readFileSync(join(FIXTURES, fixtureFileName(DOC)), "utf8")).sections;
+const read = extractFilingSections(readFileSync(join(FIXTURES, fixtureFileName(DOC)), "utf8"));
+const { sections } = read;
 const textOf = (id: string) => sections.find((section) => section.id === id)!.text;
 
 type LiveAnchor = PassageAnchor & { sectionId: string };
@@ -69,8 +70,13 @@ describe("an anchor made from one paragraph of a page", () => {
     // The reader's page holds only its paragraphs, each with 32 characters of
     // section either side. If that were not enough, a passage kept on the page
     // would differ from the one the server looks for, and never be found.
-    const text = textOf("business");
-    const paragraphs = paragraphsOf(text).slice(0, 40);
+    const business = sections.find((section) => section.id === "business")!;
+    const { text } = business;
+    const paragraphs = sectionPages(business, read.document)
+      .flatMap((page) => page.items)
+      .slice(0, 40)
+      .map((item) => ({ ...item, text: text.slice(item.start, item.end) }));
+    expect(paragraphs).toHaveLength(40);
     for (const paragraph of paragraphs) {
       const withContext = {
         ...paragraph,

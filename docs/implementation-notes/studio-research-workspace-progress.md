@@ -2379,3 +2379,88 @@ lines, rows of figures shown as loose text, and short scraps that are neither he
 - Reports organised by a cross-reference index, and all 20-F and 40-F reports, show the "read it at the
   SEC" notice rather than sections.
 - 38 companies are a sample of about 8,000 with tickers; other layouts will exist.
+
+## 2026-09-17: the reader draws each report's own document
+
+After the push the user asked: "If its a "reader" can you not just change the mechanism so it doesnt
+just pull out random texts?" The mechanism was the problem. The reader stripped every filing to plain
+text and then guessed where its paragraphs, tables and headings had been; every rule added on
+2026-09-16 fixed one layout's guesses, and scraps came from wherever a guess still missed.
+
+### How it reads now
+
+- `lib/filings/document.ts` parses the filing's HTML (parse5) into the blocks its company made:
+  paragraphs, list items, headings and tables. What is drawn is rebuilt from an allow-list: bold,
+  italic, superscript, subscript and line breaks, and table rows and cells with their spans,
+  alignment, indent and rules. Scripts, links, images, styles, iframes, hidden XBRL and anything set
+  not to display never reach the page.
+- Each block's text and HTML are written side by side, one character for each, so search, kept
+  passages and section finding read the text, and a mark is placed in the drawn HTML at the same
+  offsets. A table's text puts a space between cells and a line between rows; those spaces are
+  drawn by the table's layout and their places are recorded.
+- A table is drawn as a table when it holds figures: two rows, a figure after some row's first
+  cell, no table inside it, and at most one paragraph-length cell for every eight figures (the
+  2026-09-16 rules). Bullets, headings and paragraphs laid out in tables read as text, a row to a
+  paragraph; a page set inside one cell reads as its own blocks. "$", "(", ")" and "%" set in cells
+  of their own join their figure in the text ("$11.1", "(175,685)"), so search finds them as typed.
+- Lists: a `display: inline` div is not a block and a flex box's children are spaced, so Microsoft's
+  and Oracle's bullets keep their text; a marker in a box beside a box of text ("(a)", "3.") joins
+  it, only where the two are all their parent holds.
+- Page furniture stays in the text, where a page number after a contents entry is what tells the
+  entry from a heading, but is never drawn, paged or found by search. Added forms: "4." (Alphabet's
+  page numbers, which the 2026-09-16 notes took for list markers), "F- 1" (Crocs), "Page 7",
+  "- 8 -", "Table of Contents 13".
+- Reports set one printed line to a positioned box (Deckers) have their lines joined into
+  paragraphs; bold runs into bold only from a full line, so a short bold line stays a heading.
+- Sections are whole blocks. Pages break between blocks and between table rows, repeat a table's
+  headings (not a caption-length first row) on a page that continues it, and never end on a
+  heading: Netflix's "Forward-Looking Statements" had a page to itself, its paragraph on the next.
+- Blocks are plain data; the parse tree (about 280 MB for JPMorgan's 13 MB annual report) is let
+  go. `lib/filings/reading.ts` keeps the last four reports read, so turning a page does not read the
+  report again.
+- `tables.ts` and `entities.ts` are gone: parse5 decodes character references.
+
+### Found on the way
+
+- Dropping page numbers while reading made contents entries look like headings (the quarterly
+  contents test caught it), hence furniture kept but undrawn.
+- The first version was two to seven times slower than the old reader. Writing a character at a
+  time, escaping each character with four replaces, and WeakMap caches over millions of elements
+  were the causes. Best of three, reading only: JPMorgan 10-K 1.7 s (old 0.7 s), Microsoft 10-K
+  1.0 s (0.14 s), Apple 10-K 0.18 s (0.05 s). About half is parse5 itself. With the cache, a page
+  turn in Microsoft's report measured 0.13 s against 1.2 s for the first page, fetch included.
+- A search snippet near the end of a section cut its last word ("to publishers." showed as "to").
+
+### Measured, on 80 cached reports of 41 companies
+
+- Every report opens the same sections as before the change: 56 open every section; McDonald's
+  10-K, Intel's 10-K and 10-Q and GE's 10-K and 10-Q open none, as before.
+- Across 47,275 paragraphs: drawn text differs from the text search reads in none; a mark over a
+  random stretch lands on exactly that stretch in every paragraph and table part checked.
+- On the 71 reports measured on 2026-09-16: short scraps 518 before, 328 now plus 4 lone bullets;
+  sentences split across paragraphs 1 before, 0 now; rows of figures shown as a line of text 16
+  before, 6 now. Above 2%: Pfizer 10-K 4.0% (its own labels, "2025 v. 2024"), Disney 10-K 2.5%
+  (short bullets), Walmart 10-Q 2.3% ("See accompanying notes.").
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest: 68 files, 927 tests. Playwright, full suite on a production build:
+  180 passed, 5 skipped, none failed.
+- 29 deliberate breaks of the document rules, 3 of the heading-with-its-text rule and 1 of the
+  caption rule each failed at least one test. One break was missed at first (a list number taken
+  from among several siblings), and a test for a page number opening a run of paragraphs was added.
+- In the browser, production build: Netflix's quarterly Risk factors tab is its heading and one
+  sentence; its management's discussion opens with the heading and its paragraph together; a
+  results table is drawn as a table, 13px Inter, 15.5:1 contrast, within its frame. Microsoft's
+  bullets read "• Tackling security…", and a search for "investing significant resources" marks
+  exactly those words.
+
+### Known limits
+
+- Screen budget on a page with a table (Netflix 10-Q): 2.33 screens at 390, 1.52 at 768, 1.96 at
+  1024, 1.74 at 1280, 1.49 at 1440, 1.25 at 1920. As before this change, pages fit only at 1440 and
+  1920.
+- Netflix's quarterly report has no "Item 1" heading above its statements, so its Financial
+  statements tab is missing, as it was before.
+- The first open of a very large report takes one to two seconds.
+- Reports organised by a cross-reference index, and 20-F and 40-F reports, still show the notice.

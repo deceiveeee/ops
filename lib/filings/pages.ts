@@ -8,32 +8,27 @@
  * Atkore's margins, sits 8,274 characters into the business section, where no
  * excerpt could ever reach it.
  *
- * Pages break between paragraphs, never inside one. A sentence cut in half at
- * a page boundary is harder to read than a page that runs a little long, and a
- * passage a learner keeps must be a paragraph they could actually see whole.
+ * Pages break between the filing's own blocks, never inside a paragraph. A
+ * sentence cut in half at a page boundary is harder to read than a page that
+ * runs a little long, and a passage a learner keeps must be a paragraph they
+ * could actually see whole.
  *
- * **Sized by height, not by characters.** The first version counted characters,
- * and at 1440 a page of 2,364 characters of management's discussion rendered
- * 1,708px tall while 2,242 characters of business rendered 968px. The
- * discussion page was a financial table, extracted as dozens of one-line
- * paragraphs, and a paragraph costs a line and a gap however short it is. So a
- * page is filled against an estimate of the height it will take on screen,
- * from a model calibrated on 56 paragraphs of Atkore's 10-K measured in the
- * reader at 1440 on 2026-09-13, which put every one of them on the right number
- * of lines.
+ * **Sized by height, not by characters.** A page is filled against an estimate
+ * of the height it will take on screen at 1440, from a model calibrated on 56
+ * paragraphs of Atkore's 10-K measured in the reader on 2026-09-13.
  *
- * Positions are still characters of the section's own text, so an offset found
- * by search, kept as evidence, or carried in a link means the same place in all
+ * **Tables break between rows.** A table is the filing's own table, so its rows
+ * are sized as table rows, a page breaks between them rather than before the
+ * whole table, and a page that opens part of the way down a table repeats its
+ * headings, because a column of figures without them is a list of loose numbers.
+ *
+ * Positions are characters of the section's own text, so an offset found by
+ * search, kept as evidence, or carried in a link means the same place in all
  * three.
- *
- * **Tables are rows, not paragraphs.** A table of figures is drawn as a table,
- * one row to a line of text, so its rows are sized as table rows, a page breaks
- * between rows rather than before the whole table, and a page that opens part of
- * the way down a table repeats its headings, because a column of figures without
- * them is the list of loose numbers this replaced.
  */
 
-import { isPageFurniture, type ExtractedSection, type TextTable } from "./sections";
+import type { DocumentBlock, FilingDocument, TableBlock, TextBlock } from "./document";
+import type { ExtractedSection } from "./sections";
 
 /**
  * Characters to a line of the reader's 15px text in its 643px column at 1440:
@@ -54,42 +49,36 @@ export const GAP_PX = 12;
 /**
  * The height one page's text may take, at 1440.
  *
- * The screen budget is 1,350px. Measured on 2026-09-13, once the heading and
- * section tabs were tightened, everything around a page's text — the workspace
- * frame, the heading with search beside it, the tabs, the section heading and
- * the page controls — takes 426px above its first paragraph and 271px below
- * its last. That leaves 653px, and this keeps 53 of them in hand.
+ * The screen budget is 1,350px. Measured on 2026-09-13, everything around a
+ * page's text — the workspace frame, the heading with search beside it, the
+ * tabs, the section heading and the page controls — takes 426px above its first
+ * paragraph and 271px below its last. That leaves 653px, and this keeps 53 in hand.
  */
 export const PAGE_PX = 600;
 
-export type Paragraph = {
-  /** Position among the section's paragraphs, the heading being 0. */
-  index: number;
-  /** Offset of the first character in the section text. */
-  start: number;
-  /** Offset one past the last character. */
-  end: number;
-  text: string;
-  /** For a row of a table: which of the section's tables, and which of its rows. */
-  table?: { index: number; row: number };
-};
-
-/**
- * A table row's height at 1440: 13px text on a 20px line with 6px above and
- * below, and a 1px rule. A label longer than a line of the label column wraps.
- */
-export const TABLE_ROW_PX = 33;
+/** A table row at 1440: 13px text on a 20px line with padding and a rule. A long label wraps. */
+export const TABLE_ROW_PX = 29;
 const TABLE_LINE_PX = 20;
 const TABLE_LABEL_CHARS = 42;
 /** Space above a table, and the Keep button's row under it. */
 export const TABLE_CHROME_PX = 52;
 
-type PageableTable = Pick<TextTable, "start" | "end" | "rows">;
+/** Something on a page: one of the section's blocks, or some rows of a table. */
+export type PageItem = {
+  /** Position among the section's blocks, the heading's block being 0. */
+  block: number;
+  /** For part of a table, which rows: from `from` up to, not including, `to`. */
+  rows?: { from: number; to: number };
+  /** Offset of the first character in the section text. */
+  start: number;
+  /** Offset one past the last character. */
+  end: number;
+};
 
 export type Page = {
   /** Counted from 1, because that is how a person counts pages. */
   number: number;
-  paragraphs: Paragraph[];
+  items: PageItem[];
   start: number;
   end: number;
 };
@@ -99,122 +88,11 @@ export function paragraphHeight(length: number): number {
   return Math.max(1, Math.ceil((length + KEEP_CHARS) / LINE_CHARS)) * LINE_PX + KEEP_PX;
 }
 
-/** The estimated height of a run of paragraphs, with the gaps between them. */
-export function estimateHeight(paragraphs: readonly { text: string }[]): number {
-  return paragraphs.reduce(
-    (sum, paragraph, index) => sum + (index ? GAP_PX : 0) + paragraphHeight(paragraph.text.length),
-    0,
-  );
-}
-
-
-/**
- * The section's paragraphs, each with where it sits in the section text.
- *
- * The extractor keeps block boundaries as newlines, so a line is a paragraph.
- * Offsets are found by walking the text rather than by summing lengths, because
- * trimming removes a variable amount of space from each line.
- */
-export function paragraphsOf(sectionText: string, tables: readonly Pick<TextTable, "start" | "end">[] = []): Paragraph[] {
-  const out: Paragraph[] = [];
-  const rows = new Map<number, number>();
-  let cursor = 0;
-  for (const raw of sectionText.split("\n")) {
-    const lineStart = cursor;
-    cursor += raw.length + 1;
-    const text = raw.trim();
-    if (!text) continue;
-    const start = lineStart + raw.indexOf(text);
-    const paragraph: Paragraph = { index: out.length, start, end: start + text.length, text };
-    const tableIndex = tables.findIndex((table) => start >= table.start && start < table.end);
-    if (tableIndex === -1 && isPageFurniture(text)) continue;
-    if (tableIndex !== -1) {
-      const row = rows.get(tableIndex) ?? 0;
-      rows.set(tableIndex, row + 1);
-      paragraph.table = { index: tableIndex, row };
-    }
-    out.push(paragraph);
-  }
-  return out;
-}
-
-/** A table row's estimated height, from how far its label wraps. */
-export function rowHeight(row: PageableTable["rows"][number]): number {
-  const label = row.cells.find((cell) => cell.column === 0)?.text ?? "";
-  return (Math.max(1, Math.ceil(label.length / TABLE_LABEL_CHARS)) - 1) * TABLE_LINE_PX + TABLE_ROW_PX;
-}
-
-/** The height of a table's headings, which open it and are repeated on a page that continues it. */
-function headingsHeight(table: PageableTable): number {
-  return table.rows.filter((row) => row.header).reduce((sum, row) => sum + rowHeight(row), 0);
-}
-
-/**
- * The section's body as pages. The heading, paragraph 0, is not on any page:
- * the reader shows it above whichever page is open.
- */
-export function paginate(sectionText: string, budget = PAGE_PX, tables: readonly PageableTable[] = []): Page[] {
-  const body = paragraphsOf(sectionText, tables).slice(1);
-  const pages: Page[] = [];
-  let current: Paragraph[] = [];
-  let used = 0;
-
-  const close = () => {
-    if (!current.length) return;
-    pages.push({
-      number: pages.length + 1,
-      paragraphs: current,
-      start: current[0].start,
-      end: current[current.length - 1].end,
-    });
-    current = [];
-    used = 0;
-  };
-
-  for (const paragraph of body) {
-    const place = paragraph.table;
-    if (place) {
-      const table = tables[place.index];
-      const row = table.rows[place.row];
-      // What placing this row costs on the page as it stands: a row that goes on
-      // with the table above it costs itself; a table that opens here costs its
-      // headings and its first figures together, so no page ends on headings
-      // alone; and a page that starts part of the way down a table repeats them.
-      const cost = () => {
-        const gap = current.length ? GAP_PX : 0;
-        if (current[current.length - 1]?.table?.index === place.index) return { check: rowHeight(row), add: rowHeight(row) };
-        if (row.header) {
-          const firstFigures = table.rows.find((item) => !item.header);
-          return {
-            check: gap + TABLE_CHROME_PX + headingsHeight(table) + (firstFigures ? rowHeight(firstFigures) : 0),
-            add: gap + TABLE_CHROME_PX + rowHeight(row),
-          };
-        }
-        const height = gap + TABLE_CHROME_PX + (place.row > 0 ? headingsHeight(table) : 0) + rowHeight(row);
-        return { check: height, add: height };
-      };
-      if (current.length && used + cost().check > budget) close();
-      used += cost().add;
-      current.push(paragraph);
-      continue;
-    }
-    const height = paragraphHeight(paragraph.text.length);
-    // A paragraph that would overflow starts the next page, unless the page is
-    // empty: then it is simply a tall page, because a paragraph is not split.
-    if (current.length && used + GAP_PX + height > budget) close();
-    used += (current.length ? GAP_PX : 0) + height;
-    current.push(paragraph);
-  }
-  close();
-  return pages;
-}
-
 /**
  * A line that heads what follows rather than saying something: Apple's
  * "Products" and "iPhone", Netflix's "COMPETITION", a statement's "(In
- * millions)". The reader draws these as headings, without a Keep button of
- * their own: with one, they read as a column of loose quotations between the
- * paragraphs they introduce.
+ * millions)". It has no Keep button of its own: with one, headings read as a
+ * column of loose quotations between the paragraphs they introduce.
  *
  * A heading is short, has words, carries no figures, and does not end a
  * sentence; a line in capitals is a heading whatever it ends with, as in
@@ -222,15 +100,164 @@ export function paginate(sectionText: string, budget = PAGE_PX, tables: readonly
  */
 export function isSubheading(text: string): boolean {
   const line = text.trim();
-  if (line.length > 90 || !/[A-Za-z].*[A-Za-z]/.test(line) || /^[•·\-–—*]/.test(line)) return false;
+  if (line.length > 90 || !/[A-Za-z].*[A-Za-z]/.test(line) || /^[•·●◦▪■○\-–—*]/.test(line)) return false;
   if (/\$|\d{1,3}(,\d{3})+|\d\.\d/.test(line)) return false;
   if (!/[a-z]/.test(line)) return true;
   return !/[.;,!?]$/.test(line) && line.split(/\s+/).length <= 12;
 }
 
-/** A section's pages, with its tables sized as tables. Search, links and the reader all page this way. */
-export function sectionPages(section: Pick<ExtractedSection, "text" | "tables">): Page[] {
-  return paginate(section.text, PAGE_PX, section.tables);
+/** Whether a block is drawn as a heading: a short label, or a line the company set in bold. */
+export function isHeadingBlock(block: DocumentBlock): boolean {
+  return block.kind === "text" && (isSubheading(block.text) || (block.bold >= 0.9 && block.text.length <= 200));
+}
+
+/** Space above a heading, which sets it off from the paragraph before. */
+const HEADING_PAD_PX = 8;
+
+/** A paragraph's or a heading's estimated height at 1440. */
+export function textHeight(block: TextBlock): number {
+  return isHeadingBlock(block)
+    ? Math.max(1, Math.ceil(block.text.length / LINE_CHARS)) * LINE_PX + HEADING_PAD_PX
+    : paragraphHeight(block.text.length);
+}
+
+/** Longest heading drawn above a section's pages rather than on them. */
+const HEADING_MAX = 200;
+
+/**
+ * The line that heads a section, or null when its first block is more than a
+ * heading. A filer may set "Item 1A. Risk Factors" and the first paragraph
+ * under it in one block, or the heading in a table with the text beside it;
+ * that block then stays on the first page, so nothing under the heading is lost.
+ */
+export function sectionHeading(section: Pick<ExtractedSection, "blocks">, document: Pick<FilingDocument, "blocks">): string | null {
+  const first = section.blocks[0];
+  const block = first ? document.blocks[first.index] : undefined;
+  if (!block) return null;
+  if (block.kind === "table") return block.rowStarts.length === 1 && block.text.length <= HEADING_MAX ? block.text : null;
+  return block.text.length <= HEADING_MAX ? block.text : null;
+}
+
+/** A table row's estimated height, from how far its label wraps. */
+function rowHeight(table: TableBlock, row: number): number {
+  return (Math.max(1, Math.ceil((table.labelLengths[row] ?? 0) / TABLE_LABEL_CHARS)) - 1) * TABLE_LINE_PX + TABLE_ROW_PX;
+}
+
+function headingsHeight(table: TableBlock): number {
+  let height = 0;
+  for (let row = 0; row < table.headerRows; row += 1) height += rowHeight(table, row);
+  return height;
+}
+
+/** Where a table's row ends in its block's text. */
+function rowEnd(table: TableBlock, row: number): number {
+  return row + 1 < table.rowStarts.length ? table.rowStarts[row + 1] - 1 : table.text.length;
+}
+
+/**
+ * A section's body as pages. The heading's block is not on any page: the reader
+ * shows the heading above whichever page is open. A first block that is more
+ * than a heading is on the first page.
+ */
+export function paginate(
+  section: Pick<ExtractedSection, "blocks">,
+  document: Pick<FilingDocument, "blocks">,
+  budget = PAGE_PX,
+): Page[] {
+  const pages: Page[] = [];
+  let current: PageItem[] = [];
+  let used = 0;
+  /** Whether the page holds nothing yet but headings, which are never left at the foot of a page. */
+  let headingsOnly = true;
+
+  const close = () => {
+    if (!current.length) return;
+    pages.push({ number: pages.length + 1, items: current, start: current[0].start, end: current[current.length - 1].end });
+    current = [];
+    used = 0;
+    headingsOnly = true;
+  };
+
+  /** The height a heading must bring with it: any headings after it and the start of what they head. */
+  const following = (position: number): number => {
+    let need = 0;
+    for (let next = position + 1; next < section.blocks.length; next += 1) {
+      const block = document.blocks[section.blocks[next].index];
+      if (block.kind === "text" && block.furniture) continue;
+      if (block.kind === "table") {
+        return need + GAP_PX + TABLE_CHROME_PX + headingsHeight(block) + rowHeight(block, Math.min(block.headerRows, block.rowStarts.length - 1));
+      }
+      need += GAP_PX + textHeight(block);
+      if (!isHeadingBlock(block)) return need;
+    }
+    return need;
+  };
+
+  const headed = sectionHeading(section, document) !== null;
+  section.blocks.forEach((place, position) => {
+    if (position === 0 && headed) return;
+    const block = document.blocks[place.index];
+    if (block.kind === "text" && block.furniture) return;
+    if (block.kind === "text") {
+      const height = textHeight(block);
+      const heading = isHeadingBlock(block);
+      // A paragraph that would overflow starts the next page. So does a heading
+      // when it and the start of what it heads would not fit: Netflix's
+      // "Forward-Looking Statements" ended a page of its own, its paragraph on the
+      // next. On a page that holds only headings so far, what they head stays
+      // with them, as a tall page if need be, because a paragraph is not split.
+      const overflows = headingsOnly
+        ? heading && used + GAP_PX + height > budget
+        : used + GAP_PX + (heading ? height + following(position) : height) > budget;
+      if (current.length && overflows) close();
+      used += (current.length ? GAP_PX : 0) + height;
+      current.push({ block: position, start: place.start, end: place.end });
+      headingsOnly = headingsOnly && heading;
+      return;
+    }
+
+    for (let row = 0; row < block.rowStarts.length; row += 1) {
+      // What placing this row costs on the page as it stands: a row that goes on
+      // with the table above it costs itself; a table that opens here costs its
+      // headings and its first figures together, so no page ends on headings
+      // alone; and a page that starts part of the way down a table repeats them.
+      const cost = () => {
+        const last = current[current.length - 1];
+        const gap = current.length ? GAP_PX : 0;
+        if (last?.block === position && last.rows?.to === row) return { check: rowHeight(block, row), add: rowHeight(block, row) };
+        if (row < block.headerRows) {
+          return {
+            check: gap + TABLE_CHROME_PX + headingsHeight(block) + rowHeight(block, Math.min(block.headerRows, block.rowStarts.length - 1)),
+            add: gap + TABLE_CHROME_PX + rowHeight(block, row),
+          };
+        }
+        const height = gap + TABLE_CHROME_PX + (row > 0 ? headingsHeight(block) : 0) + rowHeight(block, row);
+        return { check: height, add: height };
+      };
+      let placed = cost();
+      if (current.length && !headingsOnly && used + placed.check > budget) {
+        close();
+        placed = cost();
+      }
+      headingsOnly = false;
+      const last = current[current.length - 1];
+      const end = place.start + rowEnd(block, row);
+      if (last?.block === position && last.rows?.to === row) {
+        last.rows.to = row + 1;
+        last.end = end;
+      } else {
+        current.push({ block: position, rows: { from: row, to: row + 1 }, start: place.start + block.rowStarts[row], end });
+      }
+      used += placed.add;
+    }
+  });
+  close();
+  return pages;
+}
+
+/** A section's pages. Search, links, kept passages and the reader all page this way. */
+export function sectionPages(section: Pick<ExtractedSection, "blocks">, document: Pick<FilingDocument, "blocks">): Page[] {
+  return paginate(section, document, PAGE_PX);
 }
 
 /**
