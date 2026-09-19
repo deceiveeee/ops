@@ -2545,16 +2545,92 @@ slow first open of large reports.
 - 32 deliberate breaks of the new rules (page numbers, the index reader, 20-F, 40-F, the fit, splitting),
   run on 2026-09-19 against the finished code: every one failed at least one unit test, and every file
   came back byte for byte. One break had to be re-aimed first, its target rewritten since it was made.
-- Audit of 97 cached reports: 78 open every section and none opens nothing; drawn text matches the
-  searched text in every paragraph and table part, and every mark lands on its stretch, including 23,564
-  paragraph parts at a phone's size.
+- Audit of 97 cached documents, which are 83 reports with 14 cached twice: 68 of the 83 open every
+  section and none opens nothing; drawn text matches the searched text in every paragraph and table part,
+  and every mark lands on its stretch, including 23,564 paragraph parts at a phone's size. (Corrected on
+  2026-09-19: this first said 78 of 97, counting the reports cached twice twice.)
 
 ### Known limits
 
 - A report opens sized for 1440 until the browser has measured once; then it is paged again at the same place.
 - 40-F reports are recognised by headings, which vary; where a filer's differ, a section is "not found".
 - Not found: GE's market and market-risk sections; market risk in Shopify's and Suncor's 40-F; risk
-  factors and market risk in Canadian Natural's. Of the 97 cached reports, 19 are without one to three
+  factors and market risk in Canadian Natural's. Of the 83 cached reports, 15 are without one to three
   sections, most often "Market for the shares" in an annual report (Amazon, Chevron, Disney, IBM, Pfizer,
   Starbucks) or risk factors in a quarterly one (Johnson & Johnson, ExxonMobil, Ford, IBM).
 - Canadian Natural's discussion ends with a stray footer line ("…2025 40-F 7").
+
+## 2026-09-19: the reports with sections missing
+
+After `ef5d3e7`, 15 of the 83 cached reports (19 of the 97 cached documents) were without one to three
+sections. Each was looked at in its own text before any change. Three different causes:
+
+### Item 5 worded another way (6 reports)
+
+- The form's title is "Market for Registrant's Common Equity"; Amazon, Chevron, IBM and Starbucks write
+  "Market for the Registrant's", Disney and Pfizer "Market for the Company's". Both are now titles of the
+  section. Each of the six opens at its Item 5 heading and ends before Item 6. IBM's first line is its own
+  pointer to its annual report to stockholders, as it wrote it.
+
+### Headed in a report's own words, on an index's page (Intel, GE)
+
+- Intel's quarterly buybacks sit on page 41 under "Issuer Purchases of Equity Securities", GE's under
+  "PURCHASES OF EQUITY SECURITIES BY THE ISSUER AND AFFILIATED PURCHASERS": the name the SEC's rules give
+  the buyback table (Regulation S-K, Item 703). It is now a heading of the quarterly Buybacks section,
+  used only on the pages an index gives it (`FilingSectionSpec.headings`, which replaces the list that
+  gave McDonald's "FINANCING AND MARKET RISK").
+- Intel's buybacks would then have run on into Item 5's "Rule 10b5-1 Trading Arrangements", which its
+  index lists as a part of Item 5 on the same page. A section now also ends at the heading of a part the
+  index lists under the next Item, looked for only from the page that Item starts on: JPMorgan's
+  statements list "Consolidated balance sheets (unaudited)" on page 95, and its discussion has
+  "CONSOLIDATED BALANCE SHEETS AND CASH FLOWS ANALYSIS" on page 15. Looked for from anywhere, that cut
+  JPMorgan's quarterly discussion from 260,596 characters to 38,286, which comparing every section before
+  and after the change showed.
+- GE's index gives its annual Item 5 as page 22, which opens with the end of its discussion; the Item
+  begins at "FIVE-YEAR PERFORMANCE GRAPH". The parts the SEC's rules give Item 5 (market information,
+  the performance graph, purchases of equity securities) now mark where it begins, but only where the
+  page opens with another section (`FilingSectionSpec.parts`). Used anywhere, they moved Intel's annual
+  Item 5, whose page opens with the Item as "Market for Our Common Stock", down to its graph, leaving out
+  the market and holders.
+- GE's discussion, given as pages 7-22, ran on over the whole of page 22: the graph and the buyback table
+  were drawn under "Management's discussion" as well as under Item 5. A section read through an index now
+  ends where another begins on its last page, and a heading left at its end ("OTHER FINANCIAL DATA")
+  goes with what follows. The statements are never cut this way: their notes hold GE's legal matters.
+
+### Not in the report at all (7 reports)
+
+- Johnson & Johnson's, ExxonMobil's, Ford's and IBM's quarterly reports have no Item 1A; Ford's has no
+  Part II Item 2, IBM's no Item 3; Home Depot's and AT&T's Part II opens at Item 1A with no Item 1. GE's
+  quarterly index gives "Item 1A. Risk Factors Not applicable(a)". The reader said "Not found", as if it
+  had missed them. `SectionResult.absent` now holds a section no line of the report names (no heading,
+  no contents or index entry: its Item number followed by one of its titles), or one the report calls
+  not applicable. A line with the Item's number and a title the reader does not know keeps it "not
+  found", and a document that names no Items at all never has one absent. The page says "This report has
+  no Risk factors section." apart from what it could not find.
+
+### Result
+
+- Of the 83 cached reports, 75 open every section; 7 are without a section they do not have; GE's two
+  reports have market risk not found (its quarterly report is also among the 7). Only the intended sections changed: 78 of the 97 documents
+  are unchanged to the character, compared section by section before and after.
+- GE's market risk stays not found. Its index gives pages 10 and 28-29 (quarterly) and 13 and 68-69
+  (annual): a paragraph in the discussion and part of a note, on pages that also carry credit ratings,
+  cash flows and other notes, with no heading of their own. Whole pages would show those under "Market
+  risk"; choosing the paragraphs would be the reader's guess, not GE's layout.
+
+### Verified
+
+- `tsc` 0; lint clean. Vitest, the project's 71 files: 967 tests (`npx vitest run` also loads old copies
+  of the specs under the ignored `tmp/`, which fail; `--exclude "tmp/**"` leaves the project's own).
+- 16 deliberate breaks of the new rules each failed at least one test, once a test was added for the one
+  missed (a section cut where another begins before its last page).
+- Audit of the 97 documents: drawn text and marks match in every paragraph, table and phone-size part.
+- In the browser, against the SEC: Johnson & Johnson's quarterly report says "This report has no Risk
+  factors section." with five tabs; Amazon's annual report opens all seven, its Market for the shares
+  from its Item 5 heading; GE's quarterly report shows Buybacks and says both what it has not and what
+  was not found. No console errors. Playwright: the reader's 23 tests pass.
+
+### Known limits
+
+- GE prints "*Non-GAAP Financial Measure" at the foot of each page, and it shows under its buyback
+  table. It explains the asterisks in GE's discussion, so it is not hidden.

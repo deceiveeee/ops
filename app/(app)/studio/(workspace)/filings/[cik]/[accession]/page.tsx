@@ -161,7 +161,7 @@ export default async function CompanyReportPage({
   // then the document itself says whether it is a quarterly report.
   const list = await fetchFilings(cik);
   const filing = list.ok ? list.filings.find((entry) => entry.accession === accession) : undefined;
-  const { sections, missing, plainTextLength, document } = await readReport({ cik, accession, document: doc }, fetched.html, filing?.form);
+  const { sections, missing, absent, plainTextLength, document } = await readReport({ cik, accession, document: doc }, fetched.html, filing?.form);
   const companyName = (list.ok ? list.name : "") || ticker || "Company";
   const kind = filing ? KIND[filing.form] ?? "report" : "report";
   // A quarterly report has no Business section and opens with its statements, so
@@ -295,6 +295,7 @@ export default async function CompanyReportPage({
               document={document}
               fit={fit}
               missing={missing}
+              absent={absent}
               extraTabs={extraTabs}
               filing={{
                 cik,
@@ -316,9 +317,7 @@ export default async function CompanyReportPage({
         </>
       )}
 
-      {missing.length > 0 && !searching && !showsSection ? (
-        <p className="text-[13px] leading-6 text-slate-500">{notFound(missing)}</p>
-      ) : null}
+      {!searching && !showsSection ? <Unread missing={missing} absent={absent} className="text-[13px] leading-6 text-slate-500" /> : null}
     </Shell>
   );
 }
@@ -383,6 +382,7 @@ function SectionView({
   document,
   fit,
   missing,
+  absent,
   extraTabs,
   filing,
   requestedPage,
@@ -396,6 +396,7 @@ function SectionView({
   document: FilingDocument;
   fit: Fit;
   missing: { id: string; label: string }[];
+  absent: { id: string; label: string }[];
   extraTabs: { id: string; label: string }[];
   filing: React.ComponentProps<typeof FilingPassages>["filing"];
   requestedPage: number | null;
@@ -472,7 +473,7 @@ function SectionView({
               <div className="space-y-2 px-3 pb-3">
                 <p>{section.lens}</p>
                 <p className="text-slate-400">{KEEP_HOW}</p>
-                {missing.length ? <p className="text-[13px] text-slate-500">{notFound(missing)}</p> : null}
+                <Unread missing={missing} absent={absent} className="text-[13px] text-slate-500" />
               </div>
             </details>
           }
@@ -482,7 +483,7 @@ function SectionView({
               <p className="mt-2 text-[13px] leading-5 text-slate-400">{section.lens}</p>
               <h2 className="mt-4 text-[14px] font-semibold text-white">Keeping a passage</h2>
               <p className="mt-2 text-[13px] leading-5 text-slate-400">{KEEP_HOW}</p>
-              {missing.length ? <p className="mt-4 text-[13px] leading-5 text-slate-500">{notFound(missing)}</p> : null}
+              <Unread missing={missing} absent={absent} className="mt-4 text-[13px] leading-5 text-slate-500" />
             </Panel>
           }
         />
@@ -529,9 +530,22 @@ function SectionView({
   );
 }
 
-/** The sections a report was read without, said plainly. */
-function notFound(missing: { label: string }[]): string {
-  return `Not found in this report: ${missing.map((section) => section.label).join(", ")}. Companies lay out their reports differently, and this reader would rather say it could not find a section than show you the wrong one.`;
+/**
+ * The sections a report was read without, said plainly, and told apart: one the
+ * report does not have is not one the reader failed to find.
+ */
+function Unread({ missing, absent, className }: { missing: { label: string }[]; absent: { label: string }[]; className: string }) {
+  if (!missing.length && !absent.length) return null;
+  const labels = absent.map((section) => section.label);
+  const named = labels.length > 1 ? `${labels.slice(0, -1).join(", ")} or ${labels[labels.length - 1]}` : labels[0];
+  return (
+    <p className={className}>
+      {absent.length ? `This report has no ${named} section. ` : null}
+      {missing.length
+        ? `Not found in this report: ${missing.map((section) => section.label).join(", ")}. Companies lay out their reports differently, and this reader would rather say it could not find a section than show you the wrong one.`
+        : null}
+    </p>
+  );
 }
 
 function Results({

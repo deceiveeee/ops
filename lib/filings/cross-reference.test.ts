@@ -117,6 +117,9 @@ describe("a report laid out by a cross-reference index", () => {
     expect(text("financials", geShaped)).toMatch(/^STATEMENT OF EARNINGS/);
     // A legal section in the notes starts at its note's own heading.
     expect(text("legal", geShaped)).toMatch(/^LEGAL MATTERS\./);
+    // And the statements keep that note, on their last page, as their own.
+    expect(text("financials", geShaped)).toContain("LEGAL MATTERS. We are party to claims.");
+    expect(text("financials", geShaped)).toContain("notes-one sentence 8");
   });
 
   it("stops a section at the next section's heading on its last page", () => {
@@ -130,7 +133,9 @@ describe("a report laid out by a cross-reference index", () => {
     // Market risk is given as page 8, the middle of the discussion: no heading
     // names it there, so it is not shown under the wrong name.
     expect(text("market-risk", geShaped)).toBeNull();
-    expect(extractFilingSections(geShaped).missing.map((section) => section.id)).toEqual(["market", "market-risk"]);
+    expect(extractFilingSections(geShaped).missing.map((section) => section.id)).toEqual(["market-risk"]);
+    // This index names no Item 5 at all, so the report does not have one.
+    expect(extractFilingSections(geShaped).absent.map((section) => section.id)).toEqual(["market"]);
   });
 });
 
@@ -200,5 +205,116 @@ describe("several Items on one page", () => {
     expect(text("risk-factors", html, "10-Q")).toMatch(/^Risk Factors and Other Key Information/);
     // Share purchases have no heading on the page, so they are not shown as another Item's text.
     expect(text("market", html, "10-Q")).toBeNull();
+  });
+});
+
+describe("Item 5 on a page the index gives it", () => {
+  const index = [
+    `<p>FORM 10-K CROSS REFERENCE INDEX</p>`,
+    `<p>Item 1. Business 3-4</p><p>Item 1A. Risk Factors 5-6</p>`,
+    `<p>Item 5. Market for Registrant's Common Equity, Related Stockholder Matters and Issuer Purchases of Equity Securities 9</p>`,
+    `<p>Item 7. Management's Discussion and Analysis of Financial Condition and Results of Operations 7-9</p>`,
+    `<p>Item 8. Financial Statements and Supplementary Data 10</p>`,
+  ].join("");
+  const before = [
+    page(3, `<p>ABOUT ACME. Acme makes engines.</p>${paragraph("business-one")}`),
+    page(4, `${paragraph("business-two")}${paragraph("business-three")}`),
+    page(5, `<p>RISK FACTORS. What could go wrong.</p>${paragraph("risk-one")}`),
+    page(6, `${paragraph("risk-two")}${paragraph("risk-three")}`),
+    page(7, `<p>MANAGEMENT'S DISCUSSION AND ANALYSIS.</p>${paragraph("mdna-one")}`),
+    page(8, `${paragraph("mdna-two")}${paragraph("mdna-three")}`),
+  ].join("");
+  const after = page(10, `<p>STATEMENT OF EARNINGS</p>${paragraph("statements-one")}`);
+
+  it("starts where the Item's first part is headed, on a page that opens with another section", () => {
+    // GE's page for Item 5 opens with the end of its discussion.
+    const html = `${before}${page(9, `${paragraph("mdna-four")}<p><b>OTHER FINANCIAL DATA</b></p><p>FIVE-YEAR PERFORMANCE GRAPH</p>${paragraph("graph")}<p>PURCHASES OF EQUITY SECURITIES BY THE ISSUER. We bought shares.</p>`)}${after}${index}`;
+    // The heading GE sets over its Item 5 goes with it, not at the end of the discussion.
+    expect(text("market", html)).toMatch(/^OTHER FINANCIAL DATA\nFIVE-YEAR PERFORMANCE GRAPH\ngraph/);
+    expect(text("market", html)).toContain("PURCHASES OF EQUITY SECURITIES");
+    expect(text("market", html)).not.toContain("mdna-four");
+    // The index gives the discussion page 9 too; it ends where the Item begins.
+    expect(text("mdna", html)).toContain("mdna-four sentence 8");
+    expect(text("mdna", html)).not.toContain("OTHER FINANCIAL DATA");
+    expect(text("mdna", html)).not.toContain("FIVE-YEAR");
+  });
+
+  it("starts at the page's top where the page opens with the Item, however it is worded", () => {
+    // Intel's page opens with "Market for Our Common Stock", and its graph comes after the holders.
+    const html = `${before.replace(page(8, `${paragraph("mdna-two")}${paragraph("mdna-three")}`), page(8, `${paragraph("mdna-two")}${paragraph("mdna-three")}`))}${page(9, `<p>Market for Our Common Stock</p>${paragraph("holders")}<p>Stock Performance Graph</p>${paragraph("graph")}`)}${after}${index.replace("7-9", "7-8")}`;
+    expect(text("market", html)).toMatch(/^Market for Our Common Stock\nholders/);
+    expect(text("market", html)).toContain("graph sentence 8");
+  });
+});
+
+describe("an Item's parts in the index", () => {
+  it("do not end a section at one beginning inside it before its last page", () => {
+    // GE gives its market risk as page 13 of a discussion that runs to page 22:
+    // were market risk headed there, the discussion would still run on past it.
+    const html = [
+      page(2, `${paragraph("forward-looking")}${paragraph("about")}`),
+      page(3, `<p>ABOUT ACME. Acme makes engines.</p>${paragraph("business-one")}`),
+      page(4, `${paragraph("business-two")}${paragraph("business-three")}`),
+      page(5, `<p>RISK FACTORS. What could go wrong.</p>${paragraph("risk-one")}`),
+      page(6, `${paragraph("risk-two")}${paragraph("risk-three")}`),
+      page(7, `<p>MANAGEMENT'S DISCUSSION AND ANALYSIS.</p>${paragraph("mdna-one")}`),
+      page(8, `${paragraph("mdna-two")}<p>MARKET RISK. Rates and currencies move.</p>${paragraph("rates")}`),
+      page(9, `${paragraph("mdna-three")}${paragraph("mdna-four")}`),
+      page(10, `<p>STATEMENT OF EARNINGS</p>${paragraph("statements-one")}`),
+      `<p>FORM 10-K CROSS REFERENCE INDEX</p><p>Item 1. Business 3-4</p><p>Item 1A. Risk Factors 5-6</p>`,
+      `<p>Item 7. Management's Discussion and Analysis of Financial Condition and Results of Operations 7-9</p>`,
+      `<p>Item 7A. Quantitative and Qualitative Disclosures About Market Risk 8</p><p>Item 8. Financial Statements and Supplementary Data 10</p>`,
+    ].join("");
+    expect(text("market-risk", html)).toMatch(/^MARKET RISK./);
+    expect(text("mdna", html)).toContain("rates sentence 8");
+    expect(text("mdna", html)).toContain("mdna-four sentence 8");
+  });
+
+  it("end a section on a shared page at the heading of the next Item's part", () => {
+    // Intel's quarterly page 41: the buybacks, headed "Issuer Purchases of
+    // Equity Securities", then Item 5's "Rule 10b5-1 Trading Arrangements".
+    const html = [
+      page(40, `${paragraph("notes-one")}${paragraph("notes-two")}`),
+      page(41, `<p>Risk Factors</p>${paragraph("risk-one")}<p>Issuer Purchases of Equity Securities</p>${paragraph("purchases-one")}<p>Rule 10b5-1 Trading Arrangements</p>${paragraph("trading-one")}`),
+      page(42, `<p>Exhibits</p>${paragraph("exhibits-one")}${paragraph("exhibits-two")}`),
+      page(43, `${paragraph("signatures")}${paragraph("officers")}`),
+      page(44, `${paragraph("more")}${paragraph("last")}`),
+      `<p>Item 1. Financial Statements Pages 40</p><p>Item 1A. Risk Factors Page 41</p>`,
+      `<p>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds Page 41</p>`,
+      `<p>Item 5. Other Information</p><p>Rule 10b5-1 Trading Arrangements Page 41</p><p>Item 6. Exhibits Page 42</p>`,
+    ].join("");
+    expect(text("market", html, "10-Q")).toMatch(/^Issuer Purchases of Equity Securities\npurchases-one/);
+    expect(text("market", html, "10-Q")).not.toContain("trading-one");
+  });
+
+  it("do not end a section before the page where their Item starts", () => {
+    // JPMorgan's statements list "Consolidated balance sheets (unaudited)" as
+    // a part on page 95; its discussion has "CONSOLIDATED BALANCE SHEETS AND
+    // CASH FLOWS ANALYSIS" on page 15, which is not where the statements begin.
+    const html = [
+      `<table>`,
+      `<tr><td>Item 1. Financial Statements</td><td></td></tr>`,
+      `<tr><td>Consolidated statements of income (unaudited)</td><td>7</td></tr>`,
+      `<tr><td>Consolidated balance sheets (unaudited) at June 30, 2026</td><td>8</td></tr>`,
+      `<tr><td>Item 2. Management's Discussion and Analysis of Financial Condition and Results of Operations</td><td></td></tr>`,
+      `<tr><td>Introduction</td><td>3</td></tr>`,
+      `<tr><td>Consolidated Balance Sheets and Cash Flows Analysis</td><td>5</td></tr>`,
+      `<tr><td>Item 3. Quantitative and Qualitative Disclosures About Market Risk</td><td>9</td></tr>`,
+      `<tr><td>Item 4. Controls and Procedures</td><td>9</td></tr>`,
+      `</table>`,
+      page(2, `${paragraph("cover")}${paragraph("cover-two")}`, (n) => String(n)),
+      page(3, `<p>Introduction</p>${paragraph("intro")}${paragraph("intro-two")}`, (n) => String(n)),
+      page(4, `${paragraph("results-one")}${paragraph("results-two")}`, (n) => String(n)),
+      page(5, `<p>CONSOLIDATED BALANCE SHEETS AND CASH FLOWS ANALYSIS</p>${paragraph("balance-analysis")}${paragraph("balance-analysis-two")}`, (n) => String(n)),
+      page(6, `${paragraph("liquidity-one")}${paragraph("liquidity-two")}`, (n) => String(n)),
+      page(7, `<p>Consolidated statements of income</p>${paragraph("income")}${paragraph("income-two")}`, (n) => String(n)),
+      page(8, `<p>Consolidated balance sheets</p>${paragraph("balance")}${paragraph("balance-two")}`, (n) => String(n)),
+      page(9, `<p>Quantitative and Qualitative Disclosures About Market Risk</p>${paragraph("rates")}<p>Controls and Procedures</p>${paragraph("controls")}`, (n) => String(n)),
+    ].join("");
+    const mdna = text("mdna", html, "10-Q");
+    expect(mdna).toMatch(/^Introduction/);
+    expect(mdna).toContain("balance-analysis sentence 0");
+    expect(mdna).toContain("liquidity-two sentence 8");
+    expect(mdna).not.toContain("income sentence 0");
   });
 });

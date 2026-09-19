@@ -19,6 +19,7 @@
 import { entryFor, readIndex, sectionFromIndex } from "./cross-reference";
 import { ENDS_IN_PAGES, isPageFurniture, joinDocuments, readDocument, type FilingDocument } from "./document";
 import { fortyFSections } from "./forty-f";
+import { isHeadingBlock } from "./pages";
 
 export type FilingSectionId =
   | "business"
@@ -42,6 +43,22 @@ export type FilingSectionSpec = {
    * Financial Statements", Apple "Condensed Consolidated Financial Statements".
    */
   titles: readonly string[];
+  /**
+   * Other words a report heads the section with where it is laid out by a
+   * cross-reference index rather than by Item headings, found only within the
+   * pages the index gives: McDonald's heads its market risk "FINANCING AND
+   * MARKET RISK", GE its buybacks "PURCHASES OF EQUITY SECURITIES BY THE ISSUER".
+   */
+  headings?: readonly string[];
+  /**
+   * The parts the SEC's rules give the Item, whose headings mark where it
+   * begins on an index's page only where that page opens with another section.
+   * GE's page for its Item 5 opens with the end of its discussion, and the
+   * Item with "FIVE-YEAR PERFORMANCE GRAPH"; Intel's opens with the Item, as
+   * "Market for Our Common Stock", and its graph comes after the market and
+   * holders, which starting at the graph would leave out.
+   */
+  parts?: readonly string[];
   /** What the course teaches a learner to look for here. */
   lens: string;
 };
@@ -72,13 +89,19 @@ export const FILING_SECTIONS: readonly FilingSectionSpec[] = [
     marker: "Item 3.",
     label: "Legal proceedings",
     titles: ["Legal Proceedings"],
+    headings: ["Legal Matters"],
     lens: "Litigation large enough to matter. Often a cross-reference to the notes rather than a disclosure in itself.",
   },
   {
     id: "market",
     marker: "Item 5.",
     label: "Market for the shares",
-    titles: ["Market for Registrant"],
+    // The form's title is "Market for Registrant's Common Equity"; Amazon,
+    // Chevron, IBM and Starbucks write "Market for the Registrant's", Disney
+    // and Pfizer "Market for the Company's".
+    titles: ["Market for Registrant", "Market for the Registrant", "Market for the Company"],
+    // Regulation S-K, Items 201 and 703.
+    parts: ["Market Information", "Performance Graph", "Purchases of Equity Securities"],
     lens: "Share count, buybacks and dividends — what the company did with capital that could have been yours.",
   },
   {
@@ -93,6 +116,7 @@ export const FILING_SECTIONS: readonly FilingSectionSpec[] = [
     marker: "Item 7A.",
     label: "Market risk",
     titles: ["Quantitative and Qualitative"],
+    headings: ["Market Risk"],
     lens: "Exposure to rates, currencies and prices, stated in the company's own terms.",
   },
   {
@@ -145,6 +169,7 @@ export const QUARTERLY_SECTIONS: readonly FilingSectionSpec[] = [
     marker: "Item 3.",
     label: "Market risk",
     titles: ["Quantitative and Qualitative"],
+    headings: ["Market Risk"],
     lens: "Exposure to rates, currencies and prices, stated in the company's own terms. Often a note that nothing has changed since the annual report.",
   },
   {
@@ -152,6 +177,7 @@ export const QUARTERLY_SECTIONS: readonly FilingSectionSpec[] = [
     marker: "Item 1.",
     label: "Legal proceedings",
     titles: ["Legal Proceedings"],
+    headings: ["Legal Matters"],
     lens: "Litigation large enough to matter. Often a cross-reference to the notes rather than a disclosure in itself.",
   },
   {
@@ -166,6 +192,10 @@ export const QUARTERLY_SECTIONS: readonly FilingSectionSpec[] = [
     marker: "Item 2.",
     label: "Buybacks",
     titles: ["Unregistered Sales"],
+    // The buyback table's own name in the SEC's rules (Regulation S-K, Item
+    // 703): Intel heads it "Issuer Purchases of Equity Securities", GE
+    // "PURCHASES OF EQUITY SECURITIES BY THE ISSUER AND AFFILIATED PURCHASERS".
+    headings: ["Purchases of Equity Securities"],
     lens: "The shares the company bought back each month of the quarter, the average price it paid, and how much its buyback plan still allows. Any shares it sold outside a public offering are reported here too.",
   },
 ];
@@ -205,6 +235,7 @@ export const FOREIGN_SECTIONS: readonly FilingSectionSpec[] = [
     marker: "Item 11.",
     label: "Market risk",
     titles: ["Quantitative and Qualitative"],
+    headings: ["Market Risk"],
     lens: "Exposure to rates, currencies and prices, stated in the company's own terms.",
   },
   {
@@ -273,8 +304,10 @@ export type ExtractedSection = {
 
 export type SectionResult = {
   sections: ExtractedSection[];
-  /** Sections whose heading could not be located outside the contents. */
+  /** Sections the report has, or may have, that the reader could not find. */
   missing: { id: FilingSectionId; label: string }[];
+  /** Sections the report does not have: no Item for them, or one it says is not applicable. */
+  absent: { id: FilingSectionId; label: string }[];
   /** Plain text of the whole filing, for length reporting and search. */
   plainTextLength: number;
   /** The filing as the reader draws it. */
@@ -470,13 +503,50 @@ const FOREIGN_POINTER_MAX = 1_500;
 const STATEMENTS_START = /(^|\n)[ \t]*(?:index to (?:the )?(?:consolidated )?financial statements|report of independent registered public accounting firm)[ \t]*(?:page)?[ \t]*(?=\n|$)/g;
 
 /**
- * Words a company heads a section with in its own layout, besides the Item's
- * title: McDonald's puts its market risk under "FINANCING AND MARKET RISK".
+ * Whether a report has no such Item at all, rather than one the reader could
+ * not find: no line anywhere, headings or contents or index, opens with the
+ * Item's number and one of its titles, or the one that does says the Item is
+ * "Not applicable".
+ *
+ * A quarterly report may leave an Item out. Johnson & Johnson's and Ford's go
+ * from Part II Item 1 to Item 2 or Item 5 with no Item 1A, and Home Depot's
+ * and AT&T's Part II opens at Item 1A with no Item 1; GE's index gives "Item
+ * 1A. Risk Factors Not applicable(a)". All six were listed as "not found", as
+ * if the reader had missed them.
+ *
+ * A line with the Item's number and a title the reader does not know may be
+ * this Item worded another way, so it keeps the section "not found": the
+ * reader says a report lacks a section only when the report says so itself.
+ * Only a title belonging to another section with the same number, such as a
+ * quarterly report's "Item 1. Financial Statements" beside its "Item 1. Legal
+ * Proceedings", is set aside. And only a report that numbers its Items at all
+ * can show one is not there: in a document where no line names an Item, a
+ * section not read is only ever not found.
  */
-const INDEX_HEADINGS: Partial<Record<FilingSectionId, readonly string[]>> = {
-  "market-risk": ["Market Risk"],
-  legal: ["Legal Matters"],
-};
+function notInReport(lower: string, spec: FilingSectionSpec, specs: readonly FilingSectionSpec[]): boolean {
+  if (!specs.some((other) => itemLines(lower, other).some((rest) => names(other, rest)))) return false;
+  for (const rest of itemLines(lower, spec)) {
+    if (names(spec, rest)) {
+      if (!/not applicable\s*(\([a-z0-9]\))?\s*$/.test(rest.trim())) return false;
+      continue;
+    }
+    const another = specs.some((other) => other !== spec && markerNumber(other) === markerNumber(spec) && names(other, rest));
+    if (!another) return false;
+  }
+  return true;
+}
+
+/** What follows each line that opens with a section's Item number: "Item 1A. Risk Factors" gives "risk factors". */
+function itemLines(lower: string, spec: FilingSectionSpec): string[] {
+  const pattern = new RegExp(`(^|\\n)[ \\t]*item\\s*${markerNumber(spec)}(?![0-9a-z])[ \\t]*[.:\\-–—]?([^\\n]*)`, "g");
+  return [...lower.matchAll(pattern)].map((match) => match[2]);
+}
+
+/** Whether a line's words, after its Item number, open with one of the section's titles. */
+const names = (spec: FilingSectionSpec, rest: string) => spec.titles.some((title) => lettersOf(rest).startsWith(lettersOf(title)));
+const markerNumber = (spec: FilingSectionSpec) => spec.marker.match(/\d{1,2}[a-f]?/i)![0].toLowerCase();
+const lettersOf = (text: string) => text.toLowerCase().replace(/[^a-z]/g, "");
+
 const EXHIBITS = /(^|\n)[ \t]*item\s*15\s*[.:\-–—]?\s*exhibits/g;
 
 export function extractFilingSections(html: string, form?: string): SectionResult {
@@ -548,23 +618,47 @@ export function extractFilingSections(html: string, form?: string): SectionResul
   const unfound = specs.filter((spec) => !sections.some((section) => section.id === spec.id));
   if (unfound.length) {
     const entries = readIndex(text);
+    const throughIndex: { spec: FilingSectionSpec; indexes: number[] }[] = [];
     for (const spec of unfound) {
-      const entry = entryFor(entries, spec.marker.match(/\d{1,2}[a-f]?/i)![0].toLowerCase(), spec.titles);
-      const indexes = entry ? sectionFromIndex(document, entries, entry, [...spec.titles, ...(INDEX_HEADINGS[spec.id] ?? [])]) : null;
-      if (!indexes) continue;
-      const section = sectionOf(spec, document, indexes);
-      if (hasBody(section.text)) sections.push(section);
+      const entry = entryFor(entries, markerNumber(spec), spec.titles);
+      const indexes = entry ? sectionFromIndex(document, entries, entry, [...spec.titles, ...(spec.headings ?? [])], spec.parts) : null;
+      if (indexes) throughIndex.push({ spec, indexes });
     }
+    // A section read through the index ends where another begins on its last
+    // page. GE gives its discussion as pages 7-22 and its Item 5 as page 22,
+    // where "FIVE-YEAR PERFORMANCE GRAPH" opens the Item, and the discussion ran
+    // on over the graph and the buyback table. One beginning on an earlier page,
+    // as GE's market risk would on page 13, sits inside it and does not end it;
+    // nor does one read in the statements' notes, which hold GE's legal matters.
+    const firsts = [...sections.map((section) => section.blocks[0].index), ...throughIndex.map((read) => read.indexes[0])];
+    const ends = throughIndex.map(({ spec, indexes }) => {
+      if (spec.id === "financials") return { kept: indexes, cut: -1, heads: [] as number[] };
+      const last = indexes[indexes.length - 1];
+      const cut = Math.min(...firsts.filter((first) => first > indexes[0] && first >= pageTop(document, last) && first <= last));
+      if (!Number.isFinite(cut)) return { kept: indexes, cut: -1, heads: [] as number[] };
+      const kept = indexes.filter((index) => index < cut);
+      // A heading left at the end introduces what follows, and goes with it:
+      // GE's "OTHER FINANCIAL DATA" stands over its Item 5.
+      const heads: number[] = [];
+      while (kept.length > 1 && kept[kept.length - 1] === cut - heads.length - 1 && isHeadingBlock(document.blocks[kept[kept.length - 1]])) {
+        heads.unshift(kept.pop()!);
+      }
+      return { kept, cut, heads };
+    });
+    throughIndex.forEach(({ spec, indexes }, i) => {
+      const heads = ends.filter((end) => end.cut === indexes[0]).flatMap((end) => end.heads);
+      const section = sectionOf(spec, document, [...heads, ...ends[i].kept]);
+      if (hasBody(section.text)) sections.push(section);
+    });
     sections.sort((a, b) => specs.findIndex((spec) => spec.id === a.id) - specs.findIndex((spec) => spec.id === b.id));
   }
 
   const found = new Set(sections.map((s) => s.id));
-  const missing = specs.filter((s) => !found.has(s.id)).map((s) => ({
-    id: s.id,
-    label: s.label,
-  }));
+  const unread = specs.filter((s) => !found.has(s.id));
+  const absent = unread.filter((s) => notInReport(lower, s, specs)).map(({ id, label }) => ({ id, label }));
+  const missing = unread.filter((s) => !absent.some((a) => a.id === s.id)).map(({ id, label }) => ({ id, label }));
 
-  return { sections, missing, plainTextLength: text.length, document };
+  return { sections, missing, absent, plainTextLength: text.length, document };
 }
 
 /**
@@ -591,7 +685,9 @@ export function extractFortyFSections(htmls: readonly string[]): SectionResult {
     return part && part.indexes.length ? [sectionOf(spec, document, part.indexes)] : [];
   }).filter((section) => hasBody(section.text));
   const missing = FILING_SECTIONS.filter((spec) => !sections.some((section) => section.id === spec.id)).map(({ id, label }) => ({ id, label }));
-  return { sections, missing, plainTextLength: document.text.length, document };
+  // A 40-F's parts are read by their headings, which have no Item numbers to
+  // show that one is absent, so a section not read is only ever not found.
+  return { sections, missing, absent: [], plainTextLength: document.text.length, document };
 }
 
 /**
@@ -615,6 +711,16 @@ function sectionOf(spec: FilingSectionSpec, document: FilingDocument, indexes: r
     text: indexes.map((index) => document.blocks[index].text).join("\n"),
     blocks,
   };
+}
+
+/** The first block of the printed page a block is on: the one after the page before's footer. */
+function pageTop(document: FilingDocument, block: number): number {
+  let top = 0;
+  for (const page of document.pages) {
+    if (page.block >= block) break;
+    top = page.block + 1;
+  }
+  return top;
 }
 
 /** The block whose text holds an offset. */

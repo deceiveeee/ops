@@ -133,6 +133,7 @@ export function sectionFromIndex(
   entries: readonly IndexEntry[],
   entry: IndexEntry,
   titles: readonly string[] = [],
+  parts: readonly string[] = [],
 ): number[] | null {
   const { pages, blocks } = document;
   if (pages.length < 2) return null;
@@ -216,15 +217,20 @@ export function sectionFromIndex(
     const end = endOf(last);
     if (end === null) continue;
     // A first page that opens partway through something else is not where this
-    // section starts; with no heading of its own there, it starts a page later.
-    const named = (page: number) => headingIn(startOf(page) ?? 0, endOf(page) ?? end, [entry.title, ...entry.parts, ...titles]) !== null;
+    // section starts; with no heading of its own there, or of one of its parts,
+    // it starts a page later.
+    const named = (page: number) => headingIn(startOf(page) ?? 0, endOf(page) ?? end, [entry.title, ...entry.parts, ...titles, ...parts]) !== null;
     const first = given < last && continues(given) && !named(given) ? given + 1 : given;
     const firstEnd = endOf(first) ?? end;
     const top = startOf(first);
     // A first page whose start is not marked, before the first footer found, is
     // searched back a few pages' length for the heading, which must then be there.
-    const heading = headingIn(top ?? firstEnd - perPage * 3, firstEnd, [entry.title, ...entry.parts, ...titles]);
-    if (heading === null && (top === null || shared(first, own.open ? 0 : last - first))) continue;
+    const searchFrom = top ?? firstEnd - perPage * 3;
+    const theirs = top === null || shared(first, own.open ? 0 : last - first);
+    // Where the page opens with another section, a heading of one of this
+    // Item's parts shows where it begins.
+    const heading = headingIn(searchFrom, firstEnd, [entry.title, ...entry.parts, ...titles]) ?? (theirs ? headingIn(searchFrom, firstEnd, parts) : null);
+    if (heading === null && theirs) continue;
     const from = heading ?? (top as number);
 
     // Where it stops: the heading of an Item the index starts inside these
@@ -240,11 +246,22 @@ export function sectionFromIndex(
       // one is a single page, as Intel's quarterly Items on page 41 are. Where
       // the index says where this section ends, an Item that starts and ends
       // within its pages is a part of it, as properties can sit in a business.
+      // An Item starting here ends it at its own heading or, from the page the
+      // Item starts on, at the heading of a part the index lists under it:
+      // Intel's Item 5 has no heading on page 41, but its "Rule 10b5-1 Trading
+      // Arrangements" does, after the buybacks. Before that page a part's words
+      // can head something else: JPMorgan's statements list "Consolidated
+      // balance sheets" on page 95, and its discussion has "CONSOLIDATED
+      // BALANCE SHEETS AND CASH FLOWS ANALYSIS" on page 15.
       const opening = Math.min(...other.ranges.map(([start]) => start));
       const theirEnd = Math.max(...other.ranges.map(([, to]) => to));
       const within = !own.open && theirEnd <= last;
       const starts = !within && ((opening > first && opening <= last) || (opening === first && own.span === 0));
-      const at = starts ? headingIn(from + 1, end, [other.title]) : letters(other.title).length >= DISTINCT_TITLE ? headingIn(lastTop, end, [other.title]) : null;
+      const at = starts
+        ? [headingIn(from + 1, end, [other.title]), headingIn(Math.max(from + 1, startOf(opening) ?? from + 1), end, other.parts)]
+            .filter((found): found is number => found !== null)
+            .reduce<number | null>((least, found) => (least === null ? found : Math.min(least, found)), null)
+        : letters(other.title).length >= DISTINCT_TITLE ? headingIn(lastTop, end, [other.title]) : null;
       return at === null ? [] : [at];
     });
     let to = stops.length ? Math.min(...stops) - 1 : end;

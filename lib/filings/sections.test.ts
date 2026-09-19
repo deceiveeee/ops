@@ -114,18 +114,16 @@ describe("filing section extraction", () => {
   it("reports what it could not find rather than guessing", () => {
     const partial = `
       <div>Item 1. Business</div><p>${body("business", 50)}</p>
+      <div>Item 3. Legal Matters</div><p>${body("legal", 50)}</p>
       <div>Item 8. Financial Statements and Supplementary Data</div><p>${body("fin", 50)}</p>
     `;
     const r = extractFilingSections(partial);
 
     expect(r.sections.map((s) => s.id)).toEqual(["business", "financials"]);
-    expect(r.missing.map((m) => m.id)).toEqual([
-      "risk-factors",
-      "legal",
-      "market",
-      "mdna",
-      "market-risk",
-    ]);
+    // Item 3 is there under a title the reader does not know: not found, not absent.
+    expect(r.missing.map((m) => m.id)).toEqual(["legal"]);
+    // No line names Items 1A, 5, 7 or 7A: the report does not have them.
+    expect(r.absent.map((m) => m.id)).toEqual(["risk-factors", "market", "mdna", "market-risk"]);
   });
 
   /**
@@ -440,5 +438,91 @@ describe("filing section extraction", () => {
     expect(text).toContain("9.8%-a slowdown");
     expect(text).toContain("See&compare");
     expect(text).not.toContain("<p>");
+  });
+});
+
+describe("the ways a report words Item 5", () => {
+  const annual = (heading: string) => `
+    <div>Item 1. Business</div><p>${body("business", 50)}</p>
+    <div>${heading}</div><p>${body("market", 50)}</p>
+    <div>Item 6. [Reserved]</div>
+    <div>Item 7. Management's Discussion and Analysis</div><p>${body("mdna", 50)}</p>
+  `;
+
+  it("finds the market for the shares however the company names itself", () => {
+    // The form's own words; Amazon's, Chevron's, IBM's and Starbucks'; Disney's and Pfizer's.
+    for (const heading of [
+      "Item 5. Market for Registrant's Common Equity, Related Stockholder Matters and Issuer Purchases of Equity Securities",
+      "Item 5. Market for the Registrant's Common Stock, Related Shareholder Matters, and Issuer Purchases of Equity Securities",
+      "ITEM 5. MARKET FOR THE COMPANY'S COMMON EQUITY, RELATED STOCKHOLDER MATTERS AND ISSUER PURCHASES OF EQUITY SECURITIES",
+    ]) {
+      const market = extractFilingSections(annual(heading), "10-K").sections.find((s) => s.id === "market");
+      expect(market?.text, heading).toContain("market-body-0");
+      expect(market?.text, heading).not.toContain("mdna-body-0");
+    }
+  });
+});
+
+describe("a section the report does not have", () => {
+  // Johnson & Johnson's and Ford's shape: Part II goes from Item 1 to Item 2 or 5.
+  const partII = (items: string) => `
+    <div>PART I. FINANCIAL INFORMATION</div>
+    <div>Item 1. Financial Statements</div><p>${body("fin", 60)}</p>
+    <div>Item 2. Management's Discussion and Analysis of Financial Condition</div><p>${body("mdna", 60)}</p>
+    <div>Item 3. Quantitative and Qualitative Disclosures About Market Risk</div><p>${body("mrisk", 40)}</p>
+    <div>Item 4. Controls and Procedures</div><p>${body("controls", 40)}</p>
+    <div>PART II. OTHER INFORMATION</div>
+    ${items}
+    <div>Item 6. Exhibits</div><p>${body("exhibits", 30)}</p>
+  `;
+  const read = (items: string) => extractFilingSections(partII(items), "10-Q");
+
+  it("says so where no line names the Item, and does not list it as not found", () => {
+    const r = read(`
+      <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+      <div>Item 5. Other Information</div><p>${body("other", 30)}</p>
+      <p>See Item 1A. Risk Factors in our annual report for a discussion of our risks.</p>
+    `);
+    // A sentence naming Item 1A is not an Item 1A line.
+    expect(r.absent.map((s) => s.id)).toEqual(["risk-factors", "market"]);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("tells a quarterly report's Part II Item 1 from its Part I Item 1 by the title", () => {
+    // Home Depot's and AT&T's shape: Part II opens at Item 1A.
+    const r = read(`
+      <div>Item 1A. Risk Factors</div><p>${body("risk", 30)}</p>
+      <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 30)}</p>
+    `);
+    expect(r.absent.map((s) => s.id)).toEqual(["legal"]);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("takes the report's own word where it says an Item is not applicable", () => {
+    // GE's index: "Item 1A. Risk Factors Not applicable(a)".
+    const r = read(`
+      <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+      <div>Item 1A. Risk Factors Not applicable(a)</div>
+      <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 30)}</p>
+    `);
+    expect(r.absent.map((s) => s.id)).toEqual(["risk-factors"]);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("keeps a section not found where a line gives its Item a title the reader does not know", () => {
+    const r = read(`
+      <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+      <div>Item 1A. Risk Matters</div><p>${body("risk", 30)}</p>
+      <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 30)}</p>
+    `);
+    expect(r.missing.map((s) => s.id)).toEqual(["risk-factors"]);
+    expect(r.absent).toEqual([]);
+  });
+
+  it("says nothing is absent from a document that names no Items at all", () => {
+    const r = extractFilingSections(`<div>Risk Factors</div><p>${body("risk", 60)}</p><div>Legal Proceedings</div><p>${body("legal", 60)}</p>`, "10-K");
+    expect(r.sections).toEqual([]);
+    expect(r.absent).toEqual([]);
+    expect(r.missing).toHaveLength(7);
   });
 });
