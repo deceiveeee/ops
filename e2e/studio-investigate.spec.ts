@@ -280,7 +280,7 @@ test("a company in any industry can be investigated", async ({ page }) => {
   await expect(industryPicker(page).locator("option", { hasText: "Air Transport" }).first()).toBeAttached();
 
   await industryPicker(page).selectOption("Air Transport");
-  await expect(page.getByText(/Studio has not built peer figures for this industry/)).toBeVisible();
+  await expect(page.getByText(/No peer figures for this industry yet/)).toBeVisible();
 
   // The answer still arrives in full: a cost of capital to judge a return by.
   await expect(page.getByRole("heading", { name: "What the money costs" })).toBeVisible();
@@ -288,7 +288,7 @@ test("a company in any industry can be investigated", async ({ page }) => {
 
   // And an industry that does have peers says so rather than staying silent.
   await industryPicker(page).selectOption("Semiconductor");
-  await expect(page.getByText(/Studio has figures for \d+ companies in this industry/)).toBeVisible();
+  await expect(page.getByText(/Peer figures for \d+ companies are below/)).toBeVisible();
 });
 
 /**
@@ -343,14 +343,17 @@ test("a company you investigated can be held in the portfolio", async ({ page })
   await openEmpty(page);
   await enter(page, "Nordic Pulp", "4200");
 
-  await page.getByRole("radio", { name: "A US-listed company" }).check();
+  await page.getByLabel(/Where it trades/).selectOption("us-equity");
   await page.getByRole("button", { name: /Add Nordic Pulp to your portfolio/ }).click();
   await expect(page.getByText(/Nordic Pulp is in your portfolio/)).toBeVisible();
 
   // The reason it is owned is asked for in the same words as any other holding,
-  // on the company's own page, where its figures and its filings already are.
+  // on the company's own page, where its figures and its filings already are,
+  // behind a disclosure because this page has a screen budget to keep.
+  await page.getByText("Why you own it").click();
   await page.getByLabel("Why it belongs").fill("It earns more than its capital costs.");
   await page.reload();
+  await page.getByText("Why you own it").click();
   await expect(page.getByLabel("Why it belongs")).toHaveValue("It earns more than its capital costs.", { timeout: 15_000 });
 
   // It arrives owning nothing: how much to hold is a decision of its own.
@@ -387,7 +390,7 @@ test("a company you read and turned down is kept, with the reason", async ({ pag
   await enter(page, "Meridian Freight", "3100");
 
   await page.getByRole("button", { name: /Decide against Meridian Freight/ }).click();
-  await page.getByLabel("Why it is not for you").fill("It earns less than its capital costs.");
+  await page.getByLabel(/is not for you/).fill("It earns less than its capital costs.");
   await page.getByRole("button", { name: "Record this decision" }).click();
 
   await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();

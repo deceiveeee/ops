@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import GlassPanel from "@/components/ui/GlassPanel";
 import Button from "@/components/ui/Button";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { authErrorMessage } from "@/lib/supabase/auth-errors";
+import { enabledProviders } from "@/lib/supabase/providers";
 
 function SignupForm() {
   const router = useRouter();
@@ -17,6 +18,17 @@ function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
+  /* Offered only where the project has it; see the login page for why. */
+  const [google, setGoogle] = useState<"checking" | "on" | "off" | "unknown">("checking");
+
+  useEffect(() => {
+    const abort = new AbortController();
+    void enabledProviders(abort.signal).then((providers) => {
+      if (abort.signal.aborted) return;
+      setGoogle(providers === null ? "unknown" : providers.has("google") ? "on" : "off");
+    });
+    return () => abort.abort();
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,12 +58,28 @@ function SignupForm() {
     setSent(true);
   }
 
-  function google() {
+  /*
+   * The address is asked for first, and only then is the browser sent to it: a
+   * provider the project has not enabled would otherwise leave the person on
+   * the authorize endpoint’s raw 400 JSON, off the site. See the login page.
+   */
+  async function signUpWithGoogle() {
+    setBusy(true);
+    setError(null);
     const supabase = getSupabaseBrowser();
-    void supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
+      options: {
+        redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        skipBrowserRedirect: true,
+      },
     });
+    setBusy(false);
+    if (error || !data?.url) {
+      setError(authErrorMessage(error) ?? "That sign-in could not be started. Try again in a moment.");
+      return;
+    }
+    window.location.assign(data.url);
   }
 
   if (sent) {
@@ -83,8 +111,14 @@ function SignupForm() {
             {busy ? "Creating…" : "Create account"}
           </Button>
         </form>
-        <div className="my-5 h-px bg-white/10" />
-        <Button variant="outline" size="md" onClick={google} className="w-full">Continue with Google</Button>
+        {google === "on" || google === "unknown" ? (
+          <>
+            <div className="my-5 h-px bg-white/10" />
+            <Button variant="outline" size="md" onClick={() => void signUpWithGoogle()} disabled={busy} className="w-full">
+              Continue with Google
+            </Button>
+          </>
+        ) : null}
         <p className="mt-6 text-[14px] text-slate-400">
           Already have an account?{" "}
           <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-accent-cyan hover:underline">Sign in</Link>

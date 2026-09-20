@@ -781,10 +781,12 @@ export default function InvestigateView() {
           </div>
           {/* Said rather than left to be noticed: an absent comparison would
               otherwise read as the learner's figures being wrong. */}
+          {/* Said rather than left to be noticed: an absent comparison would
+              otherwise read as the learner’s figures being wrong. */}
           <p className="mt-2 text-[12px] leading-5 text-slate-500">
             {researched
-              ? `Studio has figures for ${researched.peers.length} companies in this industry, so your result is placed against them below.`
-              : "Studio has not built peer figures for this industry, so there is no median to compare against. The return on capital and what the money costs are still worked out in full."}
+              ? `Peer figures for ${researched.peers.length} companies are below.`
+              : "No peer figures for this industry yet; the return on capital is still worked out in full."}
           </p>
 
           {/*
@@ -1087,166 +1089,135 @@ export default function InvestigateView() {
         </div>
       </div>
 
+      {/*
+        * Where the research becomes a decision, in one row.
+        *
+        * Held and turned down are the two honest ends of the same piece of
+        * work, so they sit together, under the figures they follow from. One
+        * row rather than a block of prose because this page has a screen
+        * budget: at 1440 the reading already runs to 1.41 screens, and a panel
+        * that explained itself in paragraphs took it to 1.73.
+        */}
       {canDecide ? (
-        <Panel>
-          <div className="grid gap-5 lg:grid-cols-2">
-            <div>
-              <h3 className="text-[15px] font-semibold text-white">Put it in your portfolio</h3>
-              {heldNow ? (
-                <>
-                  <p className="mt-2 text-[13px] leading-6 text-slate-400">
-                    {company.trim()} is in your portfolio. Choose how much to hold in{" "}
-                    <Link href="/studio/portfolio" className="text-accent-cyan hover:underline">
-                      Portfolio
-                    </Link>
-                    .
-                  </p>
-                  {/*
-                    * Asked in the same words as any other holding, and kept on the
-                    * company's own page rather than in the library of eight, which
-                    * is where its figures and its filings already are.
-                    */}
-                  <div className="mt-3 space-y-3">
-                    <Field
-                      label="Why it belongs"
-                      value={decided?.why ?? ""}
-                      onChange={(value) => note({ why: value })}
-                      multiline
-                    />
-                    <Field
-                      label="The main risk I accept"
-                      value={decided?.mainRisk ?? ""}
-                      onChange={(value) => note({ mainRisk: value })}
-                      multiline
-                    />
-                    <Field
-                      label="What would change my mind"
-                      value={decided?.whatWouldChangeMyMind ?? ""}
-                      onChange={(value) => note({ whatWouldChangeMyMind: value })}
-                      multiline
-                    />
-                  </div>
-                </>
-              ) : against !== null ? (
-                <p className="mt-2 text-[13px] leading-6 text-slate-400">
-                  You decided against it. Put it back on the table to hold it after all.
-                </p>
-              ) : (
-                <>
-                  <p className="mt-2 text-[13px] leading-6 text-slate-400">
-                    It joins at 0%, so nothing moves until you choose how much to hold in Portfolio.
-                    These figures stay here.
-                  </p>
-                  {/* Asked, not guessed: an investment of unknown kind is dealt no fall in the
-                      scenario test, which quietly understates the loss rather than showing an error. */}
-                  <fieldset className="mt-3">
-                    <legend className="text-[12px] text-slate-500">Where it trades (sets which fall the scenario test applies)</legend>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {ASSET_CLASSES.map((option) => (
-                        <label
-                          key={option.value}
-                          className={cn(
-                            "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3.5 text-[13px] focus-within:ring-2 focus-within:ring-accent-cyan/40",
-                            assetClass === option.value
-                              ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
-                              : "border-white/12 bg-white/[0.03] text-slate-300",
-                          )}
-                        >
-                          <input
-                            type="radio"
-                            name="asset-class"
-                            className="sr-only"
-                            checked={assetClass === option.value}
-                            onChange={() => setAssetClass(option.value)}
-                          />
-                          {option.label}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                  <button
-                    type="button"
-                    onClick={() => void hold()}
-                    className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white hover:border-accent-cyan/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
-                  >
-                    Add {company.trim()} to your portfolio
-                  </button>
-                </>
-              )}
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-2">
+          {heldNow ? (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <p className="text-[13px] leading-6 text-slate-300">
+                <span className="font-semibold text-white">{company.trim()}</span> is in your portfolio. Choose how
+                much to hold in{" "}
+                <Link href="/studio/portfolio" className="text-accent-cyan hover:underline">
+                  Portfolio
+                </Link>
+                .
+              </p>
+              {/* Asked in the same words as any other holding, and kept on the
+                  company's own page rather than in the library of eight, which
+                  is where its figures and its filings already are. */}
+              <details className="group">
+                <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[13px] font-semibold text-accent-cyan focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+                  Why you own it
+                  <span className="ml-2 text-[12px] font-normal text-slate-500 group-open:hidden">Write it down</span>
+                  <span className="ml-2 hidden text-[12px] font-normal text-slate-500 group-open:inline">Hide</span>
+                </summary>
+                <div className="mt-2 space-y-3">
+                  <Field label="Why it belongs" value={decided?.why ?? ""} onChange={(value) => note({ why: value })} multiline />
+                  <Field label="The main risk I accept" value={decided?.mainRisk ?? ""} onChange={(value) => note({ mainRisk: value })} multiline />
+                  <Field
+                    label="What would change my mind"
+                    value={decided?.whatWouldChangeMyMind ?? ""}
+                    onChange={(value) => note({ whatWouldChangeMyMind: value })}
+                    multiline
+                  />
+                </div>
+              </details>
             </div>
-
-            {/* Deciding against it is a result, not the absence of one: the conclusion a
-                learner can check later against what actually happened. */}
-            <div>
-              <h3 className="text-[15px] font-semibold text-white">Or decide against it</h3>
-              {against !== null ? (
-                <>
-                  <p className="mt-2 text-[13px] leading-6 text-slate-300">{against}</p>
-                  <button
-                    type="button"
-                    onClick={() => void reconsider()}
-                    className="mt-1 inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline"
-                  >
-                    Put it back on the table
-                  </button>
-                </>
-              ) : rejecting ? (
-                <>
-                  <div className="mt-2">
-                    <Field
-                      label="Why it is not for you"
-                      hint="Kept with these figures, so you can check later whether it still holds."
-                      value={rejectReason}
-                      onChange={setRejectReason}
-                      placeholder="It earns less than its capital costs and I could not see that changing"
-                      multiline
-                    />
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      disabled={!rejectReason.trim()}
-                      onClick={() => void decideAgainst()}
-                      className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-3.5 text-[13px] font-semibold text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      Record this decision
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setRejecting(false);
-                        setRejectReason("");
-                      }}
-                      className="inline-flex min-h-11 items-center px-2 text-[13px] text-slate-400"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="mt-2 text-[13px] leading-6 text-slate-400">
-                    A business can be worth reading and still not worth owning. Say why, and it is kept.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setRejecting(true)}
-                    className="mt-1 inline-flex min-h-11 items-center text-[13px] text-slate-300 underline underline-offset-2 hover:text-white"
-                  >
-                    Decide against {company.trim()}
-                  </button>
-                </>
-              )}
+          ) : against !== null ? (
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="text-[13px] text-slate-500">You decided against it:</span>
+              <span className="text-[13px] leading-6 text-slate-300">{against}</span>
+              <button
+                type="button"
+                onClick={() => void reconsider()}
+                className="inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline"
+              >
+                Put it back on the table
+              </button>
             </div>
-          </div>
+          ) : rejecting ? (
+            <>
+              <Field
+                label={`Why ${company.trim()} is not for you`}
+                hint="Kept with these figures, so you can check later whether it still holds."
+                value={rejectReason}
+                onChange={setRejectReason}
+                placeholder="It earns less than its capital costs and I could not see that changing"
+                multiline
+              />
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={!rejectReason.trim()}
+                  onClick={() => void decideAgainst()}
+                  className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-3.5 text-[13px] font-semibold text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Record this decision
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRejecting(false);
+                    setRejectReason("");
+                  }}
+                  className="inline-flex min-h-11 items-center px-2 text-[13px] text-slate-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              {/* Asked, not guessed: an investment whose kind Studio does not know is
+                  dealt no fall in the scenario test, which understates the loss
+                  rather than showing an error. */}
+              <label className="text-[13px] text-slate-400">
+                Where it trades{" "}
+                <select
+                  value={assetClass}
+                  onChange={(event) => setAssetClass(event.target.value as LearnerInstrument["assetClass"])}
+                  className="min-h-11 rounded-lg border border-white/10 bg-white/[0.03] px-2 text-[13px] text-white focus:border-accent-cyan/50 focus:outline-none"
+                >
+                  {ASSET_CLASSES.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-slate-900">
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => void hold()}
+                className="inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white hover:border-accent-cyan/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+              >
+                Add {company.trim()} to your portfolio
+              </button>
+              {/* A business can be worth reading and still not worth owning, and that
+                  conclusion is the one a learner can check later against what happened. */}
+              <button
+                type="button"
+                onClick={() => setRejecting(true)}
+                className="inline-flex min-h-11 items-center text-[13px] text-slate-300 underline underline-offset-2 hover:text-white"
+              >
+                Decide against {company.trim()}
+              </button>
+            </div>
+          )}
           {decisionNote ? (
-            <p role="alert" className="mt-3 text-[13px] leading-6 text-accent-amber">
+            <p role="alert" className="mt-2 text-[13px] leading-6 text-accent-amber">
               {decisionNote}
             </p>
           ) : null}
-        </Panel>
+        </div>
       ) : null}
-
       {/*
         * Passages kept while reading this company’s reports, beside the reading
         * they bear on. Absent until one is kept, so the page is no taller for

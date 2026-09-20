@@ -2697,3 +2697,65 @@ that it lacks is carried into them. Nineteen files conflicted.
 - Dropped as already covered here: `main`'s "research leads with any company" and "a company named in
   the address" (this branch's `studio-company-search.spec.ts`), and its homepage small-screen spec,
   whose sticky chapters this branch's homepage does not have (`visual-refresh.spec.ts` covers phones).
+
+### The merged screens, measured
+
+Looked at in a browser after the merge, not only tested:
+
+- Investigate at 1440 by 900, with a company saved: **1.49 screens** with the decision row, **1.48**
+  once the company is held. The first version of that row cost 267px as a two-column block below
+  everything else and took the page to **1.73**, over the 1.5 limit. It is one row now — where it
+  trades, add, or decide against — with "Why you own it" behind a disclosure once held, and the
+  peer-figures line cut to one sentence.
+- The company reports list, Coca-Cola from the live SEC: **1.07 screens**, opening on "Annual report
+  (10-K), filed 2026-02-20" with "Earlier and quarterly reports (11)" folded away.
+- `/login`, which accounts being offered again makes reachable: it renders in this branch's light
+  system, worst contrast 5.57:1 (white on the action blue), everything else above 5.8:1.
+- Investigate is over budget at **390 (2.16 screens)** and **768 (1.75)**, and was before this merge:
+  taking out everything added here leaves 2.09 at 390. Pre-existing and left as its own problem, as
+  `main` left the same overage on its Goal step. Nothing scrolls sideways at any of the six widths.
+
+## 2026-09-20: signing in with Google, and a redraw under the learner's hands
+
+### The Google button led to a page of JSON
+
+Pressing "Continue with Google" handed the browser to Supabase's authorize endpoint and let it
+redirect. This project has the provider off, so that endpoint answered `400
+{"error_code":"validation_failed","msg":"Unsupported provider: provider is not enabled"}` — and that
+raw JSON, on a supabase.co address, was the page the learner was left looking at, with the back
+button as the only way home. Checked against the live project: its settings report `google: false`,
+`email: true`.
+
+- `lib/supabase/providers.ts` asks the project which providers it has (the public settings endpoint,
+  with the anon key the browser already carries) and the sign-in and sign-up pages offer only those.
+  With Google off, the button is not drawn at all. A check that could not run answers "not known",
+  which keeps the button: a hiccup is not evidence that signing in would fail.
+- The address is now asked for first (`skipBrowserRedirect`) and the browser sent to it only if one
+  comes back, so a refusal stays on the page in words: "That way of signing in is not set up on this
+  site yet. Use your email address and password instead."
+- A failed round trip returns to `/login?error=auth`, which the page never read. It now says "That
+  sign-in did not finish, so nothing has changed."
+- Enabling Google is a Supabase dashboard setting plus a Google Cloud OAuth client, which is the
+  user's to do; the button returns on its own once the project reports it.
+- Four unit tests for the provider check and six for the page. Four deliberate breaks — offering a
+  provider that is off, handing over the browser without asking, saying nothing about a failed round
+  trip, reporting the refusal in Supabase's words — each failed a test.
+
+### A redraw dropped the words a learner was holding
+
+Three reader tests failed on a cold build, and the cause was real rather than slow: the reader is
+paged again once the browser has measured its own screen, and that redraw drops the browser's
+selection. Someone who had highlighted a sentence pressed Keep and stored the whole paragraph —
+"keeps just the words selected inside a paragraph" caught it doing exactly that.
+
+- `ReaderFit` now never pages again while a selection is held inside the reader. The measurement is
+  still written to the cookie, so the next page opened is sized for the screen regardless.
+- Checked in `ReaderFit.test.tsx`, which drives the component: it pages again with nothing selected,
+  and with a selection elsewhere on the page, and leaves the page alone while the reader holds words.
+  Taking the guard out fails the middle one. A Playwright test written first was deleted: it passed
+  with the guard removed, because React kept the same text nodes on that particular redraw, so it
+  proved nothing.
+- The reader's browser tests now wait for the measurement before acting, which is what a reader does.
+  One assertion was wrong rather than racing: it compared what was kept against the words on screen,
+  and a paragraph too tall for a page is drawn in parts, so the page can hold only its tail. What is
+  kept is the paragraph, and it must contain what was being read.

@@ -137,7 +137,7 @@ test.describe("filling the seven from a filing", () => {
     await expect(page.getByRole("main")).toContainText("cannot match to an industry by itself");
     // The cost of capital still works, against whichever industry is chosen; what
     // is missing is the median to place the company against, and it says so.
-    await expect(page.getByRole("main")).toContainText("Studio has not built peer figures for this industry");
+    await expect(page.getByRole("main")).toContainText("No peer figures for this industry yet");
     // And it sends the learner to the company's own reports, where an annual report's Competitors tab reads who it names.
     await expect(page.getByRole("link", { name: "Find the competitors its own annual report names →" })).toHaveAttribute(
       "href",

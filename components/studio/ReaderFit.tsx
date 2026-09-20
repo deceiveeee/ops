@@ -47,6 +47,17 @@ export default function ReaderFit({ used, firstOffset }: { used: Fit; firstOffse
       const want = fitFor(column, Math.floor(window.innerHeight * SCREENS) - frame - SPARE_PX);
       document.cookie = `${FIT_COOKIE}=${fitCookie(want)}; path=/studio; max-age=31536000; samesite=lax`;
       if (!fitsDiffer(want, used) || repaged.current >= 2) return;
+      /*
+       * Never while the reader is holding words.
+       *
+       * Paging again redraws the paragraphs, and a redraw drops the browser's
+       * selection: someone who had highlighted a sentence to keep it would
+       * press Keep and get the whole paragraph instead, which is the one thing
+       * a passage kept as evidence must never be. The measurement is already in
+       * the cookie, so the next page opened is sized to this screen regardless.
+       */
+      const selection = window.getSelection();
+      if (selection && !selection.isCollapsed && selection.anchorNode && text.contains(selection.anchorNode)) return;
       repaged.current += 1;
       // Page again at the same place: the first words on this page, unless a place is already asked for.
       const url = new URL(window.location.href);

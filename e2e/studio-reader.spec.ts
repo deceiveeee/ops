@@ -71,6 +71,27 @@ async function openBusinessHit(page: Page) {
   await page.getByRole("button", { name: "Find", exact: true }).click();
   await main(page).getByRole("link", { name: /Business · page \d+/ }).click();
   await expect(page.locator("#passage mark")).toBeVisible();
+  // Keeping words is what these go on to do, and a paging that lands mid-selection
+  // would drop it. The reader guards against that; waiting here means the tests
+  // are exercising the keeping rather than the race.
+  await measured(page);
+}
+
+/**
+ * Wait until the reader has measured this screen.
+ *
+ * A first visit is paged for 1440 and paged again once the browser reports its
+ * own column and the room its frame leaves, which rewrites the address. A click
+ * that lands in between is undone by that second paging, so these tests act
+ * after it, as a reader who spent a moment looking at the page would.
+ */
+async function measured(page: Page) {
+  await expect
+    .poll(async () => (await page.context().cookies()).some((cookie) => cookie.name === "ops-reader-fit"), {
+      timeout: 15_000,
+      message: "the reader never measured its own screen",
+    })
+    .toBe(true);
 }
 
 const keepButton = (page: Page) => page.locator("#passage").getByRole("button", { name: /^Keep paragraph [0-9]+, which begins/ });
@@ -78,6 +99,7 @@ const keepButton = (page: Page) => page.locator("#passage").getByRole("button", 
 test.describe("reading a whole report", () => {
   test("pages through a section rather than stopping at an excerpt", async ({ page }) => {
     await page.goto(REPORT);
+    await measured(page);
     await expect(main(page).getByRole("heading", { level: 2, name: /^Item 1\./ })).toBeVisible();
     await expect(main(page)).toContainText(/Page 1 of \d+/);
 
@@ -103,7 +125,12 @@ test.describe("reading a whole report", () => {
   });
 
   test("gives every Keep a name of its own", async ({ page }) => {
+    // Tall enough to hold several paragraphs once the reader has sized the page
+    // to this screen: on a short window one paragraph can fill a page, and then
+    // "every Keep" is one Keep, which cannot tell a name apart from a name.
+    await page.setViewportSize({ width: 1440, height: 1200 });
     await page.goto(REPORT);
+    await measured(page);
     // evaluateAll does not wait for anything, so wait for the paragraphs first.
     const keeps = main(page).getByRole("button", { name: /^Keep paragraph [0-9]+, which begins/ });
     await expect(keeps.first()).toBeVisible();
@@ -159,6 +186,7 @@ test.describe("reading a whole report", () => {
     await page.setViewportSize({ width: 844, height: 390 });
     await expect.poll(() => paged).toBeGreaterThan(settled);
   });
+
 });
 
 test.describe("keeping a passage", () => {
@@ -174,7 +202,15 @@ test.describe("keeping a passage", () => {
     expect(investigation.company).toBe("Atkore Inc.");
     expect(investigation.passages).toHaveLength(1);
     expect(investigation.passages[0].sectionId).toBe("business");
-    expect(investigation.passages[0].quote).toBe(paragraph.trim());
+    /*
+     * The paragraph, which is what the button offers to keep ("Keep paragraph
+     * N…"), and which is not always all of what is on screen: a paragraph too
+     * tall for one page is drawn in parts, so this page may hold only its tail.
+     * What is kept has to contain what was being read, and be the whole
+     * paragraph it belongs to.
+     */
+    expect(investigation.passages[0].quote).toContain(paragraph.trim());
+    expect(investigation.passages[0].quote.length).toBeGreaterThanOrEqual(paragraph.trim().length);
     expect(investigation.passages[0].role).toBe("context");
   });
 

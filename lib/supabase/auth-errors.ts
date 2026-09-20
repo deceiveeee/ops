@@ -41,11 +41,25 @@ export function isBackendUnreachable(error: {
 export const BACKEND_UNREACHABLE_MESSAGE =
   "We could not reach the sign-in service. Nothing you have already saved is affected — your course progress lives in this browser. Check your connection and try again; if it keeps failing, the service is probably down.";
 
+/**
+ * A provider the site offers but the project has not turned on.
+ *
+ * Supabase answers "Unsupported provider: provider is not enabled", which is
+ * accurate and useless to a learner: it is not their mistake, there is nothing
+ * for them to correct, and the thing they came to do can still be done another
+ * way. So the message says whose fault it is not, and what does work.
+ */
+const PROVIDER_DISABLED = /provider is not enabled|unsupported provider/i;
+
+export const PROVIDER_DISABLED_MESSAGE =
+  "That way of signing in is not set up on this site yet. Use your email address and password instead — nothing else is missing.";
+
 /** The message to show for a failed auth call, or `null` when it succeeded. */
 export function authErrorMessage(
   error: { name?: string; message?: string } | null | undefined,
 ): string | null {
   if (!error) return null;
   if (isBackendUnreachable(error)) return BACKEND_UNREACHABLE_MESSAGE;
+  if (PROVIDER_DISABLED.test(error.message ?? "")) return PROVIDER_DISABLED_MESSAGE;
   return error.message ?? "Something went wrong. Please try again.";
 }
