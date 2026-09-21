@@ -97,7 +97,7 @@ export function validateStudioProject(value: unknown): string[] {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
       // `industry` is absent from records saved before it could be chosen, so
       // it is accepted as missing rather than required. See FigureInvestigation.
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct"])
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct", "source", "passages", "inputs", "peers"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
         || !(investigation.industry === undefined || text(investigation.industry, 200))
@@ -116,6 +116,98 @@ export function validateStudioProject(value: unknown): string[] {
         ([key, entry]) => FIGURE_KEYS.has(key) && typeof entry === "number" && Number.isFinite(entry),
       )) {
         issues.push("A company investigation contains an unrecognised or non-numeric figure.");
+      }
+      /*
+       * Where the figures came from, when they were filled in from a filing.
+       * Absent on every record saved before the SEC lookup existed, and null
+       * whenever the learner typed them, so only a present object is checked.
+       *
+       * It is checked rather than trusted because this is what the page shows a
+       * learner as the provenance of a number. A restored backup that had been
+       * edited by hand could otherwise attach a real accession to figures that
+       * never came from it, which is worse than having no provenance at all.
+       */
+      if (investigation.source !== undefined && investigation.source !== null) {
+        const source = investigation.source;
+        if (!object(source)
+          || !keys(source, ["ticker", "cik", "entityName", "sic", "sicDescription", "periodEnd", "accession", "form", "filed", "figures"])
+          || !text(source.ticker, 20) || !text(source.cik, 20) || !text(source.entityName, 300)
+          || !text(source.sic, 20) || !text(source.sicDescription, 300)
+          || !text(source.periodEnd, 10) || !text(source.accession, 40)
+          || !text(source.form, 20) || !text(source.filed, 10)
+          || !object(source.figures)
+          || !Object.entries(source.figures).every(([key, entry]) =>
+            FIGURE_KEYS.has(key)
+            && object(entry)
+            && keys(entry, ["concepts", "addedUp"])
+            && list(entry.concepts, 20)
+            && (entry.concepts as unknown[]).every((concept) => text(concept, 200))
+            && (entry.addedUp === null || text(entry.addedUp, 300)))) {
+          issues.push("A company investigation records where its figures came from in a form this version does not understand.");
+        }
+      }
+      /*
+       * Kept passages are shown beside a learner's own note as the words a
+       * filing used. Checked rather than trusted, because a hand-edited backup
+       * could otherwise put words in a filing's mouth, or give a passage an
+       * offset that points somewhere it never was.
+       */
+      if (investigation.passages !== undefined) {
+        if (!list(investigation.passages, 1000)) issues.push("A company investigation can keep at most 1,000 passages.");
+        else for (const passage of investigation.passages) {
+          if (!object(passage)
+            || !keys(passage, ["id", "savedAt", "cik", "accession", "document", "form", "filed", "sectionId", "quote", "prefix", "suffix", "offset", "role", "note"])
+            || !uniqueId(passage.id) || !timestamp(passage.savedAt)
+            || !id(passage.cik) || !text(passage.cik, 20)
+            || !id(passage.accession) || !text(passage.accession, 40)
+            || !id(passage.document) || !text(passage.document, 200)
+            || !text(passage.form, 20) || !text(passage.filed, 10)
+            || !id(passage.sectionId) || !text(passage.sectionId, 40)
+            // Not id(): that caps text at 200 characters, and a paragraph of a 10-K
+            // runs past 2,000. Every whole paragraph kept was refused until 2026-09-13.
+            || !text(passage.quote, 5000) || !passage.quote.trim()
+            || !text(passage.prefix, 64) || !text(passage.suffix, 64)
+            || !(typeof passage.offset === "number" && Number.isInteger(passage.offset) && passage.offset >= 0)
+            || !choice(passage.role, ["supports", "challenges", "context"]) || !text(passage.note)) {
+            issues.push("A kept passage contains missing, repeated, or invalid fields.");
+          }
+        }
+      }
+      /*
+       * Linked inputs and competitors each point at a kept passage. Checked, because a link
+       * to a passage that is not there would show an index or a competitor as resting on
+       * words the report was never seen to use.
+       */
+      const keptIds = new Set(
+        Array.isArray(investigation.passages)
+          ? (investigation.passages as unknown[]).filter(object).map((passage) => passage.id).filter((value): value is string => typeof value === "string")
+          : [],
+      );
+      if (investigation.inputs !== undefined) {
+        if (!list(investigation.inputs, 200)) issues.push("A company investigation can link at most 200 inputs.");
+        else for (const link of investigation.inputs) {
+          if (!object(link)
+            || !keys(link, ["id", "savedAt", "seriesId", "passageId"])
+            || !uniqueId(link.id) || !timestamp(link.savedAt)
+            || !id(link.seriesId) || !text(link.seriesId, 40)
+            || !id(link.passageId) || !keptIds.has(link.passageId)) {
+            issues.push("A linked input contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
+          }
+        }
+      }
+      if (investigation.peers !== undefined) {
+        if (!list(investigation.peers, 200)) issues.push("A company investigation can list at most 200 competitors.");
+        else for (const peer of investigation.peers) {
+          if (!object(peer)
+            || !keys(peer, ["id", "savedAt", "name", "cik", "ticker", "passageId"])
+            || !uniqueId(peer.id) || !timestamp(peer.savedAt)
+            || !text(peer.name, 300) || !peer.name.trim()
+            || !text(peer.cik, 20) || !/^\d*$/.test(peer.cik)
+            || !text(peer.ticker, 20)
+            || !text(peer.passageId, 200) || (peer.passageId !== "" && !keptIds.has(peer.passageId))) {
+            issues.push("A competitor contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
+          }
+        }
       }
     }
   }

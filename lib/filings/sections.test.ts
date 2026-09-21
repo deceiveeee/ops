@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { extractFilingSections, filingToPlainText } from "./sections";
+import { extractFilingSections, filingToPlainText, layoutOf, sectionLabel } from "./sections";
 
 /**
  * Fixtures reproduce the three filing shapes found on real documents, rather
@@ -114,18 +114,16 @@ describe("filing section extraction", () => {
   it("reports what it could not find rather than guessing", () => {
     const partial = `
       <div>Item 1. Business</div><p>${body("business", 50)}</p>
+      <div>Item 3. Legal Matters</div><p>${body("legal", 50)}</p>
       <div>Item 8. Financial Statements and Supplementary Data</div><p>${body("fin", 50)}</p>
     `;
     const r = extractFilingSections(partial);
 
     expect(r.sections.map((s) => s.id)).toEqual(["business", "financials"]);
-    expect(r.missing.map((m) => m.id)).toEqual([
-      "risk-factors",
-      "legal",
-      "market",
-      "mdna",
-      "market-risk",
-    ]);
+    // Item 3 is there under a title the reader does not know: not found, not absent.
+    expect(r.missing.map((m) => m.id)).toEqual(["legal"]);
+    // No line names Items 1A, 5, 7 or 7A: the report does not have them.
+    expect(r.absent.map((m) => m.id)).toEqual(["risk-factors", "market", "mdna", "market-risk"]);
   });
 
   /**
@@ -170,6 +168,267 @@ describe("filing section extraction", () => {
     expect(financials.text).not.toContain("business-body-0");
   });
 
+  /**
+   * Netflix's report for the quarter to 30 June 2026, in miniature. Read with
+   * the annual numbering, only Item 1A matched, and its Risk factors tab ran
+   * from a one-sentence section through the buyback table and the exhibits.
+   * The contents entry for Item 1 is Atkore's shape: statements listed under it
+   * before any page number, which the one-line test could not see.
+   */
+  const quarterly = `
+    <div>FORM 10-Q</div>
+    <div>PART I. FINANCIAL INFORMATION</div>
+    <div>Item 1. Financial Statements (Unaudited)</div><div>2</div>
+    <div>Condensed Consolidated Statements of Operations</div><div>2</div>
+    <div>Notes to Condensed Consolidated Financial Statements</div><div>9</div>
+    <div>Item 2. Management's Discussion and Analysis</div><div>32</div>
+    <div>Item 3. Quantitative and Qualitative Disclosures about Market Risk</div><div>44</div>
+    <div>Item 4. Controls and Procedures</div><div>44</div>
+    <div>PART II. OTHER INFORMATION</div>
+    <div>Item 1. Legal Proceedings</div><div>46</div>
+    <div>Item 1A. Risk Factors</div><div>46</div>
+    <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><div>46</div>
+    <div>Item 6. Exhibits</div><div>49</div>
+    <div>PART I. FINANCIAL INFORMATION</div>
+    <div>Item 1. Financial Statements</div><p>${body("fin", 300)}</p>
+    <div>Item 2. Management's Discussion and Analysis of Financial Condition</div><p>${body("mdna", 300)}</p>
+    <div>Item 3. Quantitative and Qualitative Disclosures About Market Risk</div><p>${body("mrisk", 40)}</p>
+    <div>Item 4. Controls and Procedures</div><p>${body("controls", 40)}</p>
+    <div>PART II. OTHER INFORMATION</div>
+    <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+    <div>Item 1A. Risk Factors</div><p>There have been no material changes from the risk factors previously disclosed under the heading "Risk Factors" in Part I, Item 1A.</p>
+    <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 60)}</p>
+    <div>Item 5. Other Information</div><p>${body("other", 30)}</p>
+    <div>Item 6. Exhibits</div><p>${body("exhibits", 30)}</p>
+  `;
+
+  it("reads a quarterly report by its own Item numbers", () => {
+    const r = extractFilingSections(quarterly, "10-Q");
+
+    expect(r.sections.map((s) => s.id)).toEqual(["financials", "mdna", "market-risk", "legal", "risk-factors", "market"]);
+    expect(r.missing).toEqual([]);
+    // Part I's Item 1 and Part II's Item 1 are told apart by their titles.
+    expect(r.sections[0].text).toContain("fin-body-0");
+    expect(r.sections[3].text.startsWith("Item 1. Legal Proceedings")).toBe(true);
+    expect(r.sections[5].label).toBe("Buybacks");
+    expect(r.sections[5].text).toContain("buyback-body-0");
+  });
+
+  it("does not take a quarterly contents entry that lists statements for the heading", () => {
+    const financials = extractFilingSections(quarterly, "10-Q").sections[0];
+
+    expect(financials.text.startsWith("Item 1. Financial Statements\n")).toBe(true);
+    expect(financials.text).not.toContain("Notes to Condensed Consolidated Financial Statements");
+  });
+
+  it("ends a section at the next Item, including one the reader does not show", () => {
+    const r = extractFilingSections(quarterly, "10-Q");
+    const risk = r.sections.find((s) => s.id === "risk-factors");
+    const buybacks = r.sections.find((s) => s.id === "market");
+    const marketRisk = r.sections.find((s) => s.id === "market-risk");
+
+    expect(risk?.text).toContain("no material changes");
+    expect(risk?.text).not.toContain("Unregistered Sales");
+    expect(buybacks?.text).not.toContain("other-body-0");
+    expect(buybacks?.text).not.toContain("exhibits-body-0");
+    expect(marketRisk?.text).not.toContain("controls-body-0");
+  });
+
+  it("tells a quarterly report from an annual one by the document when no form is given", () => {
+    const tagged = `<ix:nonNumeric name="dei:DocumentType" contextRef="c-1"><span>10-Q</span></ix:nonNumeric>${quarterly}`;
+
+    expect(layoutOf(tagged)).toBe("quarterly");
+    expect(layoutOf(quarterly)).toBe("quarterly");
+    expect(layoutOf(mixedCaseFiling)).toBe("annual");
+    expect(layoutOf(quarterly, "10-K")).toBe("annual");
+    expect(extractFilingSections(quarterly).sections).toHaveLength(6);
+  });
+
+  it("names a kept passage's section as its own report names it", () => {
+    expect(sectionLabel("market", "10-Q")).toBe("Buybacks");
+    expect(sectionLabel("market", "10-K")).toBe("Market for the shares");
+    expect(sectionLabel("market")).toBe("Market for the shares");
+  });
+
+  /** An annual report with the Items between the ones OPS reads, as every real one has. */
+  const annualWithEveryItem = `
+    <div>ANNUAL REPORT</div>
+    <div>Item 1. Business</div><p>${body("business", 100)}</p>
+    <p>Refer to "Item 1A. Risk Factors - Risks Related to Our Industry" for more.</p>
+    <p>${body("business-tail", 40)}</p>
+    <div>Item 1A. Risk Factors</div><p>${body("risk", 200)}</p>
+    <div>Item 1B. Unresolved Staff Comments</div><p>None.</p>
+    <div>Item 1C. Cybersecurity</div><p>${body("cyber", 60)}</p>
+    <div>Item 2. Properties</div><p>${body("properties", 40)}</p>
+    <div>Item 3. Legal Proceedings</div><p>${body("legal", 40)}</p>
+    <div>Item 4. Mine Safety Disclosures</div><p>Not applicable.</p>
+    <div>Item 5. Market for Registrant's Common Equity</div><p>${body("market", 60)}</p>
+    <div>Item 6. [Reserved]</div>
+    <div>Item 7. Management's Discussion and Analysis</div><p>${body("mdna", 200)}</p>
+    <div>Item 7A. Quantitative and Qualitative Disclosures</div><p>${body("mrisk", 50)}</p>
+    <div>Item 8. Financial Statements and Supplementary Data</div><p>${body("fin", 300)}</p>
+    <div>Item 9. Changes in and Disagreements with Accountants</div><p>None.</p>
+    <div>Item 9A. Controls and Procedures</div><p>${body("controls", 80)}</p>
+    <div>Item 15. Exhibits and Financial Statement Schedules</div><p>${body("exhibits", 40)}</p>
+  `;
+
+  it("ends an annual section at an Item the reader does not show", () => {
+    const r = extractFilingSections(annualWithEveryItem);
+    const text = (id: string) => r.sections.find((s) => s.id === id)?.text ?? "";
+
+    expect(text("risk-factors")).toContain("risk-body-0");
+    expect(text("risk-factors")).not.toContain("cyber-body-0");
+    expect(text("risk-factors")).not.toContain("properties-body-0");
+    expect(text("legal")).not.toContain("Not applicable");
+    expect(text("market")).not.toContain("[Reserved]");
+    expect(text("financials")).not.toContain("controls-body-0");
+    expect(text("financials")).not.toContain("exhibits-body-0");
+  });
+
+  it("does not start a section at a cross-reference whose quotation mark comes first", () => {
+    const r = extractFilingSections(annualWithEveryItem);
+    const business = r.sections.find((s) => s.id === "business");
+    const risk = r.sections.find((s) => s.id === "risk-factors");
+
+    expect(risk?.text.startsWith("Item 1A. Risk Factors\n")).toBe(true);
+    expect(business?.text).toContain("business-tail-body-0");
+  });
+
+  it("reads the statements from Item 15 when Item 8 only points to them", () => {
+    const pointer = annualWithEveryItem.replace(
+      `<p>${body("fin", 300)}</p>`,
+      "<p>The information required by this Item is set forth in our Consolidated Financial Statements and Notes thereto included in this Annual Report on Form 10-K.</p>",
+    ) + `<div>Consolidated Balance Sheets</div><p>${body("statements", 200)}</p>`;
+    const financials = extractFilingSections(pointer).sections.find((s) => s.id === "financials");
+
+    expect(financials?.text.startsWith("Item 15. Exhibits")).toBe(true);
+    expect(financials?.text).toContain("statements-body-0");
+    // A full Item 8 stays where it is.
+    const full = extractFilingSections(annualWithEveryItem).sections.find((s) => s.id === "financials");
+    expect(full?.text.startsWith("Item 8. Financial Statements")).toBe(true);
+  });
+
+  it("still finds upper-case headings when the report holds a letter whose lower case is longer", () => {
+    // Coca-Cola's annual report names Coca-Cola İçecek. "İ" lower-cases to two
+    // characters, and matching fell back to case-sensitive, finding nothing.
+    const withDotted = upperCaseFiling.replace("apply.", "apply. Coca-Cola &#304;çecek is a bottler.");
+    const r = extractFilingSections(withDotted);
+    expect(r.sections).toHaveLength(7);
+    expect(r.sections[0].text).toContain("Coca-Cola İçecek");
+  });
+
+  describe("layouts measured across 38 companies on 2026-09-16", () => {
+    const annual = (headings: string[], extra = "") => `<div>FORM 10-K</div>${headings
+      .map((heading, i) => `<div>${heading}</div><p>${body(`s${i}`, 60)}</p>`)
+      .join("")}${extra}`;
+
+    it("reads Item numbers followed by a dash, a spaced dash or a colon", () => {
+      for (const separator of ["-", " - ", ": "]) {
+        const r = extractFilingSections(annual([`Item 1${separator}Business`, `Item 1A${separator}Risk Factors`, `Item 7${separator}Management's Discussion`]));
+        expect(r.sections.map((s) => s.id), separator).toEqual(["business", "risk-factors", "mdna"]);
+      }
+    });
+
+    it("finds a heading whose words the markup split, as Microsoft's are", () => {
+      const r = extractFilingSections(annual(["ITEM 1. B USINESS", "ITEM 1A. RIS K FACTORS"]));
+      expect(r.sections.map((s) => s.id)).toEqual(["business", "risk-factors"]);
+    });
+
+    it("does not end a section at a bare Item printed at the top of a page", () => {
+      // The paragraph before the page top ends its sentence, so nothing but this rule decides.
+      const html = `<div>FORM 10-K</div><div>ITEM 7. MANAGEMENT'S DISCUSSION</div><p>${body("mdna", 60)}.</p><div>Item 7</div><p>${body("page2", 60)}</p><div>ITEM 7A. QUANTITATIVE AND QUALITATIVE DISCLOSURES</div><p>${body("mrisk", 30)}</p>`;
+      const mdna = extractFilingSections(html).sections.find((s) => s.id === "mdna")!;
+      expect(mdna.text).toContain("page2-body-0");
+    });
+
+    it("keeps a section running past the Part and Item printed at the top of every page", () => {
+      const pages = Array.from({ length: 6 }, (_, i) => `<div>PART I</div><div>ITEM 1. BUSINESS</div><p>${body(`page${i}`, 40)}</p>`).join("");
+      const html = `<div>FORM 10-K</div><div>Item 1. Business</div>${pages}<div>Item 1A. Risk factors</div><p>${body("risk", 40)}</p>`;
+      const business = extractFilingSections(html).sections.find((s) => s.id === "business")!;
+      expect(business.text).toContain("page5-body-0");
+    });
+
+    it("skips a heading with nothing under it, and an index entry that gives page ranges", () => {
+      const index = `<div>Item 1. Business</div><div>Item 1A. Risk factors</div><div>Item 7. Management's Discussion and Analysis 8-23</div><div>Item 8. Financial Statements and Supplementary Data Pages 36 - 73</div>`;
+      const r = extractFilingSections(`<div>FORM 10-K</div>${index}<div>Item 9. Changes</div><p>${body("nine", 20)}</p>`);
+      expect(r.sections).toEqual([]);
+    });
+
+    it("does not mistake a section full of figures for a contents list", () => {
+      const html = `<div>FORM 10-Q</div><div>Item 2. Unregistered Sales of Equity Securities</div><div>Total 33,460,252</div><div>April 16,922,312</div><div>Item 5. Other Information</div><p>None.</p>`;
+      expect(extractFilingSections(html, "10-Q").sections.map((s) => s.id)).toEqual(["market"]);
+    });
+  });
+
+  it("gives each section whole blocks of the document, with offsets in its own text", () => {
+    const r = extractFilingSections(annualWithEveryItem);
+    for (const section of r.sections) {
+      expect(section.text.slice(section.blocks[0].start, section.blocks[0].end)).toMatch(/^Item \d/);
+      for (const place of section.blocks) {
+        const block = r.document.blocks[place.index];
+        expect(section.text.slice(place.start, place.end)).toBe(block.text);
+        expect(section.at + place.start).toBe(block.start);
+      }
+    }
+    // Consecutive sections share no block.
+    const indexes = r.sections.flatMap((section) => section.blocks.map((place) => place.index));
+    expect(new Set(indexes).size).toBe(indexes.length);
+  });
+
+  it("does not take a page's own footer for a contents entry's page number", () => {
+    // Alibaba's Item 18 is a short list, and the page's number came right after it.
+    const page = (n: number, content: string) => `${content}<p>${n}</p>`;
+    const html = [
+      `<div>FORM 10-K</div>`,
+      page(1, `<p>${body("cover", 60)}</p>`),
+      page(2, `<div>Item 7. Management's Discussion and Analysis</div><p>${body("mdna", 60)}</p>`),
+      page(3, `<div>Item 8. Financial Statements and Supplementary Data</div><p>The statements filed with this report:</p><p>• Consolidated Balance Sheets</p><p>• Consolidated Statements of Income</p>`),
+      page(4, `<div>Item 9. Changes in and Disagreements with Accountants</div><p>${body("nine", 60)}</p>`),
+      page(5, `<p>${body("ten", 60)}</p>`),
+      page(6, `<p>${body("eleven", 60)}</p>`),
+    ].join("");
+    const r = extractFilingSections(html);
+    expect(r.document.pages.map((p) => p.number)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(r.sections.map((s) => s.id)).toEqual(["mdna", "financials"]);
+    expect(r.sections[1].text).toContain("Consolidated Statements of Income");
+  });
+
+  describe("a foreign company's annual report, Form 20-F", () => {
+    // TSMC's headings ("ITEM 3.KEY INFORMATION", no space after the stop) and
+    // Alibaba's Item 18, a list of statements whose lines end in years.
+    const twentyF = `
+      <div>FORM 20-F</div>
+      <div>ITEM 3. KEY INFORMATION 3</div><div>ITEM 4. INFORMATION ON THE COMPANY 14</div>
+      <div>ITEM 5. OPERATING AND FINANCIAL REVIEWS AND PROSPECTS 26</div><div>ITEM 16E. PURCHASES OF EQUITY SECURITIES BY THE ISSUER 76</div>
+      <div>ITEM 18. FINANCIAL STATEMENTS 83</div>
+      <div>ITEM 3.KEY INFORMATION</div><p>${body("risk", 80)}</p>
+      <div>ITEM 4.INFORMATION ON THE COMPANY</div><p>${body("business", 80)}</p>
+      <div>ITEM 5.OPERATING AND FINANCIAL REVIEWS AND PROSPECTS</div><p>${body("review", 80)}</p>
+      <div>ITEM 11.QUANTITATIVE AND QUALITATIVE DISCLOSURES ABOUT MARKET RISKS</div><p>${body("rates", 30)}</p>
+      <div>ITEM 16E.PURCHASES OF EQUITY SECURITIES BY THE ISSUER AND AFFILIATED PURCHASERS</div><p>Not applicable.</p>
+      <div>ITEM 18.FINANCIAL STATEMENTS</div><p>The following financial statements are filed as part of this annual report:</p>
+      <p>• Consolidated Income Statements for the years ended March 31, 2024, 2025 and 2026</p>
+      <p>• Consolidated Balance Sheets as of March 31, 2025 and 2026</p>
+      <div>ITEM 19.EXHIBITS</div><p>${body("exhibits", 30)}</p>
+      <div>INDEX TO CONSOLIDATED FINANCIAL STATEMENTS</div><p>${body("statements", 100)}</p>`;
+
+    it("reads it by its own Item numbers", () => {
+      expect(layoutOf(twentyF)).toBe("foreign");
+      expect(layoutOf("<div>Annual report</div>", "20-F")).toBe("foreign");
+      const r = extractFilingSections(twentyF, "20-F");
+      expect(r.sections.map((s) => s.id)).toEqual(["risk-factors", "business", "mdna", "market-risk", "market", "financials"]);
+      expect(r.sections.find((s) => s.id === "business")!.text).toContain("business-body-0");
+      expect(r.sections.find((s) => s.id === "business")!.text).not.toContain("review-body-0");
+      expect(sectionLabel("mdna", "20-F")).toBe("Operating review");
+    });
+
+    it("reads the statements Item 18 points to, and does not take its list of statements for a contents list", () => {
+      const statements = extractFilingSections(twentyF, "20-F").sections.find((s) => s.id === "financials")!;
+      expect(statements.text).toMatch(/^INDEX TO CONSOLIDATED FINANCIAL STATEMENTS/);
+      expect(statements.text).toContain("statements-body-99");
+    });
+  });
+
   it("strips markup and entities without gluing words together", () => {
     const text = filingToPlainText(
       "<p>Revenue&nbsp;grew</p><p>9.8%&#8212;a slowdown</p><div>See&amp;compare</div>",
@@ -179,5 +438,91 @@ describe("filing section extraction", () => {
     expect(text).toContain("9.8%-a slowdown");
     expect(text).toContain("See&compare");
     expect(text).not.toContain("<p>");
+  });
+});
+
+describe("the ways a report words Item 5", () => {
+  const annual = (heading: string) => `
+    <div>Item 1. Business</div><p>${body("business", 50)}</p>
+    <div>${heading}</div><p>${body("market", 50)}</p>
+    <div>Item 6. [Reserved]</div>
+    <div>Item 7. Management's Discussion and Analysis</div><p>${body("mdna", 50)}</p>
+  `;
+
+  it("finds the market for the shares however the company names itself", () => {
+    // The form's own words; Amazon's, Chevron's, IBM's and Starbucks'; Disney's and Pfizer's.
+    for (const heading of [
+      "Item 5. Market for Registrant's Common Equity, Related Stockholder Matters and Issuer Purchases of Equity Securities",
+      "Item 5. Market for the Registrant's Common Stock, Related Shareholder Matters, and Issuer Purchases of Equity Securities",
+      "ITEM 5. MARKET FOR THE COMPANY'S COMMON EQUITY, RELATED STOCKHOLDER MATTERS AND ISSUER PURCHASES OF EQUITY SECURITIES",
+    ]) {
+      const market = extractFilingSections(annual(heading), "10-K").sections.find((s) => s.id === "market");
+      expect(market?.text, heading).toContain("market-body-0");
+      expect(market?.text, heading).not.toContain("mdna-body-0");
+    }
+  });
+});
+
+describe("a section the report does not have", () => {
+  // Johnson & Johnson's and Ford's shape: Part II goes from Item 1 to Item 2 or 5.
+  const partII = (items: string) => `
+    <div>PART I. FINANCIAL INFORMATION</div>
+    <div>Item 1. Financial Statements</div><p>${body("fin", 60)}</p>
+    <div>Item 2. Management's Discussion and Analysis of Financial Condition</div><p>${body("mdna", 60)}</p>
+    <div>Item 3. Quantitative and Qualitative Disclosures About Market Risk</div><p>${body("mrisk", 40)}</p>
+    <div>Item 4. Controls and Procedures</div><p>${body("controls", 40)}</p>
+    <div>PART II. OTHER INFORMATION</div>
+    ${items}
+    <div>Item 6. Exhibits</div><p>${body("exhibits", 30)}</p>
+  `;
+  const read = (items: string) => extractFilingSections(partII(items), "10-Q");
+
+  it("says so where no line names the Item, and does not list it as not found", () => {
+    const r = read(`
+      <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+      <div>Item 5. Other Information</div><p>${body("other", 30)}</p>
+      <p>See Item 1A. Risk Factors in our annual report for a discussion of our risks.</p>
+    `);
+    // A sentence naming Item 1A is not an Item 1A line.
+    expect(r.absent.map((s) => s.id)).toEqual(["risk-factors", "market"]);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("tells a quarterly report's Part II Item 1 from its Part I Item 1 by the title", () => {
+    // Home Depot's and AT&T's shape: Part II opens at Item 1A.
+    const r = read(`
+      <div>Item 1A. Risk Factors</div><p>${body("risk", 30)}</p>
+      <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 30)}</p>
+    `);
+    expect(r.absent.map((s) => s.id)).toEqual(["legal"]);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("takes the report's own word where it says an Item is not applicable", () => {
+    // GE's index: "Item 1A. Risk Factors Not applicable(a)".
+    const r = read(`
+      <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+      <div>Item 1A. Risk Factors Not applicable(a)</div>
+      <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 30)}</p>
+    `);
+    expect(r.absent.map((s) => s.id)).toEqual(["risk-factors"]);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("keeps a section not found where a line gives its Item a title the reader does not know", () => {
+    const r = read(`
+      <div>Item 1. Legal Proceedings</div><p>${body("legal", 30)}</p>
+      <div>Item 1A. Risk Matters</div><p>${body("risk", 30)}</p>
+      <div>Item 2. Unregistered Sales of Equity Securities and Use of Proceeds</div><p>${body("buyback", 30)}</p>
+    `);
+    expect(r.missing.map((s) => s.id)).toEqual(["risk-factors"]);
+    expect(r.absent).toEqual([]);
+  });
+
+  it("says nothing is absent from a document that names no Items at all", () => {
+    const r = extractFilingSections(`<div>Risk Factors</div><p>${body("risk", 60)}</p><div>Legal Proceedings</div><p>${body("legal", 60)}</p>`, "10-K");
+    expect(r.sections).toEqual([]);
+    expect(r.absent).toEqual([]);
+    expect(r.missing).toHaveLength(7);
   });
 });

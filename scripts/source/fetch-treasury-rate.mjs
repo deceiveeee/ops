@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+/**
+ * The government borrowing rate, from the US Treasury's own auction record.
+ *
+ *   node scripts/source/fetch-treasury-rate.mjs
+ *
+ * Every cost of capital starts from what lending to the government pays. Studio
+ * used to take the rate inside Damodaran's January figures, which ages every
+ * month after January, and told the learner to look up today's yield somewhere
+ * else. This takes the most recent auction of the Treasury's 10-year note
+ * instead: the yield investors accepted on a stated day, as the Treasury's
+ * Bureau of the Fiscal Service records it.
+ *
+ * **Why an auction and not the daily curve.** Fiscal Data states its terms
+ * plainly: free, without restriction, commercial use included. The daily par
+ * yield curve sits on a site whose reuse statement could not be found
+ * (research, 2026-09-10), so it is not shown to learners. The cost is
+ * frequency: a new 10-year yield about once a month, always with its date.
+ *
+ * **The trap this guards against.** Inflation-protected notes are also labelled
+ * "10-Year". Their yield is a real rate, about two points lower, and taking one
+ * would quietly understate every cost of capital in Studio. The query excludes
+ * them, and the run fails if one gets through anyway.
+ *
+ * No key and no account: the API is open.
+ */
+
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(HERE, "../..");
+const DATASET = join(ROOT, "lib", "studio-project", "data", "treasury-rate.json");
+const REPORT = join(ROOT, "docs", "source-audits", "studio-treasury-rate.md");
+const COST_OF_CAPITAL = join(ROOT, "lib", "studio-project", "data", "cost-of-capital.json");
+
+const API = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query";
+const DATASET_PAGE = "https://fiscaldata.treasury.gov/datasets/treasury-securities-auctions-data/";
+const TERMS = "https://fiscaldata.treasury.gov/api-documentation/";
+
+const FIELDS = [
+  "cusip",
+  "security_type",
+  "security_term",
+  "original_security_term",
+  "auction_date",
+  "issue_date",
+  "maturity_date",
+  "int_rate",
+  "high_yield",
+  "reopening",
+  "inflation_index_security",
+];
+
+const today = new Date().toISOString().slice(0, 10);
+// A 10-year note is auctioned or reopened every month, so half a year always holds several.
+const since = new Date(Date.now() - 190 * 86_400_000).toISOString().slice(0, 10);
+const query =
+  `${API}?filter=original_security_term:eq:10-Year,security_type:eq:Note,inflation_index_security:eq:No,auction_date:gte:${since}` +
+  `&fields=${FIELDS.join(",")}&sort=-auction_date&page[size]=20`;
+
+const response = await fetch(query);
+if (!response.ok) throw new Error(`${response.status} from Fiscal Data`);
+const body = await response.json();
+const rows = Array.isArray(body.data) ? body.data : [];
+
+// An announced auction has no yield until it is held.
+const held = rows.filter((row) => row.high_yield !== null && row.high_yield !== "null" && row.auction_date <= today);
+const latest = held[0];
+if (!latest) throw new Error(`no 10-year note auction with a yield since ${since}`);
+
+// Belt and braces: the filter asked for these, so any failure means the API changed.
+if (latest.inflation_index_security !== "No") throw new Error(`${latest.cusip} is inflation-indexed; its yield is a real rate`);
+if (latest.security_type !== "Note" || latest.original_security_term !== "10-Year") {
+  throw new Error(`${latest.cusip} is a ${latest.original_security_term} ${latest.security_type}, not a 10-year note`);
+}
+const yieldPct = Number(latest.high_yield);
+if (!Number.isFinite(yieldPct) || yieldPct <= 0 || yieldPct >= 20) throw new Error(`implausible yield ${latest.high_yield}`);
+
+const dataset = {
+  retrievedAt: today,
+  source: DATASET_PAGE,
+  api: query,
+  terms: TERMS,
+  attribution: "US Treasury, Bureau of the Fiscal Service: Treasury Securities Auctions Data (Fiscal Data).",
+  decay: "monthly: a new 10-year yield each time the note is auctioned or reopened",
+  security: {
+    cusip: latest.cusip,
+    term: latest.security_term,
+    originalTerm: latest.original_security_term,
+    auctionDate: latest.auction_date,
+    issueDate: latest.issue_date,
+    maturityDate: latest.maturity_date,
+    couponPct: Number(latest.int_rate),
+    reopening: latest.reopening === "Yes",
+    inflationIndexed: latest.inflation_index_security === "Yes",
+  },
+  yieldPct,
+  rate: Number((yieldPct / 100).toFixed(6)),
+};
+
+mkdirSync(dirname(DATASET), { recursive: true });
+writeFileSync(DATASET, JSON.stringify(dataset, null, 2) + "\n", "utf8");
+
+const costOfCapital = JSON.parse(readFileSync(COST_OF_CAPITAL, "utf8"));
+const inside = costOfCapital.impliedRiskFreeRate * 100;
+const pct = (value) => `${value.toFixed(2)}%`;
+const lines = [
+  "# Government borrowing rate",
+  "",
+  "Generated by `scripts/source/fetch-treasury-rate.mjs`. Do not edit by hand.",
+  "",
+  `Retrieved ${today} from the US Treasury's auction record (Fiscal Data).`,
+  "",
+  "## The rate",
+  "",
+  "| | |",
+  "| --- | --- |",
+  `| Security | ${latest.original_security_term} Treasury note${dataset.security.reopening ? " (reopened)" : ""} |`,
+  `| CUSIP | ${latest.cusip} |`,
+  `| Auction date | ${latest.auction_date} |`,
+  `| Issue date | ${latest.issue_date} |`,
+  `| Maturity | ${latest.maturity_date} |`,
+  `| Coupon | ${dataset.security.couponPct}% |`,
+  `| **Yield at auction** | **${yieldPct}%** |`,
+  "",
+  "## Why this rate",
+  "",
+  "Every cost of capital starts from what lending to the government pays, and the",
+  "10-year note is the usual benchmark for it. Damodaran's January figures carry an",
+  `implied ${pct(inside)}, recovered from the data rather than published. The auction`,
+  "above is newer and it is dated, so Studio rebuilds each industry's cost of capital",
+  "on it and says so beside the number. A learner can still type their own rate.",
+  "",
+  "## Permitted use",
+  "",
+  "Fiscal Data's API documentation says the data is offered free and without",
+  "restriction, to copy, adapt and redistribute, for commercial or non-commercial",
+  `use. No key or account is needed. Terms: ${TERMS}`,
+  "",
+  "The Treasury's daily par yield curve would be fresher, but its site's reuse",
+  "statement could not be found, so it is not used for anything a learner sees.",
+  "",
+  "## The trap",
+  "",
+  "Inflation-protected notes are also labelled \"10-Year\". Their yield is a real",
+  "rate, roughly two points below a nominal one, and taking one would understate",
+  "every cost of capital. The query asks only for notes that are not",
+  "inflation-indexed, and the run fails if one gets through anyway.",
+  "",
+  "## Refreshing",
+  "",
+  "Run the script after each 10-year auction, about once a month. A failed run",
+  "leaves the previous rate and its date in place.",
+  "",
+];
+writeFileSync(REPORT, lines.join("\n"), "utf8");
+
+console.log(`${latest.cusip} ${latest.original_security_term} note, auctioned ${latest.auction_date}: ${pct(yieldPct)}`);
+console.log(`${held.length} held auctions since ${since}; Damodaran's January figures carry ${pct(inside)}`);
+console.log(`\ndataset  ${DATASET}`);
+console.log(`report   ${REPORT}`);

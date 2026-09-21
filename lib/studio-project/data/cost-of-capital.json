@@ -1,9 +1,10 @@
 {
-  "retrievedAt": "2026-09-06",
-  "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/wacc.htm",
+  "retrievedAt": "2026-09-11",
+  "source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/wacc.html",
   "rules": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datahistory.html",
   "attribution": "Industry cost of capital data from Aswath Damodaran, NYU Stern.",
-  "vintage": "unstated at source; the newest dated file in his archive is the January 2025 update",
+  "vintage": "January 2026",
+  "vintageStated": true,
   "decay": "high",
   "impliedRiskFreeRate": 0.039579,
   "impliedEquityRiskPremium": 0.044503,

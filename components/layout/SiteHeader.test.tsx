@@ -1,10 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { SessionProvider } from "@/lib/supabase/session";
 import { ProgressProvider } from "@/lib/progress/store";
 import { OnboardingProvider } from "@/lib/onboarding/store";
 import SiteHeader from "./SiteHeader";
+
+const route = vi.hoisted(() => ({ pathname: "/" }));
+vi.mock("next/navigation", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/navigation")>()),
+  usePathname: () => route.pathname,
+}));
 
 function baseClient() {
   return {
@@ -38,7 +44,7 @@ describe("SiteHeader public beta navigation", () => {
     renderHeader();
     expect(screen.getAllByText("Courses").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Your plan").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Filings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Company reports").length).toBeGreaterThan(0);
     // Studio was excluded while it was six sample panels. It is now a working
     // workspace, so the beta surfaces it.
     expect(screen.getAllByText("Studio").length).toBeGreaterThan(0);
@@ -47,13 +53,13 @@ describe("SiteHeader public beta navigation", () => {
   /**
    * Accounts are offered and optional. Signing in has to be reachable, and it
    * has to stay beside the primary action rather than in front of it -- a
-   * learner who never makes an account loses no surface, so "Start building"
-   * is still the call this header makes.
+   * learner who never makes an account loses no surface, so "Open Studio" is
+   * still the call this header makes.
    */
   it("offers a way in without demanding one", () => {
     renderHeader();
-    expect(screen.getAllByText("Sign in").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Start building").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("link", { name: "Open Studio" })).toHaveAttribute("href", "/studio");
   });
 
   /**
@@ -90,7 +96,29 @@ describe("SiteHeader public beta navigation", () => {
       </session.SessionProvider>,
     );
     expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open Studio" })).toHaveAttribute("href", "/studio");
     vi.doUnmock("@/lib/beta");
     vi.resetModules();
+  });
+});
+
+describe("SiteHeader current page", () => {
+  // Company reports lives inside Studio, so both links match its path. A header
+  // that marked both would tell a screen-reader user they are in two places.
+  it("marks only Company reports as current on a report, though it sits under Studio", () => {
+    route.pathname = "/studio/filings/0001666138/0001628280-25-054049";
+    renderHeader();
+    const main = screen.getByRole("navigation", { name: "Main navigation" });
+    expect(within(main).getByRole("link", { name: "Company reports" })).toHaveAttribute("href", "/studio/filings");
+    expect(within(main).getByRole("link", { name: "Company reports" })).toHaveAttribute("aria-current", "page");
+    expect(within(main).getByRole("link", { name: "Studio" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("still marks Studio as current everywhere else in Studio", () => {
+    route.pathname = "/studio/investigate";
+    renderHeader();
+    const main = screen.getByRole("navigation", { name: "Main navigation" });
+    expect(within(main).getByRole("link", { name: "Studio" })).toHaveAttribute("aria-current", "page");
+    expect(within(main).getByRole("link", { name: "Company reports" })).not.toHaveAttribute("aria-current");
   });
 });

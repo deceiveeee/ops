@@ -8,7 +8,8 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
     globals: true,
-    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**", "e2e/**"],
+    // Nested agent checkouts have their own test runs and module contexts.
+    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/.claude/worktrees/**", "e2e/**"],
   },
   resolve: { alias: { "@": path.resolve(__dirname, "./") } },
 });

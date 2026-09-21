@@ -20,13 +20,19 @@
  * the industry context comes from him. Only industry-level data is taken; he is
  * no longer permitted to share company-level files.
  *
- * **The vintage is unstated and that matters.** The live page carries no date
- * and the server sends no Last-Modified header. The newest dated file in his
- * archive is the January 2025 update. Since the risk-free rate inside a cost of
- * capital moves, this pipeline derives that rate out of the data so the surface
- * can show it and let a learner replace it with today's Treasury yield.
- * He also warns he changes methods when he decides a past one was wrong, so
- * this is high-decay data: re-run it and re-read the rules yearly.
+ * **The vintage is stated on the page his data index links.** His current-data
+ * page links `datafile/wacc.html`, which ends "Last Updated in January 2026". An
+ * earlier version of this pipeline read `wacc.htm`, which holds the same table
+ * without that line, and recorded the vintage as unstated. The two tables were
+ * compared cell for cell on 2026-09-10 and are identical. The date is now read
+ * from the page, and if the line ever disappears the dataset says so rather
+ * than guessing.
+ *
+ * The risk-free rate inside a cost of capital ages fastest, so this pipeline
+ * still recovers it out of the data. Studio rebuilds each figure on the latest
+ * Treasury 10-year auction instead (`fetch-treasury-rate.mjs`) and shows the
+ * two side by side. He also warns he changes methods when he decides a past one
+ * was wrong, so this is high-decay data: re-run it and re-read the rules yearly.
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -38,7 +44,7 @@ const ROOT = resolve(HERE, "../..");
 const CACHE = join(ROOT, ".source-cache", "damodaran");
 const DATASET = join(ROOT, "lib", "studio-project", "data", "cost-of-capital.json");
 const REPORT = join(ROOT, "docs", "source-audits", "studio-cost-of-capital.md");
-const SOURCE = "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/wacc.htm";
+const SOURCE = "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/wacc.html";
 const RULES = "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datahistory.html";
 
 /**
@@ -133,14 +139,17 @@ function recoverComponents(rows) {
 mkdirSync(CACHE, { recursive: true });
 mkdirSync(dirname(DATASET), { recursive: true });
 
-const cached = join(CACHE, "wacc.htm");
+const cached = join(CACHE, "wacc.html");
 if (!process.argv.includes("--report") || !existsSync(cached)) {
   const response = await fetch(SOURCE, { headers: { "User-Agent": "Open Portfolio Studio educational research" } });
   if (!response.ok) throw new Error(`${response.status} fetching ${SOURCE}`);
   writeFileSync(cached, await response.text(), "utf8");
 }
 
-const rows = parseTable(readFileSync(cached, "utf8"));
+const html = readFileSync(cached, "utf8");
+const rows = parseTable(html);
+// Read, never assumed: if the page stops saying when it was updated, the dataset says so.
+const stated = decode(html).match(/Last Updated in ([A-Z][a-z]+ \d{4})/);
 if (rows.length < 50) throw new Error(`only ${rows.length} industries parsed — the page layout has changed`);
 
 const components = recoverComponents(rows);
@@ -167,7 +176,8 @@ const dataset = {
   source: SOURCE,
   rules: RULES,
   attribution: "Industry cost of capital data from Aswath Damodaran, NYU Stern.",
-  vintage: "unstated at source; the newest dated file in his archive is the January 2025 update",
+  vintage: stated ? stated[1] : "not stated on the page",
+  vintageStated: Boolean(stated),
   decay: "high",
   // Recovered rather than published. The surface shows this and lets a learner
   // replace it with a current Treasury yield, because it is the component most
@@ -212,12 +222,20 @@ const lines = [
   "Studio makes. Only industry-level data is taken; he is no longer permitted to",
   "share company-level files.",
   "",
-  "## The vintage is unstated, and it matters",
+  "## The vintage, and why it matters",
   "",
-  "The page carries no date and the server sends no `Last-Modified` header. The",
-  "newest dated file in his archive is the January 2025 update. A risk-free rate",
-  "from then, used now, would be wrong by however much yields have moved — so",
-  "this pipeline recovers that rate out of the data rather than burying it.",
+  dataset.vintageStated
+    ? `The page says "Last Updated in ${dataset.vintage}".`
+    : "The page does not say when it was last updated, so the dataset records that rather than a guess.",
+  "A risk-free rate from then, used now, would be wrong by however much yields",
+  "have moved. So Studio rebuilds each cost of capital on the latest Treasury",
+  "10-year auction ([`studio-treasury-rate.md`](./studio-treasury-rate.md)), and",
+  "this pipeline recovers the rate inside his figures so the two can be shown",
+  "side by side.",
+  "",
+  "An earlier version of this pipeline read `wacc.htm`, which holds the same",
+  "table without the date line, and recorded the vintage as unstated. The two",
+  "pages were compared cell for cell on 2026-09-10 and hold identical tables.",
   "",
   "| | |",
   "| --- | --- |",

@@ -19,9 +19,9 @@ const PERSONAL_PURPOSE = "My own deposit";
 
 test.use({ viewport: { width: 1440, height: 900 } });
 
-const modeSwitch = (page: Page) => page.getByRole("group", { name: "Which portfolio you are working on" });
-const destinations = (page: Page) => page.locator("nav[aria-label='Studio destinations']").first();
-const go = (page: Page, label: string) => destinations(page).getByRole("button", { name: label }).click();
+const GOALS = "/studio/goals";
+
+const modeSwitch = (page: Page) => page.getByRole("group", { name: "Which portfolio" });
 
 async function choose(page: Page, label: "Practice" | "Your own") {
   await modeSwitch(page).getByRole("button", { name: label, exact: true }).click();
@@ -82,7 +82,7 @@ async function openEmpty(page: Page) {
     );
   });
   await page.goto(STUDIO);
-  await expect(page.getByRole("heading", { level: 1, name: "Build a portfolio you can explain" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 15_000 });
 }
 
 test("each portfolio is kept separately, and switching loses neither", async ({ page }) => {
@@ -95,29 +95,29 @@ test("each portfolio is kept separately, and switching loses neither", async ({ 
     "true",
   );
 
-  await go(page, "Goal");
+  await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PRACTICE_PURPOSE);
-  await go(page, "Overview");
-  await expect(page.getByRole("heading", { level: 2, name: PRACTICE_PURPOSE })).toBeVisible();
+  await page.goto(STUDIO);
+  await expect(page.getByText(PRACTICE_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
   // Switching opens the other record rather than renaming this one.
   await choose(page, "Your own");
-  await expect(page.getByRole("heading", { level: 2, name: "Your portfolio" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Give the money a job/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Say what this money is for" })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText(PRACTICE_PURPOSE)).toBeHidden();
 
-  await go(page, "Goal");
+  await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PERSONAL_PURPOSE);
-  await go(page, "Overview");
-  await expect(page.getByRole("heading", { level: 2, name: PERSONAL_PURPOSE })).toBeVisible();
+  await page.goto(STUDIO);
+  await expect(page.getByText(PERSONAL_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
   // And the first one is exactly where it was left.
   await choose(page, "Practice");
-  await expect(page.getByRole("heading", { level: 2, name: PRACTICE_PURPOSE })).toBeVisible();
+  await expect(page.getByText(PRACTICE_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
   // The choice outlives the page, or moving between Studio's screens would undo it.
   await choose(page, "Your own");
   await page.reload();
-  await expect(page.getByRole("heading", { level: 2, name: PERSONAL_PURPOSE })).toBeVisible();
+  await expect(page.getByText(PERSONAL_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
   await expect(modeSwitch(page).getByRole("button", { name: "Your own", exact: true })).toHaveAttribute(
     "aria-pressed",
     "true",
@@ -135,16 +135,17 @@ test("the investigation view works on the portfolio the workspace is on", async 
    * and prove nothing. Practice is the case that can tell the two apart, and
    * it is also the ordinary one: it is what every learner opens Studio on.
    */
-  await go(page, "Goal");
+  await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PRACTICE_PURPOSE);
   await choose(page, "Your own");
-  await go(page, "Goal");
+  await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PERSONAL_PURPOSE);
   await choose(page, "Practice");
-  await expect(page.getByRole("heading", { level: 2, name: PRACTICE_PURPOSE })).toBeVisible();
+  await page.goto(STUDIO);
+  await expect(page.getByText(PRACTICE_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
   await page.goto(INVESTIGATE);
-  await page.getByPlaceholder("The one you want to understand").fill("Nordic Pulp");
+  await page.getByPlaceholder("Its ticker symbol").fill("Nordic Pulp");
   await page.getByPlaceholder("0", { exact: true }).first().fill("1200");
 
   await expect

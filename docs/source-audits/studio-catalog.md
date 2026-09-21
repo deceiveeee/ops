@@ -128,10 +128,13 @@ issuer and is cross-referenced from SGOV's holdings record so that a portfolio h
 note beside AGG or SGOV shows the concentration rather than reading as three separate
 things.
 
-**Accrued interest is deliberately null.** The auction record states it only for issue-date
-settlement, and the figure depends on when a buyer actually settles. The worksheet excludes
-it and says the estimated total is incomplete, which is true; carrying the auction's figure
-would be wrong for every date except 2026-08-17.
+**Accrued interest stays null in the catalog, and is now worked out per settlement date.**
+The auction record states it only for issue-date settlement, and the figure depends on when a
+buyer actually settles, so no catalog entry can carry one. Since 2026-09-15 Studio computes it
+from the issue's own terms — dated date 2026-08-15, semiannual, actual days in the half-year —
+by the rule in 31 CFR part 356, appendix B, on `/studio/portfolio/bond`, and the learner can
+carry that figure into the buying worksheet. Checked against Treasury's own published figures
+for both of this note's auctions; see `studio-quantitative-methods.md` §2.
 
 ## 2. Prices, and the one exception
 

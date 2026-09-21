@@ -300,6 +300,47 @@ function newestPeriod(facts: CompanyFacts, concept: string): string | null {
   return newest;
 }
 
+/** One concept's value for one period, with the filing it came from. */
+export interface ConceptValue {
+  concept: string;
+  value: number;
+  periodStart: string | null;
+  periodEnd: string;
+  accession: string;
+  form: string;
+  filed: string;
+}
+
+/**
+ * The first of a named list of concepts that covers a period.
+ *
+ * `resolvePrimitive` is the usual way in, and it applies the preference lists
+ * above. This is for a caller whose definition is narrower than a primitive's —
+ * `prefill.ts` builds total borrowings from concepts chosen so that finance
+ * leases never creep in, which is a stricter rule than `longTermDebt` applies —
+ * so it must name its own list rather than accept one.
+ */
+export function resolveConcepts(
+  facts: CompanyFacts,
+  concepts: readonly string[],
+  periodEnd: string,
+): ConceptValue | null {
+  for (const concept of concepts) {
+    const fact = factAt(facts, concept, periodEnd);
+    if (!fact) continue;
+    return {
+      concept,
+      value: fact.val,
+      periodStart: fact.start ?? null,
+      periodEnd: fact.end,
+      accession: fact.accn,
+      form: fact.form,
+      filed: fact.filed,
+    };
+  }
+  return null;
+}
+
 /**
  * Resolve one primitive for one period.
  *
@@ -319,20 +360,8 @@ export function resolvePrimitive(
     return { primitive, reason: "not applicable to this kind of company", tried: [] };
   }
 
-  for (const concept of candidates) {
-    const fact = factAt(facts, concept, periodEnd);
-    if (!fact) continue;
-    return {
-      primitive,
-      concept,
-      value: fact.val,
-      periodStart: fact.start ?? null,
-      periodEnd: fact.end,
-      accession: fact.accn,
-      form: fact.form,
-      filed: fact.filed,
-    };
-  }
+  const found = resolveConcepts(facts, candidates, periodEnd);
+  if (found) return { primitive, ...found };
 
   // Nothing covered the period. Say whether the company never reports this, or
   // reports it but stopped — those call for different responses.

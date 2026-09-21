@@ -6,10 +6,10 @@ import { routeTheme } from "./route-theme";
  *
  * The theme is resolved from the pathname alone, and the failure it produces is
  * total rather than partial: a page built on dark literals rendered on the light
- * ground shows white text on white. Studio's conversion is what made its own
- * line safe to add, and the filing reader's the same. These say which routes
- * have been through that, so adding a route here without converting it fails
- * next to the reason rather than in a browser.
+ * ground shows white text on white. Every surface now shares one light system
+ * (app/refresh.css), so the rule is that moving between routes never changes the
+ * theme; a route that came back dark would fail here next to the reason rather
+ * than in a browser.
  */
 
 describe("which surfaces are light", () => {
@@ -20,15 +20,13 @@ describe("which surfaces are light", () => {
     expect(routeTheme("/studio/investigate")).toBe("light");
   });
 
-  it("includes the filing reader, which Studio now leads into", () => {
+  it("includes the filing reader, which Studio leads into", () => {
     // Research opens with a search that lands here, so the two are one task.
-    expect(routeTheme("/filings")).toBe("light");
-    expect(routeTheme("/filings/0000320193/0000320193-25-000079")).toBe("light");
+    expect(routeTheme("/studio/filings")).toBe("light");
+    expect(routeTheme("/studio/filings/0000320193/0000320193-25-000079")).toBe("light");
   });
 
-  it("leaves the marketing pages dark", () => {
-    expect(routeTheme("/")).toBe("dark");
-    expect(routeTheme("/start")).toBe("dark");
-    expect(routeTheme("/login")).toBe("dark");
+  it("does not change when someone moves from the homepage into their work", () => {
+    for (const path of ["/", "/start", "/login", "/studio/research"]) expect(routeTheme(path)).toBe("light");
   });
 });

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { addStudioHolding, calculateStudio, createStudioPlan, type StudioPlan } from "@/lib/studio";
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
-import { ReviewStage, type StageProps, type StageResult } from "./stages";
+import { ReviewStage, type StageActions, type StageProps, type StageResult } from "./stages";
 
 /**
  * Where a backup comes from.
@@ -15,87 +15,56 @@ import { ReviewStage, type StageProps, type StageResult } from "./stages";
  * the plan would silently omit all of it, and restoring that file would then be
  * the thing that deleted it.
  *
- * So the button has to ask the session, and it has to say so when the session
- * cannot answer rather than handing over a file that looks like a backup.
+ * In the workspace every download is one of the project's own actions
+ * (`WorkspaceStage` builds them from the session's record), so the Review page
+ * has to hand each button to them and never write a file of its own.
  */
 
 const PLAN: StudioPlan = addStudioHolding(createStudioPlan("practice"), "aapl");
 
-/** Nothing has been turned down; these stages do not exercise that path. */
-const NO_DECISIONS: StageProps["decisions"] = {
-  againstReason: () => null,
-  decideAgainst: () => Promise.resolve<StageResult>({ ok: true }),
-  reconsider: () => Promise.resolve<StageResult>({ ok: true }),
-  decidedAgainst: () => [],
-};
-
-function renderReview(overrides: Partial<StageProps> = {}) {
+function renderReview(actions: StageActions) {
   const props: StageProps = {
     plan: PLAN,
     calculation: calculateStudio(PLAN, STUDIO_CATALOG),
     update: () => Promise.resolve<StageResult>({ ok: true }),
     importBackup: () => Promise.resolve<StageResult>({ ok: true }),
     reset: () => Promise.resolve<StageResult>({ ok: true }),
-    exportBackup: () => ({ ok: true, raw: "{}" }),
-    exportReadable: () => "",
-    decisions: NO_DECISIONS,
-    ...overrides,
+    actions,
   };
   render(<ReviewStage {...props} />);
-  return props;
 }
 
-describe("downloading a backup", () => {
-  it("takes its contents from the stored record, not from the plan on screen", async () => {
-    // jsdom has no object URLs, so the file is intercepted on its way to one.
-    // The assertion has to be on what is in it: calling the session and then
-    // writing something else would otherwise look identical from outside.
+const noAction = () => {};
+
+describe("downloading from Review", () => {
+  it("takes the backup from the project, not from the plan on screen", () => {
+    // jsdom has no object URLs; a file the page wrote itself would pass through here.
     const createObjectURL = vi.fn((_file: Blob) => "blob:test");
     vi.stubGlobal("URL", { ...URL, createObjectURL, revokeObjectURL: vi.fn() });
 
-    const raw = '{"schemaVersion":2,"candidates":[{"status":"rejected"}]}';
-    const exportBackup = vi.fn(() => ({ ok: true as const, raw }));
-    renderReview({ exportBackup });
+    const downloadBackup = vi.fn();
+    renderReview({ downloadBackup, downloadText: noAction, downloadCsv: noAction, restore: noAction, startAgain: noAction });
 
     fireEvent.click(screen.getByRole("button", { name: "Download a backup" }));
 
-    expect(exportBackup).toHaveBeenCalledOnce();
-    expect(createObjectURL).toHaveBeenCalledOnce();
-    const written = createObjectURL.mock.calls[0][0];
-    // A rejected candidate is the thing a plan cannot describe, so its survival
-    // is what separates a backup of the record from a backup of this view of it.
-    expect(await written.text()).toBe(raw);
-    vi.unstubAllGlobals();
-  });
-
-  it("says a backup could not be written rather than handing over an empty file", () => {
-    const createObjectURL = vi.fn(() => "blob:test");
-    vi.stubGlobal("URL", { ...URL, createObjectURL, revokeObjectURL: vi.fn() });
-
-    renderReview({
-      exportBackup: () => ({ ok: false, error: "Studio project backups support up to 10 MiB." }),
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: "Download a backup" }));
-
-    expect(screen.getByText("That backup could not be written")).toBeInTheDocument();
-    expect(screen.getByText("Studio project backups support up to 10 MiB.")).toBeInTheDocument();
-    // The failure is the point: a downloaded file here would be an empty one
-    // that a learner would keep believing their work was in it.
+    expect(downloadBackup).toHaveBeenCalledOnce();
+    // The plan's own JSON is what a rejected candidate cannot survive, so the
+    // page writing any file here would be the backup that loses it.
     expect(createObjectURL).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 
-  it("writes the readable copy from the record too", () => {
-    const createObjectURL = vi.fn(() => "blob:test");
+  it("writes the readable copy from the project too", () => {
+    const createObjectURL = vi.fn((_file: Blob) => "blob:test");
     vi.stubGlobal("URL", { ...URL, createObjectURL, revokeObjectURL: vi.fn() });
 
-    const exportReadable = vi.fn(() => "ALL RESEARCH (INCLUDING INVESTMENTS NOT HELD)");
-    renderReview({ exportReadable });
+    const downloadText = vi.fn();
+    renderReview({ downloadBackup: noAction, downloadText, downloadCsv: noAction, restore: noAction, startAgain: noAction });
 
     fireEvent.click(screen.getByRole("button", { name: "Download the readable plan" }));
 
-    expect(exportReadable).toHaveBeenCalledOnce();
+    expect(downloadText).toHaveBeenCalledOnce();
+    expect(createObjectURL).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
   });
 });

@@ -1,0 +1,35 @@
+{
+  "about": "Passages anchored in the text of Atkore's live FY2025 10-K on 2026-09-13, one sentence per section. The fixture beside this file was rebuilt from the same filing and its spacing differs slightly, so these anchors are what a passage kept against the live filing looks like when the text has since shifted. Only the anchors are recorded here; which strategy should find each one is stated in the tests.",
+  "accession": "0001628280-25-054049",
+  "document": "atkr-20250930.htm",
+  "anchors": [
+    {
+      "sectionId": "business",
+      "quote": "Our primary suppliers of steel are Cleveland-Cliffs, Steel Dynamics and Nucor; our primary suppliers of copper are AmRod, SDI LaFarga and Nexans; and our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls; and our primary suppliers of HDPE resin are LyondellBasell and Baystar.",
+      "prefix": "st for limited periods of time. ",
+      "suffix": " We strive to maintain strong re",
+      "offset": 8099
+    },
+    {
+      "sectionId": "risk-factors",
+      "quote": "Our working capital needs fluctuate based on economic activity and the market prices for our main raw materials, which are predominantly steel, copper and PVC resin.",
+      "prefix": "es and acquisition financing. \n ",
+      "suffix": " We require significant working ",
+      "offset": 28117
+    },
+    {
+      "sectionId": "mdna",
+      "quote": "The decrease was primarily due to lower input costs of steel, copper and PVC resin",
+      "prefix": ",179.3 million for fiscal 2023. ",
+      "suffix": " of $103.1 million and the benef",
+      "offset": 22448
+    },
+    {
+      "sectionId": "market-risk",
+      "quote": "We are exposed to price fluctuations for our primary raw material commodities such as steel, copper, PVC resin and HDPE resin.",
+      "prefix": "ances. \n Commodity Price Risk \n ",
+      "suffix": " Our operating performance may b",
+      "offset": 3371
+    }
+  ]
+}

@@ -128,11 +128,11 @@ async function seedLegacyOnly(page: Page) {
   );
 }
 
-const summary = (page: Page) => page.getByRole("complementary");
-const stat = (page: Page, label: string) =>
-  summary(page).getByText(label, { exact: true }).locator("xpath=following-sibling::div[1]");
-const destinations = (page: Page) => page.locator("nav[aria-label='Studio destinations']").first();
-const go = (page: Page, label: string) => destinations(page).getByRole("button", { name: label }).click();
+/** Each section of the workspace is its own page. */
+const GOALS = "/studio/goals";
+const PORTFOLIO = "/studio/portfolio";
+const RESEARCH = "/studio/research";
+const REVIEW = "/studio/review";
 
 /** The saved v2 project, read straight out of the database. */
 async function storedProject(page: Page): Promise<Record<string, unknown> | null> {
@@ -164,39 +164,42 @@ test("a portfolio saved by the previous version opens with its work intact", asy
   await seedLegacyOnly(page);
   await page.goto(STUDIO);
 
-  // The overview is what a returning learner lands on, and it is titled with
-  // the goal they wrote. The summary rail is deliberately not on this view, so
-  // the figures are read from the steps that own them.
-  await expect(page.getByRole("heading", { level: 2, name: PURPOSE })).toBeVisible();
+  // The overview is what a returning learner lands on, and it says what the
+  // money is for in the words they wrote.
+  await expect(page.getByText(PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
-  await go(page, "Goal");
-  await expect(page.getByLabel("What is this money for?")).toHaveValue(PURPOSE);
+  await page.goto(GOALS);
+  await expect(page.getByLabel("What is this money for?")).toHaveValue(PURPOSE, { timeout: 15_000 });
+  await page.getByRole("tab", { name: /Your money/ }).click();
   await expect(page.getByLabel("Money available now")).toHaveValue("20000");
   await expect(page.getByLabel("Keep aside as cash")).toHaveValue("4000");
   // $20,000 less the $4,000 held back is what the weights are a share of.
-  await expect(stat(page, "To invest")).toHaveText("$16,000");
-  await expect(stat(page, "Investments")).toHaveText("2");
+  await expect(page.getByRole("main")).toContainText("$16,000");
 
-  await go(page, "Build");
-  await expect(page.getByLabel("AAPL target percentage")).toHaveValue("60");
+  await page.goto(PORTFOLIO);
+  await expect(page.getByLabel("AAPL target percentage")).toHaveValue("60", { timeout: 15_000 });
   await expect(page.getByLabel("VXUS target percentage")).toHaveValue("40");
-  await expect(stat(page, "Assigned")).toHaveText("100.0%");
+  await expect(page.getByRole("main")).toContainText("100.0%");
 
   // Research is the part that changes shape. In the old record it hung off the
   // holding; in the new one it is a candidate keyed by instrument, and it has to
   // read back as the same sentence the learner wrote.
-  await go(page, "Research");
-  await page.getByRole("button", { name: /^AAPL\b/ }).click();
-  await expect(page.getByLabel("Why I chose it")).toHaveValue(AAPL_WHY);
+  await page.goto(RESEARCH);
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill("AAPL");
+  await page.getByRole("button", { expanded: false }).filter({ hasText: /^AAPL/ }).click();
+  await page.getByRole("button", { name: "Your record", exact: true }).click();
+  await expect(page.getByLabel("Why it belongs")).toHaveValue(AAPL_WHY);
 
-  await go(page, "Rules");
-  await expect(page.getByLabel("What I do with new money")).toHaveValue(LEGACY_PLAN.rules.contributionRule);
+  await page.goto(REVIEW);
+  await expect(page.getByLabel("What I do with new money")).toHaveValue(LEGACY_PLAN.rules.contributionRule, {
+    timeout: 15_000,
+  });
 });
 
 test("migrating keeps the original record and says where it came from", async ({ page }) => {
   await seedLegacyOnly(page);
   await page.goto(STUDIO);
-  await expect(page.getByRole("heading", { level: 2, name: PURPOSE })).toBeVisible();
+  await expect(page.getByText(PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
   /*
    * The old record is left exactly as it was, byte for byte.
@@ -255,6 +258,6 @@ test("the migration says what it did to the work, once", async ({ page }) => {
 
   // Said once. The next load migrates nothing, so it has nothing to announce.
   await page.reload();
-  await expect(page.getByRole("heading", { level: 2, name: PURPOSE })).toBeVisible();
+  await expect(page.getByText(PURPOSE).first()).toBeVisible({ timeout: 15_000 });
   await expect(notice).toBeHidden();
 });

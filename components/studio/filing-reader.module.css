@@ -1,0 +1,164 @@
+/*
+ * A filing's own paragraphs and tables, drawn in the reader's type.
+ *
+ * The HTML comes from lib/filings/document.ts, which keeps only bold, italic,
+ * superscript, line breaks and table cells with their spans, alignment,
+ * indentation and rules. Everything a filer set for paper — Times New Roman at
+ * 10pt, fixed column widths, page breaks — is gone, so these rules are the whole
+ * of how a report looks here.
+ */
+
+.document mark {
+  border-radius: 3px;
+  background: rgb(245 158 11 / 0.25);
+  color: inherit;
+  padding: 0 2px;
+}
+
+.document :global(.nowrap) {
+  white-space: nowrap;
+}
+
+.paragraph {
+  max-width: 68ch;
+  scroll-margin-top: 6rem;
+}
+
+.text {
+  font-size: 15px;
+  line-height: 1.75rem;
+  color: var(--ops-text-primary);
+}
+
+.heading {
+  padding-top: 0.5rem;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.75rem;
+  color: var(--ops-text-primary);
+}
+
+.heading strong {
+  font-weight: 600;
+}
+
+.kept {
+  border-left: 2px solid rgb(34 211 238 / 0.5);
+  padding-left: 0.75rem;
+}
+
+.keep {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  margin-left: 0.375rem;
+  border: 1px solid var(--ops-surface-border, #dedee3);
+  border-radius: 9999px;
+  padding: 0 0.625rem;
+  vertical-align: middle;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ops-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms, opacity 150ms;
+}
+
+.keep::after {
+  content: "Keep";
+}
+
+.keepTable {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  margin-top: 0.375rem;
+  border: 1px solid var(--ops-surface-border, #dedee3);
+  border-radius: 9999px;
+  padding: 0 0.625rem;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ops-text-secondary);
+  transition: color 150ms, border-color 150ms, opacity 150ms;
+}
+
+.keep:hover,
+.keepTable:hover {
+  border-color: var(--ops-accent-strong);
+  color: var(--ops-accent-strong);
+}
+
+.keep:focus-visible,
+.keepTable:focus-visible {
+  outline: 2px solid var(--ops-accent-strong);
+  outline-offset: 2px;
+}
+
+/*
+ * A Keep button waits until its paragraph is pointed at, or it is reached from
+ * the keyboard. Shown after every paragraph at once, the buttons made a report
+ * read as a stack of quotations. Without a pointer to hover with, as on a phone,
+ * they stay in view. They keep their place either way, so nothing moves.
+ */
+@media (hover: hover) {
+  .paragraph .keep,
+  .paragraph .keepTable {
+    opacity: 0;
+  }
+
+  .paragraph:hover .keep,
+  .paragraph:hover .keepTable,
+  .keep:focus-visible,
+  .keepTable:focus-visible,
+  .keepShown {
+    opacity: 1;
+  }
+}
+
+.tableFrame {
+  max-width: 100%;
+  overflow-x: auto;
+  scroll-margin-top: 6rem;
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ops-text-primary);
+}
+
+.table td {
+  padding: 4px 6px;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+/* The first cell of a row is its label, which may wrap; the figures do not. */
+.table td:first-child {
+  min-width: 9rem;
+  max-width: 24rem;
+  white-space: normal;
+}
+
+.table td:empty {
+  padding: 0;
+}
+
+.table :global(.rule) {
+  border-bottom: 1px solid var(--ops-divider, #dedee3);
+}
+
+.table :global(.rule-double) {
+  border-bottom: 3px double var(--ops-divider, #dedee3);
+}
+
+.table :global(.rule-top) {
+  border-top: 1px solid var(--ops-divider, #dedee3);
+}
+
+.table strong {
+  font-weight: 600;
+}

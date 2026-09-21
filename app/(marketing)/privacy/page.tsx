@@ -3,9 +3,9 @@ import Link from "next/link";
 import { LegalPage, Section } from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Privacy — Open Portfolio Studio",
+  title: "Privacy — Investing Studio",
   description:
-    "What Open Portfolio Studio does with your data: accounts are optional, your plan and research never leave your browser, and signing in syncs only which lessons you have finished.",
+    "What Investing Studio does with your data: accounts are optional, your plan and research never leave your browser, and signing in syncs only which lessons you have finished.",
 };
 
 /**

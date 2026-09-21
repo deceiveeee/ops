@@ -1,0 +1,12 @@
+{
+  "about": "Catalogue listings priced from other funds' N-PORT holdings filings. Each CUSIP is the exact listing a US learner buys, confirmed on 2026-09-13 by the holding it found in a real filing: its name and, where the filer gave one, its ISIN (docs/source-audits/studio-fund-prices.md). The Treasury note is priced from its own auction and is not listed here.",
+  "listings": [
+    { "instrumentId": "vti", "symbol": "VTI", "cusip": "922908769" },
+    { "instrumentId": "voo", "symbol": "VOO", "cusip": "922908363" },
+    { "instrumentId": "vxus", "symbol": "VXUS", "cusip": "921909768" },
+    { "instrumentId": "agg", "symbol": "AGG", "cusip": "464287226" },
+    { "instrumentId": "sgov", "symbol": "SGOV", "cusip": "46436E718" },
+    { "instrumentId": "aapl", "symbol": "AAPL", "cusip": "037833100" },
+    { "instrumentId": "tsm", "symbol": "TSM", "cusip": "874039100" }
+  ]
+}

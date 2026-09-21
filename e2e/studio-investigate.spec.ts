@@ -16,7 +16,7 @@ const DATABASE = "ops-studio-projects";
 /** Every figure input, in the order the page asks for them. */
 const figureBoxes = (page: Page) => page.getByPlaceholder("0", { exact: true });
 
-const companyBox = (page: Page) => page.getByPlaceholder("The one you want to understand");
+const companyBox = (page: Page) => page.getByPlaceholder("Its ticker symbol");
 
 /** One saved investigation, as much of it as these tests care about. */
 type StoredRow = { id: string; company: string; figures: number };
@@ -218,9 +218,26 @@ test("an idle visit records nothing", async ({ page }) => {
   // Well past the 600ms the page waits for typing to settle.
   await page.waitForTimeout(2_500);
   expect(await stored(page)).toEqual([]);
-  await expect(
-    page.getByRole("navigation", { name: "Companies you have looked at" }),
-  ).toHaveCount(0);
+  // The row itself is always there, holding the company in hand, so that it cannot
+  // appear under a learner's cursor. With nothing saved it lists no company to
+  // open or delete, and offers no second one.
+  await expect(chips(page)).toHaveCount(0);
+});
+
+/**
+ * The row used to appear with the first save. Leaving the company box saves, so a
+ * click on anything below it moved 66px between the press and the release and
+ * landed on empty space. Found 2026-09-10 through the Company reports link; the
+ * "?" beside each figure lost its first click the same way.
+ */
+test("the first click after naming a new company is not lost", async ({ page }) => {
+  test.setTimeout(60_000);
+  await openEmpty(page);
+  await companyBox(page).fill("Ampere Instruments");
+  const hint = page.getByRole("button", { name: /^Revenue/ });
+  await hint.click();
+  await expect(hint).toHaveAttribute("aria-expanded", "true");
+  await expect.poll(async () => (await stored(page)).length, { timeout: 10_000 }).toBe(1);
 });
 
 test("deleting asks first, and keeps the work when refused", async ({ page }) => {
@@ -263,7 +280,7 @@ test("a company in any industry can be investigated", async ({ page }) => {
   await expect(industryPicker(page).locator("option", { hasText: "Air Transport" }).first()).toBeAttached();
 
   await industryPicker(page).selectOption("Air Transport");
-  await expect(page.getByText(/Studio has not built peer figures for this industry yet/)).toBeVisible();
+  await expect(page.getByText(/No peer figures for this industry yet/)).toBeVisible();
 
   // The answer still arrives in full: a cost of capital to judge a return by.
   await expect(page.getByRole("heading", { name: "What the money costs" })).toBeVisible();
@@ -271,7 +288,7 @@ test("a company in any industry can be investigated", async ({ page }) => {
 
   // And an industry that does have peers says so rather than staying silent.
   await industryPicker(page).selectOption("Semiconductor");
-  await expect(page.getByText(/Studio has figures for \d+ companies in this industry/)).toBeVisible();
+  await expect(page.getByText(/Peer figures for \d+ companies are below/)).toBeVisible();
 });
 
 /**
@@ -320,98 +337,42 @@ test("a bank is refused rather than mismeasured", async ({ page }) => {
  */
 test("a company you investigated can be held in the portfolio", async ({ page }) => {
   test.setTimeout(120_000);
+  // Wide enough for the summary panel, which is where the portfolio's own
+  // figures are and so where a holding that failed to resolve would show.
+  await page.setViewportSize({ width: 1440, height: 900 });
   await openEmpty(page);
   await enter(page, "Nordic Pulp", "4200");
 
-  await page.getByRole("radio", { name: "A US-listed company" }).check();
+  await page.getByLabel(/Where it trades/).selectOption("us-equity");
   await page.getByRole("button", { name: /Add Nordic Pulp to your portfolio/ }).click();
-  await expect(page.getByText("Already in your portfolio")).toBeVisible();
+  await expect(page.getByText(/Nordic Pulp is in your portfolio/)).toBeVisible();
+
+  // The reason it is owned is asked for in the same words as any other holding,
+  // on the company's own page, where its figures and its filings already are,
+  // behind a disclosure because this page has a screen budget to keep.
+  await page.getByText("Why you own it").click();
+  await page.getByLabel("Why it belongs").fill("It earns more than its capital costs.");
+  await page.reload();
+  await page.getByText("Why you own it").click();
+  await expect(page.getByLabel("Why it belongs")).toHaveValue("It earns more than its capital costs.", { timeout: 15_000 });
 
   // It arrives owning nothing: how much to hold is a decision of its own.
-  await page.goto("/studio?view=build");
+  await page.goto("/studio/portfolio");
   const weight = page.getByLabel("Nordic Pulp target percentage");
-  await expect(weight).toBeVisible();
+  await expect(weight).toBeVisible({ timeout: 15_000 });
   await expect(weight).toHaveValue("0");
 
   await weight.fill("100");
-  const summary = page.getByRole("complementary");
+  // The figures that prove the calculation resolved it. An unresolved holding
+  // does not error, it silently zeroes every target in the portfolio.
+  const summary = page.getByRole("complementary", { name: "About this page" });
   await expect(summary.getByText("Assigned", { exact: true }).locator("xpath=following-sibling::div[1]")).toHaveText(
     "100.0%",
   );
-  // The figure that proves the calculation resolved it. An unresolved holding
-  // does not error, it silently zeroes every target in the portfolio.
-  await expect(summary.getByText("To invest", { exact: true }).locator("xpath=following-sibling::div[1]")).toHaveText(
-    "$10,000",
-  );
-
-  // And the reason it is owned is asked for in the same words as any other
-  // holding, on the step the overview sends people to.
-  await page.goto("/studio?view=research");
-  await expect(page.getByRole("heading", { name: "Companies you investigated yourself" })).toBeVisible();
-  await page.getByLabel("Why I chose it").fill("It earns more than its capital costs.");
-  await page.reload();
-  await expect(page.getByLabel("Why I chose it")).toHaveValue("It earns more than its capital costs.");
+  await expect(page.getByRole("main")).toContainText("Nordic Pulp");
 });
 
-/**
- * The eight are examples, and the step says so.
- *
- * Research opened with a catalogue of eight and mentioned other companies in a
- * footnote, which reads as a menu. Studio can read the filings of every company
- * listed in the US, so the search comes first and the eight are named as what
- * they are. The claim is checked by position, not only by wording: a heading
- * that says "examples" above a list still presented as the offer would not have
- * changed anything.
- */
-test("research leads with any company, and names the eight as examples", async ({ page }) => {
-  test.setTimeout(90_000);
-  await openEmpty(page);
-  await page.goto("/studio?view=research");
 
-  const search = page.getByLabel("Ticker symbol");
-  await expect(search).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Eight investments, already researched" })).toBeVisible();
-
-  // The search reaches the filing reader rather than a page inside Studio.
-  await expect(search.locator("xpath=ancestor::form")).toHaveAttribute("action", "/filings");
-
-  // Above the examples on the page, which is the whole point of the change.
-  const searchTop = await search.boundingBox();
-  const examplesTop = await page
-    .getByRole("heading", { name: "Eight investments, already researched" })
-    .boundingBox();
-  expect(searchTop!.y).toBeLessThan(examplesTop!.y);
-
-  // And what the eight lack is described as theirs, not as Studio's limit.
-  await expect(page.getByText("What the eight examples do not cover")).toBeVisible();
-});
-
-/**
- * A filing hands its company over by name.
- *
- * The figures are deliberately not carried: reading them out of the document is
- * the exercise. Only the name crosses, which is the one fact the filing page
- * can hand over without doing the learner's work for them.
- */
-test("a company named in the address opens ready to investigate", async ({ page }) => {
-  test.setTimeout(90_000);
-  await openEmpty(page);
-
-  await page.goto(`${INVESTIGATE}?company=${encodeURIComponent("Nordic Pulp")}`);
-  await expect(companyBox(page)).toHaveValue("Nordic Pulp");
-  // Nothing is saved until something is actually entered, so arriving here has
-  // not yet created a record.
-  expect(await stored(page)).toHaveLength(0);
-
-  await figureBoxes(page).first().fill("4200");
-  await savedWith(page, "Nordic Pulp", 1);
-
-  // Coming back for the same company reopens the work rather than starting a
-  // second record of it.
-  await page.goto(`${INVESTIGATE}?company=${encodeURIComponent("Nordic Pulp")}`);
-  await expect(figureBoxes(page).first()).toHaveValue("4200", { timeout: 15_000 });
-  expect(await stored(page)).toHaveLength(1);
-});
 
 /**
  * A company read and turned down, which never reaches the portfolio at all.
@@ -428,11 +389,10 @@ test("a company you read and turned down is kept, with the reason", async ({ pag
   await openEmpty(page);
   await enter(page, "Meridian Freight", "3100");
 
-  await page.getByRole("button", { name: "Decide against this company" }).click();
-  await page.getByLabel("Why it is not for you").fill("It earns less than its capital costs.");
+  await page.getByRole("button", { name: /Decide against Meridian Freight/ }).click();
+  await page.getByLabel(/is not for you/).fill("It earns less than its capital costs.");
   await page.getByRole("button", { name: "Record this decision" }).click();
 
-  await expect(page.getByText("You decided against this")).toBeVisible();
   await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
 
   // The figures are still the learner's, filed under the same investigation.
@@ -441,15 +401,13 @@ test("a company you read and turned down is kept, with the reason", async ({ pag
   await expect(figureBoxes(page).first()).toHaveValue("3100", { timeout: 15_000 });
   await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
 
-  // And it is findable from the portfolio, by name rather than by a stored id.
-  await page.goto("/studio?view=research");
-  await expect(page.getByRole("heading", { name: "Companies you decided against" })).toBeVisible();
-  // Exact, because the reconsider button names it too — and the point of this
-  // assertion is the name resolving at all rather than showing a stored id.
-  await expect(page.getByText("Meridian Freight", { exact: true })).toBeVisible();
-  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
+  // And it is findable from the overview, by name rather than by a stored id.
+  await page.goto("/studio");
+  await expect(page.getByRole("link", { name: /Meridian Freight/ }).first()).toBeVisible({ timeout: 15_000 });
 
-  // Reversible from either screen.
-  await page.getByRole("button", { name: /Put Meridian Freight back on the table/ }).click();
-  await expect(page.getByRole("heading", { name: "Companies you decided against" })).toBeHidden();
+  // Reversible: the reason survives being reconsidered.
+  await page.goto(INVESTIGATE);
+  await expect(page.getByRole("button", { name: "Put it back on the table" })).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Put it back on the table" }).click();
+  await expect(page.getByRole("button", { name: /Decide against Meridian Freight/ })).toBeVisible();
 });

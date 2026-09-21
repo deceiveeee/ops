@@ -141,6 +141,16 @@ three input treatments; goal, investigate and compare on the data that already e
 industry view pulled in rather than linked out. `useStudioProject` replaces `useStudioPlan`
 here, and this is the commit where the wizard actually goes.
 
+*Narrowed 2026-09-10 by question 3 below: comparison moves to Phase 2, and the Atkore
+journey becomes Phase 2's acceptance test.*
+
+*Strategy is left out of Phase 1 as well (decided 2026-09-10). The workspace opens with five
+sections — Overview, Goals, Research, Portfolio and Review — and Strategy arrives once its
+teaching is written and checked against sources.*
+
+*Built 2026-09-10 on `feat/studio-workspace`, not yet committed. The progress ledger records
+what was built and how it was checked.*
+
 **Phase 2 — what a decision needs.** Screening with visible score decomposition; valuation
 with sensitivities; bond cash-flow timelines. Each is a new surface over existing pipelines
 plus new maths.
@@ -161,11 +171,25 @@ If any step needs another website, asks the learner to invent a metric, or burie
 behind an external link, the design has failed and gets repaired before it is copied across
 the universe.
 
-## Open questions for the user
+## Questions for the user, decided 2026-09-10
 
 1. **Practice and personal modes.** The storage layer keeps them separate. Should the workspace
    open in practice by default for someone arriving without Investment Foundations?
+
+   **Decided: yes.** A newcomer opens in practice, and one action switches to personal. The two
+   stay stored separately, so switching loses nothing. The wizard already does this.
 2. **How much of the wizard's content survives.** Goal and Rules are genuinely useful forms.
    Build them as they are inside the new shell, or rework them to the evidence-first rule?
+
+   **Decided: as they are.** A goal is something only the learner knows, so a form is the right
+   input there. The evidence-first rule applies where evidence exists, which is research.
+   Rework them later only if review shows a need.
 3. **Phase 1 scope.** Is "the Atkore journey works end to end" the right bar for the first
    release of the workspace, or should Phase 1 ship narrower — home, goal and investigate only?
+
+   **Decided: narrower.** Phase 1 is the workspace with what already works moved into it: the
+   overview, goals, the industry and investigate views inside research, the existing
+   allocation, cost and buying surfaces, and rules, all on the v2 project store. It retires the
+   wizard and `useStudioPlan`, and adds no new analysis. The §9 Atkore journey is not lowered;
+   it becomes the acceptance test for Phase 2, where valuation, comparison and filing evidence
+   are built.

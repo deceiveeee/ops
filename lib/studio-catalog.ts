@@ -1,4 +1,7 @@
 import { PRODUCTS, RETRIEVED_AT, type Passport } from "@/lib/holdings-slate";
+import catalogPrices from "@/lib/studio-project/data/catalog-prices.json";
+import fundReports from "@/lib/studio-project/data/fund-reports.json";
+import { returnPct, type FundReportEntry } from "@/lib/studio-project/fund-reports";
 
 /**
  * The investments a user can research inside Studio.
@@ -37,6 +40,20 @@ export type StudioAssetClass =
 export type StudioInstrumentKind = "fund" | "stock" | "bond";
 
 export type StudioSource = {
+  /**
+   * A stable name for this source, so a saved piece of evidence can point at it.
+   *
+   * For anything filed with the SEC it is the accession number, which is what
+   * EDGAR itself calls the filing and what a filing read inside Studio would
+   * carry. Nothing else needs inventing, and the same id means the same
+   * document wherever it is referenced. Sources that are not filings get a
+   * readable slug naming what they are.
+   *
+   * If a source is replaced by a newer one its id changes with it, and evidence
+   * pointing at the old id says the source is no longer listed rather than
+   * silently re-pointing at a different document.
+   */
+  id: string;
   label: string;
   url: string;
   /** The date the source states its facts were true, not the date it was read. */
@@ -85,6 +102,13 @@ export type StudioBondTerms = {
   couponPct: number;
   maturity: string;
   /**
+   * When interest starts to accrue, which is not always the issue date: this
+   * note is dated 15 August 2026 and was issued on the 17th, so a buyer at
+   * issue already owed two days of interest. From the issuer's own auction
+   * record (`dated_date`).
+   */
+  datedDate: string;
+  /**
    * Per $100 of face value, at a stated settlement date. Null when no reviewed
    * source states it — the worksheet then excludes it and says the total is
    * incomplete, which is true, rather than silently treating it as zero.
@@ -100,9 +124,16 @@ export interface StudioInstrument {
   assetClass: StudioAssetClass;
   /** Annual fund operating expenses. Null for anything with no filed fee table. */
   expenseRatioPct: number | null;
-  /** Null unless an official source publishes a price. Funds have none. */
+  /**
+   * A dated price from a checked public source, or null. Never a live quote: it is
+   * what that source said on `priceAsOf`, and the worksheet says so beside it.
+   */
   referencePrice: number | null;
   priceAsOf: string;
+  /** What the price is and where it came from, in words a learner can check. Empty with no price. */
+  priceSource: string;
+  /** The CUSIP of the exact listing a US learner buys. A bond carries its CUSIP on its terms instead. */
+  listingCusip: string | null;
   /** Smallest tradeable increment. Shares for funds and stocks; face value for bonds. */
   quantityStep: number;
   minimumUnits: number;
@@ -120,12 +151,95 @@ export interface StudioInstrument {
   whatItIs: string;
   /** The filing's own principal-risk language, not an OPS ranking. */
   mainRisks: string[];
+  /** What the fund's own annual report says it returned and cost. Null for anything that is not a fund, or whose report could not be checked. */
+  report: StudioFundReport | null;
 }
 
 /** EDGAR's filing index page for one accession. */
 function filingIndexUrl(cik: string, accession: string): string {
   const bare = accession.replace(/-/g, "");
   return `https://www.sec.gov/Archives/edgar/data/${Number(cik)}/${bare}/${accession}-index.htm`;
+}
+
+/** The listings a US learner buys, each confirmed against a real holding (docs/source-audits/studio-fund-prices.md). */
+const LISTING_CUSIP: Record<string, string> = {
+  vti: "922908769", voo: "922908363", vxus: "921909768", agg: "464287226", sgov: "46436E718", aapl: "037833100", tsm: "874039100",
+};
+
+type CatalogPrice = { price: number | null; asOf: string };
+
+/**
+ * The dated price for a listing, as scripts/source/fetch-catalog-prices.mjs last
+ * wrote it: a month-end closing price reported, in their SEC holdings filings, by
+ * funds holding the listing under at least two different registrants. Anything missing or malformed in that file
+ * gives no price, and the worksheet goes back to asking for a broker quote.
+ */
+function researchPrice(instrumentId: string): Pick<StudioInstrument, "referencePrice" | "priceAsOf" | "priceSource" | "listingCusip"> {
+  const entry = (catalogPrices.listings as unknown as Record<string, CatalogPrice | undefined>)[instrumentId];
+  const listingCusip = LISTING_CUSIP[instrumentId] ?? null;
+  if (!entry || typeof entry.price !== "number" || !(entry.price > 0) || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(entry.asOf)) {
+    return { referencePrice: null, priceAsOf: "", priceSource: "", listingCusip };
+  }
+  return {
+    referencePrice: entry.price,
+    priceAsOf: entry.asOf,
+    priceSource: "what funds holding it reported in their SEC holdings filings",
+    listingCusip,
+  };
+}
+
+/** What a fund's own annual shareholder report says it returned and cost, for the share class a learner buys. */
+export interface StudioFundReport {
+  /** The last day of the year the report covers. Every period ends on it. */
+  periodEnd: string;
+  /**
+   * Average annual total return at net asset value, as a percentage: 1 year,
+   * 5 years, then 10 years or, for a younger share class, since `start`.
+   */
+  returns: { years: number | null; start: string; pct: number }[];
+  /** What the share class cost over that year on $10,000 invested, in dollars. */
+  costPer10000Usd: number;
+  costPct: number;
+  /** A fund's share classes each have their own costs, and so their own returns. */
+  classesInSeries: number;
+  /** The report's own words that past performance does not predict. */
+  pastPerformance: string;
+  /** Whether the report says its returns leave out the taxes a holder pays. */
+  leavesOutTaxes: boolean;
+  /** The date of the prospectus `expenseRatioPct` comes from, so a difference from the report's cost can be explained. */
+  prospectusDated: string;
+  source: StudioSource;
+}
+
+const FUND_REPORTS = (fundReports as unknown as { funds: Record<string, FundReportEntry | undefined> }).funds;
+
+/**
+ * A fund's returns and costs as scripts/source/fetch-fund-reports.mjs last read
+ * them from its annual shareholder report (docs/source-audits/studio-fund-reports.md),
+ * or null. Nothing is shown for a fund whose share class was not matched to its
+ * ticker, or whose figures could not be checked against the report itself.
+ */
+function annualReport(instrumentId: string, prospectusDated: string): StudioFundReport | null {
+  const entry = FUND_REPORTS[instrumentId];
+  const extract = entry?.extract;
+  if (!entry || entry.problems.length || !extract?.periodEnd || !extract.pastPerformance) return null;
+  if (!extract.returns.found || !extract.costs.found) return null;
+  return {
+    periodEnd: extract.periodEnd,
+    returns: extract.returns.periods.map((period) => ({ years: period.years, start: period.start, pct: returnPct(period.value) })),
+    costPer10000Usd: extract.costs.paidPer10000Usd,
+    costPct: returnPct(extract.costs.ratio),
+    classesInSeries: entry.classesInSeries,
+    pastPerformance: extract.pastPerformance,
+    leavesOutTaxes: Boolean(extract.taxes),
+    prospectusDated,
+    source: {
+      id: entry.accession,
+      label: `${entry.form} annual shareholder report, ${entry.seriesName}${extract.className ? `, ${extract.className}` : ""} (${entry.accession})`,
+      url: filingIndexUrl(entry.cik, entry.accession),
+      asOf: extract.periodEnd,
+    },
+  };
 }
 
 /**
@@ -143,6 +257,7 @@ const ASSET_CLASS: Record<string, StudioAssetClass> = {
 
 function instrumentFromPassport(passport: Passport): StudioInstrument {
   const { holdings, prospectus } = passport;
+  const report = annualReport(passport.ticker.toLowerCase(), prospectus.dated);
   return {
     id: passport.ticker.toLowerCase(),
     symbol: passport.ticker,
@@ -150,8 +265,7 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
     kind: "fund",
     assetClass: ASSET_CLASS[passport.ticker] ?? "us-equity",
     expenseRatioPct: passport.totalExpensePct,
-    referencePrice: null,
-    priceAsOf: "",
+    ...researchPrice(passport.ticker.toLowerCase()),
     quantityStep: 1,
     minimumUnits: 1,
     // Issuer rollup, not the raw position list: two share classes of one
@@ -180,20 +294,24 @@ function instrumentFromPassport(passport: Passport): StudioInstrument {
     stock: null,
     sources: [
       {
+        id: prospectus.accession,
         label: `${prospectus.form} prospectus, ${passport.registrant} (${prospectus.accession})`,
         url: filingIndexUrl(passport.cik, prospectus.accession),
         asOf: prospectus.dated,
       },
       {
+        id: holdings.accession,
         label: `N-PORT holdings, ${passport.legalSeriesName} (${holdings.accession})`,
         url: filingIndexUrl(passport.cik, holdings.accession),
         asOf: holdings.asOf,
       },
+      ...(report ? [report.source] : []),
     ],
     whatItIs: `${passport.structure} ${passport.objective} It tracks the ${passport.targetIndex} and holds it by ${
       passport.replication === "full" ? "full replication" : "sampling"
     }. Listed on ${passport.listing}.`,
     mainRisks: passport.riskHighlights,
+    report,
   };
 }
 
@@ -219,14 +337,14 @@ const APPLE: StudioInstrument = {
   // A share has no fund operating expenses. Null rather than zero: holding it
   // still costs commission and spread, which this figure does not describe.
   expenseRatioPct: null,
-  referencePrice: null,
-  priceAsOf: "",
+  ...researchPrice("aapl"),
   quantityStep: 1,
   minimumUnits: 1,
   // One company is one issuer, at its whole weight. Not a sample, so coverage
   // is complete — the opposite of a fund, where it never is.
   exposures: [{ label: "Apple Inc", key: "HWUPKR0MPOU8FGXBT394", weightPct: 100 }],
   exposureCoveragePct: 100,
+  report: null,
   bond: null,
   stock: {
     incorporatedIn: "California, United States",
@@ -238,6 +356,7 @@ const APPLE: StudioInstrument = {
   },
   sources: [
     {
+      id: "0000320193-25-000079",
       label: "Form 10-K, Apple Inc., fiscal year ended 2025-09-27 (0000320193-25-000079)",
       url: filingIndexUrl("0000320193", "0000320193-25-000079"),
       asOf: "2025-09-27",
@@ -267,14 +386,14 @@ const TSMC: StudioInstrument = {
   // international shock is the one that should apply to it.
   assetClass: "international-equity",
   expenseRatioPct: null,
-  referencePrice: null,
-  priceAsOf: "",
+  ...researchPrice("tsm"),
   quantityStep: 1,
   minimumUnits: 1,
   exposures: [
     { label: "Taiwan Semiconductor Manufacturing Co Ltd", key: "549300KB6NK5SBD14S87", weightPct: 100 },
   ],
   exposureCoveragePct: 100,
+  report: null,
   bond: null,
   stock: {
     incorporatedIn: "Taiwan",
@@ -287,6 +406,7 @@ const TSMC: StudioInstrument = {
   },
   sources: [
     {
+      id: "0001628280-26-025362",
       label:
         "Form 20-F, Taiwan Semiconductor Manufacturing Company Limited, year ended 2025-12-31 (0001628280-26-025362)",
       url: filingIndexUrl("0001046179", "0001628280-26-025362"),
@@ -307,10 +427,10 @@ const TSMC: StudioInstrument = {
  * accrued-interest handling has a real issue to work on.
  *
  * Every figure is from the US Treasury's own auction record for this CUSIP,
- * retrieved 2026-09-04 from the Fiscal Data auctions query. It is the only
- * catalog entry carrying a price, and the reason is narrow: Treasury publishes
- * the auction price itself, so this is an official dated figure rather than
- * market data OPS is not licensed to supply. It is the price at one auction on
+ * retrieved 2026-09-04 from the Fiscal Data auctions query. Its price is the one
+ * Treasury itself set at auction, an official dated figure; the other entries are
+ * priced from SEC holdings filings by scripts/source/fetch-catalog-prices.mjs. It
+ * is the price at one auction on
  * one date, not a current quote, and the worksheet says so — an entry with a
  * `referencePrice` and no user quote already warns that it is a dated research
  * price to verify with a broker.
@@ -326,6 +446,8 @@ const TREASURY_10Y: StudioInstrument = {
   expenseRatioPct: null,
   referencePrice: 99.540696,
   priceAsOf: "2026-08-12",
+  priceSource: "the price the US Treasury set at this note's auction",
+  listingCusip: null,
   // Treasury sets a $100 minimum in $100 multiples. A broker may require more,
   // which the worksheet tells the user to confirm.
   quantityStep: 100,
@@ -336,18 +458,22 @@ const TREASURY_10Y: StudioInstrument = {
   // instead of reading as three separate things.
   exposures: [{ label: "United States of America", key: "254900HROIFWPRGM1V77", weightPct: 100 }],
   exposureCoveragePct: 100,
+  report: null,
   stock: null,
   bond: {
     cusip: "91282CRF0",
     couponPct: 4.625,
     maturity: "2036-08-15",
-    // Accrued interest depends on the settlement date, and the auction record
-    // states it only for issue-date settlement. Any other date needs its own
-    // figure, so the worksheet excludes it and says the total is incomplete.
+    datedDate: "2026-08-15",
+    // Accrued interest depends on the settlement date, so no catalog entry can
+    // state it: the auction record gives it for issue-date settlement only. It
+    // is worked out for a date the learner picks on /studio/portfolio/bond, by
+    // the issuer's own rule, and carried into the worksheet from there.
     accruedInterestPer100: null,
   },
   sources: [
     {
+      id: "treasury-auction-91282CRF0",
       label: "US Treasury auction results for CUSIP 91282CRF0, 10-year note auctioned 2026-08-12, issued 2026-08-17",
       url: "https://www.treasurydirect.gov/auctions/announcements-data-results/",
       asOf: "2026-08-12",
@@ -361,6 +487,9 @@ const TREASURY_10Y: StudioInstrument = {
     "Inflation can outpace a fixed 4.625% payment, so the money repaid buys less than the money lent",
   ],
 };
+
+/** VXUS's annual report. The date is that of its prospectus, the first of its sources below. */
+const VXUS_REPORT = annualReport("vxus", "2026-02-27");
 
 /**
  * One broad international stock fund, so a portfolio built here is not
@@ -383,8 +512,7 @@ const VXUS: StudioInstrument = {
   kind: "fund",
   assetClass: "international-equity",
   expenseRatioPct: 0.05,
-  referencePrice: null,
-  priceAsOf: "",
+  ...researchPrice("vxus"),
   quantityStep: 1,
   minimumUnits: 1,
   // The eight largest issuers by weight, rolled up across every position each
@@ -406,19 +534,23 @@ const VXUS: StudioInstrument = {
   exposureCoveragePct: 12.9901,
   bond: null,
   stock: null,
+  report: VXUS_REPORT,
   sources: [
     {
+      id: "0001193125-26-077488",
       label:
         "485BPOS prospectus, Vanguard Star Funds, ETF share class (0001193125-26-077488)",
       url: filingIndexUrl("0000736054", "0001193125-26-077488"),
       asOf: "2026-02-27",
     },
     {
+      id: "0000736054-26-000191",
       label:
         "N-PORT holdings, Vanguard Total International Stock Index Fund (0000736054-26-000191)",
       url: filingIndexUrl("0000736054", "0000736054-26-000191"),
       asOf: "2026-04-30",
     },
+    ...(VXUS_REPORT ? [VXUS_REPORT.source] : []),
   ],
   whatItIs:
     "An exchange-traded share class of an open-end index fund. It seeks to track the performance of a benchmark index that measures the investment return of stocks issued by companies located in developed and emerging markets, excluding the United States. It tracks the FTSE Global All Cap ex US Index and holds it by full replication, meaning it generally holds the same stocks as the index in approximately the same proportions.",
@@ -481,17 +613,17 @@ export const CATALOG_GAPS: readonly StudioCatalogGap[] = [
   },
   {
     kind: "stock",
-    missing: "More company shares, and any company's financial results",
+    missing: "More company shares you can add to a portfolio",
     whyItMatters:
-      "Two companies are here, both large and both already inside funds in this library. Neither carries revenue, profit, debt or a valuation, so nothing here supports judging whether a share is worth its price — only what the company is and what it says can go wrong.",
+      "Two companies are in this library, both large and both already inside funds here. Any other company can be found with the search above, and its reports, competitors, figures and what its price assumes worked out from its own filings. It cannot be added to a portfolio, because a holding needs a dated price and Studio has checked prices only for the investments listed here.",
     whatItNeeds:
-      "A per-company filing review for each addition, and a separate decision about whether Studio should carry financial statement figures at all, which is a much larger source commitment than identity and risk.",
+      "A dated price for each added company's shares, from a source Studio may show, checked company by company.",
   },
   {
     kind: "bond",
-    missing: "More individual bonds, and accrued interest for the one that is here",
+    missing: "More individual bonds",
     whyItMatters:
-      "The catalog holds a single Treasury note. There are no corporate or municipal bonds, and no issue states accrued interest for a settlement date you choose, so a bond's estimated total here is short by exactly that unstated amount.",
+      "The catalog holds a single Treasury note, and there are no corporate or municipal bonds. Its accrued interest is no longer a gap: since 2026-09-15 it is worked out for any settlement date from the issue's own terms, by the rule in 31 CFR part 356, appendix B, and carried into the buying worksheet.",
     whatItNeeds:
       "Per-issue terms from each issuer's official source, and an accrual basis worked out for the settlement date rather than for the auction.",
   },

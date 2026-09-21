@@ -288,8 +288,8 @@ export function read(
 
   const says: string[] = [
     createsValue
-      ? `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. Every dollar put in comes back worth more than it cost, and over a year that gap is worth about ${inTheirUnits(profit)} — in the units you entered.`
-      : `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. It is not covering what that money costs, which over a year is about ${inTheirUnits(Math.abs(profit))} of value going the wrong way — in the units you entered.`,
+      ? `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. Every dollar put in comes back worth more than it cost, and over a year that gap is worth about ${inTheirUnits(profit)} — in the same units as the figures above.`
+      : `This business earns ${(result.roic * 100).toFixed(1)}% on the money invested in it, against a cost of capital of ${(costOfCapital * 100).toFixed(1)}%. It is not covering what that money costs, which over a year is about ${inTheirUnits(Math.abs(profit))} of value going the wrong way — in the same units as the figures above.`,
     `The return is those two things multiplied: it keeps ${(result.nopatMargin * 100).toFixed(1)} cents of after-tax profit on every dollar of sales, and gets ${result.capitalTurnover.toFixed(2)} dollars of sales from every dollar of capital.`,
   ];
 

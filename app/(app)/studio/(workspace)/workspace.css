@@ -1,0 +1,46 @@
+/*
+ * Studio's own components were drawn for the dark theme with cyan accents,
+ * which the light theme turns teal. Inside the workspace they take the site's
+ * blue instead, so Studio matches every other page.
+ *
+ * Scoped to .studio-app: nothing outside the workspace changes, and the
+ * light-theme mappings in globals.css stay as they are for the lessons that
+ * rely on them. Three classes of specificity beat those mappings' two.
+ *
+ * Amber is left alone. In Studio it marks warnings, and a warning should look
+ * like one.
+ */
+
+.ops-theme-light .studio-app .text-accent-cyan,
+.ops-theme-light .studio-app .hover\:text-accent-cyan:hover {
+  color: var(--ops-accent-strong);
+}
+
+.ops-theme-light .studio-app .border-accent-cyan\/25,
+.ops-theme-light .studio-app .border-accent-cyan\/30 {
+  border-color: rgb(0 102 204 / 0.28);
+}
+
+.ops-theme-light .studio-app .border-accent-cyan\/40,
+.ops-theme-light .studio-app .border-accent-cyan\/50,
+.ops-theme-light .studio-app .hover\:border-accent-cyan\/50:hover {
+  border-color: rgb(0 102 204 / 0.55);
+}
+
+.ops-theme-light .studio-app .bg-accent-cyan\/10,
+.ops-theme-light .studio-app .bg-accent-cyan\/\[0\.04\],
+.ops-theme-light .studio-app .bg-accent-cyan\/\[0\.05\] {
+  background-color: var(--ops-accent-soft);
+}
+
+.ops-theme-light .studio-app .hover\:bg-accent-cyan\/20:hover {
+  background-color: #d7e7fa;
+}
+
+.ops-theme-light .studio-app .focus\:border-accent-cyan\/50:focus {
+  border-color: var(--ops-accent-strong);
+}
+
+.ops-theme-light .studio-app .focus-visible\:ring-accent-cyan\/40:focus-visible {
+  --tw-ring-color: rgb(0 102 204 / 0.4);
+}

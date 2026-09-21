@@ -43,6 +43,8 @@ export function projectCatalog(project: StudioProject): StudioInstrument[] {
     expenseRatioPct: null,
     referencePrice: null,
     priceAsOf: "",
+    priceSource: "",
+    listingCusip: null,
     quantityStep: 1,
     minimumUnits: 1,
     exposures: [{ label: instrument.name, weightPct: 100 }],
@@ -52,6 +54,8 @@ export function projectCatalog(project: StudioProject): StudioInstrument[] {
     sources: [],
     whatItIs: "A company you investigated yourself. Studio holds your figures for it, and nothing else.",
     mainRisks: [],
+    // A company is not a fund, so it has no fund report to read returns from.
+    report: null,
   }));
   return [...STUDIO_CATALOG, ...own];
 }

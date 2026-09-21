@@ -110,6 +110,127 @@ export interface FigureInvestigation {
    * back is what they entered.
    */
   riskFreePct: number | null;
+  /**
+   * Where the figures came from, when they were filled in from a filing.
+   *
+   * Null for figures the learner typed, and absent on every record saved before
+   * the SEC lookup existed. Kept because "every supplied figure shows where it
+   * came from" has to survive closing the tab: without this, a reopened
+   * investigation would show seven numbers with no way to tell which were the
+   * company's and which were the learner's own.
+   */
+  source?: FigureSource | null;
+  /**
+   * Passages kept from the company's own filings, as evidence for or against
+   * the reading these figures produce.
+   *
+   * They live here rather than on a catalogue record because the company does:
+   * Atkore is an investigation of seven figures, not an entry in the catalogue,
+   * and its passages belong beside its figures. Absent on every record saved
+   * before the reader could keep a passage.
+   */
+  passages?: KeptPassage[];
+  /**
+   * Inputs the learner decided the company buys, each tied to a price index
+   * through a passage of its own report they kept. Absent on every record saved
+   * before 2026-09-14.
+   */
+  inputs?: InputLink[];
+  /**
+   * Companies the learner counts as competitors. Absent on every record saved
+   * before 2026-09-14.
+   */
+  peers?: PeerLink[];
+}
+
+/**
+ * An input the learner decided the company buys, and the price index standing
+ * in for it.
+ *
+ * It points at a kept passage rather than carrying a quote of its own, so the
+ * evidence for the link is a passage the learner can also mark for or against
+ * the business in Investigate, and letting that passage go lets the link go.
+ */
+export interface InputLink {
+  id: string;
+  savedAt: string;
+  /** A series id in lib/studio-project/data/input-cost-library.json. */
+  seriesId: string;
+  /** The kept passage showing the company buys it. */
+  passageId: string;
+}
+
+/** A company the learner counts as a competitor. */
+export interface PeerLink {
+  id: string;
+  savedAt: string;
+  /** As the report names it, or as EDGAR names it when added by ticker. */
+  name: string;
+  /** The SEC's number for it, or empty when no company filing with the SEC goes by that name. */
+  cik: string;
+  ticker: string;
+  /** The kept passage naming it, or empty when the learner added it by ticker. */
+  passageId: string;
+}
+
+/**
+ * The filing a set of figures was read out of, and how each one was read.
+ *
+ * Only the figures still exactly as EDGAR supplied them are listed. Overtyping
+ * one drops it from here, because at that moment it stops being the company's
+ * number and becomes the learner's.
+ */
+export interface FigureSource {
+  /** The ticker looked up, as EDGAR spells it. */
+  ticker: string;
+  cik: string;
+  /** The company as EDGAR names it, which is often not how the learner does. */
+  entityName: string;
+  /** The industry SEC files it under, which need not be one Studio researches. */
+  sic: string;
+  sicDescription: string;
+  /** The annual period every figure below covers. */
+  periodEnd: string;
+  accession: string;
+  form: string;
+  filed: string;
+  /** Keyed by figure name: the XBRL tags read, and how they were combined. */
+  figures: Record<string, { concepts: string[]; addedUp: string | null }>;
+}
+
+/**
+ * A passage kept from a filing, stored so it can be found again.
+ *
+ * The quote alone is not enough and neither is the offset alone. The filed
+ * document never changes, but the text Studio extracts from it can when the
+ * extractor improves, and a bare offset would then point at a paragraph the
+ * learner never read. So the exact quote travels with up to 32 characters
+ * either side and the position it was kept at; `lib/filings/anchor.ts` uses
+ * all three to find it again, and says plainly when it cannot.
+ */
+export interface KeptPassage {
+  id: string;
+  savedAt: string;
+  cik: string;
+  accession: string;
+  /** The document inside the filing, which is what the reader opens. */
+  document: string;
+  form: string;
+  /** The filing date, or empty for a filing older than the company's index lists. */
+  filed: string;
+  sectionId: string;
+  quote: string;
+  prefix: string;
+  suffix: string;
+  /** Where the quote began in the section text when it was kept. */
+  offset: number;
+  /**
+   * Kept as background until the learner says otherwise. Keeping a passage is
+   * one action; deciding what it argues is a judgment, and it is made beside
+   * the figures rather than forced at the moment of reading.
+   */
+  role: EvidenceRole;
+  note: string;
 }
 
 /**

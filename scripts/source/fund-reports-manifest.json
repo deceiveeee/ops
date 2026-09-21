@@ -1,0 +1,10 @@
+{
+  "about": "Catalogue funds whose returns and costs are read from their own annual shareholder reports (Form N-CSR). Each symbol is matched to one share class through the SEC's fund ticker list, the filing's EDGAR header and the ticker the report itself tags, which must all agree. Company shares and the Treasury note have no shareholder report and are not listed.",
+  "listings": [
+    { "instrumentId": "vti", "symbol": "VTI" },
+    { "instrumentId": "voo", "symbol": "VOO" },
+    { "instrumentId": "vxus", "symbol": "VXUS" },
+    { "instrumentId": "agg", "symbol": "AGG" },
+    { "instrumentId": "sgov", "symbol": "SGOV" }
+  ]
+}

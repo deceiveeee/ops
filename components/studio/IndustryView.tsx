@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
 import { Panel, Stat, StageHeading, TableScroll } from "./shared";
+import StudioAside from "./workspace/StudioAside";
 
 /**
  * The outside-in view of an industry, before any single company.
@@ -125,7 +126,7 @@ function AdvantagePlane({ earners }: { earners: Earner[] }) {
 
         {points.map((point) => (
           <g key={point.cik}>
-            <circle cx={x(point.nopatMargin)} cy={y(point.capitalTurnover)} r={5} className="fill-st-warn" />
+            <circle cx={x(point.nopatMargin)} cy={y(point.capitalTurnover)} r={5} className="fill-[#0066cc]/70" />
             <text
               x={x(point.nopatMargin)}
               y={y(point.capitalTurnover) - 9}
@@ -177,15 +178,41 @@ export default function IndustryView() {
   const earning = earners.filter((e) => e.roic !== undefined);
   const widestMove = Math.max(...movers.map((row) => row.absoluteChange), 0.01);
 
+  const sources = (
+    <>
+      <p>
+        Shares are each company&rsquo;s revenue as a fraction of what every company filing under
+        this industry code reported. Revenue is a stand-in for the market: it moves with prices,
+        and a company that owns more of its own supply chain books more of it.
+        {industry.unresolvable.length > 0 ? (
+          <>
+            {" "}
+            {industry.unresolvable.map((entry) => readableName(entry.name)).join(", ")}{" "}
+            {industry.unresolvable.length === 1 ? "is" : "are"} left out: {industry.unresolvable.length === 1 ? "it files" : "they file"} two
+            revenue figures too far apart to choose between.
+          </>
+        ) : null}
+      </p>
+      <p className="mt-2">
+        Built from public SEC filings for {industries.years[0]} and {industries.years[1]}, on{" "}
+        {industries.builtOn}. The way share movement is measured follows Morgan Stanley&rsquo;s
+        Counterpoint Global.
+      </p>
+    </>
+  );
+
   return (
     <div className="space-y-4">
-      <Link href="/studio" className="inline-block text-[13px] text-st-faint hover:text-st-sub">
-        ← Back to your plan
-      </Link>
+      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
+        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+          Research
+        </Link>
+        <span aria-hidden="true"> › </span>
+        <span>Industries</span>
+      </nav>
 
-      <StageHeading title="Who is in this industry, and what has moved">
-        Look at who competes and how much of the split has changed, before deciding whether any
-        one of them is worth your time.
+      <StageHeading as="h1" title="Who is in this industry, and what has moved">
+        Look at the industry before deciding whether any one company is worth your time.
       </StageHeading>
 
       <div className="flex flex-wrap gap-2">
@@ -198,8 +225,8 @@ export default function IndustryView() {
             className={cn(
               "rounded-full border px-4 py-2 text-[13px] transition-colors",
               entry.sic === sic
-                ? "border-st-warn-edge bg-st-warn-soft text-st-ink"
-                : "border-st-hair bg-st-paper text-st-muted hover:border-st-bound hover:text-st-body",
+                ? "border-accent-cyan/50 bg-accent-cyan/10 text-white"
+                : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/25 hover:text-slate-200",
             )}
           >
             {entry.label}
@@ -348,7 +375,7 @@ export default function IndustryView() {
                         <div className="flex items-center gap-3">
                           <div className="h-2 w-full max-w-[180px] overflow-hidden rounded-full bg-st-side">
                             <div
-                              className="h-full rounded-full bg-st-warn-soft"
+                              className="h-full rounded-full bg-[#0066cc]/70"
                               style={{ width: `${(leader.share / widest) * 100}%` }}
                             />
                           </div>
@@ -422,29 +449,20 @@ export default function IndustryView() {
         </p>
       </Panel>
 
-      <details className="group rounded-xl border border-st-bound bg-st-paper p-4">
-        <summary className="cursor-pointer text-[13px] text-st-sub">Where these numbers come from</summary>
-        <div className="mt-2 text-[13px] leading-6 text-st-muted">
-        <p>
-          Shares are each company&rsquo;s revenue as a fraction of what every company filing under
-          this industry code reported. Revenue is a stand-in for the market: it moves with prices,
-          and a company that owns more of its own supply chain books more of it.
-          {industry.unresolvable.length > 0 ? (
-            <>
-              {" "}
-              {industry.unresolvable.map((entry) => readableName(entry.name)).join(", ")}{" "}
-              {industry.unresolvable.length === 1 ? "is" : "are"} left out: {industry.unresolvable.length === 1 ? "it files" : "they file"} two
-              revenue figures too far apart to choose between.
-            </>
-          ) : null}
-        </p>
-        <p className="mt-2">
-          Built from public SEC filings for {industries.years[0]} and {industries.years[1]}, on{" "}
-          {industries.builtOn}. The way share movement is measured follows Morgan Stanley&rsquo;s
-          Counterpoint Global.
-        </p>
-        </div>
-      </details>
+      <StudioAside
+        inline={
+          <details className="group rounded-xl border border-white/12 bg-white/[0.03] p-4">
+            <summary className="cursor-pointer text-[13px] text-slate-300">Where these numbers come from</summary>
+            <div className="mt-2 text-[13px] leading-6 text-slate-400">{sources}</div>
+          </details>
+        }
+        beside={
+          <Panel>
+            <h2 className="text-[14px] font-semibold text-white">Where these numbers come from</h2>
+            <div className="mt-2 text-[13px] leading-6 text-slate-400">{sources}</div>
+          </Panel>
+        }
+      />
     </div>
   );
 }

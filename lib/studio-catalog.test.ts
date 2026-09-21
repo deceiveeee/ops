@@ -1,3 +1,5 @@
+import catalogPrices from "./studio-project/data/catalog-prices.json";
+import manifest from "../scripts/source/catalog-prices-manifest.json";
 import { describe, expect, it } from "vitest";
 import { PRODUCTS } from "@/lib/holdings-slate";
 import {
@@ -54,6 +56,39 @@ describe("Studio catalog provenance", () => {
     expect(instrument("SGOV").expenseRatioPct).not.toBe(instrument("VTI").expenseRatioPct);
   });
 
+  it("carries each fund's own annual report, cited as a source, and none for a share or the Treasury note", () => {
+    for (const item of STUDIO_CATALOG) {
+      if (item.kind !== "fund") {
+        expect(item.report, item.symbol).toBeNull();
+        continue;
+      }
+      const report = item.report;
+      if (!report) throw new Error(`${item.symbol} has no annual report`);
+      expect(report.returns.slice(0, 2).map((period) => period.years), item.symbol).toEqual([1, 5]);
+      expect(report.pastPerformance, item.symbol).toMatch(/past performance/i);
+      // Citable as evidence in the research record, under the report's accession.
+      expect(item.sources.map((source) => source.id), item.symbol).toContain(report.source.id);
+    }
+  });
+
+  it("shows the same returns VTI's and VOO's prospectuses give for the same periods", () => {
+    // Independent of the reports the figures were read from: lib/holdings-slate.ts
+    // took these from each fund's prospectus, for periods ended 31 December 2025.
+    expect(instrument("VTI").report?.returns.map((period) => period.pct)).toEqual(PRODUCTS.VTI.returns.map((row) => row.fundPct));
+    expect(instrument("VOO").report?.returns.map((period) => period.pct)).toEqual(PRODUCTS.VOO.returns.map((row) => row.fundPct));
+  });
+
+  it("differs from the prospectus cost only for VXUS, by the amounts its two filings give", () => {
+    // VXUS's report year, to 31 October 2025, cost 0.06%; the prospectus in this
+    // catalogue, of February 2026, gives 0.05%. The card says where each comes from.
+    const differing = STUDIO_CATALOG.filter((item) => item.report && item.report.costPct !== item.expenseRatioPct).map((item) => [
+      item.symbol,
+      item.expenseRatioPct,
+      item.report?.costPct,
+    ]);
+    expect(differing).toEqual([["VXUS", 0.05, 0.06]]);
+  });
+
   it("gives every instrument at least one dated source on an official domain", () => {
     for (const item of STUDIO_CATALOG) {
       expect(item.sources.length).toBeGreaterThan(0);
@@ -65,22 +100,32 @@ describe("Studio catalog provenance", () => {
     }
   });
 
-  it("states a price only where an official source publishes one", () => {
+  it("gives every entry a dated price from a checked public source", () => {
+    // Until 2026-09-13 only the Treasury note had a price, and this test said a
+    // fund gaining one would be a licence question. It was answered before any
+    // price was added: the prices are what funds holding each listing reported in
+    // SEC holdings filings, which the SEC allows to be copied and redistributed,
+    // and each is accepted only when funds under two different registrants agree
+    // (docs/source-audits/studio-fund-prices.md). None is a live quote.
     for (const item of STUDIO_CATALOG) {
-      if (item.referencePrice === null) {
-        // No market-data licence, so a fund carries no price at all.
-        expect(item.priceAsOf).toBe("");
-      } else {
-        // Treasury publishes its own auction price, so that one entry has a
-        // dated figure. A price without its date would be unusable.
-        expect(item.priceAsOf).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-        expect(item.referencePrice).toBeGreaterThan(0);
-      }
+      expect(item.referencePrice, item.symbol).not.toBeNull();
+      expect(item.referencePrice).toBeGreaterThan(0);
+      expect(item.priceAsOf).toMatch(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
+      expect(item.priceSource.trim(), item.symbol).not.toBe("");
     }
-    // Only the Treasury note. If a fund ever gains a price, that is a licence
-    // question and not a detail to slip through.
-    const priced = STUDIO_CATALOG.filter((item) => item.referencePrice !== null);
-    expect(priced.map((item) => item.kind)).toEqual(["bond"]);
+  });
+
+  it("prices each listing by its own CUSIP, agreed by funds under two different registrants", () => {
+    const data = catalogPrices.listings as unknown as Record<string, { cusip: string; price: number | null; asOf: string; registrants: number; agreeing: { cik: string }[] }>;
+    for (const item of STUDIO_CATALOG.filter((entry) => entry.kind !== "bond")) {
+      expect(item.listingCusip, item.symbol).toMatch(/^[0-9A-Z]{9}$/);
+      // The manifest the script read, the data it wrote and the catalogue must name one listing.
+      expect(manifest.listings.find((entry) => entry.instrumentId === item.id)?.cusip, item.symbol).toBe(item.listingCusip);
+      expect(data[item.id]?.cusip, item.symbol).toBe(item.listingCusip);
+      expect(data[item.id].registrants, item.symbol).toBeGreaterThanOrEqual(2);
+      expect(new Set(data[item.id].agreeing.map((agreed) => agreed.cik)).size).toBe(data[item.id].registrants);
+      expect([data[item.id].price, data[item.id].asOf]).toEqual([item.referencePrice, item.priceAsOf]);
+    }
   });
 
   it("leaves bond accrued interest unstated, because it depends on the settlement date", () => {
@@ -278,8 +323,18 @@ describe("Studio calculations over the real catalog", () => {
     expect(government?.portfolioWeightPct).toBeCloseTo(72.86, 1);
   });
 
-  it("keeps the dollar target but asks for a quote before estimating shares", () => {
-    const result = calculateStudio(twoWayPlan(10_000, "vti", 60, "agg", 40), STUDIO_CATALOG);
+  it("works out whole shares from the price on record when no quote is entered", () => {
+    const vti = STUDIO_CATALOG.find((item) => item.id === "vti")!;
+    const order = calculateStudio(twoWayPlan(10_000, "vti", 60, "agg", 40), STUDIO_CATALOG).orders.find((item) => item.instrumentId === "vti")!;
+    expect([order.price, order.priceAsOf]).toEqual([vti.referencePrice, vti.priceAsOf]);
+    expect(order.quantity).toBe(Math.floor(6_000 / vti.referencePrice!));
+    expect(order.complete).toBe(true);
+    expect(order.warnings.join(" ")).toContain("not today");
+  });
+
+  it("keeps the dollar target but asks for a quote when there is no price on record", () => {
+    const unpriced = STUDIO_CATALOG.map((item) => (item.id === "vti" ? { ...item, referencePrice: null, priceAsOf: "", priceSource: "" } : item));
+    const result = calculateStudio(twoWayPlan(10_000, "vti", 60, "agg", 40), unpriced);
     const order = result.orders.find((item) => item.instrumentId === "vti");
     expect(order?.quantity).toBe(0);
     expect(order?.complete).toBe(false);
@@ -332,5 +387,37 @@ describe("Studio calculations over the real catalog", () => {
     expect(order?.quantity).toBe(8);
     expect(order?.estimatedCost).toBe(5_600);
     expect(order?.leftover).toBe(400);
+  });
+});
+
+describe("source identity", () => {
+  /**
+   * Saved evidence points at a source by id, so an id that is blank, repeated
+   * or drifts away from the filing it names would attach a learner's note to
+   * the wrong document — or to nothing. TypeScript proves the field exists; it
+   * cannot prove any of this.
+   */
+  it("gives every source a distinct id, and uses the accession where there is one", () => {
+    const sources = STUDIO_CATALOG.flatMap((instrument) => instrument.sources);
+    expect(sources.length).toBeGreaterThan(0);
+
+    for (const source of sources) expect(source.id.trim()).not.toBe("");
+    expect(new Set(sources.map((source) => source.id)).size).toBe(sources.length);
+
+    for (const source of sources) {
+      // An SEC accession is 10-2-6 digits, and the id must be that filing's own.
+      const accession = source.label.match(/\((\d{10}-\d{2}-\d{6})\)/)?.[1];
+      if (accession) {
+        expect(source.id).toBe(accession);
+        expect(source.url).toContain(accession.replace(/-/g, ""));
+      }
+    }
+  });
+
+  it("names a source that is not a filing readably rather than by accession", () => {
+    const treasury = STUDIO_CATALOG.find((instrument) => instrument.id === "ust-91282crf0");
+    const [source] = treasury?.sources ?? [];
+    expect(source?.id).toBe("treasury-auction-91282CRF0");
+    expect(source?.id).not.toMatch(/^\d{10}-\d{2}-\d{6}$/);
   });
 });

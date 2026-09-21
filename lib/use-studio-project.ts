@@ -17,11 +17,20 @@ const notReady = (): SessionResult => ({ ok: false, code: "unavailable", error: 
  * record when none exists — guessing would leave an empty practice portfolio
  * behind every time someone with a personal one opened Studio.
  */
-export function useStudioProject(mode: StudioMode | null) {
+export function useStudioProject(mode: StudioMode | null, options: {
+  /**
+   * Pages that keep this same session open, such as the workspace's other
+   * sections. Moving between them loses nothing, so it is not leaving Studio
+   * and needs no warning.
+   */
+  internal?: (pathname: string) => boolean;
+} = {}) {
   const [snapshot, setSnapshot] = useState<{ mode: StudioMode | null; state: ProjectSessionState }>({ mode, state: INITIAL });
   const current = useRef<{ mode: StudioMode; session: ProjectSession } | null>(null);
   const pending = useRef(0);
   const [pendingCount, setPendingCount] = useState(0);
+  const internal = useRef(options.internal);
+  internal.current = options.internal;
   useEffect(() => {
     if (!mode) return;
     const session = createProjectSession(createIndexedDbProjectStorage(), mode);
@@ -36,7 +45,8 @@ export function useStudioProject(mode: StudioMode | null) {
     const navigation = (event: MouseEvent) => {
       const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
       if (!(link instanceof HTMLAnchorElement) || link.target === "_blank" || link.hasAttribute("download")
-        || link.origin !== window.location.origin || link.pathname === window.location.pathname) return;
+        || link.origin !== window.location.origin || link.pathname === window.location.pathname
+        || internal.current?.(link.pathname)) return;
       if (pending.current) {
         event.preventDefault(); event.stopPropagation();
         window.alert("A save is still in progress. Wait for it to finish before leaving Studio.");

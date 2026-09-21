@@ -1,0 +1,1093 @@
+<!-- Excerpt of https://www.sec.gov/Archives/edgar/data/1100663/000110066326000031/primary-document_htm.xml
+     for share class C000219740: its contexts and the facts lib/studio-project/fund-reports.ts reads, as filed. -->
+<fundReportExcerpt classId="C000219740">
+<context id="From2025-03-01to2026-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-03-01</startDate>
+            <endDate>2026-02-28</endDate>
+        </period>
+    </context>
+<context id="From2025-03-01to2026-02-28">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+        </entity>
+        <period>
+            <startDate>2025-03-01</startDate>
+            <endDate>2026-02-28</endDate>
+        </period>
+    </context>
+<context id="From2020-05-26to2020-05-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-05-26</startDate>
+            <endDate>2020-05-31</endDate>
+        </period>
+    </context>
+<context id="From2020-06-01to2020-06-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-06-01</startDate>
+            <endDate>2020-06-30</endDate>
+        </period>
+    </context>
+<context id="From2020-07-01to2020-07-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-07-01</startDate>
+            <endDate>2020-07-31</endDate>
+        </period>
+    </context>
+<context id="From2020-08-01to2020-08-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-08-01</startDate>
+            <endDate>2020-08-31</endDate>
+        </period>
+    </context>
+<context id="From2020-09-01to2020-09-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-09-01</startDate>
+            <endDate>2020-09-30</endDate>
+        </period>
+    </context>
+<context id="From2020-10-01to2020-10-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-10-01</startDate>
+            <endDate>2020-10-31</endDate>
+        </period>
+    </context>
+<context id="From2020-11-01to2020-11-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-11-01</startDate>
+            <endDate>2020-11-30</endDate>
+        </period>
+    </context>
+<context id="From2020-12-01to2020-12-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-12-01</startDate>
+            <endDate>2020-12-31</endDate>
+        </period>
+    </context>
+<context id="From2021-01-01to2021-01-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-01-01</startDate>
+            <endDate>2021-01-31</endDate>
+        </period>
+    </context>
+<context id="From2021-02-01to2021-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-02-01</startDate>
+            <endDate>2021-02-28</endDate>
+        </period>
+    </context>
+<context id="From2021-03-01to2021-03-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-03-01</startDate>
+            <endDate>2021-03-31</endDate>
+        </period>
+    </context>
+<context id="From2021-04-01to2021-04-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-04-01</startDate>
+            <endDate>2021-04-30</endDate>
+        </period>
+    </context>
+<context id="From2021-05-01to2021-05-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-05-01</startDate>
+            <endDate>2021-05-31</endDate>
+        </period>
+    </context>
+<context id="From2021-06-01to2021-06-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-06-01</startDate>
+            <endDate>2021-06-30</endDate>
+        </period>
+    </context>
+<context id="From2021-07-01to2021-07-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-07-01</startDate>
+            <endDate>2021-07-31</endDate>
+        </period>
+    </context>
+<context id="From2021-08-01to2021-08-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-08-01</startDate>
+            <endDate>2021-08-31</endDate>
+        </period>
+    </context>
+<context id="From2021-09-01to2021-09-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-09-01</startDate>
+            <endDate>2021-09-30</endDate>
+        </period>
+    </context>
+<context id="From2021-10-01to2021-10-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-10-01</startDate>
+            <endDate>2021-10-31</endDate>
+        </period>
+    </context>
+<context id="From2021-11-01to2021-11-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-11-01</startDate>
+            <endDate>2021-11-30</endDate>
+        </period>
+    </context>
+<context id="From2021-12-01to2021-12-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-12-01</startDate>
+            <endDate>2021-12-31</endDate>
+        </period>
+    </context>
+<context id="From2022-01-01to2022-01-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-01-01</startDate>
+            <endDate>2022-01-31</endDate>
+        </period>
+    </context>
+<context id="From2022-02-01to2022-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-02-01</startDate>
+            <endDate>2022-02-28</endDate>
+        </period>
+    </context>
+<context id="From2022-03-01to2022-03-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-03-01</startDate>
+            <endDate>2022-03-31</endDate>
+        </period>
+    </context>
+<context id="From2022-04-01to2022-04-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-04-01</startDate>
+            <endDate>2022-04-30</endDate>
+        </period>
+    </context>
+<context id="From2022-05-01to2022-05-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-05-01</startDate>
+            <endDate>2022-05-31</endDate>
+        </period>
+    </context>
+<context id="From2022-06-01to2022-06-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-06-01</startDate>
+            <endDate>2022-06-30</endDate>
+        </period>
+    </context>
+<context id="From2022-07-01to2022-07-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-07-01</startDate>
+            <endDate>2022-07-31</endDate>
+        </period>
+    </context>
+<context id="From2022-08-01to2022-08-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-08-01</startDate>
+            <endDate>2022-08-31</endDate>
+        </period>
+    </context>
+<context id="From2022-09-01to2022-09-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-09-01</startDate>
+            <endDate>2022-09-30</endDate>
+        </period>
+    </context>
+<context id="From2022-10-01to2022-10-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-10-01</startDate>
+            <endDate>2022-10-31</endDate>
+        </period>
+    </context>
+<context id="From2022-11-01to2022-11-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-11-01</startDate>
+            <endDate>2022-11-30</endDate>
+        </period>
+    </context>
+<context id="From2022-12-01to2022-12-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2022-12-01</startDate>
+            <endDate>2022-12-31</endDate>
+        </period>
+    </context>
+<context id="From2023-01-01to2023-01-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-01-01</startDate>
+            <endDate>2023-01-31</endDate>
+        </period>
+    </context>
+<context id="From2023-02-01to2023-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-02-01</startDate>
+            <endDate>2023-02-28</endDate>
+        </period>
+    </context>
+<context id="From2023-03-01to2023-03-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-03-01</startDate>
+            <endDate>2023-03-31</endDate>
+        </period>
+    </context>
+<context id="From2023-04-01to2023-04-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-04-01</startDate>
+            <endDate>2023-04-30</endDate>
+        </period>
+    </context>
+<context id="From2023-05-01to2023-05-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-05-01</startDate>
+            <endDate>2023-05-31</endDate>
+        </period>
+    </context>
+<context id="From2023-06-01to2023-06-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-06-01</startDate>
+            <endDate>2023-06-30</endDate>
+        </period>
+    </context>
+<context id="From2023-07-01to2023-07-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-07-01</startDate>
+            <endDate>2023-07-31</endDate>
+        </period>
+    </context>
+<context id="From2023-08-01to2023-08-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-08-01</startDate>
+            <endDate>2023-08-31</endDate>
+        </period>
+    </context>
+<context id="From2023-09-01to2023-09-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-09-01</startDate>
+            <endDate>2023-09-30</endDate>
+        </period>
+    </context>
+<context id="From2023-10-01to2023-10-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-10-01</startDate>
+            <endDate>2023-10-31</endDate>
+        </period>
+    </context>
+<context id="From2023-11-01to2023-11-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-11-01</startDate>
+            <endDate>2023-11-30</endDate>
+        </period>
+    </context>
+<context id="From2023-12-01to2023-12-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2023-12-01</startDate>
+            <endDate>2023-12-31</endDate>
+        </period>
+    </context>
+<context id="From2024-01-01to2024-01-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-01-01</startDate>
+            <endDate>2024-01-31</endDate>
+        </period>
+    </context>
+<context id="From2024-02-01to2024-02-29_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-02-01</startDate>
+            <endDate>2024-02-29</endDate>
+        </period>
+    </context>
+<context id="From2024-03-01to2024-03-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-03-01</startDate>
+            <endDate>2024-03-31</endDate>
+        </period>
+    </context>
+<context id="From2024-04-01to2024-04-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-04-01</startDate>
+            <endDate>2024-04-30</endDate>
+        </period>
+    </context>
+<context id="From2024-05-01to2024-05-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-05-01</startDate>
+            <endDate>2024-05-31</endDate>
+        </period>
+    </context>
+<context id="From2024-06-01to2024-06-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-06-01</startDate>
+            <endDate>2024-06-30</endDate>
+        </period>
+    </context>
+<context id="From2024-07-01to2024-07-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-07-01</startDate>
+            <endDate>2024-07-31</endDate>
+        </period>
+    </context>
+<context id="From2024-08-01to2024-08-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-08-01</startDate>
+            <endDate>2024-08-31</endDate>
+        </period>
+    </context>
+<context id="From2024-09-01to2024-09-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-09-01</startDate>
+            <endDate>2024-09-30</endDate>
+        </period>
+    </context>
+<context id="From2024-10-01to2024-10-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-10-01</startDate>
+            <endDate>2024-10-31</endDate>
+        </period>
+    </context>
+<context id="From2024-11-01to2024-11-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-11-01</startDate>
+            <endDate>2024-11-30</endDate>
+        </period>
+    </context>
+<context id="From2024-12-01to2024-12-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2024-12-01</startDate>
+            <endDate>2024-12-31</endDate>
+        </period>
+    </context>
+<context id="From2025-01-01to2025-01-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-01-01</startDate>
+            <endDate>2025-01-31</endDate>
+        </period>
+    </context>
+<context id="From2025-02-01to2025-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-02-01</startDate>
+            <endDate>2025-02-28</endDate>
+        </period>
+    </context>
+<context id="From2025-03-01to2025-03-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-03-01</startDate>
+            <endDate>2025-03-31</endDate>
+        </period>
+    </context>
+<context id="From2025-04-01to2025-04-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-04-01</startDate>
+            <endDate>2025-04-30</endDate>
+        </period>
+    </context>
+<context id="From2025-05-01to2025-05-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-05-01</startDate>
+            <endDate>2025-05-31</endDate>
+        </period>
+    </context>
+<context id="From2025-06-01to2025-06-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-06-01</startDate>
+            <endDate>2025-06-30</endDate>
+        </period>
+    </context>
+<context id="From2025-07-01to2025-07-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-07-01</startDate>
+            <endDate>2025-07-31</endDate>
+        </period>
+    </context>
+<context id="From2025-08-01to2025-08-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-08-01</startDate>
+            <endDate>2025-08-31</endDate>
+        </period>
+    </context>
+<context id="From2025-09-01to2025-09-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-09-01</startDate>
+            <endDate>2025-09-30</endDate>
+        </period>
+    </context>
+<context id="From2025-10-01to2025-10-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-10-01</startDate>
+            <endDate>2025-10-31</endDate>
+        </period>
+    </context>
+<context id="From2025-11-01to2025-11-30_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-11-01</startDate>
+            <endDate>2025-11-30</endDate>
+        </period>
+    </context>
+<context id="From2025-12-01to2025-12-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-12-01</startDate>
+            <endDate>2025-12-31</endDate>
+        </period>
+    </context>
+<context id="From2026-01-01to2026-01-31_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2026-01-01</startDate>
+            <endDate>2026-01-31</endDate>
+        </period>
+    </context>
+<context id="From2026-02-01to2026-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2026-02-01</startDate>
+            <endDate>2026-02-28</endDate>
+        </period>
+    </context>
+<context id="From2025-03-01to2026-02-28_C000219740Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2025-03-01</startDate>
+            <endDate>2026-02-28</endDate>
+        </period>
+    </context>
+<context id="From2021-03-01to2026-02-28_C000219740Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2021-03-01</startDate>
+            <endDate>2026-02-28</endDate>
+        </period>
+    </context>
+<context id="From2020-05-26to2026-02-28_C000219740Member_WithoutSalesLoadMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:SalesLoadAxis">oef:WithoutSalesLoadMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <startDate>2020-05-26</startDate>
+            <endDate>2026-02-28</endDate>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_A0Minus1YearCTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:MaturityAxis">ishares:A0Minus1YearCTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills031020263598CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills031020263598CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills031220263699CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills031220263699CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills040720263685CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills040720263685CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills042820260000CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills042820260000CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills030320263601CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills030320263601CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills041420263685CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills041420263685CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills031720263656CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills031720263656CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills040920263609CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills040920263609CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills033120263690CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills033120263690CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<context id="AsOf2026-02-28_C000219740Member_USTreasuryBills032420263685CTIMember">
+        <entity>
+            <identifier scheme="http://www.sec.gov/CIK">0001100663</identifier>
+            <segment>
+                <xbrldi:explicitMember dimension="oef:ClassAxis">ishares:C000219740Member</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="oef:LargestHoldingAxis">ishares:USTreasuryBills032420263685CTIMember</xbrldi:explicitMember>
+            </segment>
+        </entity>
+        <period>
+            <instant>2026-02-28</instant>
+        </period>
+    </context>
+<dei:DocumentPeriodEndDate
+      contextRef="From2025-03-01to2026-02-28"
+      id="DocumentPeriodEndDate_23AD76FC08BC4394">2026-02-28</dei:DocumentPeriodEndDate>
+<dei:DocumentType
+      contextRef="From2025-03-01to2026-02-28"
+      id="DocumentType_96E5222EBCA146C4">N-CSR</dei:DocumentType>
+<dei:TradingSymbol
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      id="TradingSymbol_4B85CFB7DC13450A">SGOV</dei:TradingSymbol>
+<oef:FundName
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      id="FundName_0A826BCAA79E4E6E">iShares 0-3 Month Treasury Bond ETF</oef:FundName>
+<oef:FundName
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      id="FundName_807CF68D465E4F85">iShares 0-3 Month Treasury Bond ETF</oef:FundName>
+<oef:AvgAnnlRtrPct
+      contextRef="From2025-03-01to2026-02-28_C000219740Member_WithoutSalesLoadMember"
+      decimals="INF"
+      id="AvgAnnlRtrPct_72F535283B3C402B"
+      unitRef="Pure">0.0411</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2021-03-01to2026-02-28_C000219740Member_WithoutSalesLoadMember"
+      decimals="INF"
+      id="AvgAnnlRtrPct_C6C9CD9F332D4CB2"
+      unitRef="Pure">0.0335</oef:AvgAnnlRtrPct>
+<oef:AvgAnnlRtrPct
+      contextRef="From2020-05-26to2026-02-28_C000219740Member_WithoutSalesLoadMember"
+      decimals="INF"
+      id="AvgAnnlRtrPct_650F3D8A8CA54754"
+      unitRef="Pure">0.0291</oef:AvgAnnlRtrPct>
+<oef:ExpenseRatioPct
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      decimals="INF"
+      id="ExpenseRatioPct_EF130A50A7CB4C6C"
+      unitRef="Pure">0.0009</oef:ExpenseRatioPct>
+<oef:ExpensesPaidAmt
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      decimals="0"
+      id="ExpensesPaidAmt_E8070ED21090425B"
+      unitRef="USD">9</oef:ExpensesPaidAmt>
+<oef:PerformancePastDoesNotIndicateFuture
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      id="PerformancePastDoesNotIndicateFuture_752A744291BB4755">Past performance is not an indication of future results.</oef:PerformancePastDoesNotIndicateFuture>
+<oef:NoDeductionOfTaxesTextBlock
+      contextRef="From2025-03-01to2026-02-28_C000219740Member"
+      id="NoDeductionOfTaxesTextBlock_AF9683A1B08F469B">Performance results do not reflect the deduction of taxes that a shareholder would pay on fund distributions or on the redemption or sale of fund shares.</oef:NoDeductionOfTaxesTextBlock>
+</fundReportExcerpt>

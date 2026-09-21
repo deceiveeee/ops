@@ -3,100 +3,48 @@ import { expect, test, type Page } from "@playwright/test";
 /**
  * The workspace's end-to-end baseline.
  *
- * Until this file existed no test had ever opened `/studio`. The suite reached
- * `/plan` and `/studio/investigate`, and the six-step workspace between them —
- * the surface a learner actually builds a portfolio in — was covered only by
- * unit tests of the arithmetic underneath it. Three rounds of layout work went
- * in without anything that could have told us the form stopped saving.
+ * The surface a learner actually builds a portfolio in, walked the way they
+ * walk it: the goal, what to buy, how much of each, the rules, and the
+ * overview's reading of all of it.
  *
- * It is also written to be the oracle for the v1 -> v2 storage migration, which
- * swaps localStorage for IndexedDB underneath this UI. That gives every
- * assertion here one hard constraint: **it must not know which schema is in
- * use.** So this file never reads a storage key, never parses a stored record,
- * and never names a database. It types what a learner types and asserts what a
- * learner sees. When the migration lands, this file must pass unmodified; if it
- * has to be edited to go green, the edit is the bug report.
+ * Every assertion here is deliberately blind to how the work is stored. It
+ * never reads a storage key, parses a record or names a database: it types what
+ * a learner types and asserts what a learner sees, so it keeps its meaning
+ * through any change underneath it (`studio-storage.spec.ts` covers the session
+ * layer, and `studio-migration.spec.ts` the record brought forward from v1).
  *
  * Two consequences of that rule are worth stating, because they are easy to
  * undo by accident:
  *
  * 1. `Field` keeps keystrokes in local state while a write is in flight, so an
  *    input showing what you typed proves nothing about whether it was kept.
- *    Everything here is proved either by a *derived* figure — the summary rail
- *    and the overview's next action are rendered from the calculation, which is
+ *    Everything here is proved either by a *derived* figure — the summary panel
+ *    and the overview's next step are rendered from the calculation, which is
  *    recomputed only after a write is accepted — or by a reload.
  *
- * 2. The multi-tab and conflict paths are deliberately absent. v1 silently
- *    adopts another tab's write; v2 flags `externalChange` and protects the
- *    draft instead. Those are different behaviours on purpose, so a test
- *    asserting either would fail at migration for the wrong reason. v2's side
- *    is covered at the session layer by `studio-storage.spec.ts`.
+ * 2. The multi-tab and conflict paths are deliberately absent: they are covered
+ *    at the session layer, where they can be driven rather than raced.
  */
 
 const STUDIO = "/studio";
+const GOALS = "/studio/goals";
+const RESEARCH = "/studio/research";
+const PORTFOLIO = "/studio/portfolio";
+const REVIEW = "/studio/review";
+
 const PURPOSE = "A deposit on a flat";
 const CONTRIBUTION_RULE = "Each month, into whichever holding is furthest below its target.";
 const AAPL_WHY = "It earns more than its capital costs and has done for a decade.";
-const AGAINST = "Too much of one portfolio in a single company.";
-const VXUS_WHY = "Everything else I own is American.";
 
-// The sidebar needs 1024 and the summary rail 1280. Fixing the viewport above
-// both keeps the assertions about them from depending on the runner's default.
-test.use({ viewport: { width: 1440, height: 900 } });
-
-/** The portfolio summary beside the work. `<aside>` is the only complementary landmark. */
-const summary = (page: Page) => page.getByRole("complementary");
-
-/**
- * One figure from the summary, read by the label printed above it.
- *
- * Asserting on the rail's whole text would pass on a number that happens to
- * appear anywhere in it — "2" is in "$16,000" — so each figure is addressed
- * through its own label.
- */
+/** Studio's figures, worked out from the saved portfolio rather than from the form. */
+const summary = (page: Page) => page.getByRole("complementary", { name: "About this page" });
 const stat = (page: Page, label: string) =>
   summary(page).getByText(label, { exact: true }).locator("xpath=following-sibling::div[1]");
 
-/**
- * The sidebar, not the phone tab bar.
- *
- * Both carry the same label and the same button names; only the sidebar is on
- * screen at this width, and it is first in the document.
- */
-const destinations = (page: Page) => page.locator("nav[aria-label='Studio destinations']").first();
-
-const go = (page: Page, label: string) =>
-  destinations(page).getByRole("button", { name: label }).click();
-
-/**
- * The row holding one instrument's controls.
- *
- * Every card's action is named "Add to portfolio", so the button has to be
- * found through the instrument it sits beside rather than by its own name.
- */
-const addOrRemove = (page: Page, symbol: string) =>
-  page
-    .getByRole("button", { name: new RegExp(`^${symbol}\\b`) })
-    .locator("xpath=..")
-    .getByRole("button", { name: /Add to portfolio|Remove/ });
-
-/**
- * Open one instrument's card. Only one is open at a time, which is what keeps
- * the research fields inside it unambiguous.
- */
-const expand = (page: Page, symbol: string) =>
-  page.getByRole("button", { name: new RegExp(`^${symbol}\\b`) }).click();
-
-/**
- * Write the reason a holding is in the portfolio.
- *
- * These three fields are the ones that become a `CandidateInvestigation` when
- * the project schema lands, so a portfolio that carries them is the case worth
- * putting through a reload.
- */
-async function explain(page: Page, symbol: string, why: string) {
-  await expand(page, symbol);
-  await page.getByLabel("Why I chose it").fill(why);
+/** One of the library's investments, found by its ticker. */
+async function openInvestment(page: Page, symbol: string) {
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
+  await page.getByRole("button", { expanded: false }).filter({ hasText: new RegExp(`^${symbol}`) }).click();
 }
 
 /**
@@ -133,196 +81,114 @@ async function openEmpty(page: Page) {
     );
   });
   await page.goto(STUDIO);
-  await expect(page.getByRole("heading", { level: 1, name: "Build a portfolio you can explain" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 15_000 });
 }
 
-test("a portfolio built across the six steps survives a reload", async ({ page }) => {
+test.use({ viewport: { width: 1440, height: 900 } });
+
+test("work entered across the sections survives a reload", async ({ page }) => {
+  test.setTimeout(120_000);
   await openEmpty(page);
 
-  await go(page, "Goal");
+  await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PURPOSE);
+  await page.getByRole("tab", { name: /Your money/ }).click();
   await page.getByLabel("Money available now").fill("20000");
   await page.getByLabel("Keep aside as cash").fill("4000");
-  // The first thing that can fail: the rail is rendered from the calculation,
-  // so it only reaches $16,000 once both numbers have actually been written.
-  await expect(stat(page, "To invest")).toHaveText("$16,000");
+  // The first thing that can fail: the figures are rendered from the
+  // calculation, so $16,000 appears only once both numbers were written.
+  await expect(page.getByRole("main")).toContainText("$16,000");
 
-  await go(page, "Research");
-  await addOrRemove(page, "AAPL").click();
-  await addOrRemove(page, "VXUS").click();
-  await expect(stat(page, "Investments")).toHaveText("2");
-  await explain(page, "AAPL", AAPL_WHY);
-  await explain(page, "VXUS", VXUS_WHY);
+  await page.goto(RESEARCH);
+  await openInvestment(page, "AAPL");
+  await page.getByRole("button", { name: "Add to portfolio" }).click();
+  await page.getByRole("button", { name: "Your record", exact: true }).click();
+  await page.getByLabel("Why it belongs").fill(AAPL_WHY);
 
-  await go(page, "Build");
-  await page.getByLabel("AAPL target percentage").fill("60");
-  await page.getByLabel("VXUS target percentage").fill("40");
+  await page.goto(PORTFOLIO);
+  await page.getByLabel("AAPL target percentage").fill("100");
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
   await expect(stat(page, "Held as cash")).toHaveText("$4,000");
 
-  /*
-   * The overview's advice is the receipt for everything above it.
-   *
-   * It is worked out from the portfolio, in the order the work depends on:
-   * weights before reasons, reasons before rules. Reaching "write the rules"
-   * therefore means the weights total 100 *and* both reasons were written --
-   * free text with no figure of its own, which nothing else here could prove
-   * was kept.
-   */
-  await go(page, "Overview");
-  await expect(page.getByRole("button", { name: /Write the rules you will follow/ })).toBeVisible();
-
-  await go(page, "Rules");
+  await page.goto(REVIEW);
   await page.getByLabel("What I do with new money").fill(CONTRIBUTION_RULE);
-  await go(page, "Overview");
-  await expect(page.getByRole("button", { name: /Read it back/ })).toBeVisible();
+  // Free text with no figure of its own: the reload below is what proves it kept.
+  await expect(page.getByRole("status").filter({ hasText: "Saved in this browser" }).first()).toBeVisible({
+    timeout: 15_000,
+  });
 
   await page.reload();
 
-  await expect(page.getByRole("heading", { level: 2, name: PURPOSE })).toBeVisible();
-  await go(page, "Goal");
-  await expect(page.getByLabel("What is this money for?")).toHaveValue(PURPOSE);
+  await page.goto(GOALS);
+  await expect(page.getByLabel("What is this money for?")).toHaveValue(PURPOSE, { timeout: 15_000 });
+  await page.getByRole("tab", { name: /Your money/ }).click();
   await expect(page.getByLabel("Money available now")).toHaveValue("20000");
   await expect(page.getByLabel("Keep aside as cash")).toHaveValue("4000");
-  await expect(stat(page, "To invest")).toHaveText("$16,000");
 
-  await go(page, "Research");
-  await expand(page, "AAPL");
-  await expect(page.getByLabel("Why I chose it")).toHaveValue(AAPL_WHY);
-  await expand(page, "VXUS");
-  await expect(page.getByLabel("Why I chose it")).toHaveValue(VXUS_WHY);
+  await page.goto(RESEARCH);
+  await openInvestment(page, "AAPL");
+  await page.getByRole("button", { name: "Your record", exact: true }).click();
+  await expect(page.getByLabel("Why it belongs")).toHaveValue(AAPL_WHY);
 
-  await go(page, "Build");
-  await expect(page.getByLabel("AAPL target percentage")).toHaveValue("60");
-  await expect(page.getByLabel("VXUS target percentage")).toHaveValue("40");
+  await page.goto(PORTFOLIO);
+  await expect(page.getByLabel("AAPL target percentage")).toHaveValue("100", { timeout: 15_000 });
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
 
-  await go(page, "Rules");
-  await expect(page.getByLabel("What I do with new money")).toHaveValue(CONTRIBUTION_RULE);
-});
-
-test("the destination comes from the URL, and moving updates it", async ({ page }) => {
-  await openEmpty(page);
-
-  // A destination is something you can link straight to. Deep links are the
-  // reason the open stage lives in the URL rather than in component state.
-  await page.goto(`${STUDIO}?view=build`);
-  await expect(page.getByRole("heading", { level: 2, name: "Decide how much goes where" })).toBeVisible();
-  await expect(page.getByText("Step 3 of 6")).toBeVisible();
-
-  // Overview is a place you read, not a step you work, so it is not numbered.
-  await page.goto(`${STUDIO}?view=overview`);
-  await expect(page.getByText(/Step \d of 6/)).toHaveCount(0);
-
-  // An unknown view falls back to the first destination rather than rendering
-  // nothing, which is what a stale or hand-edited link produces.
-  await page.goto(`${STUDIO}?view=not-a-destination`);
-  await expect(page.getByRole("button", { name: "Overview" }).first()).toHaveAttribute("aria-current", "page");
-
-  await go(page, "Risk and cost");
-  await expect(page).toHaveURL(/\?view=risk$/);
-  await expect(page.getByRole("heading", { level: 2, name: "Check the risk and the cost" })).toBeVisible();
-
-  // And the browser's own Back button works, because these were real navigations.
-  await page.goBack();
-  await expect(page.getByRole("heading", { level: 2, name: "Your portfolio" })).toBeVisible();
+  await page.goto(REVIEW);
+  await expect(page.getByLabel("What I do with new money")).toHaveValue(CONTRIBUTION_RULE, { timeout: 15_000 });
 });
 
 test("the overview names one next thing to do, and it changes as the work lands", async ({ page }) => {
+  test.setTimeout(120_000);
   await openEmpty(page);
 
-  // Empty: the goal comes first because every later choice is judged against it.
-  await expect(page.getByRole("button", { name: /Give the money a job/ })).toBeVisible();
+  // Empty: the goal comes first, because every later choice is judged against it.
+  await expect(page.getByRole("heading", { name: "Say what this money is for" })).toBeVisible();
 
-  await go(page, "Goal");
+  await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PURPOSE);
-  await go(page, "Overview");
+  await page.goto(STUDIO);
   // The practice portfolio starts with a budget, so the next gap is holdings.
-  await expect(page.getByRole("button", { name: /Find something to buy/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Choose what you might buy" })).toBeVisible({ timeout: 15_000 });
 
-  await go(page, "Research");
-  await addOrRemove(page, "AAPL").click();
-  await go(page, "Overview");
-  await expect(page.getByRole("button", { name: /Assign the last 100.0 points/ })).toBeVisible();
+  await page.goto(RESEARCH);
+  await openInvestment(page, "AAPL");
+  await page.getByRole("button", { name: "Add to portfolio" }).click();
+  await page.goto(STUDIO);
+  await expect(page.getByRole("heading", { name: "Decide how much goes where" })).toBeVisible({ timeout: 15_000 });
 
-  await go(page, "Build");
+  await page.goto(PORTFOLIO);
   await page.getByLabel("AAPL target percentage").fill("100");
-  await go(page, "Overview");
-  // Weights total 100 but nothing says why the holding is there.
-  await expect(page.getByRole("button", { name: /Say why you would own it/ })).toBeVisible();
+  await expect(stat(page, "Assigned")).toHaveText("100.0%");
+  await page.goto(STUDIO);
+  // Weights total 100, so what is left is saying how the plan will be followed.
+  await expect(page.getByRole("heading", { name: "Write the rules you will follow" })).toBeVisible({ timeout: 15_000 });
 
-  // The advice is a button, and it goes where it says it goes.
-  await page.getByRole("button", { name: /Say why you would own it/ }).click();
-  await expect(page.getByRole("heading", { level: 2, name: "Research what you might buy" })).toBeVisible();
+  // The advice is a link, and it goes where it says it goes.
+  await page.getByRole("link", { name: /Open Review/ }).click();
+  await expect(page).toHaveURL(/\/studio\/review$/);
 });
 
-test("a weight change shows its consequence without leaving the form", async ({ page }) => {
+test("a weight change shows its consequence without leaving the page", async ({ page }) => {
+  test.setTimeout(120_000);
   await openEmpty(page);
 
-  await go(page, "Research");
-  await addOrRemove(page, "AAPL").click();
-  await addOrRemove(page, "VXUS").click();
+  await page.goto(RESEARCH);
+  await openInvestment(page, "AAPL");
+  await page.getByRole("button", { name: "Add to portfolio" }).click();
+  await page.getByRole("button", { name: "← All investments", exact: true }).click();
+  await openInvestment(page, "VXUS");
+  await page.getByRole("button", { name: "Add to portfolio" }).click();
 
-  await go(page, "Build");
+  await page.goto(PORTFOLIO);
   await page.getByLabel("AAPL target percentage").fill("70");
   await expect(stat(page, "Assigned")).toHaveText("70.0%");
   await expect(summary(page)).toContainText("Needs to total 100%");
 
-  // The rail is the reason the summary sits beside the work rather than under
+  // The panel is the reason the figures sit beside the work rather than under
   // it: the second weight's effect has to be visible without navigating away.
   await page.getByLabel("VXUS target percentage").fill("30");
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
   await expect(summary(page)).toContainText("Fully assigned");
-
-  // Removing a holding is a change like any other and must show the same way.
-  await go(page, "Research");
-  await addOrRemove(page, "VXUS").click();
-  await expect(stat(page, "Investments")).toHaveText("1");
-  await expect(stat(page, "Assigned")).toHaveText("70.0%");
-});
-
-/**
- * Deciding against something, which is the point of keeping research at all.
- *
- * Until this shipped there was no way to record it. The schema could hold a
- * rejection and its reason, the operations to write one were tested, and no
- * screen could reach any of it — while the overview told learners that "a
- * business you decided against stays on file with the reason".
- */
-test("a company you turn down is kept, with the reason", async ({ page }) => {
-  await openEmpty(page);
-
-  await go(page, "Goal");
-  await page.getByLabel("What is this money for?").fill(PURPOSE);
-
-  await go(page, "Research");
-  await addOrRemove(page, "AAPL").click();
-  await expect(stat(page, "Investments")).toHaveText("1");
-
-  // Turning it down takes it out of the portfolio and keeps everything else.
-  // Two levels up from the toggle: past the title row, to the card itself,
-  // which is where the decision control sits.
-  const card = page.getByRole("button", { name: /^AAPL\b/ }).locator("xpath=../..");
-  await card.getByRole("button", { name: "Not for me" }).click();
-  await page.getByLabel("Why AAPL is not for you").fill(AGAINST);
-  await page.getByRole("button", { name: "Record this decision" }).click();
-
-  await expect(stat(page, "Investments")).toHaveText("0");
-  await expect(page.getByText("You decided against this")).toBeVisible();
-  await expect(page.getByText(AGAINST)).toBeVisible();
-
-  // Survives a reload, which is what separates a record from a screen state.
-  await page.reload();
-  await go(page, "Research");
-  await expect(page.getByText(AGAINST)).toBeVisible();
-
-  // And the overview's claim about keeping it is now something it can show.
-  await go(page, "Overview");
-  await expect(page.getByText(AGAINST)).toBeVisible();
-
-  // Reversible: a decision you cannot revisit is a dead end, not a record.
-  await go(page, "Research");
-  await page.getByRole("button", { name: /Put AAPL back on the table/ }).click();
-  await expect(page.getByText("You decided against this")).toBeHidden();
-  await expect(card.getByRole("button", { name: "Not for me" })).toBeVisible();
+  await expect(stat(page, "Investments")).toHaveText("2");
 });

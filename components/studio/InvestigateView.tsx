@@ -1,34 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import industriesData from "@/lib/studio-project/data/industries.json";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
 import {
-  COST_OF_CAPITAL_SOURCE,
+  TREASURY_RATE,
   estimate,
   forIndustry,
   industryForSic,
   industryNames,
   investigationIndustry,
+  longDate,
   sectorForIndustry,
 } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition } from "@/lib/studio-project/roic";
-import { useStudioProject } from "@/lib/use-studio-project";
-import { useStudioMode } from "@/lib/studio-mode";
 import {
   addInvestigatedCompany,
+  addPosition,
   newInvestigationId,
   removeInvestigation,
+  removePassage,
   removePosition,
   saveInvestigation,
   setCandidateStatus,
   startCandidate,
+  updateCandidate,
+  updatePassage,
 } from "@/lib/studio-project/operations";
-import { latestInvestigation, type LearnerInstrument } from "@/lib/studio-project/schema";
+import { isHeld, latestInvestigation, type CandidateInvestigation, type EvidenceRole, type FigureSource, type KeptPassage, type LearnerInstrument } from "@/lib/studio-project/schema";
+import type { MissingFigure, SuppliedFigure } from "@/lib/studio-project/prefill";
+import { sectionLabel as labelForSection } from "@/lib/filings/sections";
 import { Field, Panel, StageHeading } from "./shared";
+import StudioAside from "./workspace/StudioAside";
+import { useWorkspace } from "./workspace/WorkspaceProvider";
 
 /** What the learner is told about their work being kept. */
 type SaveNote =
@@ -60,15 +67,14 @@ const RESEARCHED = industriesData.industries.map((entry) => ({
     typeof row.roic === "number" && typeof row.nopatMargin === "number" && typeof row.capitalTurnover === "number",
   ),
 }));
-
 /**
  * The researched peer sets, found by the industry the learner picked.
  *
  * Two lists of different sizes meet here. Ninety-six industries have a
  * published cost of capital, which is the figure the whole investigation turns
- * on, and five of them have peer figures built from filings. Until now the
- * picker offered only those five, so a company in any other industry could not
- * be investigated at all — the scarcer fact was gating the commoner one.
+ * on, and five of them have peer figures built from filings. Offering only the
+ * five meant a company in any other industry could not be read against its own
+ * cost of capital: the scarcer fact was gating the commoner one.
  */
 const PEERS_BY_INDUSTRY = new Map(
   RESEARCHED.flatMap((entry) => {
@@ -78,21 +84,16 @@ const PEERS_BY_INDUSTRY = new Map(
 );
 
 /**
- * Where someone starts before they have said what the business does.
- *
- * The whole market rather than a plausible-looking industry: a beginner who has
- * not chosen yet should be reading their company against everything, not
- * against semiconductors because it sorted first. Financials are excluded from
- * it because their cost of capital is built on a different capital structure.
+ * Where someone starts before they have said what the business does: the whole
+ * market, rather than whichever industry sorts first. Financials are left out
+ * because their cost of capital is built on a different capital structure.
  */
 const DEFAULT_INDUSTRY = "Total Market (without financials)";
 
 /**
- * The two a company the learner found can be.
- *
- * Not the whole asset-class list: a bond issue and a fund are things Studio
- * researches and carries, not things someone types seven figures into an
- * annual report for.
+ * The two a company the learner found can be. A bond issue or a fund is
+ * something Studio researches and carries, not something someone types seven
+ * figures into an annual report for.
  */
 const ASSET_CLASSES = [
   { value: "us-equity" as const, label: "A US-listed company" },
@@ -107,13 +108,50 @@ const median = (values: number[]): number => {
 
 /** How long typing settles before a save. Short enough to survive a stray click. */
 const SAVE_DELAY_MS = 600;
+/** A ticker as the company lookup accepts one. */
+const TICKER = /^[A-Z0-9.-]{1,12}$/;
+
+/** A date as a person writes it, for a filing period a learner has to recognise. */
+const readableDate = (iso: string): string => {
+  const parsed = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return iso;
+  return parsed.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+};
+
+/** What the SEC lookup is doing, so the button can say so rather than just sit there. */
+type Lookup = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message: string };
+
+/** The same three words the research record uses, so a role means one thing everywhere. */
+const PASSAGE_ROLES: { value: EvidenceRole; label: string; tone: string }[] = [
+  { value: "supports", label: "For it", tone: "border-accent-green/40 bg-accent-green/10 text-accent-green" },
+  { value: "challenges", label: "Against it", tone: "border-accent-amber/40 bg-accent-amber/10 text-accent-amber" },
+  { value: "context", label: "Background", tone: "border-white/25 bg-white/10 text-slate-200" },
+];
 
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
+  /** A ticker from the address to look up as soon as it is in the company box. */
+  const [autoFill, setAutoFill] = useState<string | null>(null);
   const [industry, setIndustry] = useState(DEFAULT_INDUSTRY);
+  const [assetClass, setAssetClass] = useState<LearnerInstrument["assetClass"]>("us-equity");
+  const [decisionNote, setDecisionNote] = useState<string | null>(null);
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
   const [openHint, setOpenHint] = useState<FigureKey | null>(null);
+  /*
+   * Where the figures came from, when they were filled in from a filing.
+   *
+   * Saved with the record, because "every supplied figure shows where it came
+   * from" has to survive closing the tab. What is *not* saved is the list of
+   * figures the SEC could not supply: those are the empty boxes, which say it
+   * themselves, and the reasons are only worth the words in the visit that
+   * fetched them.
+   */
+  const [source, setSource] = useState<FigureSource | null>(null);
+  const [couldNotFill, setCouldNotFill] = useState<MissingFigure[]>([]);
+  const [lookup, setLookup] = useState<Lookup>({ kind: "idle" });
 
   /*
    * The work is saved as it is typed.
@@ -124,24 +162,10 @@ export default function InvestigateView() {
    * to remove. Storage is the same versioned, conflict-checked project record
    * the rest of Studio uses; nothing here writes its own store.
    */
-  /*
-   * The same portfolio the workspace has open, not a second one.
-   *
-   * This asked for `personal` while the workspace read `practice`, so a company
-   * investigated here was filed against a record the rest of Studio could not
-   * see -- and the workspace's overview linked to this page directly beneath a
-   * summary of holdings it would never show.
-   */
-  // Set when a filing hands a company over. Read once, on the first open.
-  const requestedCompany = useSearchParams().get("company")?.trim() ?? "";
-  const { mode } = useStudioMode();
-  const project = useStudioProject(mode);
+  const { session: project, setDraft } = useWorkspace();
+  const router = useRouter();
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
-  const [assetClass, setAssetClass] = useState<LearnerInstrument["assetClass"]>("us-equity");
-  const [addNote, setAddNote] = useState<string | null>(null);
-  const [rejecting, setRejecting] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
   const hydrated = useRef(false);
   /*
    * The latest edit and the latest session, readable from a timer that captured
@@ -152,8 +176,8 @@ export default function InvestigateView() {
    * depends on `flush`, so its timer would be cleared and restarted each time,
    * which is the one way to make an autosave that never fires.
    */
-  const editRef = useRef({ company, industry, entries, riskFree });
-  editRef.current = { company, industry, entries, riskFree };
+  const editRef = useRef({ company, industry, entries, riskFree, source });
+  editRef.current = { company, industry, entries, riskFree, source };
   const sessionRef = useRef(project);
   sessionRef.current = project;
   /*
@@ -172,49 +196,38 @@ export default function InvestigateView() {
   useEffect(() => {
     if (hydrated.current || project.status !== "ready" || !project.project) return;
     hydrated.current = true;
-
-    /*
-     * Arriving from a filing, with the company named in the address.
-     *
-     * Reopening the last company here would be actively wrong: someone who has
-     * just read Netflix's annual report and pressed a button that says so does
-     * not want the business they were looking at on Tuesday. An investigation
-     * of that company already on file is reopened rather than duplicated, and
-     * only the name is carried across — the figures are the learner's to read
-     * out of the document, which is the exercise.
-     */
-    if (requestedCompany) {
-      const existing = project.project.investigations.find(
-        (item) => item.company.trim().toLowerCase() === requestedCompany.trim().toLowerCase(),
-      );
-      if (existing) {
-        idRef.current = existing.id;
-        setInvestigationId(existing.id);
-        setCompany(existing.company);
-        setIndustry(investigationIndustry(existing) ?? DEFAULT_INDUSTRY);
-        setEntries(existing.figures as Entries);
-        setRiskFree(existing.riskFreePct === null ? "" : String(existing.riskFreePct));
-        setSaveNote({ kind: "saved" });
-      } else {
-        setCompany(requestedCompany);
-      }
+    // Overview links name the company to open; otherwise reopen the one last touched.
+    const params = new URLSearchParams(window.location.search);
+    const wanted = params.get("company");
+    // Research's company search names a ticker: reopen that company if it has
+    // been investigated, or start on it and look its figures up.
+    const ticker = params.get("ticker")?.trim().toUpperCase() ?? "";
+    // The ticker is an instruction, carried out once. Left in the address, a
+    // reload after deleting the company started it again (found 2026-09-16).
+    // Replaced at once rather than through the router, whose navigation had not
+    // finished when a quick reload came.
+    if (params.has("ticker")) window.history.replaceState(window.history.state, "", window.location.pathname);
+    const byTicker = TICKER.test(ticker)
+      ? project.project.investigations.find((item) => item.source?.ticker.toUpperCase() === ticker)
+      : undefined;
+    if (TICKER.test(ticker) && !byTicker) {
+      setCompany(ticker);
+      setAutoFill(ticker);
       return;
     }
-
-    const saved = latestInvestigation(project.project);
+    const saved = byTicker ?? project.project.investigations.find((item) => item.id === wanted) ?? latestInvestigation(project.project);
     if (!saved) return;
     idRef.current = saved.id;
     setInvestigationId(saved.id);
     setCompany(saved.company);
-    // An industry Studio no longer researches would leave the select showing
-    // one thing and reading against another, so it falls back rather than lies.
+    // A record saved before the industry could be chosen carries only a SIC,
+    // and reopens against the industry that SIC was read with.
     setIndustry(investigationIndustry(saved) ?? DEFAULT_INDUSTRY);
     setEntries(saved.figures as Entries);
     setRiskFree(saved.riskFreePct === null ? "" : String(saved.riskFreePct));
+    setSource(saved.source ?? null);
     setSaveNote({ kind: "saved" });
-    // `requestedCompany` is read above; the `hydrated` guard is what keeps this
-    // to one run, not the dependency list.
-  }, [project.status, project.project, requestedCompany]);
+  }, [project.status, project.project]);
 
   const flush = useCallback(async () => {
     const edit = editRef.current;
@@ -232,23 +245,36 @@ export default function InvestigateView() {
       saveInvestigation(current, {
         company: edit.company,
         industry: edit.industry,
-        // Only set where peers exist, because that is all a SIC is used for
-        // here. Storing one for an industry with no peer figures would imply a
+        // Only where peers exist, because that is all a SIC is used for here.
+        // Storing one for an industry with no peer figures would imply a
         // comparison that cannot be made.
         sic: PEERS_BY_INDUSTRY.get(edit.industry)?.sic ?? "",
         figures: edit.entries as Record<string, number>,
         riskFreePct: rate !== null && Number.isFinite(rate) ? rate : null,
+        source: edit.source,
       }, id),
     );
     setSaveNote(result.ok ? { kind: "saved" } : { kind: "error", message: result.error });
   }, []);
 
   // Save after typing settles. Hydration must not trigger one of its own.
+  // Until then the project bar says "Saving…": an edit that exists only on
+  // this page is not yet kept, and must not be reported as saved.
   useEffect(() => {
     if (!hydrated.current) return;
-    const timer = setTimeout(() => void flush(), SAVE_DELAY_MS);
+    setDraft(true);
+    const timer = setTimeout(() => void flush().finally(() => setDraft(false)), SAVE_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [company, industry, entries, riskFree, flush]);
+  }, [company, industry, entries, riskFree, source, flush, setDraft]);
+
+  // Leaving for another section inside the typing pause would drop the last
+  // edit. The workspace keeps the session open, so write it on the way out.
+  useEffect(
+    () => () => {
+      void flush().finally(() => setDraft(false));
+    },
+    [flush, setDraft],
+  );
 
   /* Most recently touched first, which is the order they were last cared about. */
   const saved = useMemo(
@@ -271,11 +297,132 @@ export default function InvestigateView() {
     setInvestigationId(target.id);
     setCompany(target.company);
     setIndustry(investigationIndustry(target) ?? DEFAULT_INDUSTRY);
+    setRejecting(false);
+    setDecisionNote(null);
     setEntries(target.figures as Entries);
     setRiskFree(target.riskFreePct === null ? "" : String(target.riskFreePct));
+    setSource(target.source ?? null);
+    setCouldNotFill([]);
+    setLookup({ kind: "idle" });
     setOpenHint(null);
     setSaveNote({ kind: "saved" });
   }, [flush]);
+
+  /**
+   * Fill the seven boxes from what the company filed with the SEC.
+   *
+   * The lookup runs on the server: `data.sec.gov`'s company-facts endpoint sends
+   * no cross-origin header, and a browser cannot set the User-Agent the SEC's
+   * fair-access policy asks for. So this asks Studio's own route, which fetches
+   * identified and returns the seven numbers rather than the two megabytes they
+   * were read out of.
+   *
+   * Typed work is never replaced without asking. Figures already filled in from
+   * a filing are another matter -- looking up a second time is how a learner
+   * corrects a mistyped ticker, and pausing to confirm that would be noise.
+   */
+  const fill = useCallback(async () => {
+    /*
+     * One box holds both the company's name and the ticker to look up, because
+     * two boxes for one company is a question a learner should not have to
+     * answer twice. A successful lookup writes EDGAR's name into it -- "Atkore
+     * Inc." -- so a second press must recognise that as the company already
+     * found rather than send it back as a ticker, while a name that matches
+     * nothing still asks for a symbol instead of quietly refetching the last one.
+     */
+    const typed = company.trim();
+    const symbol = /^[A-Za-z0-9.-]{1,12}$/.test(typed)
+      ? typed
+      : source && typed === source.entityName
+        ? source.ticker
+        : "";
+    if (!symbol) {
+      setLookup({
+        kind: "error",
+        message: typed
+          ? `Studio looks companies up by ticker symbol, the short code its shares trade under, and "${typed}" is not one.`
+          : "Type the company's ticker symbol first: the short code its shares trade under.",
+      });
+      return;
+    }
+    const typedByHand = Object.keys(entries).some((key) => !source || !(key in source.figures));
+    if (typedByHand && !window.confirm(`Replace the figures with ${symbol.toUpperCase()}'s own, as filed? What you typed will be gone.`)) {
+      return;
+    }
+
+    setLookup({ kind: "loading" });
+    let body: {
+      error?: string;
+      ticker?: string;
+      cik?: string;
+      entityName?: string;
+      sic?: string;
+      sicDescription?: string;
+      periodEnd?: string;
+      supplied?: SuppliedFigure[];
+      missing?: MissingFigure[];
+      filing?: { accession: string; form: string; filed: string } | null;
+    };
+    try {
+      const response = await fetch(`/api/studio/company-figures?ticker=${encodeURIComponent(symbol)}`);
+      body = await response.json();
+      if (!response.ok) {
+        setLookup({ kind: "error", message: body.error ?? "The SEC could not be reached just now." });
+        return;
+      }
+    } catch {
+      setLookup({ kind: "error", message: "The SEC could not be reached just now. Type the figures from the annual report instead." });
+      return;
+    }
+
+    const supplied = body.supplied ?? [];
+    if (!supplied.length) {
+      setLookup({
+        kind: "error",
+        message: `Nothing could be read from ${body.entityName ?? symbol.toUpperCase()}'s filings for the year ending ${body.periodEnd ?? "the latest period"}. Type the seven from the annual report.`,
+      });
+      setCouldNotFill(body.missing ?? []);
+      return;
+    }
+
+    const filled: Entries = {};
+    const figures: FigureSource["figures"] = {};
+    for (const figure of supplied) {
+      filled[figure.key] = figure.value;
+      figures[figure.key] = { concepts: figure.concepts, addedUp: figure.addedUp };
+    }
+
+    setEntries(filled);
+    setSource({
+      ticker: body.ticker ?? symbol.toUpperCase(),
+      cik: body.cik ?? "",
+      entityName: body.entityName ?? "",
+      sic: body.sic ?? "",
+      sicDescription: body.sicDescription ?? "",
+      periodEnd: body.periodEnd ?? "",
+      accession: body.filing?.accession ?? "",
+      form: body.filing?.form ?? "",
+      filed: body.filing?.filed ?? "",
+      figures,
+    });
+    // EDGAR's name for the company, which is the one on the filing the figures
+    // came from, so the two agree on screen.
+    if (body.entityName) setCompany(body.entityName);
+    // Where the SEC's code is one of the industries Studio has peers for, it
+    // names the industry. Otherwise the select keeps what it had, and the page
+    // says so rather than pretending to know.
+    const named = body.sic ? industryForSic(body.sic) : null;
+    if (named) setIndustry(named);
+    setCouldNotFill(body.missing ?? []);
+    setLookup({ kind: "idle" });
+  }, [company, entries, source]);
+
+  // A ticker arriving from Research's search is looked up once it is in the box.
+  useEffect(() => {
+    if (autoFill === null || company !== autoFill) return;
+    setAutoFill(null);
+    void fill();
+  }, [autoFill, company, fill]);
 
   /** A blank sheet. Nothing is written until something is actually entered. */
   const startNew = useCallback(async () => {
@@ -285,7 +432,13 @@ export default function InvestigateView() {
     setCompany("");
     setEntries({});
     setRiskFree("");
+    setSource(null);
+    setCouldNotFill([]);
+    setLookup({ kind: "idle" });
     setOpenHint(null);
+    setRejecting(false);
+    setRejectReason("");
+    setDecisionNote(null);
     setSaveNote({ kind: "idle" });
   }, [flush]);
 
@@ -296,7 +449,10 @@ export default function InvestigateView() {
    * that cannot be undone by carrying on typing. It asks first.
    */
   const forget = useCallback(async (id: string, label: string) => {
-    if (!window.confirm(`Delete ${label}? The figures you entered for it will be gone.`)) return;
+    // Kept passages go with the company, so the warning names them.
+    const keptCount = sessionRef.current.project?.investigations.find((item) => item.id === id)?.passages?.length ?? 0;
+    const alsoGone = keptCount ? ` and the ${keptCount} ${keptCount === 1 ? "passage" : "passages"} you kept from its filings` : "";
+    if (!window.confirm(`Delete ${label}? The figures you entered for it${alsoGone} will be gone.`)) return;
     const result = await sessionRef.current.update((current) => removeInvestigation(current, id));
     if (!result.ok) { setSaveNote({ kind: "error", message: result.error }); return; }
     if (idRef.current !== id) return;
@@ -309,13 +465,135 @@ export default function InvestigateView() {
   }, [open, startNew]);
 
   /*
-   * Peers are a bonus, not a requirement.
+   * Where the research becomes a decision.
    *
-   * Five industries have them and ninety-six do not, so this is undefined most
-   * of the time — which `checkEntries` and `read` already allow for. What the
-   * learner loses without it is the sanity check against a median, not the
-   * answer: the return on capital and the cost it is judged against are both
-   * still there.
+   * Studio would investigate any business and hold any of eight, and those were
+   * different sets, so reading a company's annual report ended on a screen the
+   * portfolio could not see. Holding it records the company as the learner's own
+   * instrument; deciding against it records a reason on a candidate, which
+   * exists whether or not anything holds it. They are the two honest ends of the
+   * same piece of work, not a success and a failure.
+   *
+   * Held is read from the portfolio, not from the instrument having been added
+   * once: a company taken out in Portfolio is not held, and can be added again.
+   */
+  const ownId = investigationId ? `own-${investigationId}` : null;
+  const heldNow = Boolean(ownId && project.project && isHeld(project.project, ownId));
+  const decided = ownId ? project.project?.candidates.find((candidate) => candidate.instrumentId === ownId) : undefined;
+  const against = decided?.status === "rejected" ? decided.rejectedBecause : null;
+  const canDecide = Boolean(investigationId) && company.trim() !== "" && project.status === "ready";
+
+  const hold = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    // Anything typed since the last save goes in first, so the holding is added
+    // against the figures on screen rather than the ones from a moment ago.
+    await flush();
+    setDecisionNote(null);
+    const result = await sessionRef.current.update((current) => {
+      const withInstrument = addInvestigatedCompany(current, id, assetClass);
+      return isHeld(withInstrument, `own-${id}`) ? withInstrument : addPosition(withInstrument, `own-${id}`);
+    });
+    if (!result.ok) setDecisionNote(`Not added: ${result.error}`);
+  }, [assetClass, flush]);
+
+  const decideAgainst = useCallback(async () => {
+    const id = idRef.current;
+    const reason = rejectReason.trim();
+    if (!id || !reason) return;
+    await flush();
+    setDecisionNote(null);
+    const instrumentId = `own-${id}`;
+    const result = await sessionRef.current.update((current) =>
+      setCandidateStatus(removePosition(startCandidate(current, instrumentId), instrumentId), instrumentId, "rejected", reason),
+    );
+    if (result.ok) {
+      setRejecting(false);
+      setRejectReason("");
+    } else {
+      setDecisionNote(`Not recorded: ${result.error}`);
+    }
+  }, [flush, rejectReason]);
+
+  const reconsider = useCallback(async () => {
+    const id = idRef.current;
+    if (!id) return;
+    const result = await sessionRef.current.update((current) => setCandidateStatus(current, `own-${id}`, "researching"));
+    if (!result.ok) setDecisionNote(`Not changed: ${result.error}`);
+  }, []);
+
+  /** Why this company is owned, on the candidate the portfolio already keeps for it. */
+  const note = (patch: Partial<Pick<CandidateInvestigation, "why" | "mainRisk" | "whatWouldChangeMyMind">>) => {
+    const id = idRef.current;
+    if (!id) return undefined;
+    return sessionRef.current.update((current) => updateCandidate(current, `own-${id}`, patch));
+  };
+
+  /*
+   * Passages kept from this company’s filings, read from the saved project
+   * rather than held in page state. The reader writes them, not this page, so
+   * the stored record is the only place that knows them.
+   */
+  const passages: KeptPassage[] = saved.find((item) => item.id === investigationId)?.passages ?? [];
+  const [passageNote, setPassageNote] = useState<{ id: string; message: string; search?: string } | null>(null);
+
+  const markPassage = (passageId: string, patch: Partial<Pick<KeptPassage, "role" | "note">>) => {
+    const target = idRef.current;
+    if (!target) return undefined;
+    return sessionRef.current.update((current) => updatePassage(current, target, passageId, patch));
+  };
+
+  const dropPassage = async (passageId: string) => {
+    const target = idRef.current;
+    if (!target) return;
+    const result = await sessionRef.current.update((current) => removePassage(current, target, passageId));
+    if (!result.ok) setSaveNote({ kind: "error", message: result.error });
+  };
+
+  /**
+   * Open a kept passage where it is now.
+   *
+   * The report is fetched fresh and the passage found again across its whole
+   * section by the locate-passage route, so what opens is where the words are
+   * today. When they cannot be found, that is said, with a search for their
+   * opening words as the way to look.
+   */
+  const openPassage = async (passage: KeptPassage) => {
+    setPassageNote(null);
+    const opening = passage.quote.split(/\s+/).slice(0, 5).join(" ");
+    const reader = `/studio/filings/${passage.cik}/${passage.accession}?doc=${encodeURIComponent(passage.document)}`;
+    let answer: { found?: boolean; strategy?: string; sectionId?: string; start?: number; end?: number; message?: string; error?: string };
+    try {
+      const response = await fetch("/api/studio/locate-passage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cik: passage.cik, accession: passage.accession, document: passage.document, sectionId: passage.sectionId,
+          quote: passage.quote, prefix: passage.prefix, suffix: passage.suffix, offset: passage.offset,
+        }),
+      });
+      answer = await response.json();
+    } catch {
+      setPassageNote({ id: passage.id, message: "The report could not be reached just now." });
+      return;
+    }
+    if (!answer.found || answer.start === undefined || answer.end === undefined) {
+      setPassageNote({
+        id: passage.id,
+        message: answer.message ?? answer.error ?? "This passage could not be found in the report any more.",
+        search: `${reader}&q=${encodeURIComponent(opening)}`,
+      });
+      return;
+    }
+    const moved = answer.strategy && answer.strategy !== "position" ? `&moved=${answer.strategy}` : "";
+    router.push(`${reader}&section=${answer.sectionId}&at=${answer.start}&len=${answer.end - answer.start}${moved}#passage`);
+  };
+
+  /*
+   * Peers are a bonus, not a requirement. Five industries have them and
+   * ninety-six do not, so this is usually undefined, which the checks and the
+   * reading allow for: without it the learner loses the comparison with a
+   * median, not the answer.
    */
   const researched = PEERS_BY_INDUSTRY.get(industry);
   const sector = sectorForIndustry(industry);
@@ -331,186 +609,167 @@ export default function InvestigateView() {
   }, [researched]);
 
   const industryCost = forIndustry(industry) ?? forIndustry(DEFAULT_INDUSTRY)!;
-
-  const alreadyHeld = (project.project?.instruments ?? []).some(
-    (instrument) => instrument.investigationId === investigationId,
-  );
-  /*
-   * There has to be a saved record to point at. The instrument keeps the
-   * investigation's id so the figures behind a holding stay findable, and an
-   * unsaved investigation has no id to keep.
-   */
-  const canAdd = Boolean(investigationId) && company.trim() !== "" && project.status === "ready";
-
-  const addToPortfolio = useCallback(async () => {
-    const id = idRef.current;
-    if (!id) return;
-    // Anything typed since the last save goes in first, so the holding is added
-    // against the figures on screen rather than the ones from a moment ago.
-    await flush();
-    setAddNote(null);
-    const result = await sessionRef.current.update((current) => addInvestigatedCompany(current, id, assetClass));
-    if (!result.ok) setAddNote(`Not added — ${result.error}`);
-  }, [assetClass, flush]);
-
-  /*
-   * The decision is recorded as a candidate, not on the figures.
-   *
-   * `FigureInvestigation` is deliberately quantitative — seven numbers read out
-   * of a report — and says so: judgements belong on a `CandidateInvestigation`,
-   * which exists whether or not anything holds it. So turning a company down
-   * opens one for it, which is the schema's own "the two are meant to meet
-   * eventually". Nothing new had to be stored to do it.
-   */
-  const candidateId = investigationId ? `own-${investigationId}` : null;
-  const rejectedCandidate = candidateId
-    ? project.project?.candidates.find((candidate) => candidate.instrumentId === candidateId)
-    : undefined;
-  const against = rejectedCandidate?.status === "rejected" ? rejectedCandidate.rejectedBecause : null;
-
-  const decideAgainst = useCallback(async () => {
-    const id = idRef.current;
-    if (!id) return;
-    await flush();
-    setAddNote(null);
-    const instrumentId = `own-${id}`;
-    const reason = rejectReason.trim();
-    const result = await sessionRef.current.update((current) =>
-      setCandidateStatus(
-        removePosition(startCandidate(current, instrumentId), instrumentId),
-        instrumentId,
-        "rejected",
-        reason,
-      ),
-    );
-    if (result.ok) {
-      setRejecting(false);
-      setRejectReason("");
-    } else {
-      setAddNote(`Not recorded — ${result.error}`);
-    }
-  }, [flush, rejectReason]);
-
-  const reconsider = useCallback(async () => {
-    const id = idRef.current;
-    if (!id) return;
-    await sessionRef.current.update((current) => setCandidateStatus(current, `own-${id}`, "researching"));
-  }, []);
-  const suppliedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
-  const cost = estimate(industryCost, Number.isFinite(suppliedRate) ? suppliedRate : undefined);
+  const typedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;
+  const learnerRate = typedRate !== undefined && Number.isFinite(typedRate) ? typedRate : undefined;
+  // With nothing typed, the rate is the Treasury's latest 10-year auction, dated and
+  // sourced, rather than the older one inside the source's January figures.
+  const cost =
+    learnerRate === undefined
+      ? estimate(industryCost, TREASURY_RATE.rate, "treasury")
+      : estimate(industryCost, learnerRate, "learner");
 
   const checks = checkEntries(entries, sector, peerContext);
   const stops = checks.filter((c) => c.severity === "stop");
   const questions = checks.filter((c) => c.severity === "question");
   const reading = stops.length ? { blocked: stops[0].message } : read(entries, sector, cost.costOfCapital, peerContext);
 
-  const set = (key: FigureKey, raw: string) =>
+  const set = (key: FigureKey, raw: string) => {
     setEntries((current) => {
       const next = { ...current };
       if (raw.trim() === "") delete next[key];
       else if (Number.isFinite(Number(raw))) next[key] = Number(raw);
       return next;
     });
+    /*
+     * Touching a figure makes it the learner's own.
+     *
+     * The moment a box is edited it is no longer what the company filed, so its
+     * provenance goes with it -- keeping the tag beside a number the learner
+     * changed would be the worst kind of wrong: a false source note on a figure
+     * they have every right to overrule. When the last one goes, so does the
+     * filing reference, because nothing on the page comes from it any more.
+     */
+    setSource((current) => {
+      if (!current || !(key in current.figures)) return current;
+      const figures = { ...current.figures };
+      delete figures[key];
+      return Object.keys(figures).length ? { ...current, figures } : null;
+    });
+  };
 
   const flagged = new Set(checks.flatMap((c) => c.figures));
 
   return (
     <div className="space-y-4">
-      <Link href="/studio" className="inline-block text-[13px] text-st-faint hover:text-st-sub">
-        ← Back to your plan
-      </Link>
+      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
+        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+          Research
+        </Link>
+        <span aria-hidden="true"> › </span>
+        <span>Investigate a company</span>
+      </nav>
 
-      <StageHeading title="Is this business creating value?">
-        Look up seven figures for a company you care about. Studio says which ones matter, checks
-        what you typed, and tells you what the answer means against real competitors.
+      <StageHeading as="h1" title="Is this business creating value?">
+        Look up seven figures from one annual report, then read them against real competitors.
       </StageHeading>
 
       {/*
         * One row, and it scrolls sideways rather than wrapping.
         *
-        * This page is already over the screen budget, so a list of companies
-        * cannot cost vertical space that grows with how much work you have
-        * done -- the more you use it, the worse that would get.
+        * A list of companies cannot cost vertical space that grows with how much
+        * work you have done -- the more you use the page, the worse that would get.
+        *
+        * The row is always there, holding the company in hand even before it is
+        * saved. It used to appear with the first save, and a learner who typed a
+        * company's name and then clicked a link or a "?" below saw nothing
+        * happen: leaving the box saved the record, the row pushed the form down
+        * 66px between the press and the release, and the click landed on empty
+        * space (found 2026-09-10). The placeholder is a label, not a button,
+        * because there is nothing to open or delete until it is saved.
         */}
-      {saved.length > 0 && (
-        <nav aria-label="Companies you have looked at" className="-mx-1 overflow-x-auto px-1 pb-1">
-          <ul className="flex items-center gap-2">
-            {saved.map((item) => {
-              const active = item.id === investigationId;
-              const label = item.company.trim() || "Unnamed company";
-              return (
-                <li key={item.id} className="flex-shrink-0">
-                  <span
-                    className={cn(
-                      "inline-flex items-center rounded-full border text-[13px] transition-colors",
-                      active
-                        ? "border-st-blue-edge bg-st-blue-soft text-st-ink"
-                        : "border-st-hair bg-st-paper text-st-sub hover:border-st-bound hover:text-st-ink",
-                    )}
+      <nav aria-label="Companies you have looked at" className="-mx-1 overflow-x-auto px-1 pb-1">
+        <ul className="flex items-center gap-2">
+          {!saved.some((item) => item.id === investigationId) ? (
+            <li className="flex-shrink-0">
+              <span
+                aria-current="true"
+                className="inline-flex min-h-11 items-center rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] text-white"
+              >
+                {company.trim() || "New company"}
+                <span className="ml-2 text-[11px] text-slate-500">
+                  {Object.keys(entries).length}/{FIGURES.length}
+                </span>
+              </span>
+            </li>
+          ) : null}
+          {saved.map((item) => {
+            const active = item.id === investigationId;
+            const label = item.company.trim() || "Unnamed company";
+            return (
+              <li key={item.id} className="flex-shrink-0">
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-full border text-[13px] transition-colors",
+                    active
+                      ? "border-accent-cyan/40 bg-accent-cyan/10 text-white"
+                      : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:text-white",
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={() => void open(item.id)}
+                    aria-current={active ? "true" : undefined}
+                    className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
                   >
+                    {label}
+                    <span className="ml-2 text-[11px] text-slate-500">
+                      {Object.keys(item.figures).length}/{FIGURES.length}
+                    </span>
+                  </button>
+                  {/*
+                    * Only on the company in hand. On every chip it would be a
+                    * row of delete buttons a thumb can hit by accident, and
+                    * hiding them until hover fails on touch entirely.
+                    */}
+                  {active && (
                     <button
                       type="button"
-                      onClick={() => void open(item.id)}
-                      aria-current={active ? "true" : undefined}
-                      className="min-h-11 rounded-full px-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
+                      onClick={() => void forget(item.id, label)}
+                      aria-label={`Delete ${label}`}
+                      className="min-h-11 rounded-full pl-1 pr-3 text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
                     >
-                      {label}
-                      <span className="ml-2 text-[11px] text-st-faint">
-                        {Object.keys(item.figures).length}/{FIGURES.length}
-                      </span>
+                      ×
                     </button>
-                    {/*
-                      * Only on the company in hand. On every chip it would be a
-                      * row of delete buttons a thumb can hit by accident, and
-                      * hiding them until hover fails on touch entirely.
-                      */}
-                    {active && (
-                      <button
-                        type="button"
-                        onClick={() => void forget(item.id, label)}
-                        aria-label={`Delete ${label}`}
-                        className="min-h-11 rounded-full pl-1 pr-3 text-st-muted hover:text-st-warn focus:outline-none focus-visible:ring-2 focus-visible:ring-st-warn-edge"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </span>
-                </li>
-              );
-            })}
+                  )}
+                </span>
+              </li>
+            );
+          })}
+          {/* With nothing saved yet there is no other company to make room for. */}
+          {saved.length > 0 ? (
             <li className="flex-shrink-0">
               <button
                 type="button"
                 onClick={() => void startNew()}
-                className="min-h-11 rounded-full border border-dashed border-st-bound px-3.5 text-[13px] text-st-muted transition-colors hover:border-st-bound hover:text-st-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
+                className="min-h-11 rounded-full border border-dashed border-white/15 px-3.5 text-[13px] text-slate-400 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
               >
                 + Another company
               </button>
             </li>
-          </ul>
-        </nav>
-      )}
+          ) : null}
+        </ul>
+      </nav>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         {/* ---------------------------------------------------------- entry */}
         <Panel>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block">
-              <span className="ops-caption text-[11px] text-st-faint">Company</span>
+              <span className="ops-caption text-[11px] text-slate-500">Company</span>
               <input
                 value={company}
                 onChange={(event) => setCompany(event.target.value)}
                 onBlur={() => void flush()}
-                placeholder="The one you want to understand"
-                className="mt-1 w-full rounded-lg border border-st-hair bg-st-paper px-3 py-2 text-[14px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none"
+                placeholder="Its ticker symbol"
+                className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
             </label>
             <label className="block">
-              <span className="ops-caption text-[11px] text-st-faint">Industry</span>
+              <span className="ops-caption text-[11px] text-slate-500">Industry</span>
               <select
                 value={industry}
                 onChange={(event) => setIndustry(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-st-hair bg-st-paper px-3 py-2 text-[14px] text-st-ink focus:border-st-blue-edge focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white focus:border-accent-cyan/50 focus:outline-none"
               >
                 {industryNames().map((name) => (
                   <option key={name} value={name} className="bg-slate-900">
@@ -520,26 +779,117 @@ export default function InvestigateView() {
               </select>
             </label>
           </div>
-
-          {/* Said rather than left to be noticed. The comparison simply does not
-              appear for most industries, and an absence explains nothing on its
-              own — a learner would reasonably read it as their figures being
-              wrong rather than as data Studio has not built yet. */}
-          <p className="mt-3 text-[13px] leading-6 text-st-muted">
+          {/* Said rather than left to be noticed: an absent comparison would
+              otherwise read as the learner's figures being wrong. */}
+          {/* Said rather than left to be noticed: an absent comparison would
+              otherwise read as the learner’s figures being wrong. */}
+          <p className="mt-2 text-[12px] leading-5 text-slate-500">
             {researched
-              ? `Studio has figures for ${researched.peers.length} companies in this industry, so your result is placed against them below.`
-              : "Studio has not built peer figures for this industry yet, so there is no median to place your company against. The return on capital and what the money costs are still worked out in full."}
+              ? `Peer figures for ${researched.peers.length} companies are below.`
+              : "No peer figures for this industry yet; the return on capital is still worked out in full."}
           </p>
 
-          <p className="mt-4 text-[13px] leading-6 text-st-muted">
-            All seven come from one annual report. Click a name to see where it sits and what other
-            sites call it.
-          </p>
+          {/*
+            * The lookup replaces the paragraph that used to sit here, rather
+            * than being added below it, so the first figure box does not move
+            * further down the screen. Everything it says, that paragraph said.
+            */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <button
+              type="button"
+              onClick={() => void fill()}
+              disabled={lookup.kind === "loading"}
+              className="inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white transition-colors hover:border-accent-cyan/70 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+            >
+              {lookup.kind === "loading" ? "Reading the filing…" : "Fill these from the SEC"}
+            </button>
+            <p className="text-[13px] leading-6 text-slate-400">
+              Or type them from the annual report, which you can open in{" "}
+              <Link href="/studio/filings" className="text-accent-cyan hover:underline">
+                Company reports
+              </Link>
+              .
+            </p>
+          </div>
+
+          {/*
+            * Where the figures came from, once they came from somewhere.
+            *
+            * Absent until a lookup succeeds, so the page at rest is no taller
+            * than it was. The tint on a box is explained here rather than left
+            * to be guessed, and every supplied box also says it in its label,
+            * because colour on its own tells a screen reader nothing.
+            */}
+          {source ? (
+            <div className="mt-3 rounded-lg border border-accent-cyan/25 bg-accent-cyan/[0.06] p-3">
+              <p className="text-[13px] leading-6 text-slate-200">
+                <span className="font-semibold text-white">{source.entityName}</span>
+                {source.periodEnd ? ` · the year to ${readableDate(source.periodEnd)}` : null}
+                {source.form && source.filed ? ` · from its ${source.form} filed ${readableDate(source.filed)}` : null}
+                {source.accession && source.cik ? (
+                  <>
+                    {" · "}
+                    <a
+                      href={`https://www.sec.gov/Archives/edgar/data/${source.cik.replace(/^0+/, "")}/${source.accession.replace(/-/g, "")}/${source.accession}-index.htm`}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-accent-cyan underline underline-offset-2"
+                    >
+                      open the filing
+                    </a>
+                  </>
+                ) : null}
+              </p>
+              <p className="mt-1 text-[12px] leading-5 text-slate-400">
+                Highlighted boxes are its own figures. Type over any to use yours.
+              </p>
+              {/*
+                * Atkore files under SIC 3690, mostly battery and EV-charging
+                * makers, which is not one of the five industries Studio has
+                * researched. Reading its figures against semiconductors without
+                * saying so was the one dead end the friction walk found
+                * (2026-09-10). It shares this block rather than taking one of
+                * its own, which on a phone is 50px of border and padding.
+                */}
+              {source.sic && !industryForSic(source.sic) ? (
+                <p className="mt-2 border-t border-accent-cyan/20 pt-2 text-[12px] leading-5 text-accent-amber">
+                  The SEC files it under {source.sic}
+                  {source.sicDescription ? `, ${source.sicDescription.toLowerCase()}` : null}, which Studio
+                  cannot match to an industry by itself. The cost of capital below is{" "}
+                  {industry === DEFAULT_INDUSTRY ? "the whole market's" : `${industry}'s`}: choose the industry
+                  that fits the business best.
+                  {/* Any company's annual report has a Competitors tab reading who it names. */}
+                  {source.ticker ? (
+                    <>
+                      {" "}
+                      <Link
+                        href={`/studio/filings?ticker=${encodeURIComponent(source.ticker)}`}
+                        className="text-accent-cyan underline underline-offset-2"
+                      >
+                        Find the competitors its own annual report names →
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {lookup.kind === "error" ? (
+            <p
+              role="alert"
+              className="mt-2 rounded-lg border border-accent-amber/30 bg-accent-amber/[0.05] p-3 text-[13px] leading-6 text-slate-300"
+            >
+              {lookup.message}
+            </p>
+          ) : null}
 
           <div className="mt-3 space-y-2">
             {FIGURES.map((figure) => {
               const open = openHint === figure.key;
               const marked = flagged.has(figure.key);
+              const filed = source?.figures[figure.key];
+              const couldNot = couldNotFill.find((entry) => entry.key === figure.key);
               return (
                 <div key={figure.key}>
                   <div className="flex items-center gap-2">
@@ -547,10 +897,10 @@ export default function InvestigateView() {
                       type="button"
                       onClick={() => setOpenHint(open ? null : figure.key)}
                       aria-expanded={open}
-                      className="min-w-[150px] shrink-0 text-left text-[13px] text-st-sub hover:text-st-ink"
+                      className="min-w-[150px] shrink-0 text-left text-[13px] text-slate-300 hover:text-white"
                     >
                       {figure.label}
-                      <span className="ml-1 text-st-faint">?</span>
+                      <span className="ml-1 text-slate-600">?</span>
                     </button>
                     <input
                       inputMode="decimal"
@@ -558,27 +908,65 @@ export default function InvestigateView() {
                       onChange={(event) => set(figure.key, event.target.value)}
                       onBlur={() => void flush()}
                       placeholder="0"
-                      aria-label={figure.label}
+                      /* The tint says where a figure came from; this says it in words. */
+                      aria-label={filed ? `${figure.label}, as the company filed it` : figure.label}
                       className={cn(
-                        "w-full rounded-lg border bg-st-paper px-3 py-1.5 text-right text-[14px] tabular-nums text-st-ink placeholder:text-st-faint focus:outline-none",
-                        marked ? "border-st-warn-edge" : "border-st-hair focus:border-st-blue-edge",
+                        "w-full rounded-lg border px-3 py-1.5 text-right text-[14px] tabular-nums text-white placeholder:text-slate-700 focus:outline-none",
+                        marked
+                          ? "border-accent-amber/50 bg-white/[0.03]"
+                          : filed
+                            ? "border-accent-cyan/40 bg-accent-cyan/[0.07] focus:border-accent-cyan/70"
+                            : "border-white/10 bg-white/[0.03] focus:border-accent-cyan/50",
                       )}
                     />
                   </div>
                   {open ? (
-                    <p className="mt-1 pl-[158px] text-[12px] leading-5 text-st-faint">
-                      {figure.whatItIs} On the {figure.statement}. Also called{" "}
-                      {figure.alsoCalled.join(", ")}.
-                    </p>
+                    <div className="mt-1 space-y-1 pl-[158px] text-[12px] leading-5 text-slate-500">
+                      <p>
+                        {figure.whatItIs} On the {figure.statement}. Also called{" "}
+                        {figure.alsoCalled.join(", ")}.
+                      </p>
+                      {/*
+                        * The SEC's own viewer pattern: a supplied figure opens to
+                        * the tag it was read from and the period it covers, so a
+                        * learner can check it against the statement rather than
+                        * take it on trust.
+                        */}
+                      {filed && source ? (
+                        <p className="text-slate-400">
+                          Read from {source.entityName}&rsquo;s {source.form || "filing"} as{" "}
+                          <span className="text-slate-300">{filed.concepts.join(" + ")}</span>
+                          {filed.addedUp ? `, which is ${filed.addedUp}` : null}, for the year to{" "}
+                          {readableDate(source.periodEnd)}.
+                        </p>
+                      ) : null}
+                      {couldNot ? <p className="text-slate-400">{couldNot.reason}</p> : null}
+                    </div>
                   ) : null}
                 </div>
               );
             })}
           </div>
 
-          <p className="mt-3 text-[12px] leading-5 text-st-faint">
-            Use the same units throughout — all millions, or all billions. Studio only compares them
-            with each other.
+          {/*
+            * Which of the seven the filing could not give, named where the empty
+            * boxes are rather than in a list somewhere else. Only after a lookup:
+            * before one, every box is empty and saying so would be noise.
+            */}
+          {couldNotFill.length ? (
+            <p className="mt-3 text-[12px] leading-5 text-slate-400">
+              Not tagged in this filing:{" "}
+              {couldNotFill
+                .map((entry) => FIGURES.find((figure) => figure.key === entry.key)?.label.toLowerCase() ?? entry.key)
+                .join(", ")}
+              . Click the name of each to see why, then read it off the statement.
+            </p>
+          ) : null}
+
+          <p className="mt-3 text-[12px] leading-5 text-slate-600">
+            {source
+              ? "Every figure is in US dollars, as filed. Keep any you type in the same units."
+              : "Use the same units throughout — all millions, or all billions. Studio only compares them with each other."}
           </p>
 
           {checks.length ? (
@@ -589,8 +977,8 @@ export default function InvestigateView() {
                   className={cn(
                     "rounded-lg border p-3 text-[13px] leading-6",
                     check.severity === "stop"
-                      ? "border-st-bad-edge bg-st-bad-soft text-st-body"
-                      : "border-st-warn-edge bg-st-warn-soft text-st-sub",
+                      ? "border-accent-red/30 bg-accent-red/[0.06] text-slate-200"
+                      : "border-accent-amber/30 bg-accent-amber/[0.05] text-slate-300",
                   )}
                 >
                   {check.message}
@@ -604,52 +992,71 @@ export default function InvestigateView() {
         <div className="space-y-4">
           <Panel>
             <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-[15px] font-semibold text-st-ink">What the money costs</h3>
-              <span className="text-[20px] font-semibold tabular-nums text-st-ink">{pct(cost.costOfCapital, 2)}</span>
+              <h3 className="text-[15px] font-semibold text-white">What the money costs</h3>
+              <span className="text-[20px] font-semibold tabular-nums text-white">{pct(cost.costOfCapital, 2)}</span>
             </div>
-            <p className="mt-2 text-[13px] leading-6 text-st-muted">
+            <p className="mt-2 text-[13px] leading-6 text-slate-400">
               No company reports this — it has to be estimated. A return above it means the business
               creates value; below it, the money would do better elsewhere.
             </p>
 
-            <label className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-st-muted">
+            <label className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-slate-400">
               <span>Government borrowing rate</span>
               <input
                 inputMode="decimal"
                 value={riskFree}
                 onChange={(event) => setRiskFree(event.target.value)}
                 onBlur={() => void flush()}
-                placeholder={(COST_OF_CAPITAL_SOURCE.impliedRiskFreeRate * 100).toFixed(2)}
-                className="w-20 rounded-lg border border-st-hair bg-st-paper px-2 py-1 text-right text-[13px] tabular-nums text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none"
+                placeholder={TREASURY_RATE.yieldPct.toFixed(2)}
+                className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
               />
               <span>%</span>
             </label>
+            <p className="mt-1 text-[12px] leading-5 text-slate-500">
+              {learnerRate === undefined
+                ? `From the Treasury's 10-year auction on ${longDate(TREASURY_RATE.auctionDate)}.`
+                : "Your own rate. Clear the box to use the Treasury's."}
+            </p>
 
-            <details className="mt-3">
-              <summary className="cursor-pointer text-[12px] text-st-faint">Where this number comes from</summary>
-              <ul className="mt-2 space-y-1 text-[12px] leading-5 text-st-faint">
-                {cost.provenance.map((line, index) => (
-                  <li key={index}>{line}</li>
-                ))}
-              </ul>
-            </details>
+            <StudioAside
+              inline={
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-[12px] text-slate-500">Where this number comes from</summary>
+                  <ul className="mt-2 space-y-1 text-[12px] leading-5 text-slate-500">
+                    {cost.provenance.map((line, index) => (
+                      <li key={index}>{line}</li>
+                    ))}
+                  </ul>
+                </details>
+              }
+              beside={
+                <Panel>
+                  <h2 className="text-[14px] font-semibold text-white">Where the cost of capital comes from</h2>
+                  <ul className="mt-2 space-y-2 text-[13px] leading-5 text-slate-400">
+                    {cost.provenance.map((line, index) => (
+                      <li key={index}>{line}</li>
+                    ))}
+                  </ul>
+                </Panel>
+              }
+            />
           </Panel>
 
           {"blocked" in reading ? (
             <Panel>
-              <p className="text-[13px] leading-6 text-st-faint">{reading.blocked}</p>
+              <p className="text-[13px] leading-6 text-slate-500">{reading.blocked}</p>
             </Panel>
           ) : (
             <>
               <Panel>
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-[15px] font-semibold text-st-ink">
+                  <h3 className="text-[15px] font-semibold text-white">
                     {company.trim() || "This business"} earns
                   </h3>
                   <span
                     className={cn(
                       "text-[24px] font-semibold tabular-nums",
-                      reading.createsValue ? "text-st-good" : "text-st-bad",
+                      reading.createsValue ? "text-accent-green" : "text-accent-red",
                     )}
                   >
                     {pct(reading.decomposition.roic)}
@@ -657,21 +1064,21 @@ export default function InvestigateView() {
                 </div>
                 <div className="mt-3 space-y-3">
                   {reading.says.map((line, index) => (
-                    <p key={index} className="text-[13px] leading-6 text-st-sub">
+                    <p key={index} className="text-[13px] leading-6 text-slate-300">
                       {line}
                     </p>
                   ))}
                 </div>
-                <p className="mt-3 text-[12px] leading-5 text-st-faint">
-                  Calculated from what you entered — not a figure any company reports.
+                <p className="mt-3 text-[12px] leading-5 text-slate-600">
+                  Calculated from the figures above — not a figure any company reports.
                 </p>
               </Panel>
 
               <Panel>
-                <h3 className="text-[14px] font-semibold text-st-ink">What this cannot tell you</h3>
+                <h3 className="text-[14px] font-semibold text-white">What this cannot tell you</h3>
                 <ul className="mt-2 space-y-2">
                   {reading.cannotTell.map((line, index) => (
-                    <li key={index} className="text-[12px] leading-5 text-st-faint">
+                    <li key={index} className="text-[12px] leading-5 text-slate-500">
                       {line}
                     </li>
                   ))}
@@ -683,118 +1090,75 @@ export default function InvestigateView() {
       </div>
 
       {/*
-        * Where the research becomes a decision.
+        * Where the research becomes a decision, in one row.
         *
-        * Until this existed, reading a company's annual report and building a
-        * portfolio were separate activities that could not reach each other:
-        * Studio would investigate any business and would hold any of eight, and
-        * those were different sets. The work ended on a screen the portfolio
-        * could not see.
+        * Held and turned down are the two honest ends of the same piece of
+        * work, so they sit together, under the figures they follow from. One
+        * row rather than a block of prose because this page has a screen
+        * budget: at 1440 the reading already runs to 1.41 screens, and a panel
+        * that explained itself in paragraphs took it to 1.73.
         */}
-      <Panel>
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-          <h3 className="text-[15px] font-semibold text-st-ink">Put this company in your portfolio</h3>
-          {alreadyHeld ? (
-            <span className="text-[13px] text-st-good">Already in your portfolio</span>
-          ) : null}
-        </div>
-        <p className="mt-2 text-[13px] leading-6 text-st-muted">
-          It joins at nothing, so nothing moves until you decide how much to hold in step 3. Your
-          figures stay here, and the reason you would own it is asked for in step 2.
-        </p>
-
-        {alreadyHeld ? null : (
-          <>
-            {/*
-              * Asked, not guessed. An investment whose kind Studio does not know
-              * is dealt a zero in the scenario test — so a wrong guess here does
-              * not show up as an error, it quietly leaves this holding out of the
-              * fall and reports a smaller loss than the portfolio would take.
-              */}
-            <fieldset className="mt-4">
-              <legend className="ops-caption text-[11px] text-st-faint">Where it trades</legend>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {ASSET_CLASSES.map((option) => (
-                  <label
-                    key={option.value}
-                    className={cn(
-                      "min-h-11 cursor-pointer rounded-full border px-4 text-[13px] leading-[2.75rem]",
-                      assetClass === option.value
-                        ? "border-st-blue-edge bg-st-blue-soft text-st-blue"
-                        : "border-st-bound text-st-body",
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      name="asset-class"
-                      className="sr-only"
-                      checked={assetClass === option.value}
-                      onChange={() => setAssetClass(option.value)}
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
-              <p className="mt-2 text-[12px] leading-5 text-st-faint">
-                This decides which fall in your scenario test applies to it.
+      {canDecide ? (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-2">
+          {heldNow ? (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <p className="text-[13px] leading-6 text-slate-300">
+                <span className="font-semibold text-white">{company.trim()}</span> is in your portfolio. Choose how
+                much to hold in{" "}
+                <Link href="/studio/portfolio" className="text-accent-cyan hover:underline">
+                  Portfolio
+                </Link>
+                .
               </p>
-            </fieldset>
-
-            <button
-              type="button"
-              disabled={!canAdd}
-              onClick={() => void addToPortfolio()}
-              className="mt-4 min-h-11 rounded-full border border-st-blue-edge bg-st-blue-soft px-5 text-[14px] font-semibold text-st-blue disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Add {company.trim() || "this company"} to your portfolio
-            </button>
-            {!canAdd ? (
-              <p className="mt-2 text-[12px] leading-5 text-st-faint">
-                Give the company a name and save a figure first, so there is something to add.
-              </p>
-            ) : null}
-          </>
-        )}
-        {addNote ? <p className="mt-3 text-[13px] leading-6 text-st-warn">{addNote}</p> : null}
-
-        {/*
-          * Deciding against it is a result, not the absence of one.
-          *
-          * A company can be worth the afternoon it took to read and still not be
-          * worth owning, and that conclusion is the one most worth keeping — it
-          * is the only one a learner can check later against what actually
-          * happened. Sitting beside "add", because they are the two honest ends
-          * of the same piece of work rather than a success and a failure.
-          */}
-        <div className="mt-5 border-t border-st-hair pt-4">
-          {against !== null ? (
-            <>
-              <div className="ops-caption text-[11px] text-st-faint">You decided against this</div>
-              <p className="mt-1 text-[14px] leading-6 text-st-sub">{against}</p>
+              {/* Asked in the same words as any other holding, and kept on the
+                  company's own page rather than in the library of eight, which
+                  is where its figures and its filings already are. */}
+              <details className="group">
+                <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[13px] font-semibold text-accent-cyan focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+                  Why you own it
+                  <span className="ml-2 text-[12px] font-normal text-slate-500 group-open:hidden">Write it down</span>
+                  <span className="ml-2 hidden text-[12px] font-normal text-slate-500 group-open:inline">Hide</span>
+                </summary>
+                <div className="mt-2 space-y-3">
+                  <Field label="Why it belongs" value={decided?.why ?? ""} onChange={(value) => note({ why: value })} multiline />
+                  <Field label="The main risk I accept" value={decided?.mainRisk ?? ""} onChange={(value) => note({ mainRisk: value })} multiline />
+                  <Field
+                    label="What would change my mind"
+                    value={decided?.whatWouldChangeMyMind ?? ""}
+                    onChange={(value) => note({ whatWouldChangeMyMind: value })}
+                    multiline
+                  />
+                </div>
+              </details>
+            </div>
+          ) : against !== null ? (
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="text-[13px] text-slate-500">You decided against it:</span>
+              <span className="text-[13px] leading-6 text-slate-300">{against}</span>
               <button
                 type="button"
                 onClick={() => void reconsider()}
-                className="mt-2 min-h-11 text-[14px] font-semibold text-st-blue underline underline-offset-2"
+                className="inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline"
               >
                 Put it back on the table
               </button>
-            </>
+            </div>
           ) : rejecting ? (
             <>
               <Field
-                label="Why it is not for you"
+                label={`Why ${company.trim()} is not for you`}
                 hint="Kept with these figures, so you can check later whether it still holds."
                 value={rejectReason}
                 onChange={setRejectReason}
-                placeholder="It earns less than its capital costs and I could not see that changing…"
+                placeholder="It earns less than its capital costs and I could not see that changing"
                 multiline
               />
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-2 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  disabled={!rejectReason.trim() || !canAdd}
+                  disabled={!rejectReason.trim()}
                   onClick={() => void decideAgainst()}
-                  className="min-h-11 rounded-full border border-st-bound px-5 text-[14px] font-semibold text-st-body disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-3.5 text-[13px] font-semibold text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Record this decision
                 </button>
@@ -804,26 +1168,144 @@ export default function InvestigateView() {
                     setRejecting(false);
                     setRejectReason("");
                   }}
-                  className="min-h-11 px-2 text-[14px] text-st-muted"
+                  className="inline-flex min-h-11 items-center px-2 text-[13px] text-slate-400"
                 >
                   Cancel
                 </button>
               </div>
             </>
           ) : (
-            <button
-              type="button"
-              onClick={() => setRejecting(true)}
-              className="min-h-11 text-[13px] text-st-muted underline underline-offset-2 hover:text-st-ink"
-            >
-              Decide against this company
-            </button>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              {/* Asked, not guessed: an investment whose kind Studio does not know is
+                  dealt no fall in the scenario test, which understates the loss
+                  rather than showing an error. */}
+              <label className="text-[13px] text-slate-400">
+                Where it trades{" "}
+                <select
+                  value={assetClass}
+                  onChange={(event) => setAssetClass(event.target.value as LearnerInstrument["assetClass"])}
+                  className="min-h-11 rounded-lg border border-white/10 bg-white/[0.03] px-2 text-[13px] text-white focus:border-accent-cyan/50 focus:outline-none"
+                >
+                  {ASSET_CLASSES.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-slate-900">
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                onClick={() => void hold()}
+                className="inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white hover:border-accent-cyan/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+              >
+                Add {company.trim()} to your portfolio
+              </button>
+              {/* A business can be worth reading and still not worth owning, and that
+                  conclusion is the one a learner can check later against what happened. */}
+              <button
+                type="button"
+                onClick={() => setRejecting(true)}
+                className="inline-flex min-h-11 items-center text-[13px] text-slate-300 underline underline-offset-2 hover:text-white"
+              >
+                Decide against {company.trim()}
+              </button>
+            </div>
           )}
+          {decisionNote ? (
+            <p role="alert" className="mt-2 text-[13px] leading-6 text-accent-amber">
+              {decisionNote}
+            </p>
+          ) : null}
         </div>
-      </Panel>
+      ) : null}
+      {/*
+        * Passages kept while reading this company’s reports, beside the reading
+        * they bear on. Absent until one is kept, so the page is no taller for
+        * a learner who has not used the reader.
+        */}
+      {passages.length ? (
+        <Panel>
+          <h3 className="text-[15px] font-semibold text-white">
+            From its own filings <span className="font-normal text-slate-500">({passages.length})</span>
+          </h3>
+          <p className="mt-1 text-[13px] leading-6 text-slate-400">
+            Passages you kept while reading. Say whether each argues for this business or against it.
+          </p>
+          <ul className="mt-3 space-y-4">
+            {passages.map((passage) => {
+              const sectionLabel = labelForSection(passage.sectionId, passage.form);
+              return (
+                <li key={passage.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+                  <blockquote className="line-clamp-4 border-l-2 border-accent-cyan/40 pl-3 text-[14px] leading-6 text-slate-200">
+                    {passage.quote}
+                  </blockquote>
+                  <p className="mt-1.5 text-[12px] leading-5 text-slate-500">
+                    {passage.form || "Report"} · {sectionLabel}
+                    {passage.filed ? ` · filed ${passage.filed}` : ""}
+                  </p>
+                  <div className="mt-3 grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)]">
+                    <fieldset>
+                      <legend className="text-[13px] font-semibold text-white">Does it argue for it or against it?</legend>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {PASSAGE_ROLES.map((option) => (
+                          <label
+                            key={option.value}
+                            className={cn(
+                              "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3.5 text-[13px] transition-colors focus-within:ring-2 focus-within:ring-accent-cyan/40",
+                              passage.role === option.value ? option.tone : "border-white/12 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white",
+                            )}
+                          >
+                            <input
+                              type="radio"
+                              name={`passage-role-${passage.id}`}
+                              value={option.value}
+                              checked={passage.role === option.value}
+                              onChange={() => void markPassage(passage.id, { role: option.value })}
+                              className="sr-only"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                    <Field label="What it shows" value={passage.note} onChange={(value) => markPassage(passage.id, { note: value })} multiline />
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <button
+                      type="button"
+                      onClick={() => void openPassage(passage)}
+                      className="inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                    >
+                      Open it in the report
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void dropPassage(passage.id)}
+                      aria-label="Remove this passage"
+                      className="inline-flex min-h-11 items-center text-[13px] text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  {passageNote?.id === passage.id ? (
+                    <p role="alert" className="mt-1 text-[13px] leading-6 text-accent-amber">
+                      {passageNote.message}{" "}
+                      {passageNote.search ? (
+                        <Link href={passageNote.search} className="underline underline-offset-2">
+                          Search the report for it
+                        </Link>
+                      ) : null}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </Panel>
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <p className="text-[12px] leading-5 text-st-faint">
+        <p className="text-[12px] leading-5 text-slate-600">
           Peer figures come from company filings; the cost of capital from Aswath Damodaran, NYU
           Stern.
         </p>
@@ -836,7 +1318,7 @@ export default function InvestigateView() {
           aria-live={saveNote.kind === "error" ? "assertive" : "polite"}
           className={cn(
             "text-[12px] leading-5",
-            saveNote.kind === "error" ? "text-st-warn" : "text-st-faint",
+            saveNote.kind === "error" ? "text-accent-amber" : "text-slate-600",
           )}
         >
           {saveNote.kind === "saving" && "Saving…"}

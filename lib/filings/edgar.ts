@@ -30,6 +30,8 @@ export type EdgarResult<T> = ({ ok: true } & T) | EdgarUnavailable;
 
 /** The declared identity, or null when the deployment has not configured one. */
 export function secUserAgent(): string | null {
+  // Fixture mode never reaches the SEC, so it has no one to identify itself to.
+  if (process.env.OPS_EDGAR_FIXTURE_DIR?.trim()) return "Open Portfolio Studio test fixtures";
   const contact = process.env.OPS_SEC_CONTACT?.trim();
   if (!contact) return null;
   return `Open Portfolio Studio educational research ${contact}`;
@@ -42,10 +44,46 @@ const noContact: EdgarUnavailable = {
     "This reader fetches documents straight from EDGAR, and the SEC requires a contact address in the request. Set OPS_SEC_CONTACT to enable it.",
 };
 
+/**
+ * The file a URL is served from when `OPS_EDGAR_FIXTURE_DIR` is set.
+ *
+ * Every character that is not a letter, digit, dot, dash or underscore becomes
+ * an underscore, so no name can climb out of the directory it is read from.
+ */
+export function fixtureFileName(url: string): string {
+  return url.replace(/[^A-Za-z0-9._-]/g, "_");
+}
+
+/**
+ * Company reports from files on disk instead of from sec.gov.
+ *
+ * For the end-to-end tests, which must pass whether or not the SEC is reachable,
+ * fast or rate-limiting that afternoon. Set only in `playwright.config.ts`. A
+ * missing fixture is "not found" and never falls through to the network, so a
+ * test run cannot quietly send requests the fixtures were meant to replace.
+ *
+ * The imports are dynamic, and hidden from webpack, so the file system is only
+ * reached for when fixture mode is actually on. The pure helpers in this module
+ * are the kind client code reaches for, and a top-level import of `node:fs`
+ * would turn any such import into a failed browser build.
+ */
+async function readFixture(directory: string, url: string): Promise<EdgarResult<{ body: string }>> {
+  try {
+    const { readFile } = await import(/* webpackIgnore: true */ "node:fs/promises");
+    const { join } = await import(/* webpackIgnore: true */ "node:path");
+    return { ok: true, body: await readFile(join(directory, fixtureFileName(url)), "utf8") };
+  } catch {
+    return { ok: false, reason: "not-found", message: "EDGAR has no document at that address." };
+  }
+}
+
 async function secFetch(
   url: string,
   revalidateSeconds: number,
 ): Promise<EdgarResult<{ body: string }>> {
+  const fixtures = process.env.OPS_EDGAR_FIXTURE_DIR?.trim();
+  if (fixtures) return readFixture(fixtures, url);
+
   const ua = secUserAgent();
   if (!ua) return noContact;
 
@@ -186,6 +224,22 @@ export function companyName(json: unknown): string {
   return typeof name === "string" ? name : "";
 }
 
+/**
+ * The industry the SEC assigns the company, from its own filing index.
+ *
+ * SIC decides which accounting shape a company's statements have, and so which
+ * XBRL concepts mean what for it - a bank's revenue is not a line but a sum.
+ * It is read from the submissions payload rather than guessed from the name.
+ */
+export function companySic(json: unknown): { sic: string; sicDescription: string } {
+  if (!json || typeof json !== "object") return { sic: "", sicDescription: "" };
+  const row = json as { sic?: unknown; sicDescription?: unknown };
+  return {
+    sic: typeof row.sic === "string" || typeof row.sic === "number" ? String(row.sic) : "",
+    sicDescription: typeof row.sicDescription === "string" ? row.sicDescription : "",
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Network calls.
 // ---------------------------------------------------------------------------
@@ -213,10 +267,25 @@ export async function resolveTicker(symbol: string): Promise<EdgarResult<{ compa
   return { ok: true, company };
 }
 
-/** A company's recent readable filings. Cached for an hour. */
+/**
+ * EDGAR's whole ticker file, parsed: every company with a ticker, by SEC number
+ * and name. Cached for a day, like the lookup above. The Competitors tab matches
+ * the companies a report names against it.
+ */
+export async function fetchCompanyTickers(): Promise<EdgarResult<{ json: unknown }>> {
+  const res = await secFetch("https://www.sec.gov/files/company_tickers.json", 86_400);
+  if (!res.ok) return res;
+  try {
+    return { ok: true, json: JSON.parse(res.body) };
+  } catch {
+    return { ok: false, reason: "fetch-failed", message: "EDGAR's ticker file could not be read." };
+  }
+}
+
+/** A company's recent readable filings, and the industry SEC files it under. Cached for an hour. */
 export async function fetchFilings(
   cik: string,
-): Promise<EdgarResult<{ name: string; filings: FilingSummary[] }>> {
+): Promise<EdgarResult<{ name: string; sic: string; sicDescription: string; filings: FilingSummary[] }>> {
   const res = await secFetch(`https://data.sec.gov/submissions/CIK${padCik(cik)}.json`, 3_600);
   if (!res.ok) return res;
 
@@ -227,7 +296,37 @@ export async function fetchFilings(
     return { ok: false, reason: "fetch-failed", message: "That company's filing index could not be read." };
   }
 
-  return { ok: true, name: companyName(parsed), filings: parseSubmissions(parsed) };
+  return { ok: true, name: companyName(parsed), ...companySic(parsed), filings: parseSubmissions(parsed) };
+}
+
+/**
+ * Everything a company has tagged in XBRL, as the SEC assembles it.
+ *
+ * A few megabytes, and it changes only when a filing lands, so it is cached for
+ * six hours. This is what fills Investigate's seven boxes; it deliberately
+ * holds no dimensional detail - revenue by product line lives in the filing's
+ * own data file, not here.
+ */
+export async function fetchCompanyFacts(cik: string): Promise<EdgarResult<{ facts: unknown }>> {
+  const res = await secFetch(`https://data.sec.gov/api/xbrl/companyfacts/CIK${padCik(cik)}.json`, 21_600);
+  if (!res.ok) {
+    // A company with nothing tagged is a real case, and 404 here means exactly
+    // that rather than a bad address the learner could correct.
+    if (res.reason === "not-found") {
+      return {
+        ok: false,
+        reason: "not-found",
+        message: "The SEC holds no tagged financial data for this company, so its figures cannot be filled in automatically.",
+      };
+    }
+    return res;
+  }
+
+  try {
+    return { ok: true, facts: JSON.parse(res.body) };
+  } catch {
+    return { ok: false, reason: "fetch-failed", message: "That company's tagged financial data could not be read." };
+  }
 }
 
 /**
@@ -242,4 +341,55 @@ export async function fetchFilingDocument(
   const res = await secFetch(archivePath(cik, accession, document), 604_800);
   if (!res.ok) return res;
   return { ok: true, html: res.body };
+}
+
+/**
+ * Any file in a filing, by name: its XBRL data file, say, or its label file.
+ * A data file can run to megabytes, so a caller reading one should cache what
+ * it works out from the file rather than count on the file itself being cached.
+ */
+export async function fetchFilingFile(cik: string, accession: string, name: string): Promise<EdgarResult<{ body: string }>> {
+  return secFetch(archivePath(cik, accession, name), 604_800);
+}
+
+export type FilingPart = { document: string; type: string; description: string; size: number };
+
+/**
+ * The documents a filing holds, each with its type ("40-F", "EX-99.1"), from
+ * the filing's index page, which is the only place EDGAR states them. A
+ * Canadian company's annual report on Form 40-F files its annual information
+ * form, its discussion of results and its statements as exhibits beside a
+ * short cover document.
+ */
+export async function fetchFilingParts(cik: string, accession: string): Promise<EdgarResult<{ parts: FilingPart[] }>> {
+  const res = await secFetch(archivePath(cik, accession, `${accession}-index.htm`), 604_800);
+  if (!res.ok) return res;
+  return { ok: true, parts: parseFilingParts(res.body) };
+}
+
+/** The rows of a filing index page's document table: sequence, description, document, type, size. */
+export function parseFilingParts(html: string): FilingPart[] {
+  const cell = (value: string) => value.replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim();
+  const parts: FilingPart[] = [];
+  for (const [, row] of html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(([, value]) => value);
+    if (cells.length < 5) continue;
+    const document = cells[2].match(/href="[^"]*\/([^"/]+\.html?)"/i)?.[1] ?? cell(cells[2]).split(" ")[0];
+    if (!/\.html?$/i.test(document)) continue;
+    parts.push({ document, type: cell(cells[3]), description: cell(cells[1]), size: Number(cell(cells[4]).replace(/\D/g, "")) || 0 });
+  }
+  return parts;
+}
+
+/** The names of the files a filing holds, from its index. */
+export async function fetchFilingFileNames(cik: string, accession: string): Promise<EdgarResult<{ names: string[] }>> {
+  const res = await secFetch(archivePath(cik, accession, "index.json"), 604_800);
+  if (!res.ok) return res;
+  try {
+    const parsed = JSON.parse(res.body) as { directory?: { item?: { name?: unknown }[] } };
+    const names = (parsed.directory?.item ?? []).map((item) => item.name).filter((name): name is string => typeof name === "string");
+    return { ok: true, names };
+  } catch {
+    return { ok: false, reason: "fetch-failed", message: "That filing's list of files could not be read." };
+  }
 }

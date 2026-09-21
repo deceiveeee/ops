@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 
 export const metadata = {
-  title: "Find your starting point — Open Portfolio Studio",
+  title: "Find your starting point — Investing Studio",
 };
 
 export default function StartPage({

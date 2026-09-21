@@ -1,0 +1,404 @@
+{
+  "retrievedAt": "2026-09-14",
+  "method": "Each fund's newest annual shareholder report (Form N-CSR) that covers its share class, read from the facts it tags in inline XBRL. Returns are the series the report prints as net asset value, checked figure by figure against the tagged facts; costs are what the class cost over the report's year. The share class is matched to its ticker only when the SEC's fund ticker list, the filing's header and the report's own ticker tag agree.",
+  "terms": "SEC website dissemination terms, read firsthand on 2026-09-10 (docs/source-audits/studio-online-data-and-tools.md §5.1): information on sec.gov may be copied or further distributed; citation is requested.",
+  "funds": {
+    "vti": {
+      "instrumentId": "vti",
+      "symbol": "VTI",
+      "cik": "0000036405",
+      "registrant": "VANGUARD INDEX FUNDS",
+      "seriesId": "S000002848",
+      "seriesName": "Vanguard Total Stock Market Index Fund",
+      "classId": "C000007808",
+      "classesInSeries": 6,
+      "accession": "0001104659-26-021502",
+      "form": "N-CSR",
+      "filedAt": "2026-02-27",
+      "url": "https://www.sec.gov/Archives/edgar/data/36405/000110465926021502/tm263123d1_ncsr_htm.xml",
+      "instanceBytes": 2207193,
+      "excerpt": "lib/studio-project/data/fund-report-excerpts/vti.xml",
+      "headersRead": 2,
+      "passedOver": [],
+      "problems": [],
+      "extract": {
+        "classId": "C000007808",
+        "documentType": "N-CSR",
+        "periodEnd": "2025-12-31",
+        "tradingSymbols": [
+          "VTI"
+        ],
+        "className": "ETF Shares",
+        "fundName": "Vanguard Total Stock Market Index Fund",
+        "returns": {
+          "found": true,
+          "label": "ETF Shares Net Asset Value",
+          "checkedAgainst": "printed table",
+          "periods": [
+            {
+              "years": 1,
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "value": 0.1714
+            },
+            {
+              "years": 5,
+              "start": "2021-01-01",
+              "end": "2025-12-31",
+              "value": 0.1308
+            },
+            {
+              "years": 10,
+              "start": "2016-01-01",
+              "end": "2025-12-31",
+              "value": 0.1425
+            }
+          ],
+          "others": [
+            {
+              "label": "ETF Shares Market Price",
+              "periods": [
+                {
+                  "years": 1,
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "value": 0.171
+                },
+                {
+                  "years": 5,
+                  "start": "2021-01-01",
+                  "end": "2025-12-31",
+                  "value": 0.1306
+                },
+                {
+                  "years": 10,
+                  "start": "2016-01-01",
+                  "end": "2025-12-31",
+                  "value": 0.1425
+                }
+              ]
+            }
+          ],
+          "labelConflict": null
+        },
+        "costs": {
+          "found": true,
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "paidPer10000Usd": 3,
+          "ratio": 0.0003
+        },
+        "pastPerformance": "Keep in mind that the Fund's past performance does not indicate how the Fund will perform in the future.",
+        "taxes": "The graph and returns shown do not reflect taxes that a shareholder would pay on fund distributions or on the sale of fund shares."
+      }
+    },
+    "voo": {
+      "instrumentId": "voo",
+      "symbol": "VOO",
+      "cik": "0000036405",
+      "registrant": "VANGUARD INDEX FUNDS",
+      "seriesId": "S000002839",
+      "seriesName": "Vanguard 500 Index Fund",
+      "classId": "C000092055",
+      "classesInSeries": 4,
+      "accession": "0001104659-26-021519",
+      "form": "N-CSR",
+      "filedAt": "2026-02-27",
+      "url": "https://www.sec.gov/Archives/edgar/data/36405/000110465926021519/tm263123d8_ncsr_htm.xml",
+      "instanceBytes": 5438674,
+      "excerpt": "lib/studio-project/data/fund-report-excerpts/voo.xml",
+      "headersRead": 1,
+      "passedOver": [],
+      "problems": [],
+      "extract": {
+        "classId": "C000092055",
+        "documentType": "N-CSR",
+        "periodEnd": "2025-12-31",
+        "tradingSymbols": [
+          "VOO"
+        ],
+        "className": "ETF Shares",
+        "fundName": "500 Index Fund",
+        "returns": {
+          "found": true,
+          "label": "ETF Shares Net Asset Value",
+          "checkedAgainst": "printed table",
+          "periods": [
+            {
+              "years": 1,
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "value": 0.1784
+            },
+            {
+              "years": 5,
+              "start": "2021-01-01",
+              "end": "2025-12-31",
+              "value": 0.1438
+            },
+            {
+              "years": 10,
+              "start": "2016-01-01",
+              "end": "2025-12-31",
+              "value": 0.1478
+            }
+          ],
+          "others": [
+            {
+              "label": "ETF Shares Market Price",
+              "periods": [
+                {
+                  "years": 1,
+                  "start": "2025-01-01",
+                  "end": "2025-12-31",
+                  "value": 0.1782
+                },
+                {
+                  "years": 5,
+                  "start": "2021-01-01",
+                  "end": "2025-12-31",
+                  "value": 0.1438
+                },
+                {
+                  "years": 10,
+                  "start": "2016-01-01",
+                  "end": "2025-12-31",
+                  "value": 0.1478
+                }
+              ]
+            }
+          ],
+          "labelConflict": "The data file labels another series \"ETF Shares Net Asset Value\", but its figures are the ones printed as \"ETF Shares Market Price\"."
+        },
+        "costs": {
+          "found": true,
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "paidPer10000Usd": 3,
+          "ratio": 0.0003
+        },
+        "pastPerformance": "Keep in mind that the Fund's past performance does not indicate how the Fund will perform in the future.",
+        "taxes": "The graph and returns shown do not reflect taxes that a shareholder would pay on fund distributions or on the sale of fund shares."
+      }
+    },
+    "vxus": {
+      "instrumentId": "vxus",
+      "symbol": "VXUS",
+      "cik": "0000736054",
+      "registrant": "VANGUARD STAR FUNDS",
+      "seriesId": "S000002932",
+      "seriesName": "Vanguard Total International Stock Index Fund",
+      "classId": "C000094038",
+      "classesInSeries": 6,
+      "accession": "0001104659-25-125068",
+      "form": "N-CSR",
+      "filedAt": "2025-12-30",
+      "url": "https://www.sec.gov/Archives/edgar/data/736054/000110465925125068/tm2530396d3_ncsr_htm.xml",
+      "instanceBytes": 700003,
+      "excerpt": "lib/studio-project/data/fund-report-excerpts/vxus.xml",
+      "headersRead": 1,
+      "passedOver": [],
+      "problems": [],
+      "extract": {
+        "classId": "C000094038",
+        "documentType": "N-CSR",
+        "periodEnd": "2025-10-31",
+        "tradingSymbols": [
+          "VXUS"
+        ],
+        "className": "ETF Shares",
+        "fundName": "Vanguard Total International Stock Index Fund",
+        "returns": {
+          "found": true,
+          "label": "ETF Shares Net Asset Value",
+          "checkedAgainst": "printed table",
+          "periods": [
+            {
+              "years": 1,
+              "start": "2024-11-01",
+              "end": "2025-10-31",
+              "value": 0.2483
+            },
+            {
+              "years": 5,
+              "start": "2020-11-01",
+              "end": "2025-10-31",
+              "value": 0.1127
+            },
+            {
+              "years": 10,
+              "start": "2015-11-01",
+              "end": "2025-10-31",
+              "value": 0.0786
+            }
+          ],
+          "others": [
+            {
+              "label": "ETF Shares Market Price",
+              "periods": [
+                {
+                  "years": 1,
+                  "start": "2024-11-01",
+                  "end": "2025-10-31",
+                  "value": 0.246
+                },
+                {
+                  "years": 5,
+                  "start": "2020-11-01",
+                  "end": "2025-10-31",
+                  "value": 0.1127
+                },
+                {
+                  "years": 10,
+                  "start": "2015-11-01",
+                  "end": "2025-10-31",
+                  "value": 0.0785
+                }
+              ]
+            }
+          ],
+          "labelConflict": null
+        },
+        "costs": {
+          "found": true,
+          "start": "2024-11-01",
+          "end": "2025-10-31",
+          "paidPer10000Usd": 7,
+          "ratio": 0.0006
+        },
+        "pastPerformance": "Keep in mind that the Fund's past performance does not indicate how the Fund will perform in the future.",
+        "taxes": "The graph and returns shown do not reflect taxes that a shareholder would pay on fund distributions or on the sale of fund shares."
+      }
+    },
+    "agg": {
+      "instrumentId": "agg",
+      "symbol": "AGG",
+      "cik": "0001100663",
+      "registrant": "iSHARES TRUST",
+      "seriesId": "S000004362",
+      "seriesName": "iShares Core U.S. Aggregate Bond ETF",
+      "classId": "C000012092",
+      "classesInSeries": 1,
+      "accession": "0001193125-26-205617",
+      "form": "N-CSR",
+      "filedAt": "2026-05-05",
+      "url": "https://www.sec.gov/Archives/edgar/data/1100663/000119312526205617/d147625dncsr_htm.xml",
+      "instanceBytes": 1956992,
+      "excerpt": "lib/studio-project/data/fund-report-excerpts/agg.xml",
+      "headersRead": 7,
+      "passedOver": [],
+      "problems": [],
+      "extract": {
+        "classId": "C000012092",
+        "documentType": "N-CSR",
+        "periodEnd": "2026-02-28",
+        "tradingSymbols": [
+          "AGG"
+        ],
+        "className": "iShares Core U.S. Aggregate Bond ETF",
+        "fundName": "iShares Core U.S. Aggregate Bond ETF",
+        "returns": {
+          "found": true,
+          "label": "Fund NAV",
+          "checkedAgainst": "printed table",
+          "periods": [
+            {
+              "years": 1,
+              "start": "2025-03-01",
+              "end": "2026-02-28",
+              "value": 0.0624
+            },
+            {
+              "years": 5,
+              "start": "2021-03-01",
+              "end": "2026-02-28",
+              "value": 0.0041
+            },
+            {
+              "years": 10,
+              "start": "2016-03-01",
+              "end": "2026-02-28",
+              "value": 0.0194
+            }
+          ],
+          "others": [],
+          "labelConflict": null
+        },
+        "costs": {
+          "found": true,
+          "start": "2025-03-01",
+          "end": "2026-02-28",
+          "paidPer10000Usd": 3,
+          "ratio": 0.0003
+        },
+        "pastPerformance": "Past performance is not an indication of future results.",
+        "taxes": "Performance results do not reflect the deduction of taxes that a shareholder would pay on fund distributions or on the redemption or sale of fund shares."
+      }
+    },
+    "sgov": {
+      "instrumentId": "sgov",
+      "symbol": "SGOV",
+      "cik": "0001100663",
+      "registrant": "iSHARES TRUST",
+      "seriesId": "S000068768",
+      "seriesName": "iShares 0-3 Month Treasury Bond ETF",
+      "classId": "C000219740",
+      "classesInSeries": 1,
+      "accession": "0001100663-26-000031",
+      "form": "N-CSR",
+      "filedAt": "2026-05-05",
+      "url": "https://www.sec.gov/Archives/edgar/data/1100663/000110066326000031/primary-document_htm.xml",
+      "instanceBytes": 9567713,
+      "excerpt": "lib/studio-project/data/fund-report-excerpts/sgov.xml",
+      "headersRead": 8,
+      "passedOver": [],
+      "problems": [],
+      "extract": {
+        "classId": "C000219740",
+        "documentType": "N-CSR",
+        "periodEnd": "2026-02-28",
+        "tradingSymbols": [
+          "SGOV"
+        ],
+        "className": null,
+        "fundName": "iShares 0-3 Month Treasury Bond ETF",
+        "returns": {
+          "found": true,
+          "label": "",
+          "checkedAgainst": "only series tagged",
+          "periods": [
+            {
+              "years": 1,
+              "start": "2025-03-01",
+              "end": "2026-02-28",
+              "value": 0.0411
+            },
+            {
+              "years": 5,
+              "start": "2021-03-01",
+              "end": "2026-02-28",
+              "value": 0.0335
+            },
+            {
+              "years": null,
+              "start": "2020-05-26",
+              "end": "2026-02-28",
+              "value": 0.0291
+            }
+          ],
+          "others": [],
+          "labelConflict": null
+        },
+        "costs": {
+          "found": true,
+          "start": "2025-03-01",
+          "end": "2026-02-28",
+          "paidPer10000Usd": 9,
+          "ratio": 0.0009
+        },
+        "pastPerformance": "Past performance is not an indication of future results.",
+        "taxes": "Performance results do not reflect the deduction of taxes that a shareholder would pay on fund distributions or on the redemption or sale of fund shares."
+      }
+    }
+  }
+}

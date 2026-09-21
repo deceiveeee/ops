@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PortfolioPlan from "@/components/plan/PortfolioPlan";
 
 export const metadata: Metadata = {
-  title: "Your portfolio plan — Open Portfolio Studio",
+  title: "Your portfolio plan — Investing Studio",
   description:
     "Every decision you have recorded across Investment Foundations, gathered into one portfolio plan.",
 };

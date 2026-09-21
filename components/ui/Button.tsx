@@ -39,7 +39,7 @@ type ButtonAsButton = CommonProps & {
 export default function Button(props: ButtonAsLink | ButtonAsButton) {
   const { variant = "primary", size = "md", className, disabled } = props;
   const cls = cn(
-    "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[-0.01em] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-55 disabled:shadow-none disabled:hover:bg-accent-cyan disabled:hover:text-ink-950",
+    "inline-flex items-center justify-center gap-2 rounded-lg font-medium tracking-[-0.01em] transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ops-accent-strong)] disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-55 disabled:shadow-none disabled:hover:bg-accent-cyan disabled:hover:text-ink-950",
     variants[variant],
     sizes[size],
     className,
