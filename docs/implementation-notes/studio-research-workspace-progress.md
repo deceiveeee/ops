@@ -2759,3 +2759,93 @@ selection. Someone who had highlighted a sentence pressed Keep and stored the wh
   One assertion was wrong rather than racing: it compared what was kept against the words on screen,
   and a paragraph too tall for a page is drawn in parts, so the page can hold only its tail. What is
   kept is the paragraph, and it must contain what was being read.
+
+## 2026-09-22: Investigate, measured properly and brought inside its budget
+
+### What the earlier measurement missed
+
+The merge note of 19 September recorded Investigate at **1.49 screens at 1440**, measured with a
+company saved. Measured with a reading actually on screen — seven figures entered and interpreted,
+which is the state the page exists to reach — it is **1.83**, against the project's limit of 1.5 at
+1440 by 900. Filled from the SEC, the path a learner takes every time, it is **1.93**. A page
+measured before its own work appears is not measured.
+
+### Where the height went
+
+The two columns are drawn to the same height, so the page costs whichever is taller — and which one
+that is changes with how the figures arrived:
+
+| at 1440 | figures column | reading column | binds |
+| --- | ---: | ---: | --- |
+| typed in | 618px | 955px | the reading |
+| filled from the SEC | 998px | 587px | the figures |
+
+Anything moved between them therefore helps one path and hurts the other. Four caveats set out as a
+list cost 323px; the block naming the filing cost 279px; below them the entry panel ended a third of
+a screen short of the reading beside it, and the grid drew that emptiness.
+
+Fixed overhead is the other half of the problem: the site header, the project bar, the page padding
+and the site footer come to **385px at 1440** — 43% of one screen before this page draws anything.
+
+### What changed
+
+- **Four caveats behind a disclosure**, under the reading they qualify. Closed it says "What this
+  cannot tell you — 4 things", so that the reading has limits is not hidden, only their wording.
+- **The filing block reduced to one line** — "Filled from Atkore Inc.'s 10-K, the year to 30
+  September 2025" — with the filing date and the link to it behind "More".
+- **The unmatched-industry warning moved to the cost of capital.** It says that number is the whole
+  market's rather than this industry's, so it belongs against that number, not up beside the
+  figures. This is also what took the SEC path under the limit: it moved ~150px out of the column
+  that binds on that path into the one that does not.
+- **The columns are 0.85/1.15 rather than equal.** Seven labelled number boxes need about 340px and
+  no more; sentences at that width ran to six lines each. A sixth more width takes a line off every
+  paragraph.
+- **The breadcrumb is drawn below 1024px only**, where the sections live in a menu. From 1024 the
+  sidebar marks Research as the section in hand, and saying it twice cost 36px.
+- **"A return above it means the business creates value" removed** from the cost-of-capital panel.
+  The reading below says the same thing in the learner's own numbers.
+- **"calculated, not filed"** now sits on the return's own line, where it costs no height, instead
+  of a footnote under the reading.
+
+### Found on the way
+
+**"Peer figures for 10 companies are below" was not true.** This page draws no peer table; the peers
+reach the learner only as a sentence inside the reading. `PeersView` renders on the filing reader,
+not here. It now says what happens — "The reading compares it with 10 companies in this industry".
+
+### Measured after
+
+Both paths, six widths, `1440x900` the limit's own viewport:
+
+| width | typed in | filled from the SEC |
+| ---: | ---: | ---: |
+| 390 | 2.60 (was 2.92) | 2.66 (was 2.90) |
+| 768 | 2.07 (was 2.34) | 2.22 (was 2.25) |
+| 1024 | 1.51 (was 1.94) | 1.58 (was 1.92) |
+| 1280 | 1.58 (was 2.01) | 1.67 (was 1.99) |
+| 1440 | **1.47** (was 1.83) | **1.49** (was 1.93) |
+| 1920 | 1.47 | 1.49 |
+
+Nothing scrolls sideways at any of the six widths.
+
+The SEC figures are Atkore, whose SEC code Studio cannot match to an industry, so they carry the
+warning that case adds. A company whose industry is known is shorter.
+
+### Verified
+
+- `npm run typecheck` clean. `npm test` 1018 passing across 79 files.
+- `npm run test:e2e` 195 passing, 5 skipped. Four failed first, every one of them a spec asserting
+  copy this change rewrote, and each was updated rather than relaxed: the filing block's wording and
+  its link now behind a disclosure the test opens, the warning's new wording, and the peer sentence.
+- Read at 390 and 1440 as images, not inferred from CSS. Nothing scrolls sideways at any width.
+
+### Known limits
+
+- **390 and 768 are still 2.6 and 2.2 screens.** Below 1024 the figures and the reading stack, and
+  the two together are more than a screen and a half whatever the wording. Fitting a phone needs
+  them not stacked — the two as switchable views is the obvious candidate and is a change to how the
+  page works, not to its copy. Not attempted here.
+- **1280 is the worst desktop width** (1.58/1.67): the side panel takes 272px there, leaving each
+  column about 310px, and prose at that width runs long again.
+- The filing link is now one press away rather than on the page. That is the same treatment the cost
+  of capital's provenance already has, but it is a real step further from the source.

@@ -651,7 +651,11 @@ export default function InvestigateView() {
 
   return (
     <div className="space-y-4">
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
+      {/* Below 1024px the sections live in a menu, so this is the only way back
+          to Research on the page. From 1024 the sidebar is drawn with Research
+          marked as the section in hand, and saying it twice costs 36px of a
+          budget this page was over. */}
+      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500 lg:hidden">
         <Link href="/studio/research" className="text-accent-cyan hover:underline">
           Research
         </Link>
@@ -750,7 +754,15 @@ export default function InvestigateView() {
         </ul>
       </nav>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      {/*
+        * The reading gets the wider half.
+        *
+        * Both columns were equal, and they hold different things: seven labelled
+        * number boxes on the left, which need about 340px and no more, and
+        * sentences on the right, which at the same width ran to six lines each.
+        * Widening the prose by a sixth takes a line off every paragraph.
+        */}
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
         {/* ---------------------------------------------------------- entry */}
         <Panel>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -779,13 +791,17 @@ export default function InvestigateView() {
               </select>
             </label>
           </div>
-          {/* Said rather than left to be noticed: an absent comparison would
-              otherwise read as the learner's figures being wrong. */}
-          {/* Said rather than left to be noticed: an absent comparison would
-              otherwise read as the learner’s figures being wrong. */}
+          {/*
+            * Said rather than left to be noticed: an absent comparison would
+            * otherwise read as the learner's figures being wrong.
+            *
+            * It used to say the peer figures were "below", and they are not:
+            * this page has no peer table, only the sentence the reading draws
+            * from them. Naming what actually happens keeps the promise.
+            */}
           <p className="mt-2 text-[12px] leading-5 text-slate-500">
             {researched
-              ? `Peer figures for ${researched.peers.length} companies are below.`
+              ? `The reading compares it with ${researched.peers.length} companies in this industry.`
               : "No peer figures for this industry yet; the return on capital is still worked out in full."}
           </p>
 
@@ -803,13 +819,18 @@ export default function InvestigateView() {
             >
               {lookup.kind === "loading" ? "Reading the filing…" : "Fill these from the SEC"}
             </button>
-            <p className="text-[13px] leading-6 text-slate-400">
-              Or type them from the annual report, which you can open in{" "}
-              <Link href="/studio/filings" className="text-accent-cyan hover:underline">
-                Company reports
-              </Link>
-              .
-            </p>
+            {/* How to fill the boxes by hand, until they are filled. Once a
+                filing has answered, the learner has done it and the two lines
+                are just height beside the figures they came back with. */}
+            {source ? null : (
+              <p className="text-[13px] leading-6 text-slate-400">
+                Or type them from the annual report — open one in{" "}
+                <Link href="/studio/filings" className="text-accent-cyan hover:underline">
+                  Company reports
+                </Link>
+                .
+              </p>
+            )}
           </div>
 
           {/*
@@ -822,56 +843,42 @@ export default function InvestigateView() {
             */}
           {source ? (
             <div className="mt-3 rounded-lg border border-accent-cyan/25 bg-accent-cyan/[0.06] p-3">
-              <p className="text-[13px] leading-6 text-slate-200">
-                <span className="font-semibold text-white">{source.entityName}</span>
-                {source.periodEnd ? ` · the year to ${readableDate(source.periodEnd)}` : null}
-                {source.form && source.filed ? ` · from its ${source.form} filed ${readableDate(source.filed)}` : null}
-                {source.accession && source.cik ? (
-                  <>
-                    {" · "}
-                    <a
-                      href={`https://www.sec.gov/Archives/edgar/data/${source.cik.replace(/^0+/, "")}/${source.accession.replace(/-/g, "")}/${source.accession}-index.htm`}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="text-accent-cyan underline underline-offset-2"
-                    >
-                      open the filing
-                    </a>
-                  </>
-                ) : null}
-              </p>
-              <p className="mt-1 text-[12px] leading-5 text-slate-400">
-                Highlighted boxes are its own figures. Type over any to use yours.
-              </p>
               {/*
-                * Atkore files under SIC 3690, mostly battery and EV-charging
-                * makers, which is not one of the five industries Studio has
-                * researched. Reading its figures against semiconductors without
-                * saying so was the one dead end the friction walk found
-                * (2026-09-10). It shares this block rather than taking one of
-                * its own, which on a phone is 50px of border and padding.
+                * Which filing, on one line; the rest of it a press away.
+                *
+                * Set out in full this block ran to 279px at 1440 -- a fifth of
+                * the page's whole budget, on the path a learner takes every
+                * time. Which filing answered is the part worth that space; when
+                * it was filed and the filing itself are a press behind it.
                 */}
-              {source.sic && !industryForSic(source.sic) ? (
-                <p className="mt-2 border-t border-accent-cyan/20 pt-2 text-[12px] leading-5 text-accent-amber">
-                  The SEC files it under {source.sic}
-                  {source.sicDescription ? `, ${source.sicDescription.toLowerCase()}` : null}, which Studio
-                  cannot match to an industry by itself. The cost of capital below is{" "}
-                  {industry === DEFAULT_INDUSTRY ? "the whole market's" : `${industry}'s`}: choose the industry
-                  that fits the business best.
-                  {/* Any company's annual report has a Competitors tab reading who it names. */}
-                  {source.ticker ? (
+              <details className="group">
+                <summary className="flex cursor-pointer list-none items-baseline gap-2 text-[13px] leading-6 text-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+                  <span>
+                    Filled from <span className="font-semibold text-white">{source.entityName}</span>
+                    {source.form ? `'s ${source.form}` : null}
+                    {source.periodEnd ? `, the year to ${readableDate(source.periodEnd)}` : null}
+                  </span>
+                  <span className="text-[12px] text-slate-400 group-open:hidden">More</span>
+                  <span className="hidden text-[12px] text-slate-400 group-open:inline">Hide</span>
+                </summary>
+                <p className="mt-1 text-[12px] leading-5 text-slate-400">
+                  Highlighted boxes are its own figures. Type over any to use yours.
+                  {source.filed ? ` Filed ${readableDate(source.filed)}.` : null}
+                  {source.accession && source.cik ? (
                     <>
                       {" "}
-                      <Link
-                        href={`/studio/filings?ticker=${encodeURIComponent(source.ticker)}`}
+                      <a
+                        href={`https://www.sec.gov/Archives/edgar/data/${source.cik.replace(/^0+/, "")}/${source.accession.replace(/-/g, "")}/${source.accession}-index.htm`}
+                        target="_blank"
+                        rel="noreferrer noopener"
                         className="text-accent-cyan underline underline-offset-2"
                       >
-                        Find the competitors its own annual report names →
-                      </Link>
+                        Open the filing
+                      </a>
                     </>
                   ) : null}
                 </p>
-              ) : null}
+              </details>
             </div>
           ) : null}
 
@@ -965,8 +972,8 @@ export default function InvestigateView() {
 
           <p className="mt-3 text-[12px] leading-5 text-slate-600">
             {source
-              ? "Every figure is in US dollars, as filed. Keep any you type in the same units."
-              : "Use the same units throughout — all millions, or all billions. Studio only compares them with each other."}
+              ? "In US dollars, as filed. Keep any you type in the same units."
+              : "Keep all seven in the same units — millions, or billions."}
           </p>
 
           {checks.length ? (
@@ -995,28 +1002,66 @@ export default function InvestigateView() {
               <h3 className="text-[15px] font-semibold text-white">What the money costs</h3>
               <span className="text-[20px] font-semibold tabular-nums text-white">{pct(cost.costOfCapital, 2)}</span>
             </div>
+            {/* The second half of this used to say that a return above it
+                creates value and a return below it does not. The reading below
+                says the same thing in the learner's own numbers, so it was
+                being told twice. */}
             <p className="mt-2 text-[13px] leading-6 text-slate-400">
-              No company reports this — it has to be estimated. A return above it means the business
-              creates value; below it, the money would do better elsewhere.
+              No company reports this — it has to be estimated.
             </p>
 
-            <label className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-slate-400">
-              <span>Government borrowing rate</span>
-              <input
-                inputMode="decimal"
-                value={riskFree}
-                onChange={(event) => setRiskFree(event.target.value)}
-                onBlur={() => void flush()}
-                placeholder={TREASURY_RATE.yieldPct.toFixed(2)}
-                className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
-              />
-              <span>%</span>
-            </label>
-            <p className="mt-1 text-[12px] leading-5 text-slate-500">
-              {learnerRate === undefined
-                ? `From the Treasury's 10-year auction on ${longDate(TREASURY_RATE.auctionDate)}.`
-                : "Your own rate. Clear the box to use the Treasury's."}
-            </p>
+            {/* Which rate is in force stays beside the box rather than under
+                it: at 1440 there is room on the same line, and on a phone it
+                wraps to where it was. */}
+            <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <label className="flex flex-wrap items-center gap-2 text-[13px] text-slate-400">
+                <span>Government borrowing rate</span>
+                <input
+                  inputMode="decimal"
+                  value={riskFree}
+                  onChange={(event) => setRiskFree(event.target.value)}
+                  onBlur={() => void flush()}
+                  placeholder={TREASURY_RATE.yieldPct.toFixed(2)}
+                  className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
+                />
+                <span>%</span>
+              </label>
+              <p className="text-[12px] leading-5 text-slate-500">
+                {learnerRate === undefined
+                  ? `Treasury 10-year auction, ${longDate(TREASURY_RATE.auctionDate)}.`
+                  : "Your own rate. Clear the box to use the Treasury's."}
+              </p>
+            </div>
+
+            {/*
+              * When the SEC's code for the company is not one Studio has a cost
+              * of capital for, that is a fault in this number, so it is said
+              * here rather than up beside the figures. Atkore files under SIC
+              * 3690, mostly battery and EV-charging makers: reading it against
+              * semiconductors without saying so was the one dead end the
+              * friction walk found (2026-09-10).
+              */}
+            {source?.sic && !industryForSic(source.sic) ? (
+              <p className="mt-3 border-t border-st-hair pt-2 text-[12px] leading-5 text-accent-amber">
+                The SEC files it under{" "}
+                {source.sicDescription ? `${source.sicDescription.toLowerCase()} (${source.sic})` : source.sic},
+                which Studio cannot match to an industry, so this is{" "}
+                {industry === DEFAULT_INDUSTRY ? "the whole market's cost of capital" : `${industry}'s`}. Pick
+                the industry that fits the business best.
+                {/* Any company's annual report has a Competitors tab reading who it names. */}
+                {source.ticker ? (
+                  <>
+                    {" "}
+                    <Link
+                      href={`/studio/filings?ticker=${encodeURIComponent(source.ticker)}`}
+                      className="text-accent-cyan underline underline-offset-2"
+                    >
+                      Find the competitors its own annual report names →
+                    </Link>
+                  </>
+                ) : null}
+              </p>
+            ) : null}
 
             <StudioAside
               inline={
@@ -1053,13 +1098,20 @@ export default function InvestigateView() {
                   <h3 className="text-[15px] font-semibold text-white">
                     {company.trim() || "This business"} earns
                   </h3>
-                  <span
-                    className={cn(
-                      "text-[24px] font-semibold tabular-nums",
-                      reading.createsValue ? "text-accent-green" : "text-accent-red",
-                    )}
-                  >
-                    {pct(reading.decomposition.roic)}
+                  {/* Three kinds of value are styled apart on this page, and
+                      this is the calculated one. It says so on the number's own
+                      line, which costs no height, rather than in a footnote
+                      under the reading. */}
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-[12px] font-normal text-slate-500">calculated, not filed</span>
+                    <span
+                      className={cn(
+                        "text-[24px] font-semibold tabular-nums",
+                        reading.createsValue ? "text-accent-green" : "text-accent-red",
+                      )}
+                    >
+                      {pct(reading.decomposition.roic)}
+                    </span>
                   </span>
                 </div>
                 <div className="mt-3 space-y-3">
@@ -1069,20 +1121,32 @@ export default function InvestigateView() {
                     </p>
                   ))}
                 </div>
-                <p className="mt-3 text-[12px] leading-5 text-slate-600">
-                  Calculated from the figures above — not a figure any company reports.
-                </p>
-              </Panel>
 
-              <Panel>
-                <h3 className="text-[14px] font-semibold text-white">What this cannot tell you</h3>
-                <ul className="mt-2 space-y-2">
-                  {reading.cannotTell.map((line, index) => (
-                    <li key={index} className="text-[12px] leading-5 text-slate-500">
-                      {line}
-                    </li>
-                  ))}
-                </ul>
+                {/*
+                  * The limits of the reading, under the reading, one press away.
+                  *
+                  * Set out as a list these four cost 323px at 1440 and 335px on
+                  * a phone -- a fifth of the page's budget on text read once.
+                  * Closed, the heading still says the reading has limits and
+                  * how many, which is the part that must not be hidden; open,
+                  * nothing is shortened.
+                  */}
+                <details className="group mt-4 border-t border-st-hair pt-2">
+                  <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 text-[14px] font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+                    What this cannot tell you
+                    <span className="text-[12px] font-normal text-slate-500 group-open:hidden">
+                      {reading.cannotTell.length} things
+                    </span>
+                    <span className="hidden text-[12px] font-normal text-slate-500 group-open:inline">Hide</span>
+                  </summary>
+                  <ul className="mt-1 space-y-2">
+                    {reading.cannotTell.map((line, index) => (
+                      <li key={index} className="text-[12px] leading-5 text-slate-500">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
               </Panel>
             </>
           )}

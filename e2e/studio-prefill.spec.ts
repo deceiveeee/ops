@@ -100,10 +100,14 @@ test.describe("filling the seven from a filing", () => {
     // EDGAR's own name for the company replaces the ticker that was typed.
     await expect(tickerBox(page)).toHaveValue("Atkore Inc.");
 
+    // Which filing answered is on the page; the rest of it — when it was filed,
+    // and the filing itself — is behind the disclosure that keeps this block to
+    // one line. Opened here, because a link nobody can reach is not a source.
     const main = page.getByRole("main");
-    await expect(main).toContainText("the year to 30 September 2025");
-    await expect(main).toContainText("from its 10-K filed 26 November 2025");
-    await expect(main.getByRole("link", { name: "open the filing" })).toHaveAttribute(
+    await expect(main).toContainText("Filled from Atkore Inc.'s 10-K, the year to 30 September 2025");
+    await main.getByRole("group").filter({ hasText: "Filled from Atkore Inc." }).getByText("More").click();
+    await expect(main).toContainText("Filed 26 November 2025");
+    await expect(main.getByRole("link", { name: "Open the filing" })).toHaveAttribute(
       "href",
       "https://www.sec.gov/Archives/edgar/data/1666138/000162828025054049/0001628280-25-054049-index.htm",
     );
@@ -134,7 +138,8 @@ test.describe("filling the seven from a filing", () => {
     // SIC 3690 is mostly battery and EV-charging makers, which Studio cannot
     // match to one of its researched industries. Comparing Atkore with
     // semiconductors without saying so was the dead end this removes.
-    await expect(page.getByRole("main")).toContainText("cannot match to an industry by itself");
+    // Said beside the cost of capital it damages, rather than up beside the figures.
+    await expect(page.getByRole("main")).toContainText("which Studio cannot match to an industry");
     // The cost of capital still works, against whichever industry is chosen; what
     // is missing is the median to place the company against, and it says so.
     await expect(page.getByRole("main")).toContainText("No peer figures for this industry yet");
@@ -158,7 +163,7 @@ test.describe("filling the seven from a filing", () => {
 
     await page.reload();
     await expect(filed(page, "Revenue")).toHaveValue("2850378000");
-    await expect(page.getByRole("main")).toContainText("from its 10-K filed 26 November 2025");
+    await expect(page.getByRole("main")).toContainText("Filled from Atkore Inc.'s 10-K, the year to 30 September 2025");
     await expect(page.getByRole("main")).toContainText("Atkore Inc. earns");
   });
 

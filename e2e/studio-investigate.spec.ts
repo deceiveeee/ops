@@ -287,8 +287,10 @@ test("a company in any industry can be investigated", async ({ page }) => {
   await expect(page.getByText(/%/).first()).toBeVisible();
 
   // And an industry that does have peers says so rather than staying silent.
+  // It says what actually happens with them — they are read into the reading —
+  // rather than promising a table of peer figures this page does not draw.
   await industryPicker(page).selectOption("Semiconductor");
-  await expect(page.getByText(/Peer figures for \d+ companies are below/)).toBeVisible();
+  await expect(page.getByText(/The reading compares it with \d+ companies in this industry/)).toBeVisible();
 });
 
 /**
