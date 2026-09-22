@@ -13,6 +13,7 @@ import {
   type PortfolioAlternative,
   type StudioProject,
 } from "./schema";
+import type { ForceFinding, ForceFindingEdit } from "./five-forces";
 
 /**
  * The operations that change a project.
@@ -122,6 +123,8 @@ export function saveInvestigation(
     // The same goes for inputs and competitors linked in the reader, which rest on those passages.
     ...(existing?.inputs ? { inputs: existing.inputs } : {}),
     ...(existing?.peers ? { peers: existing.peers } : {}),
+    // And for findings about competition, which are written on their own surface.
+    ...(existing?.forces ? { forces: existing.forces } : {}),
   };
   const investigations = existing
     ? project.investigations.map((item) => (item.id === existing.id ? record : item))
@@ -236,6 +239,23 @@ export function removePassage(
               passages: item.passages!.filter((kept) => kept.id !== passageId),
               ...(item.inputs ? { inputs: item.inputs.filter((link) => link.passageId !== passageId) } : {}),
               ...(item.peers ? { peers: item.peers.map((peer) => (peer.passageId === passageId ? { ...peer, passageId: "" } : peer)) } : {}),
+              /*
+               * A finding loses the citation, not the finding. An input link
+               * rests on its passage and goes with it, but a finding about
+               * competition is the learner's own reasoning: dropping the
+               * paragraph they quoted is no reason to delete the thought it
+               * prompted, and a finding with nothing behind it is a state the
+               * surface already knows how to show.
+               */
+              ...(item.forces
+                ? {
+                    forces: item.forces.map((finding) =>
+                      finding.passageIds.includes(passageId)
+                        ? { ...finding, passageIds: finding.passageIds.filter((id) => id !== passageId) }
+                        : finding,
+                    ),
+                  }
+                : {}),
             },
             now,
           )
@@ -677,6 +697,59 @@ export function addInvestigatedCompany(
     updatedAt: now,
   };
   return addPosition(withInstrument, instrument.id, undefined, now);
+}
+
+/**
+ * Record one finding about the competition a company faces.
+ *
+ * Evidence is optional and passages that are not kept against this
+ * investigation are dropped rather than stored, so a finding can never point at
+ * a passage that is not there. Nothing here judges the finding: `whatIsMissing`
+ * in `five-forces.ts` decides whether it is complete, and the surface asks.
+ */
+export function recordForceFinding(
+  project: StudioProject,
+  investigationId: string,
+  edit: ForceFindingEdit,
+  id: string = makeId("frc"),
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target) return project;
+  const kept = new Set((target.passages ?? []).map((passage) => passage.id));
+  const finding: ForceFinding = {
+    ...edit,
+    id,
+    savedAt: now,
+    passageIds: edit.passageIds.filter((passageId) => kept.has(passageId)),
+  };
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, forces: [...(item.forces ?? []), finding] }, now) : item,
+    ),
+  };
+}
+
+/** Take back one finding. The passages it cited stay kept. */
+export function removeForceFinding(
+  project: StudioProject,
+  investigationId: string,
+  findingId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.forces?.some((finding) => finding.id === findingId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId
+        ? touch({ ...item, forces: item.forces!.filter((finding) => finding.id !== findingId) }, now)
+        : item,
+    ),
+  };
 }
 
 /** Candidates the learner looked at and decided against. Kept findable. */

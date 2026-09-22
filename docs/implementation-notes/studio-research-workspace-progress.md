@@ -12,7 +12,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented; saved investigations added to the schema with migration (`85101cd`). Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. The workspace runs on v2 and the wizard is retired (Phase 1, 2026-09-10). Remaining: no screen yet lets a learner reject an investment with a reason or record a decision, though storage holds both and its tests show rejected research survives; and the dependency graph behind `needs review` |
-| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces, value stick and industry map not started |
+| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick and industry map not started |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -2849,3 +2849,112 @@ warning that case adds. A company whose industry is known is shorter.
   column about 310px, and prose at that width runs long again.
 - The filing link is now one press away rather than on the page. That is the same treatment the cost
   of capital's provenance already has, but it is a real step further from the source.
+
+## 2026-09-22: the five forces, from the paper itself
+
+### The source had to be fetched before anything could be built
+
+The five forces is a teaching surface whose every claim maps to *Measuring the Moat*, and this
+container had no copy of it: the earlier session read it from `tmp/pdfs/firm-process/`, which is
+gitignored and was gone. Both ways to it were shut — `www.morganstanley.com` and `data.sec.gov`
+are refused by this environment's egress proxy with a 403 "organization policy", through curl and
+through the fetch tool alike. Work stopped there rather than writing Porter from memory, which is
+what the source gate is for.
+
+The user pushed the PDF to the branch. It is now committed at
+[`docs/source-pdfs/measuring-the-moat-2024-10-15.pdf`](../source-pdfs/measuring-the-moat-2024-10-15.pdf)
+so the next session does not repeat this. Edition confirmed from the cover: **Consilient Observer,
+15 October 2024**, 104 pages, 46,331 words extracted — the same count the M0 record reports, so it
+is the same document that session read. The "© 2025" footer on every page and the November 2025
+creation date in the metadata are neither of them the publication date.
+
+### What the paper actually decides
+
+Exhibit 17 (p. 22) gives the five forces with a risk and a mitigant each, and the checklist
+(pp. 67-68) asks 24 questions across the three competition sections. The design, though, is
+settled by the five cautions on p. 22, and by the last one in particular:
+
+> Much of what is put forth as analysis of industry structure is simply listing pluses and minuses
+> for each of the forces. The objective is to go beyond the superficial to get a complete view of
+> the drivers of profit.
+
+So there is **no high/medium/low picker and no score**. A learner picks one of the paper's own
+questions and answers it: how it works in their own words, which of prices, costs, capital or room
+to invest it moves (p. 22: "assess each force in the context of what it means for prices and
+costs... the income statement and the balance sheet"), whether it is structural or passing (the
+third caution), any passage they kept from the company's own filings, and what would change their
+mind. Short of those it is not a finding, and the surface names the part that is missing.
+
+The worked example is Porter's own reading of airlines, as the paper reports it, labelled as his
+and on a business nobody here holds. Rivalry gets none, because the paper gives none for airlines,
+and the surface says so rather than inventing one.
+
+### Built
+
+- `lib/studio-project/five-forces.ts` — the framework as data, every string from the paper, with
+  the audit at [`studio-five-forces.md`](../source-audits/studio-five-forces.md) giving the page
+  for each. 18 tests.
+- `forces` on `FigureInvestigation`, with operations, migration-free optionality, and validation
+  that checks the force and the question against the framework rather than accepting text: a
+  hand-edited backup naming a sixth force would otherwise put a finding under a heading Studio
+  would have to invent.
+- `components/studio/CompetitionView.tsx` on route `/studio/competition`, inside Research.
+- `e2e/studio-competition.spec.ts`, six tests.
+
+### Found on the way
+
+**`saveInvestigation` would have eaten every finding.** It rebuilds the investigation record from
+its own edit, and Investigate writes on every keystroke. Passages, inputs and peers are each
+carried forward explicitly; a fourth list that was not would have vanished the moment a learner
+typed a figure — silently, and long after they wrote it. There is a test that fails when the
+carry-forward is removed, checked by removing it.
+
+**The validator refused the whole thing at first**, because its key allowlist is exact. That is the
+schema working as intended; the fix was to teach it the field rather than to loosen it.
+
+### Measured
+
+Screen budget at all six widths, both states of the page:
+
+| width | choosing a question | writing the answer |
+| ---: | ---: | ---: |
+| 390 | 2.04 | 2.42 |
+| 768 | 1.59 | 2.03 |
+| 1024 | 1.49 | 1.56 |
+| 1280 | 1.52 | 1.56 |
+| 1440 | **1.49** | **1.48** |
+| 1920 | 1.49 | 1.48 |
+
+Nothing scrolls sideways at any width. The first version was **1.96 at 1440** on the force a
+learner lands on: the threat of new entrants has eleven questions and down one narrow column they
+alone cost 616px. Choosing a question is now a state of its own — the force takes the full width
+and its questions sit in two columns until one is picked, and then the other ten get out of the way
+and the form takes the wider half.
+
+Looked at as images, not inferred: the five force chips were **clipped at 1440**, the fifth one cut
+off the end of a row that scrolls. Their labels are shorter for that reason, and each force's own
+heading carries the full sense with the paper's label printed under it.
+
+### Verified
+
+- `npm run typecheck` clean. `npm test` 1036 passing across 80 files. `npm run test:e2e` 203
+  passing, 5 skipped.
+- Four deliberate breaks, each of which failed a test: dropping the carry-forward in
+  `saveInvestigation`, naming a force the paper does not have, answering a question the force does
+  not ask, and recording a finding with no mechanism or nothing that would change it.
+
+### Known limits
+
+- **390 and 768 are 2.0 and 2.4 screens when writing an answer.** Below 1024 the force and the
+  form stack, and a form with two text boxes, seven chips and an evidence list is most of a screen
+  on its own. Same structural problem as Investigate's, and the same answer would serve both.
+- `e2e/studio-workspace.spec.ts` **fails under two workers and passes alone** — a different test in
+  it each time. Reproduced at the base commit with this work stashed, so it is that file's own
+  parallelism problem and not this change's. Worth fixing on its own; the suite's default worker
+  count hides it most runs.
+- The forces are a learner's reading of their own company. Nothing wires them to the industry
+  surface's entry counts or share instability, which cover five SIC codes; implying that coverage
+  would be a claim Studio cannot keep.
+- Only pp. 22-32 and the checklist's competition sections are read. Barriers in their own right,
+  disruption, the value chain, the value stick, government, firm interaction and brands each need
+  their own pass.

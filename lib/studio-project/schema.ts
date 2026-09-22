@@ -16,6 +16,12 @@
  * live elsewhere so this file stays a description of shape.
  */
 
+// A finding's shape belongs with the framework it comes from, which is a cited
+// paper rather than a decision of this schema's. The dependency runs one way.
+import type { ForceFinding } from "./five-forces";
+
+export type { ForceFinding };
+
 export const STUDIO_PROJECT_SCHEMA_VERSION = 2 as const;
 
 export type StudioMode = "practice" | "personal";
@@ -141,6 +147,15 @@ export interface FigureInvestigation {
    * before 2026-09-14.
    */
   peers?: PeerLink[];
+  /**
+   * What the learner has worked out about the competition this business faces,
+   * one finding at a time. Absent on every record saved before 2026-09-22.
+   *
+   * On the investigation rather than on the industry, because it is a reading of
+   * one company's position and two learners looking at the same industry may
+   * reach different findings from different filings.
+   */
+  forces?: ForceFinding[];
 }
 
 /**
