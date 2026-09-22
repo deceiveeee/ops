@@ -22,6 +22,10 @@ const PAGE_SIZE = 3;
 const LIBRARY_TICKERS: ReadonlySet<string> = new Set(STUDIO_CATALOG.map((item) => item.symbol.toUpperCase()));
 
 export default function ResearchWorkspace({ plan, update, record, investigations = [] }: StageProps) {
+  // What the two reading tools already hold, so their links say so rather than
+  // looking like places nothing has happened.
+  const forceCount = investigations.reduce((total, item) => total + (item.forces?.length ?? 0), 0);
+  const claimCount = investigations.reduce((total, item) => total + (item.valueClaims?.length ?? 0), 0);
   const [filter, setFilter] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [all, setAll] = useState(false);
@@ -87,6 +91,8 @@ export default function ResearchWorkspace({ plan, update, record, investigations
         <nav className={styles.researchRoutes} aria-label="Company research tools">
           <Link href="/studio/industry"><StudioIcon name="overview" /><span><strong>Start with the industry</strong><small>See the competition</small></span><StudioIcon name="arrow" /></Link>
           <Link href="/studio/investigate"><StudioIcon name="company" /><span><strong>Investigate a company you care about</strong><small>{investigations.length ? `${investigations.length} saved investigations` : "Read the business behind the ticker"}</small></span><StudioIcon name="arrow" /></Link>
+          <Link href="/studio/competition"><StudioIcon name="research" /><span><strong>What competition does to it</strong><small>{forceCount ? `${forceCount} ${forceCount === 1 ? "finding" : "findings"} so far` : "The five forces, one question at a time"}</small></span><StudioIcon name="arrow" /></Link>
+          <Link href="/studio/value"><StudioIcon name="portfolio" /><span><strong>Where its value comes from</strong><small>{claimCount ? `${claimCount} ${claimCount === 1 ? "lever" : "levers"} argued` : "The value stick, and the six levers on it"}</small></span><StudioIcon name="arrow" /></Link>
           <Link href="/studio/filings"><StudioIcon name="report" /><span><strong>Find its annual report →</strong><small>Go to the original source</small></span></Link>
         </nav>
         <section className={styles.investmentLibrary} aria-labelledby="investment-library-heading">

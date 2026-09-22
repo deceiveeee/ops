@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import industriesData from "@/lib/studio-project/data/industries.json";
-import { checkEntries, FIGURES, read, type Entries, type FigureKey, type PeerContext } from "@/lib/studio-project/investigate";
+import { checkEntries, FIGURES, read, type Entries, type FigureKey } from "@/lib/studio-project/investigate";
+import { DEFAULT_INDUSTRY, PEERS_BY_INDUSTRY, peerContextFor } from "@/lib/studio-project/investigate-read";
 import {
   TREASURY_RATE,
   estimate,
@@ -59,36 +59,9 @@ type SaveNote =
 
 const pct = (value: number, digits = 1) => `${(value * 100).toFixed(digits)}%`;
 
-/** The industries Studio has already researched, with peers to compare against. */
-const RESEARCHED = industriesData.industries.map((entry) => ({
-  sic: entry.sic,
-  label: entry.label,
-  peers: (entry.roic ?? []).filter((row): row is typeof row & { roic: number; nopatMargin: number; capitalTurnover: number } =>
-    typeof row.roic === "number" && typeof row.nopatMargin === "number" && typeof row.capitalTurnover === "number",
-  ),
-}));
-/**
- * The researched peer sets, found by the industry the learner picked.
- *
- * Two lists of different sizes meet here. Ninety-six industries have a
- * published cost of capital, which is the figure the whole investigation turns
- * on, and five of them have peer figures built from filings. Offering only the
- * five meant a company in any other industry could not be read against its own
- * cost of capital: the scarcer fact was gating the commoner one.
- */
-const PEERS_BY_INDUSTRY = new Map(
-  RESEARCHED.flatMap((entry) => {
-    const name = industryForSic(entry.sic);
-    return name ? ([[name, entry]] as const) : [];
-  }),
-);
-
-/**
- * Where someone starts before they have said what the business does: the whole
- * market, rather than whichever industry sorts first. Financials are left out
- * because their cost of capital is built on a different capital structure.
- */
-const DEFAULT_INDUSTRY = "Total Market (without financials)";
+// The peer map, the default industry and the peer context live in
+// lib/studio-project/investigate-read.ts, because the value stick reads the
+// same figures and two definitions of "peer" would drift apart.
 
 /**
  * The two a company the learner found can be. A bond issue or a fund is
@@ -99,12 +72,6 @@ const ASSET_CLASSES = [
   { value: "us-equity" as const, label: "A US-listed company" },
   { value: "international-equity" as const, label: "Listed outside the US" },
 ];
-
-const median = (values: number[]): number => {
-  const sorted = [...values].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-};
 
 /** How long typing settles before a save. Short enough to survive a stray click. */
 const SAVE_DELAY_MS = 600;
@@ -598,15 +565,7 @@ export default function InvestigateView() {
   const researched = PEERS_BY_INDUSTRY.get(industry);
   const sector = sectorForIndustry(industry);
 
-  const peerContext: PeerContext | undefined = useMemo(() => {
-    if (!researched || researched.peers.length < 5) return undefined;
-    return {
-      industry: researched.label.toLowerCase(),
-      medianMargin: median(researched.peers.map((p) => p.nopatMargin)),
-      medianTurnover: median(researched.peers.map((p) => p.capitalTurnover)),
-      peers: researched.peers as unknown as RoicDecomposition[],
-    };
-  }, [researched]);
+  const peerContext = useMemo(() => peerContextFor(industry), [industry]);
 
   const industryCost = forIndustry(industry) ?? forIndustry(DEFAULT_INDUSTRY)!;
   const typedRate = riskFree.trim() === "" ? undefined : Number(riskFree) / 100;

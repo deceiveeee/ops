@@ -19,8 +19,9 @@
 // A finding's shape belongs with the framework it comes from, which is a cited
 // paper rather than a decision of this schema's. The dependency runs one way.
 import type { ForceFinding } from "./five-forces";
+import type { ValueClaim } from "./value-stick";
 
-export type { ForceFinding };
+export type { ForceFinding, ValueClaim };
 
 export const STUDIO_PROJECT_SCHEMA_VERSION = 2 as const;
 
@@ -156,6 +157,15 @@ export interface FigureInvestigation {
    * reach different findings from different filings.
    */
   forces?: ForceFinding[];
+  /**
+   * Claims that a particular lever on the value stick is at work in this
+   * business. Absent on every record saved before 2026-09-22.
+   *
+   * No numbers: two of the stick's four marks cannot be measured for a real
+   * company, so what is kept is which lever, how it is supposed to work, what
+   * in the filings shows it, and what would say it was not there.
+   */
+  valueClaims?: ValueClaim[];
 }
 
 /**

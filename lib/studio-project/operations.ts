@@ -14,6 +14,7 @@ import {
   type StudioProject,
 } from "./schema";
 import type { ForceFinding, ForceFindingEdit } from "./five-forces";
+import type { ValueClaim, ValueClaimEdit } from "./value-stick";
 
 /**
  * The operations that change a project.
@@ -125,6 +126,7 @@ export function saveInvestigation(
     ...(existing?.peers ? { peers: existing.peers } : {}),
     // And for findings about competition, which are written on their own surface.
     ...(existing?.forces ? { forces: existing.forces } : {}),
+    ...(existing?.valueClaims ? { valueClaims: existing.valueClaims } : {}),
   };
   const investigations = existing
     ? project.investigations.map((item) => (item.id === existing.id ? record : item))
@@ -253,6 +255,15 @@ export function removePassage(
                       finding.passageIds.includes(passageId)
                         ? { ...finding, passageIds: finding.passageIds.filter((id) => id !== passageId) }
                         : finding,
+                    ),
+                  }
+                : {}),
+              ...(item.valueClaims
+                ? {
+                    valueClaims: item.valueClaims.map((claim) =>
+                      claim.passageIds.includes(passageId)
+                        ? { ...claim, passageIds: claim.passageIds.filter((id) => id !== passageId) }
+                        : claim,
                     ),
                   }
                 : {}),
@@ -747,6 +758,52 @@ export function removeForceFinding(
     investigations: project.investigations.map((item) =>
       item.id === investigationId
         ? touch({ ...item, forces: item.forces!.filter((finding) => finding.id !== findingId) }, now)
+        : item,
+    ),
+  };
+}
+
+/** Record one claim that a lever on the value stick is at work here. */
+export function recordValueClaim(
+  project: StudioProject,
+  investigationId: string,
+  edit: ValueClaimEdit,
+  id: string = makeId("val"),
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target) return project;
+  const kept = new Set((target.passages ?? []).map((passage) => passage.id));
+  const claim: ValueClaim = {
+    ...edit,
+    id,
+    savedAt: now,
+    passageIds: edit.passageIds.filter((passageId) => kept.has(passageId)),
+  };
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, valueClaims: [...(item.valueClaims ?? []), claim] }, now) : item,
+    ),
+  };
+}
+
+/** Take back one claim. The passages it cited stay kept. */
+export function removeValueClaim(
+  project: StudioProject,
+  investigationId: string,
+  claimId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.valueClaims?.some((claim) => claim.id === claimId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId
+        ? touch({ ...item, valueClaims: item.valueClaims!.filter((claim) => claim.id !== claimId) }, now)
         : item,
     ),
   };

@@ -1,6 +1,7 @@
 import { validateStudioPlan } from "@/lib/studio";
 import { FIGURES } from "./investigate";
 import { FORCE_BY_KEY, type ForceKey } from "./five-forces";
+import { LEVER_BY_ID } from "./value-stick";
 
 /** The seven figures Studio asks for. Anything else in a stored record is junk. */
 const FIGURE_KEYS = new Set<string>(FIGURES.map((figure) => figure.key));
@@ -98,7 +99,7 @@ export function validateStudioProject(value: unknown): string[] {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
       // `industry` is absent from records saved before it could be chosen, so
       // it is accepted as missing rather than required. See FigureInvestigation.
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct", "source", "passages", "inputs", "peers", "forces"])
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct", "source", "passages", "inputs", "peers", "forces", "valueClaims"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
         || !(investigation.industry === undefined || text(investigation.industry, 200))
@@ -234,6 +235,27 @@ export function validateStudioProject(value: unknown): string[] {
             || !list(finding.passageIds, 1000)
             || !(finding.passageIds as unknown[]).every((passageId) => typeof passageId === "string" && keptIds.has(passageId))) {
             issues.push("A finding about competition contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
+          }
+        }
+      }
+      /*
+       * Claims about the value stick. The lever is checked against Exhibit 29
+       * rather than accepted as text, for the same reason a force is: a
+       * hand-edited backup naming a seventh lever would put a claim on screen
+       * under a heading the paper does not have.
+       */
+      if (investigation.valueClaims !== undefined) {
+        if (!list(investigation.valueClaims, 500)) issues.push("A company investigation can record at most 500 claims about value.");
+        else for (const claim of investigation.valueClaims) {
+          if (!object(claim)
+            || !keys(claim, ["id", "savedAt", "lever", "mechanism", "passageIds", "wouldChangeIt"])
+            || !uniqueId(claim.id) || !timestamp(claim.savedAt)
+            || typeof claim.lever !== "string" || !LEVER_BY_ID.has(claim.lever)
+            || !text(claim.mechanism, 5000) || !String(claim.mechanism).trim()
+            || !text(claim.wouldChangeIt, 5000) || !String(claim.wouldChangeIt).trim()
+            || !list(claim.passageIds, 1000)
+            || !(claim.passageIds as unknown[]).every((passageId) => typeof passageId === "string" && keptIds.has(passageId))) {
+            issues.push("A claim about value contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
           }
         }
       }

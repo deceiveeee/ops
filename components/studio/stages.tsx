@@ -60,8 +60,12 @@ export type StageProps = {
   headingAs?: "h1" | "h2";
   /** Workspace only. Without it, the wizard's single-portfolio downloads are used. */
   actions?: StageActions;
-  /** Workspace only: companies investigated so far, named on the way in to Investigate. */
-  investigations?: { id: string; company: string }[];
+  /**
+   * Workspace only: companies investigated so far, named on the way in to
+   * Investigate. The two reading tools' records are counted for their links, so
+   * they are declared here even though nothing else reads them.
+   */
+  investigations?: { id: string; company: string; forces?: unknown[]; valueClaims?: unknown[] }[];
   /**
    * Workspace only: the research record, which belongs to the project rather
    * than to a portfolio.

@@ -12,7 +12,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented; saved investigations added to the schema with migration (`85101cd`). Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. The workspace runs on v2 and the wizard is retired (Phase 1, 2026-09-10). Remaining: no screen yet lets a learner reject an investment with a reason or record a decision, though storage holds both and its tests show rejected research survives; and the dependency graph behind `needs review` |
-| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick and industry map not started |
+| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick built from the paper: route `/studio/value`, audit [`studio-value-stick.md`](../source-audits/studio-value-stick.md) (`e2e/studio-value-stick.spec.ts`). Industry map not started |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -2958,3 +2958,85 @@ heading carries the full sense with the paper's label printed under it.
 - Only pp. 22-32 and the checklist's competition sections are read. Barriers in their own right,
   disruption, the value chain, the value stick, government, firm interaction and brands each need
   their own pass.
+
+## 2026-09-22: the value stick, and the two marks nobody can measure
+
+### What the paper gives, and what it withholds
+
+*Measuring the Moat* pp. 40-55. Exhibit 27 draws the stick — willingness to pay, price, cost,
+willingness to sell — with the three bands between them: the customer's surplus, the firm's value
+creation, the supplier's surplus. Exhibit 29 names six levers, three that raise what a customer
+will pay and three that lower what a supplier will accept. The audit is at
+[`studio-value-stick.md`](../source-audits/studio-value-stick.md), with the page for every string.
+
+The framework is not the paper's own and the surface says so: the model is Brandenburger and
+Stuart's, the picture the one Oberholzer-Gee popularized, and both reach Studio through this paper.
+Studio has not read *Better, Simpler Strategy*; the citation says that too.
+
+**Two of the four marks cannot be observed.** The paper says so of one — "Willingness to pay can be
+difficult to measure but is determined by economic, emotional, and situational drivers" — and gives
+no method for either. So the page is in two halves that never mix. The worked example carries
+numbers on all four marks and says on its face that Studio invented the bakery they describe. The
+company half carries no numbers at all: it asks which lever, how it works here, what in the filings
+shows it, and what would change the learner's mind. A browser test asserts that no box on the page
+ever asks a willingness for a real company.
+
+### The bridge that was already built
+
+The checklist asks on p. 68: "Does a disaggregated ROIC suggest a cost leadership or
+differentiation advantage?" `readAdvantage` has answered exactly that since the industry work, from
+the same paper. The value surface reads it rather than asking again, and puts it as a question —
+figures above the industry median say which end of the stick to look at, never that a lever is
+there.
+
+Doing that meant one definition of a peer rather than two: the peer map, the default industry and
+the peer context moved out of `InvestigateView` into `lib/studio-project/investigate-read.ts`, and
+Investigate now imports them. Its twenty browser tests pass unchanged.
+
+### The picture is the teaching
+
+Pulling a lever moves what somebody is *willing* to do, and the price and the cost stay where they
+were — which is the framework's point, and the reason the levers are toggles rather than a slider
+on the price. The gain sits with the customer and the supplier until the business decides to take
+some of it, and the page says so once a lever is pulled.
+
+The first drawing put the marks in a column beside the bands, and it was wrong in a way that only
+looking showed: the marks sat at even thirds while the bands were worth 8, 8 and 5, so the label
+for the price pointed at the middle of a band rather than at its edge. It is now laid out as
+Exhibit 27 lays it out — marks as lines, bands as the space between them, each growing in
+proportion to what it is worth.
+
+### Measured
+
+| width | reading it | arguing a lever |
+| ---: | ---: | ---: |
+| 390 | 2.13 | 2.31 |
+| 768 | 1.70 | 1.99 |
+| 1024 | 1.39 | 1.49 |
+| 1280 | 1.45 | 1.51 |
+| 1440 | **1.32** | **1.49** |
+| 1920 | 1.32 | 1.49 |
+
+**A sideways scroll at 390, found by measuring and fixed.** Both panels ran 11px past the viewport:
+the marks column was 9.5rem of fixed width beside a bar with nothing left to give, and the band
+labels had no `min-w-0` to shrink into. Nothing scrolls sideways at any width now.
+
+### Verified
+
+- `npm run typecheck` clean, `npm run lint` clean apart from a pre-existing warning in
+  `lib/onboarding/store.tsx`. `npm test` 1055 passing across 82 files. `npm run test:e2e` 209
+  passing, 5 skipped.
+- Deliberate breaks that each failed a test: a lever the paper does not have, a claim with no
+  mechanism, a claim citing a passage that is not kept, and dropping the carry-forward that keeps
+  claims alive through Investigate's next keystroke.
+
+### Known limits
+
+- 390 and 768 are 2.1 and 2.0 screens, and 2.3 while arguing a lever. The worked example and the
+  company sit side by side from 1024 and stack below it. Third surface with the same shape of
+  problem; it wants solving once, for all of them.
+- The example's lever sizes (what each moves the stick by) are Studio's invention. They are
+  labelled as such, but a learner could still read them as a ranking of which lever is worth most.
+- Nothing yet connects a claim here to the candidate record in Research, so a learner can argue a
+  lever and still have nothing in the reasons they keep for owning the company. That join is the
+  next thing worth doing on either reading surface.
