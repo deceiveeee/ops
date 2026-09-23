@@ -3128,3 +3128,67 @@ Worth fixing on its own, before the next surface is built on top of it.
 - Nothing connects a map entry to the forces or the value stick, though the paper's own text does:
   the five forces section opens by naming suppliers, buyers and substitutes, who are on this map by
   definition. Three surfaces now hold pieces of one investigation with no join between them.
+
+## 2026-09-23: the suite's one failure a run, found and fixed
+
+Recorded yesterday as unsolved: the e2e suite failed exactly one test per full run
+and a different one each time — `studio-workspace`, `studio-reader`, `studio-mode` — each
+passing when its own file ran alone, and reproducing at a base commit with this branch's work
+stashed.
+
+There was no single cause. There were two, and both were in the tests rather than in Studio.
+
+### One: navigating before the browser had written
+
+Eight places across two specs edited something and then called `page.goto`, which starts a fresh
+document. Studio saves as the learner types, through a queue ending in an IndexedDB write; if that
+write had not landed, the reload read a project without the edit and everything after it failed for
+a reason unconnected to what was being tested.
+
+The one that started the hunt: a test added two holdings and reloaded the portfolio. The second
+write lost the race, the portfolio came back holding only the first, and the test sat waiting two
+minutes for a row that was never going to arrive. Alone, the write finishes in a few milliseconds
+and nothing notices. With the whole suite running — two browsers and one server on four cores —
+it does not.
+
+`e2e/project-store.ts` now reads what the browser has actually written, and `saved(page, holds,
+what)` waits for it before each of those navigations, naming what it waited for so a failure there
+says the write never landed. Waiting on the page's own "Saved in this browser" would not do: it is
+already showing from the previous keystroke, so it passes instantly and proves nothing — the same
+trap `studio-investigate.spec.ts` documents.
+
+### Two: counting somebody else's requests as the reader's
+
+The reader test asserts that making a phone's window taller — an address bar sliding away under a
+thumb — does not fetch the page again. It counted every request carrying `_rsc=`. Next sends one of
+those for each link it decides to **prefetch**, as well as for a page it is asked to draw again, and
+a taller window brings more links into view. Five prefetches of other routes arrived inside the
+second the test waits and read as five pagings of the reader. Run alone they landed before the
+count was taken; under load they landed after it.
+
+It now counts only requests for the reader's own path. A second, smaller race in the same test is
+fixed too: settling takes up to two fetches by design, the second issued from an effect after the
+first response lands, so there is a quiet moment in the middle where the network is idle and the
+reader has not finished. The test waits for the paging to stop rather than for the network to fall
+idle.
+
+### Measured
+
+| | before | after |
+| --- | --- | --- |
+| full runs | 4 | 6 |
+| runs with a failure | 4 | 0 |
+| specs implicated | 3, rotating | none |
+
+Six consecutive full runs since the last fix, 214 passing each, nothing flaky. Before the fixes the
+rate was one failure per run without exception.
+
+Nothing was retried, skipped, or given a longer timeout to get there. The one use of `--retries` was
+as an instrument: it turns a rotating red into a "flaky" report with a trace attached, which is how
+the reader's prefetch counting was found.
+
+### What this changes
+
+The suite is a gate again. Until today a real regression would have been one voice among the noise,
+and the honest reading of any red was "probably the flake, run it again" — which is how a genuine
+failure gets waved through.

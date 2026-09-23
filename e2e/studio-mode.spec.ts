@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { saved } from "./project-store";
 
 /**
  * Studio works on one portfolio at a time, and every surface agrees which.
@@ -97,6 +98,7 @@ test("each portfolio is kept separately, and switching loses neither", async ({ 
 
   await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PRACTICE_PURPOSE);
+  await saved(page, (project) => project.goal?.purpose === PRACTICE_PURPOSE, "the practice purpose");
   await page.goto(STUDIO);
   await expect(page.getByText(PRACTICE_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
@@ -107,6 +109,7 @@ test("each portfolio is kept separately, and switching loses neither", async ({ 
 
   await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PERSONAL_PURPOSE);
+  await saved(page, (project) => project.goal?.purpose === PERSONAL_PURPOSE, "the personal purpose");
   await page.goto(STUDIO);
   await expect(page.getByText(PERSONAL_PURPOSE).first()).toBeVisible({ timeout: 15_000 });
 
@@ -137,9 +140,11 @@ test("the investigation view works on the portfolio the workspace is on", async 
    */
   await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PRACTICE_PURPOSE);
+  await saved(page, (project) => project.goal?.purpose === PRACTICE_PURPOSE, "the practice purpose");
   await choose(page, "Your own");
   await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PERSONAL_PURPOSE);
+  await saved(page, (project) => project.goal?.purpose === PERSONAL_PURPOSE, "the personal purpose");
   await choose(page, "Practice");
   await page.goto(STUDIO);
   await expect(page.getByText(PRACTICE_PURPOSE).first()).toBeVisible({ timeout: 15_000 });

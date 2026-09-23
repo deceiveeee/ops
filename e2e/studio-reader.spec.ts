@@ -94,6 +94,27 @@ async function measured(page: Page) {
     .toBe(true);
 }
 
+/**
+ * How many times the reader has fetched a page, once it has stopped fetching.
+ *
+ * The network falling idle is not the same thing: the reader measures again
+ * after a response lands, from an effect, so there is a quiet moment in the
+ * middle of settling. This waits for the count to hold still instead.
+ */
+async function stillPaging(page: Page, count: () => number): Promise<number> {
+  await expect
+    .poll(
+      async () => {
+        const before = count();
+        await page.waitForTimeout(400);
+        return count() === before;
+      },
+      { timeout: 15_000, message: "the reader never stopped paging" },
+    )
+    .toBe(true);
+  return count();
+}
+
 const keepButton = (page: Page) => page.locator("#passage").getByRole("button", { name: /^Keep paragraph [0-9]+, which begins/ });
 
 test.describe("reading a whole report", () => {
@@ -164,9 +185,21 @@ test.describe("reading a whole report", () => {
     // Until the reader has measured its column and the room its frame leaves,
     // a page is sized for 1440, and on a phone runs to well over the budget.
     await page.setViewportSize({ width: 390, height: 844 });
+    /*
+     * Only the reader's own page counts.
+     *
+     * Every `_rsc=` request was counted here, and Next fetches one for each
+     * link it decides to prefetch as well as for a page it is asked to draw
+     * again. Making the window taller brings more links into view, so five
+     * prefetches of other routes arrived during the second below and read as
+     * five pagings of this one. Alone they landed before the count was taken
+     * and nobody noticed; with the whole suite running they landed after it.
+     */
+    const readerPath = new URL(REPORT, "http://localhost").pathname;
     let paged = 0;
     page.on("request", (request) => {
-      if (request.url().includes("_rsc=")) paged += 1;
+      const url = new URL(request.url());
+      if (url.searchParams.has("_rsc") && url.pathname === readerPath) paged += 1;
     });
     await page.goto(`${REPORT}&section=risk-factors&page=3`);
     await expect
@@ -175,9 +208,20 @@ test.describe("reading a whole report", () => {
     await page.waitForLoadState("networkidle");
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(Math.floor(844 * 1.5));
 
-    // A phone's address bar sliding away as the reader scrolls changes the
-    // window's height alone, and the page is not fetched again under them.
-    const settled = paged;
+    /*
+     * Wait for the paging to stop, rather than for the network to fall idle.
+     *
+     * Settling takes up to two fetches by design: paging again can add or
+     * remove the page controls, which moves the frame, so the reader measures
+     * once more after the first response lands. That second fetch is issued
+     * from an effect, so there is a gap after the first one finishes in which
+     * the network is idle and the reader has not finished. Reading the count
+     * there made the next assertion compare against a number that was still
+     * moving, and it failed roughly once in every two hundred tests — only ever
+     * with the whole suite running, because only then is the gap long enough to
+     * land in.
+     */
+    const settled = await stillPaging(page, () => paged);
     await page.setViewportSize({ width: 390, height: 900 });
     await page.waitForTimeout(1_000);
     expect(paged, "paged again for a change of height alone").toBe(settled);

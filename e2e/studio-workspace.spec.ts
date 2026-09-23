@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { heldIn, saved } from "./project-store";
 
 /**
  * The workspace's end-to-end baseline.
@@ -104,6 +105,7 @@ test("work entered across the sections survives a reload", async ({ page }) => {
   await page.getByRole("button", { name: "Add to portfolio" }).click();
   await page.getByRole("button", { name: "Your record", exact: true }).click();
   await page.getByLabel("Why it belongs").fill(AAPL_WHY);
+  await saved(page, (project) => heldIn(project).includes("aapl"), "the holding");
 
   await page.goto(PORTFOLIO);
   await page.getByLabel("AAPL target percentage").fill("100");
@@ -147,6 +149,7 @@ test("the overview names one next thing to do, and it changes as the work lands"
 
   await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PURPOSE);
+  await saved(page, (project) => project.goal?.purpose === PURPOSE, "the goal");
   await page.goto(STUDIO);
   // The practice portfolio starts with a budget, so the next gap is holdings.
   await expect(page.getByRole("heading", { name: "Choose what you might buy" })).toBeVisible({ timeout: 15_000 });
@@ -154,12 +157,14 @@ test("the overview names one next thing to do, and it changes as the work lands"
   await page.goto(RESEARCH);
   await openInvestment(page, "AAPL");
   await page.getByRole("button", { name: "Add to portfolio" }).click();
+  await saved(page, (project) => heldIn(project).includes("aapl"), "the holding");
   await page.goto(STUDIO);
   await expect(page.getByRole("heading", { name: "Decide how much goes where" })).toBeVisible({ timeout: 15_000 });
 
   await page.goto(PORTFOLIO);
   await page.getByLabel("AAPL target percentage").fill("100");
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
+  await saved(page, (project) => project.alternatives?.[0]?.positions?.length === 1, "the weight");
   await page.goto(STUDIO);
   // Weights total 100, so what is left is saying how the plan will be followed.
   await expect(page.getByRole("heading", { name: "Write the rules you will follow" })).toBeVisible({ timeout: 15_000 });
@@ -179,6 +184,15 @@ test("a weight change shows its consequence without leaving the page", async ({ 
   await page.getByRole("button", { name: "← All investments", exact: true }).click();
   await openInvestment(page, "VXUS");
   await page.getByRole("button", { name: "Add to portfolio" }).click();
+  /*
+   * Both holdings, on disk, before the reload below.
+   *
+   * This is the failure that started the hunt: with the whole suite running,
+   * the second write had not landed when the navigation began, the portfolio
+   * came back holding only AAPL, and the test sat waiting two minutes for a
+   * VXUS row that was never going to arrive.
+   */
+  await saved(page, (project) => heldIn(project).length === 2, "both holdings");
 
   await page.goto(PORTFOLIO);
   await page.getByLabel("AAPL target percentage").fill("70");
