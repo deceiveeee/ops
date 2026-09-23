@@ -95,10 +95,15 @@ Two parts of the map are already in the project and are drawn without being aske
   supplier or customer. Inventing an order would be inventing the fact the order is meant to carry.
   The surface says so where the paper's recommendation appears, and the industry surface, which
   does have measured shares, is linked from it.
-- **No profit pool.** It is the next section of the paper (p. 15) and needs economic profit per
-  participant — ROIC, WACC and invested capital for every entity on the map. Studio has that for
-  one company at a time and for five researched industries, not for a supplier a learner has just
-  named. A pool drawn from what is available would cover a fraction of the map without saying so.
+- **No profit pool on the map.** It is the next section of the paper (p. 15). Drawn across a map —
+  Exhibit 10's pool by activity, suppliers and customers beside the industry — it needs ROIC, WACC
+  and invested capital for every kind of participant, and Studio has none of that for a supplier a
+  learner has just named. Drawn within one industry by company, as Exhibit 11 draws the airlines, it
+  needs only the industry's own companies, and Studio has those for its five researched industries:
+  that form is built on its own page, `/studio/pool`, audited in
+  [`studio-profit-pool.md`](studio-profit-pool.md), and linked from this surface's source panel.
+  (This entry said until 2026-09-23 that no pool could be built at all. That was true of Exhibit 10
+  only.)
 - **No suggested entities.** Studio does not know who supplies or buys from an arbitrary company,
   and a list of plausible-looking names would be a guess wearing the clothes of research. What it
   can do — and does — is point at the company's own filings, where the names actually are.

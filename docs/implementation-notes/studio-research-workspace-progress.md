@@ -12,7 +12,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented; saved investigations added to the schema with migration (`85101cd`). Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. The workspace runs on v2 and the wizard is retired (Phase 1, 2026-09-10). Remaining: no screen yet lets a learner reject an investment with a reason or record a decision, though storage holds both and its tests show rejected research survives; and the dependency graph behind `needs review` |
-| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick built from the paper: route `/studio/value`, audit [`studio-value-stick.md`](../source-audits/studio-value-stick.md) (`e2e/studio-value-stick.spec.ts`). Industry map built from the paper: route `/studio/map`, audit [`studio-industry-map.md`](../source-audits/studio-industry-map.md) (`e2e/studio-industry-map.spec.ts`). Profit pool not built: it needs economic profit per participant, which Studio has for one company at a time |
+| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick built from the paper: route `/studio/value`, audit [`studio-value-stick.md`](../source-audits/studio-value-stick.md) (`e2e/studio-value-stick.spec.ts`). Industry map built from the paper: route `/studio/map`, audit [`studio-industry-map.md`](../source-audits/studio-industry-map.md) (`e2e/studio-industry-map.spec.ts`). Profit pool built for the five researched industries, by company as the paper's Exhibit 11 draws it: route `/studio/pool`, audit [`studio-profit-pool.md`](../source-audits/studio-profit-pool.md) (`e2e/studio-profit-pool.spec.ts`). Exhibit 10's pool by activity across a whole map is not built and cannot be from Studio's data |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -3192,3 +3192,186 @@ the reader's prefetch counting was found.
 The suite is a gate again. Until today a real regression would have been one voice among the noise,
 and the honest reading of any red was "probably the flake, run it again" — which is how a genuine
 failure gets waved through.
+
+## 2026-09-23: where the money is made, the profit pool
+
+### Why this was next
+
+After the industry map, *Measuring the Moat* turns straight to the profit pool (p. 15): "Now that we
+have a sense of the relevant companies and entities in an industry, we turn to understanding how the
+economic profit is distributed among the participants." It was also the one M3 item the status row
+still listed as not built.
+
+The map's entry said it could not be built, because a pool "needs economic profit per participant"
+and Studio has that for one company at a time. That is true of **Exhibit 10**, the pool by activity
+across a whole value chain (airlines beside airports beside fuel). It is not true of **Exhibit 11**
+(p. 16), which draws one industry by company. That needs each company's return on capital and invested
+capital plus a cost of capital, and `industries.json` has had the first two for every leading company
+in the five researched industries since 2026-09-06. The cost of capital is Damodaran's by industry,
+already mapped to the five SIC codes. `industry.ts` even had a tested `profitPool` function that
+nothing called. The map audit is corrected.
+
+### What a learner can do now
+
+Open **Research › Start with the industry › Where the money is made**, or the link in the map's source
+panel. Pick one of the five industries and see each leading company as a block. Its height is the
+gap between its return and its industry's cost of capital, in percentage points; its width is its
+share of the capital drawn; its area is its economic profit. Return on capital, the cost of capital
+and economic profit are defined in three sentences before the chart. The page opens on a worked
+example, the widest block that creates value, with its arithmetic in words. For Walmart: "It earned
+16.9% on $133.7B of capital, and capital in this industry costs 8.1%. That is 8.8 points more than it
+costs, and 8.8 points of $133.7B is $11.7B of economic profit a year: the block's area." Choosing another
+block, by mouse or keyboard, works the arithmetic for that one. A company the learner filled from the
+SEC in Investigate is marked on its block, and the page opens on its industry and on it.
+
+Under the chart: the pool's total ("Together these 9 companies made $22.1B of economic profit on
+$203.7B of capital"), how much of the industry's counted revenue it covers, and the paper's warning
+that a large pool draws challengers ("your margin is my opportunity"), linked to the threat of new
+entrants on the competition page. Three closed disclosures hold every figure as a table, every
+company not drawn and why, and what one year cannot show. That last one carries the paper's cautions:
+one year is not a cycle, one picture is not a story, the paper's returns are adjusted for intangibles
+and these are not, and every company is measured against one industry figure.
+
+### How it works
+
+- `lib/studio-project/profit-pool.ts` decides who is in a pool, which is the part that can go wrong
+  quietly. The arithmetic stays in `industry.ts`'s `profitPool`. The cost of capital is
+  `estimate(forSic(sic), TREASURY_RATE.rate, "treasury")`, the same figure Investigate uses by
+  default, and a test pins the two equal for all five industries.
+- `components/studio/ProfitPoolView.tsx` on route `/studio/pool`, inside Research. The chart measures
+  its own width and draws in pixels, so its labels stay legible at 390 rather than shrinking with a
+  viewBox. Each block has a full-height hit area that is a keyboard button with a spoken summary. A
+  name is drawn under a block only if the whole name fits ("Advanced" names nothing); the readout and
+  the table carry every company.
+- Colours are `--st-blue-edge` and `--st-bad-edge`, which pass the dataviz validator on white: CVD ΔE
+  27.6, normal-vision ΔE 33.1, both at 3:1 or better. `--st-blue` was not used because its
+  prefers-contrast value (`#00458f`) falls outside the chart lightness band.
+- `components/studio/company-name.ts` now holds `readableName`, moved out of `IndustryView` so both
+  pages tidy SEC names the same way.
+
+### Found on the way
+
+**Two companies' invested capital is not in dollars.** `metrics.ts`'s `factAt` reads a concept across
+every currency unit a company files it in and does not record which one it used. A return is a ratio,
+so it survives. Invested capital does not, and in a pool it is the width. The check: the revenue
+behind the return (NOPAT ÷ NOPAT margin) against the revenue the SEC's dollar-only frames record for
+the same company. NetEase's run **7.8 times** and JinkoSolar's **5.2 times**, both consistent with
+yuan. Drawn, NetEase would have been a "$113B" block, the third widest in software, measured in the
+wrong currency. Both are left out and named. Every company kept falls between 0.89 and 1.65 times, the spread explained by the two
+figures covering different years. The check cannot see a currency worth about as much as the dollar,
+and the source panel says so.
+
+**Universe Pharmaceuticals is recorded as a $23.0B drug maker.** Its share of its industry's revenue
+went from 0.008% in 2019 to 3.9% in 2024, about 499 times over. The pipeline's own scale check
+compares a company's competing revenue figures, so it could not test a company that files only one.
+The pool holds back any share that rose more than a hundredfold (NVIDIA's rise, the largest of the
+rest, is under sevenfold) and names this one with its numbers. **The industry page still shows it**
+among the ten largest drug makers and counts it in that industry's instability and concentration.
+Fixing that means rebuilding `industries.json`, which needs the SEC, and this container's proxy
+refuses `data.sec.gov` (403, organisation policy), as it did on 2026-09-22.
+
+**The drug makers' pool covers 22% of its industry.** Five of the ten largest (Johnson & Johnson,
+Merck, Pfizer, Bristol-Myers Squibb, Eli Lilly) have no return in the dataset because their filings
+do not carry the operating-profit line the pipeline reads. That pool says so in its own coverage
+sentence, in the warning colour: "most of it is not here".
+
+**The railroads' 99% leaves out BNSF.** The industry figures drop Burlington Northern Santa Fe, about
+as large as Union Pacific, for filing two revenue figures too far apart to choose between. So "99% of
+the revenue counted" would read as nearly the whole industry. Every company the industry data never
+counted is now named first in the pool's list of who is missing.
+
+**The industry page described dollar figures in pounds**: "the profit it keeps on each pound of
+sales". It now says dollars.
+
+**"Burlington Northern Santa FE".** `readableName` keeps two- and three-letter words as initials, so
+it kept "FE". "FE" is added to its list of ordinary words.
+
+### Where it lives, and why not on the industry page
+
+It was planned as a fourth view on `/studio/industry`, next to "How they earn it", because the paper
+puts the pool in the same Lay of the Land section. Measuring that page first ruled it out: its default
+view is 1.43 screens at 1440 and **"How they earn it" is already 1.86**, over budget before this
+change. It stays over; that is recorded here, not fixed. A seventh Research tile was also tried and
+measured. The tiles are a three-column grid that held six exactly, so the seventh cost a whole row
+and took Research from 1.42 to 1.53. So the pool is reached from the industry page's breadcrumb row,
+which has room at every width, and the industry tile's caption now says "Who is in it, and where the
+money is made". The industry page measures exactly as before at every width. Research is 8px taller
+at 1440 and above, where the longer caption wraps: 1.43 screens against 1.42.
+
+### Measured
+
+Page height in screens (height ÷ 900), six widths, nothing scrolling sideways at any of them:
+
+| width | all five industries |
+| ---: | ---: |
+| 390 | 1.85 (railroads 1.87) |
+| 768 | 1.56 |
+| 1024 | 1.46 |
+| 1280 | 1.48 |
+| 1440 | **1.40** |
+| 1920 | 1.40 |
+
+Measured on a production build after the last copy change. The drug makers' pool, whose coverage
+warning is the longest sentence on any of them, was 1.51 at 1280 until that sentence was shortened
+for every industry to "They made 22% of this industry's revenue counted for 2024: most of it is not
+here."
+
+The first version was **2.27 at 1280 and above**. The source panel beside the work ran 1,300px next to
+a main column of 1,165, so the cost-of-capital derivation went behind "How it is built". Getting
+1024 and 1280 under the limit took the rest: a one-clause introduction, the unit moved into the
+definition instead of a second legend line, the "not drawn" list folded into the table's disclosure,
+a 196px chart, and a shorter coverage sentence. On a phone the five industry chips took three rows, so below `sm` they scroll in
+one, as the map's company row does. From `sm` up they wrap, because a chip cut off at the edge of a
+desktop row was treated as a defect on the competition page.
+
+Read as images at 390, 1024, 1280 and 1440, including the Walmart-investigated state.
+
+### Verified
+
+- `npm run typecheck` clean. `npm run lint`: only the two pre-existing warnings, both in onboarding
+  files. `npm test` **1094 passing** (25 new, in `profit-pool.test.ts`).
+- The unit tests' expected figures were worked out separately in Python from the three JSON files,
+  sharing no code with `profit-pool.ts`: each industry's rebuilt cost of capital, every block's
+  spread and economic profit, the totals, and the coverage. Union Pacific is worked by hand in a
+  test's comment.
+- Five deliberate breaks, each failing at least one test: currency check off (5 failed), share-rise
+  check off (4), dropped companies not named (1), published rate instead of the Treasury's (5),
+  zero capital drawn (1).
+- `e2e/studio-profit-pool.spec.ts`, seven tests: the worked example before anything else, keyboard
+  selection with the loss said as a loss, the drug makers' coverage warning and who is missing, the
+  yuan filers named rather than drawn, BNSF named, a Walmart investigation (restored through the
+  app's own backup) marked and opened on, and the route in from Research.
+- Full `npm run test:e2e` on a production build: **221 passed, 5 skipped, 0 failed** (5.5 minutes;
+  214 before, plus these 7). After the last copy change the pool, map, working-pages and workspace
+  specs were run again on a fresh production build: 19 passed.
+
+**Running this suite in this container** needs two things the repo does not supply, and neither is
+committed. The app throws without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`; a
+placeholder pair pointing at a closed local port is enough for every guest Studio page. And the
+installed `@playwright/test` wants a headless-shell build this image does not have, so a throwaway
+config extending `playwright.config.ts` set `launchOptions.executablePath` to
+`/opt/pw-browsers/chromium`.
+
+### Known limits
+
+- **390 and 768 are 1.85 and 1.56 screens.** Better than the other Research pages at those widths,
+  but the same stacking problem they all have. It wants solving once, for all of them.
+- **One cost of capital per industry.** A company's own would differ with its own risk and borrowing
+  and would move its block's height. The page says so twice.
+- **One year, unadjusted.** No pool over time, and returns not adjusted for intangible investment the
+  way the paper's are. Its finding that the adjustment pulls extreme returns toward the middle is
+  quoted, and nothing more is claimed.
+- Narrow blocks carry no name. Costco, the tallest block among the variety stores, is one: its name
+  does not fit a tenth of the width.
+- The currency check is blind to currencies near the dollar, and the share check is aimed at one
+  known failure. Both are stated on the page and in the audit.
+
+### Next concrete action
+
+1. **Rebuild `industries.json` once the SEC is reachable**, recording each fact's currency unit. That
+   drops Universe Pharmaceuticals from the industry page's leaders, instability and concentration,
+   brings NetEase and JinkoSolar into the pool through a dated rate or leaves them out on a recorded
+   unit, and lets this page's two read-time checks become assertions about the data.
+2. The join the 2026-09-22 and 2026-09-23 entries both name: the map, the forces, the value stick and
+   now the pool each hold part of one investigation, and none of it reaches the reasons a learner
+   keeps for owning or rejecting a company.

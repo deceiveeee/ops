@@ -352,6 +352,14 @@ export default function IndustryMapView() {
               </Link>{" "}
               is where the measured shares are.
             </p>
+            <p className="mt-2 text-[13px] leading-5 text-slate-400">
+              The paper&rsquo;s next step is the profit pool: how the economic profit is shared among an
+              industry&rsquo;s companies. Studio draws it for the five industries it has researched, on{" "}
+              <Link href="/studio/pool" className="text-accent-cyan hover:underline">
+                where the money is made
+              </Link>
+              .
+            </p>
           </Panel>
         }
       />

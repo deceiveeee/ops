@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
 import { Panel, Stat, StageHeading, TableScroll } from "./shared";
 import StudioAside from "./workspace/StudioAside";
+import { readableName } from "./company-name";
 
 /**
  * The outside-in view of an industry, before any single company.
@@ -28,34 +29,6 @@ const money = (value: number) =>
     : Math.abs(value) >= 1e9
       ? `$${(value / 1e9).toFixed(1)}B`
       : `$${(value / 1e6).toFixed(0)}M`;
-
-/**
- * SEC registrant names as a person would write them.
- *
- * They arrive shouting and with a state of incorporation stapled on — "APPLIED
- * MATERIALS INC /DE", "PFIZER INC". Names that already carry mixed case are
- * left exactly as filed, since the company chose them.
- */
-function readableName(raw: string): string {
-  const trimmed = raw.replace(/\s*\/[A-Z]{2}[A-Z/]*\s*$/, "").trim();
-  if (trimmed !== trimmed.toUpperCase()) return trimmed;
-
-  // Two- and three-letter capitals are usually initials a company keeps — CSX,
-  // NXP, AMD — so they stay as filed. Four letters and up get title case,
-  // because ordinary words live there: BJ'S Wholesale CLUB and Dollar TREE both
-  // came out shouting when the rule ran to four. The cost is that a genuine
-  // four-letter acronym like FTAI reads as Ftai, which is the cheaper mistake.
-  const ordinary = new Set(["INC", "CO", "LTD", "LLC", "LP", "THE", "AND", "NEW", "OIL", "GAS", "AIR", "OF", "FOR"]);
-
-  return trimmed
-    .split(/(\s+)/)
-    .map((token) => {
-      const letters = token.replace(/[^A-Z]/g, "");
-      if (letters.length >= 2 && letters.length <= 3 && !ordinary.has(letters)) return token;
-      return token.toLowerCase().replace(/(^|[(.,&/-])([a-z])/g, (_, before, letter) => before + letter.toUpperCase());
-    })
-    .join("");
-}
 
 type Earner = {
   name: string;
@@ -203,13 +176,21 @@ export default function IndustryView() {
 
   return (
     <div className="space-y-4">
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
-          Research
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 text-[13px]">
+        <nav aria-label="Breadcrumb" className="text-slate-500">
+          <Link href="/studio/research" className="text-accent-cyan hover:underline">
+            Research
+          </Link>
+          <span aria-hidden="true"> › </span>
+          <span>Industries</span>
+        </nav>
+        {/* The paper's next measure after these, on its own page: a chart and its
+            arithmetic do not fit under this page's figures. On the breadcrumb's
+            row because it has room to spare at every width. */}
+        <Link href="/studio/pool" className="text-accent-cyan hover:underline">
+          Where the money is made →
         </Link>
-        <span aria-hidden="true"> › </span>
-        <span>Industries</span>
-      </nav>
+      </div>
 
       <StageHeading as="h1" title="Who is in this industry, and what has moved">
         Look at the industry before deciding whether any one company is worth your time.
@@ -296,8 +277,8 @@ export default function IndustryView() {
           <>
             <p className="text-[13px] leading-6 text-st-muted">
               Return on the money each company has put into its business, split into the two things
-              that produce it: the profit it keeps on each pound of sales, and how many pounds of
-              sales it gets from each pound of capital. Multiply the two and you have the return.
+              that produce it: the profit it keeps on each dollar of sales, and how many dollars of
+              sales it gets from each dollar of capital. Multiply the two and you have the return.
             </p>
             <AdvantagePlane earners={earners} />
             <TableScroll>

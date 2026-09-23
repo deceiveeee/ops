@@ -90,7 +90,7 @@ export default function ResearchWorkspace({ plan, update, record, investigations
         </article>
       </> : <>
         <nav className={styles.researchRoutes} aria-label="Company research tools">
-          <Link href="/studio/industry"><StudioIcon name="overview" /><span><strong>Start with the industry</strong><small>See the competition</small></span><StudioIcon name="arrow" /></Link>
+          <Link href="/studio/industry"><StudioIcon name="overview" /><span><strong>Start with the industry</strong><small>Who is in it, and where the money is made</small></span><StudioIcon name="arrow" /></Link>
           <Link href="/studio/investigate"><StudioIcon name="company" /><span><strong>Investigate a company you care about</strong><small>{investigations.length ? `${investigations.length} saved investigations` : "Read the business behind the ticker"}</small></span><StudioIcon name="arrow" /></Link>
           <Link href="/studio/map"><StudioIcon name="overview" /><span><strong>The map around it</strong><small>{mapCount ? `${mapCount} on the map` : "Who reaches its profits, and how"}</small></span><StudioIcon name="arrow" /></Link>
           <Link href="/studio/competition"><StudioIcon name="research" /><span><strong>What competition does to it</strong><small>{forceCount ? `${forceCount} ${forceCount === 1 ? "finding" : "findings"} so far` : "The five forces, one question at a time"}</small></span><StudioIcon name="arrow" /></Link>
