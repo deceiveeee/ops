@@ -20,8 +20,9 @@
 // paper rather than a decision of this schema's. The dependency runs one way.
 import type { ForceFinding } from "./five-forces";
 import type { ValueClaim } from "./value-stick";
+import type { MapEntry } from "./industry-map";
 
-export type { ForceFinding, ValueClaim };
+export type { ForceFinding, ValueClaim, MapEntry };
 
 export const STUDIO_PROJECT_SCHEMA_VERSION = 2 as const;
 
@@ -166,6 +167,12 @@ export interface FigureInvestigation {
    * in the filings shows it, and what would say it was not there.
    */
   valueClaims?: ValueClaim[];
+  /**
+   * The industry map the learner has drawn around this business: who supplies
+   * it, who buys from it, who it competes with, and what else reaches its
+   * profits. Absent on every record saved before 2026-09-23.
+   */
+  mapEntries?: MapEntry[];
 }
 
 /**

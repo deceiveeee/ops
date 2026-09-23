@@ -65,7 +65,7 @@ export type StageProps = {
    * Investigate. The two reading tools' records are counted for their links, so
    * they are declared here even though nothing else reads them.
    */
-  investigations?: { id: string; company: string; forces?: unknown[]; valueClaims?: unknown[] }[];
+  investigations?: { id: string; company: string; forces?: unknown[]; valueClaims?: unknown[]; mapEntries?: unknown[] }[];
   /**
    * Workspace only: the research record, which belongs to the project rather
    * than to a portfolio.

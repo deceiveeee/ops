@@ -2,6 +2,7 @@ import { validateStudioPlan } from "@/lib/studio";
 import { FIGURES } from "./investigate";
 import { FORCE_BY_KEY, type ForceKey } from "./five-forces";
 import { LEVER_BY_ID } from "./value-stick";
+import { RELATIONSHIP_BY_KEY, ZONE_BY_KEY } from "./industry-map";
 
 /** The seven figures Studio asks for. Anything else in a stored record is junk. */
 const FIGURE_KEYS = new Set<string>(FIGURES.map((figure) => figure.key));
@@ -99,7 +100,7 @@ export function validateStudioProject(value: unknown): string[] {
       if (!object(investigation)) { issues.push("A company investigation is invalid."); continue; }
       // `industry` is absent from records saved before it could be chosen, so
       // it is accepted as missing rather than required. See FigureInvestigation.
-      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct", "source", "passages", "inputs", "peers", "forces", "valueClaims"])
+      if (!keys(investigation, ["id", "createdAt", "updatedAt", "company", "sic", "industry", "figures", "riskFreePct", "source", "passages", "inputs", "peers", "forces", "valueClaims", "mapEntries"])
         || !uniqueId(investigation.id) || !dated(investigation)
         || !text(investigation.company, 300) || !text(investigation.sic, 20)
         || !(investigation.industry === undefined || text(investigation.industry, 200))
@@ -256,6 +257,29 @@ export function validateStudioProject(value: unknown): string[] {
             || !list(claim.passageIds, 1000)
             || !(claim.passageIds as unknown[]).every((passageId) => typeof passageId === "string" && keptIds.has(passageId))) {
             issues.push("A claim about value contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
+          }
+        }
+      }
+      /*
+       * The industry map. Zone and relationship are checked against the
+       * framework; the name and what it affects are the learner's own words and
+       * are only bounded. A relationship is allowed to be absent, because the
+       * zones with no counterparty -- government, other factors -- are never
+       * asked for one.
+       */
+      if (investigation.mapEntries !== undefined) {
+        if (!list(investigation.mapEntries, 1000)) issues.push("A company investigation can map at most 1,000 entries.");
+        else for (const entry of investigation.mapEntries) {
+          if (!object(entry)
+            || !keys(entry, ["id", "savedAt", "zone", "name", "relationship", "affects", "passageIds"])
+            || !uniqueId(entry.id) || !timestamp(entry.savedAt)
+            || typeof entry.zone !== "string" || !ZONE_BY_KEY.has(entry.zone as never)
+            || !text(entry.name, 300) || !String(entry.name).trim()
+            || !(entry.relationship === undefined || (typeof entry.relationship === "string" && RELATIONSHIP_BY_KEY.has(entry.relationship as never)))
+            || !text(entry.affects, 5000) || !String(entry.affects).trim()
+            || !list(entry.passageIds, 1000)
+            || !(entry.passageIds as unknown[]).every((passageId) => typeof passageId === "string" && keptIds.has(passageId))) {
+            issues.push("An entry on the industry map contains missing, repeated, or invalid fields, or rests on a passage that is not kept.");
           }
         }
       }

@@ -12,7 +12,7 @@ Branch: `feat/studio-workspace`. Started 2026-09-05.
 | M0 inspect and map | **Complete** | [`studio-research-coverage.md`](../source-audits/studio-research-coverage.md); this ledger |
 | M1 data and method feasibility | **In progress** | [`studio-data-coverage.md`](../source-audits/studio-data-coverage.md), [`studio-price-snapshot.md`](../source-audits/studio-price-snapshot.md), [`studio-metric-mapping.md`](../source-audits/studio-metric-mapping.md). D1 and D2 resolved; price ingestion and per-sector metric mapping both built and run. Two build items outstanding |
 | M2 project state and recovery | **In progress** | v2 schema, migration, validation, IndexedDB/session storage, atomic conflicts, backups and recovery implemented; saved investigations added to the schema with migration (`85101cd`). Native-browser verification in `e2e/studio-storage.spec.ts`; integration notes in `studio-project-storage.md`. The workspace runs on v2 and the wizard is retired (Phase 1, 2026-09-10). Remaining: no screen yet lets a learner reject an investment with a reason or record a decision, though storage holds both and its tests show rejected research survives; and the dependency graph behind `needs review` |
-| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick built from the paper: route `/studio/value`, audit [`studio-value-stick.md`](../source-audits/studio-value-stick.md) (`e2e/studio-value-stick.spec.ts`). Industry map not started |
+| M3 complete stock prototype | **In progress** | Industry surface and disaggregated ROIC built and verified: [`studio-industry-view.md`](../source-audits/studio-industry-view.md), route `/studio/industry`. Investigate surface built: route `/studio/investigate`, seven entered figures with checks, peer interpretation and cost of capital, saved per company (`e2e/studio-investigate.spec.ts`). Five forces built from the paper: route `/studio/competition`, audit [`studio-five-forces.md`](../source-audits/studio-five-forces.md), source PDF committed (`e2e/studio-competition.spec.ts`). Value stick built from the paper: route `/studio/value`, audit [`studio-value-stick.md`](../source-audits/studio-value-stick.md) (`e2e/studio-value-stick.spec.ts`). Industry map built from the paper: route `/studio/map`, audit [`studio-industry-map.md`](../source-audits/studio-industry-map.md) (`e2e/studio-industry-map.spec.ts`). Profit pool not built: it needs economic profit per participant, which Studio has for one company at a time |
 | M4 curate and generalize | Not started | |
 | M5 complete basic portfolio loop | Not started | |
 | M6 quantitative comparison | Not started | |
@@ -3040,3 +3040,91 @@ labels had no `min-w-0` to shrink into. Nothing scrolls sideways at any width no
 - Nothing yet connects a claim here to the candidate record in Research, so a learner can argue a
   lever and still have nothing in the reasons they keep for owning the company. That join is the
   next thing worth doing on either reading surface.
+
+## 2026-09-23: the industry map, and what Studio refuses to guess
+
+### What the paper asks for
+
+*Measuring the Moat* pp. 13-14. "Constructing an industry map is a good place to start the analysis
+of an industry... The goal is to include all of the companies or entities that may have an impact on
+the profitability of the firm you are analyzing." Suppliers on the left, customers on the right,
+government across the top, and in Exhibit 9 a box at the bottom for the things that reach everyone:
+economic conditions, geopolitical risk, climate change, a global pandemic. Those five zones are the
+surface's five, and the audit is at
+[`studio-industry-map.md`](../source-audits/studio-industry-map.md).
+
+The paper also asks what kind of economic interaction each connection is, and gives its own list
+with its own examples — non-contractual, contractual, cost-plus, best-efforts, licence, option, or
+some other arrangement. That list is offered where there is a counterparty to have an arrangement
+with, and not in the two zones where there is none: a tariff is not in a contract with anybody, and
+asking would be putting a question the framework does not.
+
+### The refusal that shaped it
+
+Studio does not know who supplies or buys from an arbitrary company, and this surface does not
+guess. A list of plausible-looking names would be a guess wearing the clothes of research, and the
+learner would have no way to tell. What it can do, and does, is say where the names actually are —
+in the company's own filings, which the reader already opens — and draw the two parts of the map
+the learner has already built there: inputs they linked to a price index, and competitors they
+added. Both are drawn dashed and say "from the reader" rather than passing as work done here.
+
+The paper's recommendation to list each side in order of market share is not followed, and the
+source panel says why: Studio has measured shares for five industries and none for an arbitrary
+supplier, so an order would be inventing the fact the order exists to carry. It links to the
+industry surface, where the measured shares are.
+
+**The profit pool (p. 15) is not built.** It needs economic profit — ROIC, WACC and invested
+capital — for every participant on the map. Studio has that for one company at a time and for five
+researched industries, not for a supplier a learner has just named, and a pool drawn from what is
+available would cover a fraction of the map without saying so.
+
+### Measured
+
+| width | the map | adding to it | the paper's own map open |
+| ---: | ---: | ---: | ---: |
+| 390 | 1.88 | 1.79 | 2.68 |
+| 768 | 1.75 | 1.62 | 2.27 |
+| 1024 | 1.37 | 1.34 | 1.76 |
+| 1280 | 1.39 | 1.40 | 1.76 |
+| 1440 | **1.36** | **1.36** | 1.72 |
+| 1920 | 1.36 | 1.36 | 1.72 |
+
+Nothing scrolls sideways at any width. Adding was **1.73 screens at 1440** with the form above the
+whole map; while something is being added only the side it is being added to is drawn now, because
+of the two the map is the part that can wait.
+
+An empty side says what belongs on it rather than that it is empty. That costs a line per side at
+first and goes away as the map fills, and a learner meeting the map for the first time needs the
+definition before the invitation.
+
+### Verified
+
+- `npm run typecheck` clean, lint clean apart from the pre-existing warning in
+  `lib/onboarding/store.tsx`. `npm test` 1069 passing across 83 files. `npm run test:e2e` 213
+  passing, 5 skipped, 1 failing — see below.
+- Deliberate breaks that each failed a test: a zone the paper does not have, an entry with a name
+  and no path to the profits, an entry citing a passage that is not kept, and dropping the
+  carry-forward that keeps the map alive through Investigate's next keystroke.
+
+### The suite's own parallelism problem, now measured
+
+Recorded on 22 September as one flaky spec. It is not one spec. Across four full runs the suite has
+failed **one test per run, a different one each time** — `studio-workspace.spec.ts`,
+`studio-reader.spec.ts`, `studio-mode.spec.ts` — and every one of them passes when its file is run
+alone. It was reproduced at a base commit with this branch's work stashed, so it predates all of
+it.
+
+That makes the suite unreliable as a gate: any real regression is now one voice among the noise.
+Worth fixing on its own, before the next surface is built on top of it.
+
+### Known limits
+
+- **The paper's own map, opened, is 1.72 screens at 1440 and 2.68 on a phone.** It is Exhibit 9 in
+  full, behind a closed disclosure, below the learner's own map — so the work is never behind it —
+  but opened it is over the budget, and shortening the paper's exhibit would be worse than the
+  overage.
+- 390 and 768 are 1.88 and 1.75 at rest. Better than the other two reading surfaces, because the
+  zones are short, but the same stacking problem underneath.
+- Nothing connects a map entry to the forces or the value stick, though the paper's own text does:
+  the five forces section opens by naming suppliers, buyers and substitutes, who are on this map by
+  definition. Three surfaces now hold pieces of one investigation with no join between them.

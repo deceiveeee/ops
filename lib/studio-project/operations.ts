@@ -15,6 +15,7 @@ import {
 } from "./schema";
 import type { ForceFinding, ForceFindingEdit } from "./five-forces";
 import type { ValueClaim, ValueClaimEdit } from "./value-stick";
+import type { MapEntry, MapEntryEdit } from "./industry-map";
 
 /**
  * The operations that change a project.
@@ -127,6 +128,7 @@ export function saveInvestigation(
     // And for findings about competition, which are written on their own surface.
     ...(existing?.forces ? { forces: existing.forces } : {}),
     ...(existing?.valueClaims ? { valueClaims: existing.valueClaims } : {}),
+    ...(existing?.mapEntries ? { mapEntries: existing.mapEntries } : {}),
   };
   const investigations = existing
     ? project.investigations.map((item) => (item.id === existing.id ? record : item))
@@ -264,6 +266,15 @@ export function removePassage(
                       claim.passageIds.includes(passageId)
                         ? { ...claim, passageIds: claim.passageIds.filter((id) => id !== passageId) }
                         : claim,
+                    ),
+                  }
+                : {}),
+              ...(item.mapEntries
+                ? {
+                    mapEntries: item.mapEntries.map((entry) =>
+                      entry.passageIds.includes(passageId)
+                        ? { ...entry, passageIds: entry.passageIds.filter((id) => id !== passageId) }
+                        : entry,
                     ),
                   }
                 : {}),
@@ -804,6 +815,52 @@ export function removeValueClaim(
     investigations: project.investigations.map((item) =>
       item.id === investigationId
         ? touch({ ...item, valueClaims: item.valueClaims!.filter((claim) => claim.id !== claimId) }, now)
+        : item,
+    ),
+  };
+}
+
+/** Put something on the industry map around a company. */
+export function addMapEntry(
+  project: StudioProject,
+  investigationId: string,
+  edit: MapEntryEdit,
+  id: string = makeId("map"),
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target) return project;
+  const kept = new Set((target.passages ?? []).map((passage) => passage.id));
+  const entry: MapEntry = {
+    ...edit,
+    id,
+    savedAt: now,
+    passageIds: edit.passageIds.filter((passageId) => kept.has(passageId)),
+  };
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId ? touch({ ...item, mapEntries: [...(item.mapEntries ?? []), entry] }, now) : item,
+    ),
+  };
+}
+
+/** Take something off the map. The passages it cited stay kept. */
+export function removeMapEntry(
+  project: StudioProject,
+  investigationId: string,
+  entryId: string,
+  now = new Date().toISOString(),
+): StudioProject {
+  const target = project.investigations.find((item) => item.id === investigationId);
+  if (!target?.mapEntries?.some((entry) => entry.id === entryId)) return project;
+  return {
+    ...project,
+    updatedAt: now,
+    investigations: project.investigations.map((item) =>
+      item.id === investigationId
+        ? touch({ ...item, mapEntries: item.mapEntries!.filter((entry) => entry.id !== entryId) }, now)
         : item,
     ),
   };
