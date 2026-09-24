@@ -4,11 +4,19 @@ import data from "@/lib/studio-project/data/fund-total-returns.json";
 import { cumulativeReturn, importMonthlyReturns, validSourceUrl, type MonthlyReturn, type ReturnHistory, type ReturnBasis } from "@/lib/studio-project/total-returns";
 import { useWorkspace } from "./WorkspaceProvider";
 import { downloadFile } from "../shared";
+import ViewTabs from "./ViewTabs";
 import styles from "./quant-workspace.module.css";
+
+type View = "history" | "import" | "growth";
+const VIEWS: { id: View; label: string; className?: string }[] = [
+  { id: "history", label: "Inspect history" },
+  { id: "growth", label: "Growth of 100", className: styles.mobileTab },
+  { id: "import", label: "Import a local history" },
+];
 
 export default function ReturnHistoryWorkspace() {
   const { project, catalog, session, report } = useWorkspace();
-  const [view, setView] = useState<"history" | "import" | "growth">("history");
+  const [view, setView] = useState<View>("history");
   const [importStep, setImportStep] = useState<"source" | "file">("source");
   const [choice, setChoice] = useState("public-vti");
   const [instrumentId, setInstrumentId] = useState("aapl");
@@ -47,21 +55,21 @@ export default function ReturnHistoryWorkspace() {
   };
   return <div className={styles.root}>
     <header className={styles.heading}><h1>Return history</h1><p>Total return includes price changes and reinvested payouts, such as dividends. These histories include those payouts once.</p></header>
-    <div className={styles.tabs} aria-label="Return history views"><button aria-current={view === "history" ? "page" : undefined} onClick={() => setView("history")}>Inspect history</button><button className={styles.mobileTab} aria-current={view === "growth" ? "page" : undefined} onClick={() => setView("growth")}>Growth of 100</button><button aria-current={view === "import" ? "page" : undefined} onClick={() => setView("import")}>Import a local history</button></div>
+    <ViewTabs label="Return history views" idPrefix="returns" className={styles.tabs} tabs={VIEWS} selected={view} onSelect={setView} />
     {view !== "import" ? <>
       {view === "history" && <p className={styles.mobileSummary}>{name} · {compound === null ? "Incomplete history" : `${(compound * 100).toFixed(2)}% total return`} · {rows.length} months</p>}
-      <div className={`${styles.layout} ${view === "growth" ? styles.single : ""}`}>
+      <div className={`${styles.layout} ${view === "growth" ? styles.single : ""}`} role="tabpanel" id="returns-panel" aria-labelledby={`returns-tab-${view}`}>
       {view === "history" && <section className={styles.panel} aria-label="History source and months">
         <label>Return series<select value={choice} onChange={(e) => { setChoice(e.target.value); setMonthIndex(0); }}>{data.histories.map((h) => <option key={h.instrumentId} value={`public-${h.instrumentId}`}>{h.symbol} · public fund total returns</option>)}{project.returnHistories?.map((h) => <option key={h.id} value={h.id}>{catalog.find((c) => c.id === h.instrumentId)?.symbol ?? h.instrumentId} · {h.sourceName} · local import</option>)}</select></label>
-        <p className={styles.note}>{published ? `SEC-reported ETF share class ${published.classId}. Net asset value in USD, including reinvested distributions. These are the fund's returns, rather than its exchange trading price.` : `${imported?.sourceName}. ${imported?.basis === "net-asset-value" ? "Net asset value" : "Market-price basis"} in ${imported?.currency}. Local import; adjustments are stated by your source.`}</p>
+        <p className={styles.note}>{published ? `The fund's own monthly returns, as reported to the SEC for this exact version of the fund (class ${published.classId}). Measured on net asset value: what its holdings are worth per share, after what it owes. In US dollars with distributions reinvested, and not the price it traded at on the exchange.` :`${imported?.sourceName}. ${imported?.basis === "net-asset-value" ? "Net asset value" : "Market-price basis"} in ${imported?.currency}. Local import; adjustments are stated by your source.`}</p>
         {selectedMonth && <><label className={styles.note}>Inspect a month<select value={selectedMonth.month} onChange={(e) => setMonthIndex(rows.findIndex((r) => r.month === e.target.value))}>{rows.map((r) => <option key={r.month}>{r.month}</option>)}</select></label><table className={styles.table}><thead><tr><th>Month</th><th>Total return</th></tr></thead><tbody><tr><td>{selectedMonth.month}</td><td>{(selectedMonth.value * 100).toFixed(4)}%</td></tr></tbody></table></>}
         {selectedSource && <p className={styles.note}><a href={selectedSource.url} target="_blank" rel="noreferrer">Read this month’s SEC source</a><br />Report date {selectedSource.reportDate} · filed {selectedSource.filedAt}</p>}
         {imported && <p className={styles.note}>Imported {imported.importedAt.slice(0, 10)}. {imported.sourceUrl && <a href={imported.sourceUrl} target="_blank" rel="noreferrer">Original source</a>}</p>}
-        <button className={styles.button} style={{ marginTop: 14 }} onClick={() => downloadFile(`${name.replace(/[^a-z0-9-]/gi, "_")}-total-returns.csv`, ["month,total_return_pct", ...rows.map((r) => `${r.month},${r.value * 100}`)].join("\n"), "text/csv")}>Download monthly returns</button>
+        <button className={styles.button} style={{ marginTop: 14 }} onClick={() => downloadFile(`${name.replace(/[^a-z0-9-]/gi, "_")}-total-returns.csv`, ["month,total_return_pct", ...rows.map((r) => `${r.month},${Number((r.value * 100).toPrecision(12))}`)].join("\n"), "text/csv")}>Download monthly returns</button>
         <p className={styles.note}>{rows.length} months · {rows[0]?.month} to {rows.at(-1)?.month}. This is historical evidence, not an expected-return forecast. Short histories do not establish long-term risk.</p>
       </section>}
       <section className={`${styles.graphic} ${view === "history" ? styles.desktopGraphic : ""}`} aria-label="Reinvested return chart"><h2>{name} · distributions reinvested</h2><strong className={styles.value}>{compound === null ? "Incomplete history" : `${(compound * 100).toFixed(2)}%`}</strong><p>{rows[0]?.month} to {rows.at(-1)?.month} · compounded return</p><ReturnChart rows={rows} /><p>{compound === null ? "Missing months are not filled with zero." : `100 becomes ${(100 * (1 + compound)).toFixed(2)} in the history's currency.`}</p><p>Fund reports include their reported expenses. Personal taxes and investor trading costs are not included here.</p></section>
-    </div></> : <section className={styles.panel} style={{ marginTop: 16 }} aria-label="Import a total-return history">
+    </div></> : <section className={styles.panel} style={{ marginTop: 16 }} role="tabpanel" id="returns-panel" aria-label="Import a total-return history">
       {importStep === "source" ? <>
       <h2>1. Identify the source</h2>
       <div className={styles.fields}>

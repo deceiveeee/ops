@@ -39,10 +39,10 @@ test("valuation persists edits, separate scenarios and reasoning without adding 
   await page.getByText("Scenario name and reasoning", { exact: true }).click();
   await expect(page.getByLabel("Why these assumptions?", { exact: true })).toHaveValue("New capital can earn its historical return.");
   await page.getByText("Scenario name and reasoning", { exact: true }).click();
-  await page.getByRole("button", { name: "Compare", exact: true }).click();
+  await page.getByRole("tab", { name: "Compare", exact: true }).click();
   await expect(page.getByRole("row", { name: /Worked example/ })).toContainText("$13.00");
   await expect(page.getByRole("row", { name: /Steady growth/ })).toContainText("$14.50");
-  await page.getByRole("button", { name: "Figures", exact: true }).click();
+  await page.getByRole("tab", { name: "Figures", exact: true }).click();
   await page.getByLabel("Company shares per traded share", { exact: true }).fill("0");
   await expect(valuePanel(page)).toContainText("must be above zero");
   await saved(page);
@@ -53,11 +53,11 @@ test("valuation persists edits, separate scenarios and reasoning without adding 
 test("a sourced company keeps original figures and industry reference after reload", async ({ page }) => {
   await sourceCompany(page);
   await expect(valuePanel(page)).toContainText("Build the case");
-  await page.getByRole("button", { name: "Figures", exact: true }).click();
+  await page.getByRole("tab", { name: "Figures", exact: true }).click();
   await expect(page.getByLabel("Annual operating profit after tax ($m)", { exact: true })).toHaveValue("150");
   await expect(page.getByLabel("Shares (millions)", { exact: true })).toHaveValue("100");
   await page.getByLabel("Company shares per traded share", { exact: true }).fill("1");
-  await page.getByRole("button", { name: "Assumptions", exact: true }).click();
+  await page.getByRole("tab", { name: "Assumptions", exact: true }).click();
   await page.getByLabel("Growth each year (%)", { exact: true }).fill("2");
   await page.getByLabel("Cost of capital (%)", { exact: true }).fill("10");
   await expect(valuePanel(page)).toContainText("$14.50");
@@ -68,7 +68,7 @@ test("a sourced company keeps original figures and industry reference after relo
   await expect(page).toHaveURL(/\/studio\/valuation\?case=/);
   await page.reload();
   await expect(page.getByLabel("Industry cost reference")).toHaveValue("Advertising");
-  await page.getByRole("button", { name: "Sources", exact: true }).click();
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
   await expect(page.getByRole("link", { name: "SEC filing · year to 2025-09-30" })).toHaveAttribute("href", company.filing.url);
   await page.getByLabel("Inspect a source figure").selectOption({ label: "Share count" });
   await expect(page.getByRole("region", { name: "Sources for this valuation" })).toContainText(company.shares.concept);
@@ -82,12 +82,47 @@ test("unsupported company models are explained before a case is saved", async ({
   await expect(page.getByLabel("Saved scenario")).toHaveCount(0);
 });
 
+test("reads a figure as the report prints it, and names one it cannot read", async ({ page }) => {
+  await page.goto("/studio/valuation");
+  await page.getByRole("button", { name: "Try a worked example" }).click();
+  await page.getByRole("tab", { name: "Figures", exact: true }).click();
+  const profit = page.getByLabel("Annual operating profit after tax ($m)", { exact: true });
+  await profit.fill("1,500");
+  await page.getByLabel("Shares (millions)", { exact: true }).fill("1,000");
+  // 1,500 of profit over 1,000 shares is the example's 150 over 100, with net debt ten times smaller per share.
+  await expect(valuePanel(page)).toContainText("$16.30");
+  await page.getByLabel("Borrowings ($m)", { exact: true }).fill("30o");
+  await expect(valuePanel(page)).toContainText("Borrowings ($m) is not a number");
+});
+
+test("the view switches are tabs a keyboard can move between", async ({ page }) => {
+  await page.goto("/studio/valuation");
+  await page.getByRole("button", { name: "Try a worked example" }).click();
+  const views = page.getByRole("tablist", { name: "Valuation views" });
+  await expect(views.getByRole("tab", { selected: true })).toHaveText("Assumptions");
+  await views.getByRole("tab", { name: "Assumptions" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(views.getByRole("tab", { name: "Compare" })).toBeFocused();
+  await expect(views.getByRole("tab", { selected: true })).toHaveText("Compare");
+  await expect(page.getByRole("tabpanel")).toHaveAttribute("aria-labelledby", "valuation-tab-Compare");
+  await page.keyboard.press("End");
+  await expect(views.getByRole("tab", { selected: true })).toHaveText("Sources");
+  await page.keyboard.press("Home");
+  await expect(views.getByRole("tab", { selected: true })).toHaveText("Figures");
+  // Growth of 100 is a phone's view; at this width the arrow skips it.
+  await page.goto("/studio/portfolio/returns");
+  await page.getByRole("tab", { name: "Inspect history" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Import a local history" })).toBeFocused();
+  await expect(page.getByRole("tabpanel")).toHaveAccessibleName("Import a total-return history");
+});
+
 test("public returns include distributions; local adjusted imports require confirmation and survive reload", async ({ page }) => {
   await page.goto("/studio/portfolio/returns");
   await expect(page.getByRole("region", { name: "History source and months" })).toContainText("C000007808");
   await expect(page.getByRole("region", { name: "History source and months" })).toContainText("18 months");
   await expect(page.getByRole("link", { name: "Read this month’s SEC source" })).toHaveAttribute("href", /^https:\/\/www.sec.gov\/Archives\//);
-  await page.getByRole("button", { name: "Import a local history" }).click();
+  await page.getByRole("tab", { name: "Import a local history" }).click();
   await page.getByLabel("Source name", { exact: true }).fill("Verified broker export");
   await page.getByRole("button", { name: "Continue to file" }).click();
   const file = (content: string) => page.getByLabel("Monthly CSV file").setInputFiles({ name: "history.csv", mimeType: "text/csv", buffer: Buffer.from(content) });
@@ -114,9 +149,9 @@ test("new valuation and return surfaces fit six widths with usable controls", as
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await sourceCompany(page);
-  await page.getByRole("button", { name: "Figures", exact: true }).click();
+  await page.getByRole("tab", { name: "Figures", exact: true }).click();
   await page.getByLabel("Company shares per traded share", { exact: true }).fill("1");
-  await page.getByRole("button", { name: "Assumptions", exact: true }).click();
+  await page.getByRole("tab", { name: "Assumptions", exact: true }).click();
   await page.getByLabel("Growth each year (%)", { exact: true }).fill("2");
   await page.getByLabel("Industry cost reference").selectOption({ label: "Advertising" });
   await expect(valuePanel(page)).not.toContainText("Build the case");
@@ -137,22 +172,22 @@ test("new valuation and return surfaces fit six widths with usable controls", as
       await page.getByRole("button", { name: "See calculation" }).click();
       await capture("valuation-calculation");
     }
-    await page.getByRole("button", { name: "Figures", exact: true }).click();
+    await page.getByRole("tab", { name: "Figures", exact: true }).click();
     await capture("valuation-figures");
-    await page.getByRole("button", { name: "Sources", exact: true }).click();
+    await page.getByRole("tab", { name: "Sources", exact: true }).click();
     await capture("valuation-sources");
     await page.getByLabel("Source to inspect").selectOption("method");
     await capture("valuation-method");
-    await page.getByRole("button", { name: "Compare", exact: true }).click();
+    await page.getByRole("tab", { name: "Compare", exact: true }).click();
     await capture("valuation-compare");
     await page.goto("/studio/portfolio/returns");
     await expect(page.getByLabel("Return series")).toBeVisible();
     await capture("total-return-history");
     if (width < 768) {
-      await page.getByRole("button", { name: "Growth of 100" }).click();
+      await page.getByRole("tab", { name: "Growth of 100" }).click();
       await capture("total-return-growth");
     }
-    await page.getByRole("button", { name: "Import a local history" }).click();
+    await page.getByRole("tab", { name: "Import a local history" }).click();
     await capture("total-return-import");
     await page.getByLabel("Source name", { exact: true }).fill("Broker export");
     await page.getByRole("button", { name: "Continue to file" }).click();

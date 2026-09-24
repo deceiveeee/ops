@@ -38,7 +38,7 @@ test("search failure offers retry and a manual company that survives reload", as
   await expect(page.getByRole("status").filter({ hasText: /^Saved in this browser$/ })).toBeVisible();
   await page.reload();
   await expect(page.getByLabel("Annual operating profit after tax ($m)", { exact: true })).toHaveValue("150");
-  await page.getByRole("button", { name: "Sources", exact: true }).click();
+  await page.getByRole("tab", { name: "Sources", exact: true }).click();
   await expect(page.getByRole("region", { name: "Sources for this valuation" })).toContainText("entered by you");
 });
 

@@ -3,6 +3,18 @@ import type { StudioProject } from "./schema";
 
 export const VALUATION_INPUTS = ["nopat", "debt", "cash", "shares", "receipt", "growth", "returnOnCapital", "costOfCapital", "price"] as const;
 export type ValuationInput = typeof VALUATION_INPUTS[number];
+/** Each input's name on screen, shared by its box and any message about it. */
+export const VALUATION_LABELS: Record<ValuationInput, string> = { nopat: "Annual operating profit after tax ($m)", debt: "Borrowings ($m)", cash: "Cash ($m)", shares: "Shares (millions)", receipt: "Company shares per traded share", growth: "Growth each year (%)", returnOnCapital: "Return on new capital (%)", costOfCapital: "Cost of capital (%)", price: "Market price per traded share ($)" };
+/**
+ * A figure as typed. Annual reports print thousands with commas, so "98,657"
+ * copied from one is 98657. Anything else that is not plainly a number --
+ * "1,5", "0x10", "Infinity" -- is NaN rather than whatever Number() makes of it.
+ */
+export function readInput(text: string): number {
+  const trimmed = text.trim();
+  const plain = /^[+-]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(trimmed) ? trimmed.replace(/,/g, "") : trimmed;
+  return /^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(plain) ? Number(plain) : NaN;
+}
 export interface ValuationCase {
   id: string; name: string; company: string; ticker: string; cik: string;
   model: "stable-growth-v1"; createdAt: string; updatedAt: string;
@@ -19,7 +31,10 @@ export function newValuation(example = false, now = new Date().toISOString()): V
   };
 }
 export function valuationResult(record: ValuationCase) {
-  const number = (key: ValuationInput) => record.inputs[key].trim() === "" ? NaN : Number(record.inputs[key]);
+  const number = (key: ValuationInput) => readInput(record.inputs[key]);
+  // Typed but unreadable is said by name: calling it blank sent people looking for an empty box.
+  const unreadable = VALUATION_INPUTS.find((key) => record.inputs[key].trim() !== "" && !Number.isFinite(number(key)));
+  if (unreadable) return { ok: false as const, reason: `${VALUATION_LABELS[unreadable]} is not a number. Use digits, with commas between thousands if you like: 98,657.5.` };
   const required = VALUATION_INPUTS.filter((key) => key !== "price");
   if (required.some((key) => !Number.isFinite(number(key)))) return { ok: false as const, reason: "Complete the financial figures and the three assumptions to calculate a value." };
   if (number("receipt") <= 0) return { ok: false as const, reason: "Company shares per traded share must be above zero. Use 1 for an ordinary share." };
