@@ -5,7 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { storedProjects } from "./project-store";
 
 /**
- * Where the money is made: the profit pool for each researched industry.
+ * See where the money is made: the profit pool for each researched industry.
  *
  * What matters here: the page works the arithmetic for a block before asking
  * anyone to read the picture, every block can be reached without a mouse, and
@@ -27,7 +27,7 @@ async function openDisclosure(page: Page, name: string) {
 
 test("the page opens on a worked example before anything else is asked", async ({ page }) => {
   await page.goto(POOL);
-  await expect(page.getByRole("heading", { level: 1, name: "Where the money is made" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "See where the money is made" })).toBeVisible();
   // The definition comes before the chart that uses it.
   await expect(main(page)).toContainText("is its economic profit");
 
@@ -140,11 +140,11 @@ test("the company a learner investigated is marked on its block", async ({ page 
   await expect(main(page).getByRole("row").filter({ hasText: "Walmart" })).toContainText("yours");
 });
 
-test("it is reached from Research, through the industry page", async ({ page }) => {
+test("it is step 2 of the research path, after the industry", async ({ page }) => {
   await page.goto("/studio/research");
-  await page.getByRole("link", { name: /Start with the industry/ }).click();
+  await page.getByRole("link", { name: /Step 1: See who is in an industry/ }).click();
   await expect(page).toHaveURL(/\/studio\/industry$/);
-  await page.getByRole("main").getByRole("link", { name: /Where the money is made/ }).click();
+  await page.getByRole("navigation", { name: /Research steps/ }).getByRole("link", { name: /Next: See where the money is made/ }).click();
   await expect(page).toHaveURL(/\/studio\/pool$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Where the money is made" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "See where the money is made" })).toBeVisible();
 });

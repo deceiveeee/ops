@@ -892,8 +892,12 @@ export function ReviewStage(props: StageProps) {
 
       <Panel>
         <div className="ops-caption text-[11px] text-slate-500">Take your work with you</div>
+        {/* The end of the plan, said where the last thing to do is. A separate
+            "what next" row under this panel cost 75px of a page already over
+            budget below 1440, and would only have repeated it. */}
         <p className="mt-2 text-[14px] leading-6 text-slate-400">
-          Studio saves in this browser only. Clearing site data erases it, so keep a backup.
+          That is the whole plan. Keep a copy now: Studio saves in this browser only, and clearing site data
+          erases it. Come back on the schedule you set above.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button

@@ -307,15 +307,18 @@ test.describe("keeping a passage", () => {
   });
 });
 
-test.describe("kept passages in Investigate", () => {
+test.describe("kept passages, judged at the decision", () => {
   test("survive Investigate saving the figures as they are typed", async ({ page }) => {
     await openBusinessHit(page);
     await keepButton(page).click();
-    await main(page).getByRole("link", { name: "Open it", exact: true }).click();
+    await expect.poll(async () => (await stored(page))[0]?.passages.length).toBe(1);
+    const [kept] = await stored(page);
 
-    await expect(main(page).getByRole("heading", { name: /From its own filings \(1\)/ })).toBeVisible();
     // Investigate rebuilds its record from what is on its page on every save,
     // and its page has never heard of passages.
+    await page.goto(`/studio/investigate?company=${encodeURIComponent(kept.id)}`);
+    // Opened from the address, so wait for the company to be the one on screen.
+    await expect(page.getByPlaceholder("Its ticker symbol")).toHaveValue(kept.company);
     await page.getByLabel("Cash", { exact: true }).fill("506699000");
     await expect.poll(async () => (await stored(page))[0]?.figures.cash).toBe(506_699_000);
     expect((await stored(page))[0].passages).toHaveLength(1);
@@ -324,7 +327,10 @@ test.describe("kept passages in Investigate", () => {
   test("record which way a passage argues, in the learner's words", async ({ page }) => {
     await openBusinessHit(page);
     await keepButton(page).click();
+    // "Open it" goes to the decision, where what the research found is judged.
     await main(page).getByRole("link", { name: "Open it", exact: true }).click();
+    await expect(page).toHaveURL(/\/studio\/decide\?company=/);
+    await expect(main(page).getByRole("heading", { name: /From its own filings \(1\)/ })).toBeVisible();
 
     await page.getByText("Against it", { exact: true }).click();
     await page.getByLabel("What it shows").fill("Three suppliers set the price of my biggest input");
@@ -394,7 +400,7 @@ test("a passage kept against the live filing is found again after the text shift
   await page.setInputFiles('input[type="file"]', file);
   await expect.poll(async () => (await stored(page)).find((item) => item.id === "inv-live")?.passages.length).toBe(2);
 
-  await page.goto("/studio/investigate?company=inv-live");
+  await page.goto("/studio/decide?company=inv-live");
   const opens = main(page).getByRole("button", { name: "Open it in the report" });
 
   // The live filing put this sentence at a different offset. It must be found
@@ -404,7 +410,7 @@ test("a passage kept against the live filing is found again after the text shift
   await expect(main(page).getByRole("status").filter({ hasText: "has moved since you kept it" })).toBeVisible();
 
   // Words that are not in the report are said to be missing, with a way to look.
-  await page.goto("/studio/investigate?company=inv-live");
+  await page.goto("/studio/decide?company=inv-live");
   await opens.nth(1).click();
   await expect(main(page).getByRole("alert").filter({ hasText: "no longer in that section" })).toBeVisible();
   await expect(main(page).getByRole("link", { name: "Search the report for it" })).toBeVisible();

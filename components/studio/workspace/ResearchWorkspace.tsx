@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRef, useState } from "react";
 import { CATALOG_GAPS, STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { addStudioHolding, removeStudioHolding } from "@/lib/studio";
@@ -9,6 +8,7 @@ import ResearchRecord from "../ResearchRecord";
 import CompanySearch, { companiesFound, useCompanySearch } from "./CompanySearch";
 import ResearchFacts from "./ResearchFacts";
 import StudioIcon from "./StudioIcon";
+import ResearchPath from "./ResearchPath";
 import WorkspaceNotes from "./WorkspaceNotes";
 import styles from "./working-pages.module.css";
 
@@ -17,16 +17,16 @@ const FILTERS = [
   { id: "stock", label: "Stocks" }, { id: "bond", label: "Bonds" },
 ] as const;
 const kindName = { fund: "Fund", stock: "Stock", bond: "Bond" };
-const PAGE_SIZE = 3;
+/**
+ * How many of the eight show before "Show all". Two, since the company path
+ * above took the space the old tiles had: at three the page ran to 1.58
+ * screens at 1024 against a limit of 1.5.
+ */
+const PAGE_SIZE = 2;
 /** The library's own tickers, so a company already in it is not offered twice. */
 const LIBRARY_TICKERS: ReadonlySet<string> = new Set(STUDIO_CATALOG.map((item) => item.symbol.toUpperCase()));
 
-export default function ResearchWorkspace({ plan, update, record, investigations = [] }: StageProps) {
-  // What the two reading tools already hold, so their links say so rather than
-  // looking like places nothing has happened.
-  const forceCount = investigations.reduce((total, item) => total + (item.forces?.length ?? 0), 0);
-  const claimCount = investigations.reduce((total, item) => total + (item.valueClaims?.length ?? 0), 0);
-  const mapCount = investigations.reduce((total, item) => total + (item.mapEntries?.length ?? 0), 0);
+export default function ResearchWorkspace({ plan, update, record }: StageProps) {
   const [filter, setFilter] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [all, setAll] = useState(false);
@@ -61,7 +61,7 @@ export default function ResearchWorkspace({ plan, update, record, investigations
       <header className={styles.pageHeading}>
         <p className={styles.eyebrow}>Research</p>
         <h1 ref={headingRef} tabIndex={-1}>{current ? <>Your <em>research.</em></> : <>Research what you might <em>buy.</em></>}</h1>
-        {!current && <p>Read the facts behind an investment. Keep a dated source, your reason to own it and what would make you reconsider.</p>}
+        {!current && <p>Two ways in: research one company step by step, or choose from eight Studio has already researched.</p>}
       </header>
       {current ? <>
         <div className={styles.readerToolbar}>
@@ -89,16 +89,9 @@ export default function ResearchWorkspace({ plan, update, record, investigations
           }} /> : null}
         </article>
       </> : <>
-        <nav className={styles.researchRoutes} aria-label="Company research tools">
-          <Link href="/studio/industry"><StudioIcon name="overview" /><span><strong>Start with the industry</strong><small>Who is in it, and where the money is made</small></span><StudioIcon name="arrow" /></Link>
-          <Link href="/studio/investigate"><StudioIcon name="company" /><span><strong>Investigate a company you care about</strong><small>{investigations.length ? `${investigations.length} saved investigations` : "Read the business behind the ticker"}</small></span><StudioIcon name="arrow" /></Link>
-          <Link href="/studio/map"><StudioIcon name="overview" /><span><strong>The map around it</strong><small>{mapCount ? `${mapCount} on the map` : "Who reaches its profits, and how"}</small></span><StudioIcon name="arrow" /></Link>
-          <Link href="/studio/competition"><StudioIcon name="research" /><span><strong>What competition does to it</strong><small>{forceCount ? `${forceCount} ${forceCount === 1 ? "finding" : "findings"} so far` : "The five forces, one question at a time"}</small></span><StudioIcon name="arrow" /></Link>
-          <Link href="/studio/value"><StudioIcon name="portfolio" /><span><strong>Where its value comes from</strong><small>{claimCount ? `${claimCount} ${claimCount === 1 ? "lever" : "levers"} argued` : "The value stick, and the six levers on it"}</small></span><StudioIcon name="arrow" /></Link>
-          <Link href="/studio/filings"><StudioIcon name="report" /><span><strong>Find its annual report →</strong><small>Go to the original source</small></span></Link>
-        </nav>
+        <ResearchPath />
         <section className={styles.investmentLibrary} aria-labelledby="investment-library-heading">
-          <div className={styles.libraryHeading}><div><h2 id="investment-library-heading">Find your next question.</h2><p>Choose an investment to read its facts and keep your reasoning, or search for any company.</p></div>
+          <div className={styles.libraryHeading}><div><h2 id="investment-library-heading">Or choose from eight investments Studio has researched</h2><p>Funds, shares and bonds with their facts and sources ready. Open one to read it and keep your reasons, or add it straight to your portfolio.</p></div>
             <label className={styles.search}><StudioIcon name="research" /><span className="sr-only">Find an investment or a company</span><input ref={searchRef} type="search" value={query} onChange={event => { setQuery(event.target.value); setAll(false); setCompaniesOpen(false); }} placeholder="Name or ticker" /></label>
           </div>
           <div className={styles.libraryFilters}><div role="group" aria-label="Investment type">{FILTERS.map(item => <button key={item.id} type="button" aria-pressed={filter === item.id} onClick={() => { setFilter(item.id); setAll(false); }}>{item.label}</button>)}</div><span role="status">{matches.length} {matches.length === 1 ? "investment" : "investments"}</span></div>

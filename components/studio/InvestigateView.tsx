@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { checkEntries, FIGURES, read, type Entries, type FigureKey } from "@/lib/studio-project/investigate";
@@ -17,23 +16,11 @@ import {
   sectorForIndustry,
 } from "@/lib/studio-project/cost-of-capital";
 import type { RoicDecomposition } from "@/lib/studio-project/roic";
-import {
-  addInvestigatedCompany,
-  addPosition,
-  newInvestigationId,
-  removeInvestigation,
-  removePassage,
-  removePosition,
-  saveInvestigation,
-  setCandidateStatus,
-  startCandidate,
-  updateCandidate,
-  updatePassage,
-} from "@/lib/studio-project/operations";
-import { isHeld, latestInvestigation, type CandidateInvestigation, type EvidenceRole, type FigureSource, type KeptPassage, type LearnerInstrument } from "@/lib/studio-project/schema";
+import { newInvestigationId, removeInvestigation, saveInvestigation } from "@/lib/studio-project/operations";
+import { latestInvestigation, type FigureSource } from "@/lib/studio-project/schema";
 import type { MissingFigure, SuppliedFigure } from "@/lib/studio-project/prefill";
-import { sectionLabel as labelForSection } from "@/lib/filings/sections";
-import { Field, Panel, StageHeading } from "./shared";
+import { Panel } from "./shared";
+import { StepHeading } from "./workspace/ResearchSteps";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
 
@@ -63,16 +50,6 @@ const pct = (value: number, digits = 1) => `${(value * 100).toFixed(digits)}%`;
 // lib/studio-project/investigate-read.ts, because the value stick reads the
 // same figures and two definitions of "peer" would drift apart.
 
-/**
- * The two a company the learner found can be. A bond issue or a fund is
- * something Studio researches and carries, not something someone types seven
- * figures into an annual report for.
- */
-const ASSET_CLASSES = [
-  { value: "us-equity" as const, label: "A US-listed company" },
-  { value: "international-equity" as const, label: "Listed outside the US" },
-];
-
 /** How long typing settles before a save. Short enough to survive a stray click. */
 const SAVE_DELAY_MS = 600;
 /** A ticker as the company lookup accepts one. */
@@ -88,22 +65,12 @@ const readableDate = (iso: string): string => {
 /** What the SEC lookup is doing, so the button can say so rather than just sit there. */
 type Lookup = { kind: "idle" } | { kind: "loading" } | { kind: "error"; message: string };
 
-/** The same three words the research record uses, so a role means one thing everywhere. */
-const PASSAGE_ROLES: { value: EvidenceRole; label: string; tone: string }[] = [
-  { value: "supports", label: "For it", tone: "border-accent-green/40 bg-accent-green/10 text-accent-green" },
-  { value: "challenges", label: "Against it", tone: "border-accent-amber/40 bg-accent-amber/10 text-accent-amber" },
-  { value: "context", label: "Background", tone: "border-white/25 bg-white/10 text-slate-200" },
-];
 
 export default function InvestigateView() {
   const [company, setCompany] = useState("");
   /** A ticker from the address to look up as soon as it is in the company box. */
   const [autoFill, setAutoFill] = useState<string | null>(null);
   const [industry, setIndustry] = useState(DEFAULT_INDUSTRY);
-  const [assetClass, setAssetClass] = useState<LearnerInstrument["assetClass"]>("us-equity");
-  const [decisionNote, setDecisionNote] = useState<string | null>(null);
-  const [rejecting, setRejecting] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
   const [entries, setEntries] = useState<Entries>({});
   const [riskFree, setRiskFree] = useState<string>("");
   const [openHint, setOpenHint] = useState<FigureKey | null>(null);
@@ -130,7 +97,6 @@ export default function InvestigateView() {
    * the rest of Studio uses; nothing here writes its own store.
    */
   const { session: project, setDraft } = useWorkspace();
-  const router = useRouter();
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [saveNote, setSaveNote] = useState<SaveNote>({ kind: "idle" });
   const hydrated = useRef(false);
@@ -264,8 +230,6 @@ export default function InvestigateView() {
     setInvestigationId(target.id);
     setCompany(target.company);
     setIndustry(investigationIndustry(target) ?? DEFAULT_INDUSTRY);
-    setRejecting(false);
-    setDecisionNote(null);
     setEntries(target.figures as Entries);
     setRiskFree(target.riskFreePct === null ? "" : String(target.riskFreePct));
     setSource(target.source ?? null);
@@ -403,9 +367,6 @@ export default function InvestigateView() {
     setCouldNotFill([]);
     setLookup({ kind: "idle" });
     setOpenHint(null);
-    setRejecting(false);
-    setRejectReason("");
-    setDecisionNote(null);
     setSaveNote({ kind: "idle" });
   }, [flush]);
 
@@ -430,131 +391,6 @@ export default function InvestigateView() {
     if (next) await open(next.id);
     else await startNew();
   }, [open, startNew]);
-
-  /*
-   * Where the research becomes a decision.
-   *
-   * Studio would investigate any business and hold any of eight, and those were
-   * different sets, so reading a company's annual report ended on a screen the
-   * portfolio could not see. Holding it records the company as the learner's own
-   * instrument; deciding against it records a reason on a candidate, which
-   * exists whether or not anything holds it. They are the two honest ends of the
-   * same piece of work, not a success and a failure.
-   *
-   * Held is read from the portfolio, not from the instrument having been added
-   * once: a company taken out in Portfolio is not held, and can be added again.
-   */
-  const ownId = investigationId ? `own-${investigationId}` : null;
-  const heldNow = Boolean(ownId && project.project && isHeld(project.project, ownId));
-  const decided = ownId ? project.project?.candidates.find((candidate) => candidate.instrumentId === ownId) : undefined;
-  const against = decided?.status === "rejected" ? decided.rejectedBecause : null;
-  const canDecide = Boolean(investigationId) && company.trim() !== "" && project.status === "ready";
-
-  const hold = useCallback(async () => {
-    const id = idRef.current;
-    if (!id) return;
-    // Anything typed since the last save goes in first, so the holding is added
-    // against the figures on screen rather than the ones from a moment ago.
-    await flush();
-    setDecisionNote(null);
-    const result = await sessionRef.current.update((current) => {
-      const withInstrument = addInvestigatedCompany(current, id, assetClass);
-      return isHeld(withInstrument, `own-${id}`) ? withInstrument : addPosition(withInstrument, `own-${id}`);
-    });
-    if (!result.ok) setDecisionNote(`Not added: ${result.error}`);
-  }, [assetClass, flush]);
-
-  const decideAgainst = useCallback(async () => {
-    const id = idRef.current;
-    const reason = rejectReason.trim();
-    if (!id || !reason) return;
-    await flush();
-    setDecisionNote(null);
-    const instrumentId = `own-${id}`;
-    const result = await sessionRef.current.update((current) =>
-      setCandidateStatus(removePosition(startCandidate(current, instrumentId), instrumentId), instrumentId, "rejected", reason),
-    );
-    if (result.ok) {
-      setRejecting(false);
-      setRejectReason("");
-    } else {
-      setDecisionNote(`Not recorded: ${result.error}`);
-    }
-  }, [flush, rejectReason]);
-
-  const reconsider = useCallback(async () => {
-    const id = idRef.current;
-    if (!id) return;
-    const result = await sessionRef.current.update((current) => setCandidateStatus(current, `own-${id}`, "researching"));
-    if (!result.ok) setDecisionNote(`Not changed: ${result.error}`);
-  }, []);
-
-  /** Why this company is owned, on the candidate the portfolio already keeps for it. */
-  const note = (patch: Partial<Pick<CandidateInvestigation, "why" | "mainRisk" | "whatWouldChangeMyMind">>) => {
-    const id = idRef.current;
-    if (!id) return undefined;
-    return sessionRef.current.update((current) => updateCandidate(current, `own-${id}`, patch));
-  };
-
-  /*
-   * Passages kept from this company’s filings, read from the saved project
-   * rather than held in page state. The reader writes them, not this page, so
-   * the stored record is the only place that knows them.
-   */
-  const passages: KeptPassage[] = saved.find((item) => item.id === investigationId)?.passages ?? [];
-  const [passageNote, setPassageNote] = useState<{ id: string; message: string; search?: string } | null>(null);
-
-  const markPassage = (passageId: string, patch: Partial<Pick<KeptPassage, "role" | "note">>) => {
-    const target = idRef.current;
-    if (!target) return undefined;
-    return sessionRef.current.update((current) => updatePassage(current, target, passageId, patch));
-  };
-
-  const dropPassage = async (passageId: string) => {
-    const target = idRef.current;
-    if (!target) return;
-    const result = await sessionRef.current.update((current) => removePassage(current, target, passageId));
-    if (!result.ok) setSaveNote({ kind: "error", message: result.error });
-  };
-
-  /**
-   * Open a kept passage where it is now.
-   *
-   * The report is fetched fresh and the passage found again across its whole
-   * section by the locate-passage route, so what opens is where the words are
-   * today. When they cannot be found, that is said, with a search for their
-   * opening words as the way to look.
-   */
-  const openPassage = async (passage: KeptPassage) => {
-    setPassageNote(null);
-    const opening = passage.quote.split(/\s+/).slice(0, 5).join(" ");
-    const reader = `/studio/filings/${passage.cik}/${passage.accession}?doc=${encodeURIComponent(passage.document)}`;
-    let answer: { found?: boolean; strategy?: string; sectionId?: string; start?: number; end?: number; message?: string; error?: string };
-    try {
-      const response = await fetch("/api/studio/locate-passage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cik: passage.cik, accession: passage.accession, document: passage.document, sectionId: passage.sectionId,
-          quote: passage.quote, prefix: passage.prefix, suffix: passage.suffix, offset: passage.offset,
-        }),
-      });
-      answer = await response.json();
-    } catch {
-      setPassageNote({ id: passage.id, message: "The report could not be reached just now." });
-      return;
-    }
-    if (!answer.found || answer.start === undefined || answer.end === undefined) {
-      setPassageNote({
-        id: passage.id,
-        message: answer.message ?? answer.error ?? "This passage could not be found in the report any more.",
-        search: `${reader}&q=${encodeURIComponent(opening)}`,
-      });
-      return;
-    }
-    const moved = answer.strategy && answer.strategy !== "position" ? `&moved=${answer.strategy}` : "";
-    router.push(`${reader}&section=${answer.sectionId}&at=${answer.start}&len=${answer.end - answer.start}${moved}#passage`);
-  };
 
   /*
    * Peers are a bonus, not a requirement. Five industries have them and
@@ -610,21 +446,7 @@ export default function InvestigateView() {
 
   return (
     <div className="space-y-4">
-      {/* Below 1024px the sections live in a menu, so this is the only way back
-          to Research on the page. From 1024 the sidebar is drawn with Research
-          marked as the section in hand, and saying it twice costs 36px of a
-          budget this page was over. */}
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500 lg:hidden">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
-          Research
-        </Link>
-        <span aria-hidden="true"> › </span>
-        <span>Investigate a company</span>
-      </nav>
-
-      <StageHeading as="h1" title="Is this business creating value?">
-        Look up seven figures from one annual report, then read them against real competitors.
-      </StageHeading>
+      <StepHeading step="numbers" />
 
       {/*
         * One row, and it scrolls sideways rather than wrapping.
@@ -1111,221 +933,6 @@ export default function InvestigateView() {
           )}
         </div>
       </div>
-
-      {/*
-        * Where the research becomes a decision, in one row.
-        *
-        * Held and turned down are the two honest ends of the same piece of
-        * work, so they sit together, under the figures they follow from. One
-        * row rather than a block of prose because this page has a screen
-        * budget: at 1440 the reading already runs to 1.41 screens, and a panel
-        * that explained itself in paragraphs took it to 1.73.
-        */}
-      {canDecide ? (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-2">
-          {heldNow ? (
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-              <p className="text-[13px] leading-6 text-slate-300">
-                <span className="font-semibold text-white">{company.trim()}</span> is in your portfolio. Choose how
-                much to hold in{" "}
-                <Link href="/studio/portfolio" className="text-accent-cyan hover:underline">
-                  Portfolio
-                </Link>
-                .
-              </p>
-              {/* Asked in the same words as any other holding, and kept on the
-                  company's own page rather than in the library of eight, which
-                  is where its figures and its filings already are. */}
-              <details className="group">
-                <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[13px] font-semibold text-accent-cyan focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
-                  Why you own it
-                  <span className="ml-2 text-[12px] font-normal text-slate-500 group-open:hidden">Write it down</span>
-                  <span className="ml-2 hidden text-[12px] font-normal text-slate-500 group-open:inline">Hide</span>
-                </summary>
-                <div className="mt-2 space-y-3">
-                  <Field label="Why it belongs" value={decided?.why ?? ""} onChange={(value) => note({ why: value })} multiline />
-                  <Field label="The main risk I accept" value={decided?.mainRisk ?? ""} onChange={(value) => note({ mainRisk: value })} multiline />
-                  <Field
-                    label="What would change my mind"
-                    value={decided?.whatWouldChangeMyMind ?? ""}
-                    onChange={(value) => note({ whatWouldChangeMyMind: value })}
-                    multiline
-                  />
-                </div>
-              </details>
-            </div>
-          ) : against !== null ? (
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="text-[13px] text-slate-500">You decided against it:</span>
-              <span className="text-[13px] leading-6 text-slate-300">{against}</span>
-              <button
-                type="button"
-                onClick={() => void reconsider()}
-                className="inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline"
-              >
-                Put it back on the table
-              </button>
-            </div>
-          ) : rejecting ? (
-            <>
-              <Field
-                label={`Why ${company.trim()} is not for you`}
-                hint="Kept with these figures, so you can check later whether it still holds."
-                value={rejectReason}
-                onChange={setRejectReason}
-                placeholder="It earns less than its capital costs and I could not see that changing"
-                multiline
-              />
-              <div className="mt-2 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  disabled={!rejectReason.trim()}
-                  onClick={() => void decideAgainst()}
-                  className="inline-flex min-h-11 items-center rounded-lg border border-white/15 px-3.5 text-[13px] font-semibold text-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  Record this decision
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRejecting(false);
-                    setRejectReason("");
-                  }}
-                  className="inline-flex min-h-11 items-center px-2 text-[13px] text-slate-400"
-                >
-                  Cancel
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              {/* Asked, not guessed: an investment whose kind Studio does not know is
-                  dealt no fall in the scenario test, which understates the loss
-                  rather than showing an error. */}
-              <label className="text-[13px] text-slate-400">
-                Where it trades{" "}
-                <select
-                  value={assetClass}
-                  onChange={(event) => setAssetClass(event.target.value as LearnerInstrument["assetClass"])}
-                  className="min-h-11 rounded-lg border border-white/10 bg-white/[0.03] px-2 text-[13px] text-white focus:border-accent-cyan/50 focus:outline-none"
-                >
-                  {ASSET_CLASSES.map((option) => (
-                    <option key={option.value} value={option.value} className="bg-slate-900">
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button
-                type="button"
-                onClick={() => void hold()}
-                className="inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-3.5 text-[13px] font-semibold text-white hover:border-accent-cyan/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
-              >
-                Add {company.trim()} to your portfolio
-              </button>
-              {/* A business can be worth reading and still not worth owning, and that
-                  conclusion is the one a learner can check later against what happened. */}
-              <button
-                type="button"
-                onClick={() => setRejecting(true)}
-                className="inline-flex min-h-11 items-center text-[13px] text-slate-300 underline underline-offset-2 hover:text-white"
-              >
-                Decide against {company.trim()}
-              </button>
-            </div>
-          )}
-          {decisionNote ? (
-            <p role="alert" className="mt-2 text-[13px] leading-6 text-accent-amber">
-              {decisionNote}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
-      {/*
-        * Passages kept while reading this company’s reports, beside the reading
-        * they bear on. Absent until one is kept, so the page is no taller for
-        * a learner who has not used the reader.
-        */}
-      {passages.length ? (
-        <Panel>
-          <h3 className="text-[15px] font-semibold text-white">
-            From its own filings <span className="font-normal text-slate-500">({passages.length})</span>
-          </h3>
-          <p className="mt-1 text-[13px] leading-6 text-slate-400">
-            Passages you kept while reading. Say whether each argues for this business or against it.
-          </p>
-          <ul className="mt-3 space-y-4">
-            {passages.map((passage) => {
-              const sectionLabel = labelForSection(passage.sectionId, passage.form);
-              return (
-                <li key={passage.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
-                  <blockquote className="line-clamp-4 border-l-2 border-accent-cyan/40 pl-3 text-[14px] leading-6 text-slate-200">
-                    {passage.quote}
-                  </blockquote>
-                  <p className="mt-1.5 text-[12px] leading-5 text-slate-500">
-                    {passage.form || "Report"} · {sectionLabel}
-                    {passage.filed ? ` · filed ${passage.filed}` : ""}
-                  </p>
-                  <div className="mt-3 grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)]">
-                    <fieldset>
-                      <legend className="text-[13px] font-semibold text-white">Does it argue for it or against it?</legend>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {PASSAGE_ROLES.map((option) => (
-                          <label
-                            key={option.value}
-                            className={cn(
-                              "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3.5 text-[13px] transition-colors focus-within:ring-2 focus-within:ring-accent-cyan/40",
-                              passage.role === option.value ? option.tone : "border-white/12 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white",
-                            )}
-                          >
-                            <input
-                              type="radio"
-                              name={`passage-role-${passage.id}`}
-                              value={option.value}
-                              checked={passage.role === option.value}
-                              onChange={() => void markPassage(passage.id, { role: option.value })}
-                              className="sr-only"
-                            />
-                            {option.label}
-                          </label>
-                        ))}
-                      </div>
-                    </fieldset>
-                    <Field label="What it shows" value={passage.note} onChange={(value) => markPassage(passage.id, { note: value })} multiline />
-                  </div>
-                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
-                    <button
-                      type="button"
-                      onClick={() => void openPassage(passage)}
-                      className="inline-flex min-h-11 items-center text-[13px] font-semibold text-accent-cyan hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
-                    >
-                      Open it in the report
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void dropPassage(passage.id)}
-                      aria-label="Remove this passage"
-                      className="inline-flex min-h-11 items-center text-[13px] text-slate-400 hover:text-accent-amber focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/40"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  {passageNote?.id === passage.id ? (
-                    <p role="alert" className="mt-1 text-[13px] leading-6 text-accent-amber">
-                      {passageNote.message}{" "}
-                      {passageNote.search ? (
-                        <Link href={passageNote.search} className="underline underline-offset-2">
-                          Search the report for it
-                        </Link>
-                      ) : null}
-                    </p>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-        </Panel>
-      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <p className="text-[12px] leading-5 text-slate-600">

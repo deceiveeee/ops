@@ -125,7 +125,10 @@ test("a whole finding is kept, and survives a reload", async ({ page }) => {
 
   await expect(page.getByText("Two firms make the part and it cannot buy the part anywhere else.")).toBeVisible();
 
+  // Saved findings fold away on arrival, because the work here is the next
+  // one; they are one press away, and listed again at the decision.
   await page.reload();
+  await page.getByText("What you have found").click();
   await expect(page.getByText("Two firms make the part and it cannot buy the part anywhere else.")).toBeVisible();
   await expect(page.getByText("Moves costs")).toBeVisible();
 });
@@ -161,7 +164,9 @@ test("the worked example is Porter's, on airlines, and says so", async ({ page }
 
 test("with nothing investigated it sends you to start a company", async ({ page }) => {
   await page.goto(COMPETITION);
-  await expect(page.getByRole("link", { name: /Start with a company.s figures/ })).toBeVisible();
+  await expect(page.getByRole("main").getByText("This step needs a company first.")).toBeVisible();
+  await page.getByRole("link", { name: "Choose a company in step 3" }).click();
+  await expect(page).toHaveURL(/\/studio\/investigate$/);
 });
 
 test("a finding can be taken back", async ({ page }) => {

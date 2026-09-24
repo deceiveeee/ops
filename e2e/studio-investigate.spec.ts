@@ -11,6 +11,7 @@ import { expect, test, type Page } from "@playwright/test";
  */
 
 const INVESTIGATE = "/studio/investigate";
+const DECIDE = "/studio/decide";
 const DATABASE = "ops-studio-projects";
 
 /** Every figure input, in the order the page asks for them. */
@@ -260,7 +261,9 @@ test("deleting asks first, and keeps the work when refused", async ({ page }) =>
   await expect.poll(async () => (await stored(page)).length, { timeout: 10_000 }).toBe(0);
 });
 
-const industryPicker = (page: Page) => page.getByLabel("Industry");
+// Anchored, because the research step bar has a step called "See who is in an
+// industry", and the select's own name runs on into the industry chosen.
+const industryPicker = (page: Page) => page.getByLabel(/^Industry/);
 
 /**
  * Any company, not five industries' worth.
@@ -345,13 +348,16 @@ test("a company you investigated can be held in the portfolio", async ({ page })
   await openEmpty(page);
   await enter(page, "Nordic Pulp", "4200");
 
+  // Deciding is the last step of the research path, on its own page, after the
+  // report, the map, the competition and the value stick.
+  await page.goto(DECIDE);
   await page.getByLabel(/Where it trades/).selectOption("us-equity");
   await page.getByRole("button", { name: /Add Nordic Pulp to your portfolio/ }).click();
   await expect(page.getByText(/Nordic Pulp is in your portfolio/)).toBeVisible();
 
   // The reason it is owned is asked for in the same words as any other holding,
-  // on the company's own page, where its figures and its filings already are,
-  // behind a disclosure because this page has a screen budget to keep.
+  // beside what the research found, behind a disclosure because the page has a
+  // screen budget to keep.
   await page.getByText("Why you own it").click();
   await page.getByLabel("Why it belongs").fill("It earns more than its capital costs.");
   await page.reload();
@@ -391,6 +397,7 @@ test("a company you read and turned down is kept, with the reason", async ({ pag
   await openEmpty(page);
   await enter(page, "Meridian Freight", "3100");
 
+  await page.goto(DECIDE);
   await page.getByRole("button", { name: /Decide against Meridian Freight/ }).click();
   await page.getByLabel(/is not for you/).fill("It earns less than its capital costs.");
   await page.getByRole("button", { name: "Record this decision" }).click();
@@ -400,15 +407,18 @@ test("a company you read and turned down is kept, with the reason", async ({ pag
   // The figures are still the learner's, filed under the same investigation.
   expect(await stored(page)).toHaveLength(1);
   await page.reload();
+  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible({ timeout: 15_000 });
+  // With a decision recorded, the last step's button says what comes after it.
+  await expect(page.getByRole("navigation", { name: /Research steps/ }).getByRole("link", { name: /Next: research another company/ })).toBeVisible();
+  await page.goto(INVESTIGATE);
   await expect(figureBoxes(page).first()).toHaveValue("3100", { timeout: 15_000 });
-  await expect(page.getByText("It earns less than its capital costs.")).toBeVisible();
 
   // And it is findable from the overview, by name rather than by a stored id.
   await page.goto("/studio");
   await expect(page.getByRole("link", { name: /Meridian Freight/ }).first()).toBeVisible({ timeout: 15_000 });
 
   // Reversible: the reason survives being reconsidered.
-  await page.goto(INVESTIGATE);
+  await page.goto(DECIDE);
   await expect(page.getByRole("button", { name: "Put it back on the table" })).toBeVisible({ timeout: 15_000 });
   await page.getByRole("button", { name: "Put it back on the table" }).click();
   await expect(page.getByRole("button", { name: /Decide against Meridian Freight/ })).toBeVisible();

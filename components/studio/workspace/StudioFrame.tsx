@@ -6,8 +6,10 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import { STUDIO_MODES } from "@/lib/studio-mode";
+import { stepFor } from "@/lib/studio-project/research-path";
 import { GuidancePanel, Notice, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
+import { ResearchStepBar, StepAside } from "./ResearchSteps";
 import StudioIcon from "./StudioIcon";
 import styles from "./studio-design.module.css";
 import { WorkspaceProvider, useWorkspace } from "./WorkspaceProvider";
@@ -24,7 +26,7 @@ export const SECTIONS = [
     key: "research",
     label: "Research",
     href: "/studio/research",
-    covers: ["/studio/research", "/studio/investigate", "/studio/industry", "/studio/filings", "/studio/competition", "/studio/value", "/studio/map", "/studio/pool"],
+    covers: ["/studio/research", "/studio/investigate", "/studio/industry", "/studio/filings", "/studio/competition", "/studio/value", "/studio/map", "/studio/pool", "/studio/decide"],
   },
   { key: "portfolio", label: "Portfolio", href: "/studio/portfolio", covers: ["/studio/portfolio"] },
   { key: "review", label: "Review", href: "/studio/review", covers: ["/studio/review"] },
@@ -41,7 +43,19 @@ const sectionFor = (pathname: string): Section | undefined =>
 /** Pages built from the old form's steps: the guide sits with them, and so does the portfolio total. */
 const STAGE_PAGES = ["/studio/goals", "/studio/research", "/studio/portfolio", "/studio/review"];
 /** Research tools with their own introductions, whose sources belong beside the work. */
-const TOOL_PAGES = ["/studio/investigate", "/studio/industry", "/studio/filings", "/studio/competition", "/studio/value", "/studio/map", "/studio/pool"];
+const TOOL_PAGES = ["/studio/investigate", "/studio/industry", "/studio/filings", "/studio/competition", "/studio/value", "/studio/map", "/studio/pool", "/studio/decide"];
+
+/**
+ * The step whose bar is drawn above a page: every page on the research path
+ * except a report being read. The reader pages each document to fit the
+ * screen, and a bar held at the top would take a row from every page of it;
+ * the report's own list, one step back, carries the bar, and the step is still
+ * named beside the reader from 1280px.
+ */
+function barStepFor(pathname: string) {
+  if (/^\/studio\/filings\/[^/]+\/[^/]+/.test(pathname)) return undefined;
+  return stepFor(pathname);
+}
 
 /** The explanation that belongs with each page's work. */
 function guidanceFor(pathname: string): StudioGuidanceKey | null {
@@ -87,6 +101,9 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
   const stagePage = STAGE_PAGES.some((base) => within(pathname, base));
   const integratedGuide = pathname === "/studio/goals" || pathname === "/studio/research";
   const toolPage = TOOL_PAGES.some((base) => within(pathname, base));
+  // A page on the research path says which step it is and what comes next.
+  const step = stepFor(pathname);
+  const bar = barStepFor(pathname);
 
   let aside: ReactNode = null;
   if (stagePage && guidance && !integratedGuide) {
@@ -101,7 +118,7 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
       <div className="space-y-4">
         {/* Filled by the page with where its numbers come from, beside the numbers. */}
         <div ref={setAsideSlot} className="space-y-4 empty:hidden" />
-        {guidance ? <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} /> : null}
+        {step ? <StepAside step={step} /> : guidance ? <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} /> : null}
       </div>
     );
   }
@@ -117,6 +134,7 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
           <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
         </div>
       ) : null}
+      {bar ? <ResearchStepBar step={bar} /> : null}
       {children}
     </Layout>
   );
@@ -133,7 +151,8 @@ function Layout({
           <div className={cn("flex min-h-[3.25rem] flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-[var(--ops-divider)] pb-4", styles.projectBar)}>
             {bar}
           </div>
-          <div className={cn("mt-6", aside ? "xl:grid xl:grid-cols-[minmax(0,1fr)_17rem] xl:items-start xl:gap-8" : undefined)}>
+          {/* A research step's own bar follows straight on, so it sits closer. */}
+          <div className={cn(barStepFor(pathname) ? "mt-4" : "mt-6", aside ? "xl:grid xl:grid-cols-[minmax(0,1fr)_17rem] xl:items-start xl:gap-8" : undefined)}>
             <div className="min-w-0">{children}</div>
             {/* Beside the work, never under it: a weight change is never made
                 without its consequence on screen. */}

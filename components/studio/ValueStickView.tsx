@@ -21,9 +21,10 @@ import { recordValueClaim, removeValueClaim } from "@/lib/studio-project/operati
 import { latestInvestigation, type FigureInvestigation, type KeptPassage } from "@/lib/studio-project/schema";
 import { readInvestigation } from "@/lib/studio-project/investigate-read";
 import { sectionLabel as labelForSection } from "@/lib/filings/sections";
-import { Field, Panel, StageHeading } from "./shared";
+import { Field, Panel } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
+import { NeedsCompany, StepHeading } from "./workspace/ResearchSteps";
 
 /**
  * Where a business's value comes from, read on the value stick.
@@ -212,12 +213,9 @@ export default function ValueStickView() {
             </h2>
             <p className="mt-2 text-[13px] leading-6 text-slate-300">{suggestion.says}</p>
             {!open ? (
-              <p className="mt-2 text-[13px] leading-6 text-slate-500">
-                <Link href="/studio/investigate" className="text-accent-cyan hover:underline">
-                  Start with a company&rsquo;s figures
-                </Link>{" "}
-                and its levers can be argued here.
-              </p>
+              <div className="mt-3">
+                <NeedsCompany>The example on the left works without one.</NeedsCompany>
+              </div>
             ) : lever === null ? (
               <>
                 <h3 className="mt-3 text-[13px] font-semibold text-white">Which lever is at work here?</h3>
@@ -511,17 +509,10 @@ function ClaimForm({
 function Heading() {
   return (
     <>
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500 lg:hidden">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
-          Research
-        </Link>
-        <span aria-hidden="true"> › </span>
-        <span>Where the value comes from</span>
-      </nav>
-      <StageHeading as="h1" title="Where the value comes from">
-        Between the most a customer would pay and the least a supplier would accept sits everything
-        there is to share. <em>Measuring the Moat</em> draws it as a value stick.
-      </StageHeading>
+      <StepHeading step="value">
+        Between the most a customer would pay and the least a supplier would accept sits everything there
+        is to share; <em>Measuring the Moat</em> draws it as a value stick.
+      </StepHeading>
     </>
   );
 }

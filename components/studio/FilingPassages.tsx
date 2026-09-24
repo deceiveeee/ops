@@ -257,7 +257,7 @@ export default function FilingPassages({
                 Kept in your investigation of {kept.company}
                 {kept.started ? ", which this started" : ""}.{" "}
                 <Link
-                  href={`/studio/investigate?company=${encodeURIComponent(kept.investigationId)}`}
+                  href={`/studio/decide?company=${encodeURIComponent(kept.investigationId)}`}
                   className="font-semibold underline underline-offset-2"
                 >
                   Open it

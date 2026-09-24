@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
-import { Panel, Stat, StageHeading, TableScroll } from "./shared";
+import { Panel, Stat, TableScroll } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { readableName } from "./company-name";
+import { StepHeading } from "./workspace/ResearchSteps";
 
 /**
  * The outside-in view of an industry, before any single company.
@@ -176,25 +176,9 @@ export default function IndustryView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 text-[13px]">
-        <nav aria-label="Breadcrumb" className="text-slate-500">
-          <Link href="/studio/research" className="text-accent-cyan hover:underline">
-            Research
-          </Link>
-          <span aria-hidden="true"> › </span>
-          <span>Industries</span>
-        </nav>
-        {/* The paper's next measure after these, on its own page: a chart and its
-            arithmetic do not fit under this page's figures. On the breadcrumb's
-            row because it has room to spare at every width. */}
-        <Link href="/studio/pool" className="text-accent-cyan hover:underline">
-          Where the money is made →
-        </Link>
-      </div>
-
-      <StageHeading as="h1" title="Who is in this industry, and what has moved">
-        Look at the industry before deciding whether any one company is worth your time.
-      </StageHeading>
+      {/* Where this sits in the research, and what comes after it, is the step
+          bar's job: the frame draws it above every page on the path. */}
+      <StepHeading step="industry" />
 
       <div className="flex flex-wrap gap-2">
         {industries.industries.map((entry) => (
@@ -418,16 +402,24 @@ export default function IndustryView() {
         )}
       </Panel>
 
+      {/* The paper's two cautions, one press away as on the other research
+          pages: open, they cost 185px of a page the step bar had put over. */}
       <Panel>
-        <h3 className="text-[15px] font-semibold text-st-ink">Two things this cannot tell you</h3>
-        <p className="mt-2 text-[13px] leading-6 text-st-muted">
-          Companies in one industry differ from each other more than industries differ from one
-          another. This narrows your search; it does not make the choice for you.
-        </p>
-        <p className="mt-2 text-[13px] leading-6 text-st-muted">
-          A concentrated industry is not automatically a profitable one. A company&rsquo;s own share
-          tracks its profits better than its industry&rsquo;s concentration does.
-        </p>
+        <details className="group">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 text-[14px] font-semibold text-st-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
+            What this cannot tell you
+            <span className="text-[12px] font-normal text-st-muted group-open:hidden">2 things</span>
+            <span className="hidden text-[12px] font-normal text-st-muted group-open:inline">Hide</span>
+          </summary>
+          <p className="mt-1 text-[13px] leading-6 text-st-muted">
+            Companies in one industry differ from each other more than industries differ from one
+            another. This narrows your search; it does not make the choice for you.
+          </p>
+          <p className="mt-2 text-[13px] leading-6 text-st-muted">
+            A concentrated industry is not automatically a profitable one. A company&rsquo;s own share
+            tracks its profits better than its industry&rsquo;s concentration does.
+          </p>
+        </details>
       </Panel>
 
       <StudioAside

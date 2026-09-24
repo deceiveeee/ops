@@ -18,9 +18,10 @@ import {
 import { recordForceFinding, removeForceFinding } from "@/lib/studio-project/operations";
 import { latestInvestigation, type FigureInvestigation, type KeptPassage } from "@/lib/studio-project/schema";
 import { sectionLabel as labelForSection } from "@/lib/filings/sections";
-import { Field, Panel, StageHeading } from "./shared";
+import { Field, Panel } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
+import { NeedsCompany, StepHeading } from "./workspace/ResearchSteps";
 
 /**
  * What competition does to a business, read the way *Measuring the Moat* reads
@@ -54,6 +55,8 @@ export default function CompetitionView() {
 
   const [investigationId, setInvestigationId] = useState<string | null>(null);
   const [force, setForce] = useState<ForceKey>("entrants");
+  /** Whether the list of findings is open: after recording one, so the save is seen; closed on arrival. */
+  const [showFound, setShowFound] = useState(false);
   const [question, setQuestion] = useState<string | null>(null);
   const [mechanism, setMechanism] = useState("");
   const [effect, setEffect] = useState<ForceEffect | null>(null);
@@ -119,8 +122,10 @@ export default function CompetitionView() {
         wouldChangeIt: wouldChangeIt.trim(),
       }),
     );
-    if (result.ok) blank();
-    else setNote(`Not saved: ${result.error}`);
+    if (result.ok) {
+      blank();
+      setShowFound(true);
+    } else setNote(`Not saved: ${result.error}`);
   };
 
   const drop = async (findingId: string) => {
@@ -140,16 +145,7 @@ export default function CompetitionView() {
     return (
       <div className="space-y-4">
         <Heading />
-        <Panel>
-          <p className="text-[15px] leading-7 text-st-sub">
-            This reads the competition around a company you are investigating, and you have not started
-            one yet.{" "}
-            <Link href="/studio/investigate" className="text-accent-cyan hover:underline">
-              Start with a company&rsquo;s figures
-            </Link>
-            , then come back.
-          </p>
-        </Panel>
+        <NeedsCompany>The five forces are read for one company at a time.</NeedsCompany>
       </div>
     );
   }
@@ -489,12 +485,24 @@ export default function CompetitionView() {
           </Panel>
           )}
 
+          {/* Closed on arrival: the work on this page is the next finding, and
+              every saved one is also listed at the decision, step 8. Open
+              right after one is recorded, so the save can be seen. */}
           {findings.length ? (
-            <Panel>
-              <h2 className="text-[15px] font-semibold text-white">
+            <details
+              open={showFound}
+              onToggle={(event) => setShowFound(event.currentTarget.open)}
+              className="rounded-2xl border border-white/10 bg-white/[0.02] px-4"
+            >
+              <summary className="flex min-h-11 cursor-pointer list-none flex-wrap items-center gap-x-2 text-[15px] font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
                 What you have found <span className="font-normal text-slate-500">({findings.length})</span>
-              </h2>
-              <ul className="mt-3 space-y-3">
+                <span className="text-[12px] font-normal text-slate-500">
+                  {seen.forcesExamined} of the five looked at{seen.untouched.length ? `, ${seen.untouched.length} not yet` : ""}
+                  {" · "}
+                  {showFound ? "Hide" : "Show"}
+                </span>
+              </summary>
+              <ul className="mb-3 mt-1 space-y-3">
                 {findings.map((finding) => {
                   const its = FORCE_BY_KEY.get(finding.force);
                   const asked = its?.questions.find((item) => item.id === finding.question)?.ask;
@@ -527,7 +535,7 @@ export default function CompetitionView() {
                   );
                 })}
               </ul>
-            </Panel>
+            </details>
           ) : null}
         </div>
       </div>
@@ -535,13 +543,11 @@ export default function CompetitionView() {
       {/* What is left, as a count of what has been looked at and never as a
           score: the paper is explicit that structure does not settle a
           company's fate. */}
-      <p className="text-[12px] leading-5 text-slate-600">
-        {seen.forcesExamined === 0
-          ? "Nothing found yet. Any one of the five is a reasonable place to start."
-          : `${seen.findings} finding${seen.findings === 1 ? "" : "s"} across ${seen.forcesExamined} of the five${
-              seen.untouched.length ? `; ${seen.untouched.length} not looked at yet` : ", every one of them"
-            }.`}
-      </p>
+      {seen.forcesExamined === 0 ? (
+        <p className="text-[12px] leading-5 text-slate-600">
+          Nothing found yet. Any one of the five is a reasonable place to start.
+        </p>
+      ) : null}
 
       <StudioAside
         inline={null}
@@ -571,19 +577,7 @@ export default function CompetitionView() {
 function Heading() {
   return (
     <>
-      {/* Below 1024px the sections live in a menu, so this is the only way back
-          to Research. From 1024 the sidebar already says where you are. */}
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500 lg:hidden">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
-          Research
-        </Link>
-        <span aria-hidden="true"> › </span>
-        <span>Competition</span>
-      </nav>
-      <StageHeading as="h1" title="What competition does to this business">
-        Five things press on what any business can earn — Porter&rsquo;s five forces, as{" "}
-        <em>Measuring the Moat</em> sets them out. One question at a time.
-      </StageHeading>
+      <StepHeading step="competition" />
     </>
   );
 }

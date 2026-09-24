@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { exportStudioCsv } from "@/lib/studio";
 import { addEvidence, removeEvidence, setCandidateStatus, updateCandidate } from "@/lib/studio-project/operations";
 import { exportProjectText } from "@/lib/studio-project/workspace";
@@ -18,6 +19,37 @@ const STAGES = {
   buy: BuyStage,
   review: ReviewStage,
 } as const;
+
+/**
+ * Where each page of the plan sends a learner when its work is done.
+ *
+ * Goals has its own, inside its editor, and Research has the step bar. The
+ * three parts of Portfolio had nothing: a learner who finished setting weights
+ * met the end of the page and had to guess that the tabs above were an order.
+ * Review is the last page, and says so in its panel for keeping a copy.
+ */
+const NEXT: Partial<Record<keyof typeof STAGES, { href: string; label: string; before: string }>> = {
+  build: { href: "/studio/portfolio/risk", label: "Next: Check the risk and the cost", before: "Weights add up to what you want?" },
+  risk: { href: "/studio/portfolio/buying", label: "Next: Work out what to buy", before: "Happy with the risk and the cost?" },
+  buy: { href: "/studio/review", label: "Next: Write the rules and keep a copy", before: "Know what to buy?" },
+};
+
+function StageNext({ href, label, before }: { href: string; label: string; before: string }) {
+  return (
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--ops-divider)] pt-4">
+      <p className="text-[13px] leading-6 text-st-muted">{before}</p>
+      <Link
+        href={href}
+        className="inline-flex min-h-11 items-center rounded-full bg-st-blue-edge px-4 text-[13px] font-semibold text-[#fff] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]"
+      >
+        {label}
+        <span aria-hidden="true" className="ml-1.5">
+          →
+        </span>
+      </Link>
+    </div>
+  );
+}
 
 /**
  * A working page running on the workspace's saved project.
@@ -76,5 +108,14 @@ export default function WorkspaceStage({ stage, eyebrow }: { stage: keyof typeof
       startAgain: async () => report(await session.reset()),
     },
   };
-  return <Stage {...props} />;
+  // With nothing held, the page's own message already sends the learner to
+  // Research, and a Next to an empty risk page would contradict it.
+  const next = NEXT[stage];
+  const showNext = next && plan.holdings.length > 0;
+  return (
+    <>
+      <Stage {...props} />
+      {showNext ? <StageNext {...next} /> : null}
+    </>
+  );
 }

@@ -3375,3 +3375,167 @@ config extending `playwright.config.ts` set `launchOptions.executablePath` to
 2. The join the 2026-09-22 and 2026-09-23 entries both name: the map, the forces, the value stick and
    now the pool each hold part of one investigation, and none of it reaches the reasons a learner
    keeps for owning or rejecting a company.
+
+## 2026-09-24: Research as one path, and every page saying what to do next
+
+### What the user said
+
+"I'm so confused by the research tab right now. It is so chaotic, users don't know what the hell
+they're doing, where to start, whats next etc. You MUST ensure in every tab, that the user is clear
+what to do."
+
+### What was wrong, found by walking it as a first-time learner
+
+- **Seven doors, no hallway.** Research had grown one surface per session (industry, investigate,
+  map, competition, value, reports, and last week the pool), and the Research page linked six of
+  them as equal tiles in a grid with no order. Nothing said where to start.
+- **Four of them dead-ended.** The map, competition and value pages, and the reader's keep, need a
+  company from Investigate. Without one they said "start with a company's figures, then come back"
+  and nothing more.
+- **No page said what came after it.** No tool page linked to a next step; from 1024px there was
+  not even a breadcrumb.
+- **The side panel said the same thing on every page.** Every research tool showed the Research
+  section's general paragraph about funds and depositary receipts beside work that had nothing to
+  do with either.
+- **The Research page did two jobs without saying so.** Under the tiles sat the library of eight
+  researched investments with "Add to portfolio" buttons, headed "Find your next question".
+- **The decision came first.** "Add to portfolio / Decide against" sat at the foot of the figures
+  page, before the report, the map, the competition or the value stick had been touched. Passages
+  kept in the reader were marked for or against on that same figures page, which comes before the
+  reader, so going forward a learner never met them again.
+- **Portfolio's three tabs and Review ended without a next step.**
+
+### What changed
+
+- **`lib/studio-project/research-path.ts`**: the order, with its source reasoning. It follows the
+  handoff's §9 journey (find, understand, investigate, test explanations, value, decide) and
+  *Measuring the Moat*'s own order (industry, where the money is, forces, what the firm does
+  differently). It also puts return on capital across an industry before a learner is asked to work
+  one out, and keeping passages before the three steps that cite them. There are eight steps:
+  1. See who is in an industry
+  2. See where the money is made
+  3. Choose a company and check its numbers
+  4. Read its annual report
+  5. Map who it deals with
+  6. Test its competition
+  7. Find where its value comes from
+  8. Decide: own it or turn it down
+
+  Each step's status is read from the saved project and never stored. Steps 1 and 2 save nothing,
+  so they have none. 13 unit tests.
+- **A step bar on every page of the path**, drawn once by the frame. It shows eight numbered
+  circles with a tick for saved work, "Step 5 of 8 · Atkore", and one button. The button reads
+  "Next: <the next step>", or "First, choose a company" when the step needs one and there is none.
+  On step 8 it follows the decision: record it below, then Portfolio, or another company. It stays
+  in view under the site header from 768px. On a phone it is two rows and scrolls with the page.
+- **Each page's heading is its step's name and its introduction is the instruction.** "Is this
+  business creating value?" is now "Choose a company and check its numbers", followed by what to
+  type and press. Both come from the path module, so the landing, the bar and the page cannot drift
+  apart. The paper's own terms (industry map, five forces, value stick, profit pool) are still
+  named and glossed where they appear.
+- **One "needs a company first" prompt** (`NeedsCompany`) with a button to step 3. It replaces four
+  differently worded dead ends, and on the map it now sits above the map instead of below it.
+- **The side panel on research pages** now says which step this is, what is saved, and what comes
+  next, instead of the general paragraph.
+- **Step 8 is a page of its own**, `/studio/decide`. It lists what each of steps 3 to 7 found for
+  the company, one line each with a link back: the figures' reading, passages kept (how many for
+  it, how many against), who is on the map, which forces have findings, which levers were argued.
+  Under that come the kept passages to mark for or against (open while any is still background),
+  then the decision. The controls moved from Investigate unchanged, as `CompanyDecision`. The
+  passages panel moved from Investigate unchanged, as `KeptPassages`. The reader's "Open it" after
+  keeping a passage now goes here. This is also the join the 22 and 23 September entries named:
+  until now nothing brought the steps' work together.
+- **The Research page has two ways in, said in words.** "Research one company, step by step" lays
+  out the eight steps in order, each with what is saved or "After step 3", and one button: "Start
+  with step 1", or "Continue: step 7, Find where its value comes from". Under it, "Or choose from
+  eight investments Studio has researched" is the library, previewing two rows instead of three.
+- **Portfolio's three tabs end on a Next**: check the risk and the cost, then work out what to buy,
+  then write the rules. It is shown only when something is held, because the empty page already
+  sends the learner to Research. Review's panel for keeping a copy now says it is the whole plan.
+- Goals and Overview were checked and already say what is next; they are unchanged.
+
+### Also, on the way
+
+- The competition page's saved findings fold into one line with the coverage count. They open right
+  after a finding is recorded, so the save is seen, and all of them are listed at step 8. The
+  industry page's two cautions fold the same way as the pool's and the figures page's.
+- **The Next buttons first rendered near-black on blue, 3.02:1.** The light theme remaps Tailwind's
+  `text-white` to heading ink, a holdover from the dark design, and the reports contrast spec
+  caught it. They use an explicit `#fff` now, as the site's own primary button does.
+- **The report being read has no step bar.** The reader pages each document to fit the screen, and
+  the bar took 50px of every page. A kept paragraph split across two pages as a result, which the
+  reader spec caught. The report list and the company's reports carry the bar, and the side panel
+  still names the step beside the reader.
+- `e2e/studio-reader.spec.ts:276` ("keeps the same passage once") fails about one run in three on
+  the dev server. It fails at the same rate with this work stashed (2 of 6), and it passes on the
+  production build that is the real gate. Recorded, not fixed.
+
+### Measured
+
+Page height in screens, production build, nothing scrolling sideways at any width. On a fresh start:
+
+| page | 390 | 768 | 1024 | 1280 | 1440 | 1920 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Research | 1.91 | 1.65 | 1.50 | 1.43 | 1.42 | 1.42 |
+| 1 Industry | 1.80 | 1.56 | 1.49 | 1.44 | 1.37 | 1.37 |
+| 2 Money | 1.92 | 1.58 | **1.52** | 1.50 | 1.39 | 1.39 |
+| 3 Numbers | 2.02 | 1.73 | 1.43 | 1.45 | 1.43 | 1.43 |
+| 5 Map | 1.69 | 1.51 | 1.29 | 1.32 | 1.32 | 1.32 |
+| 7 Value | 1.91 | 1.61 | 1.44 | **1.51** | 1.38 | 1.38 |
+
+Partway through a company (figures in, a passage kept, a map entry, a finding, a fund held):
+
+| page | 390 | 768 | 1024 | 1280 | 1440 | 1920 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 3 Numbers | 2.35 | 1.96 | 1.43 | 1.48 | 1.43 | 1.43 |
+| 5 Map | 1.96 | 1.80 | 1.40 | 1.43 | 1.39 | 1.39 |
+| 6 Competition | 2.06 | 1.62 | **1.55** | **1.54** | **1.54** | **1.54** |
+| 7 Value | 2.22 | 1.74 | 1.44 | **1.51** | 1.38 | 1.38 |
+| 8 Decide | 1.66 | 1.45 | 1.39 | 1.39 | 1.39 | 1.39 |
+| Review | 2.48 | 1.67 | **1.67** | 1.48 | 1.40 | 1.40 |
+
+The bar costs every research page a row. It was paid for by removing the breadcrumbs it
+replaces, folding the saved lists, and shortening each introduction to its instruction. The first
+version had Competition partway through at 1.91 and the pool at 1.54 at 1440.
+
+### Verified
+
+- `npm run typecheck` clean; lint only the two pre-existing onboarding warnings; `npm test`
+  **1107 passing** across 84 files.
+- Full `npm run test:e2e` on a production build, run after the last change: **226 passed, 5
+  skipped, 0 failed**. Five new tests in `e2e/studio-research-path.spec.ts` cover:
+  - the Research page's order and its one start;
+  - every page's bar, current step, heading and Next;
+  - the "choose a company first" routing;
+  - Continue after step 3;
+  - the Portfolio and Review ends.
+
+  Specs whose copy or place changed were updated rather than loosened: Investigate's decision tests
+  now run on step 8, the reader's passage tests open the decision, and competition's reload opens
+  its folded list.
+- Read as images at 390, 1024, 1280 and 1440, empty and partway through.
+
+### Known limits
+
+- **Over the 1.5 limit from 1024 up**, all recorded above:
+  - the pool at 1024 (18px);
+  - value at 1280 (9px);
+  - Competition partway through, on the eleven-question force (about 36px, down from about 1.8);
+  - Review at 1024, where the section guide is drawn above the work below 1280, as before.
+
+  Phones and 768 are over on every research page, the stacking problem recorded since 22
+  September.
+- The industry page's "How they earn it" view is 1.80 at 1440 (1.86 on 23 September; the folded
+  cautions paid for the bar and a little more), 1.82 at 1280 and 1.90 at 1024. Still over, and its
+  own problem: a chart and a six-row table under the industry's figures.
+- The path follows the company most recently worked on. A learner researching two companies at
+  once switches between them with each page's own company chips, as before.
+- Steps 1 and 2 have no tick, because they save nothing. The Research page's Continue starts from
+  step 3 once a company exists.
+
+### Next concrete action
+
+1. The phone and 768 stacking problem, now on every page of the path and worth solving once in the
+   frame.
+2. The industry dataset rebuild recorded on 23 September (currency units, Universe
+   Pharmaceuticals), when the SEC is reachable.

@@ -119,7 +119,8 @@ test("a whole claim is kept, survives a reload, and survives typing in Investiga
 
 test("with no company started it says what to do first", async ({ page }) => {
   await page.goto(VALUE);
-  await expect(page.getByRole("link", { name: /Start with a company.s figures/ })).toBeVisible();
+  await expect(page.getByRole("main").getByText("This step needs a company first.")).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: "Choose a company in step 3" })).toBeVisible();
   // The example is still there to read: it needs no company at all.
   await expect(page.getByRole("main")).toContainText("One cake, from a bakery Studio made up");
 });

@@ -21,9 +21,10 @@ import { addMapEntry, removeMapEntry } from "@/lib/studio-project/operations";
 import { latestInvestigation, type FigureInvestigation, type KeptPassage } from "@/lib/studio-project/schema";
 import library from "@/lib/studio-project/data/input-cost-library.json";
 import { sectionLabel as labelForSection } from "@/lib/filings/sections";
-import { Field, Panel, StageHeading } from "./shared";
+import { Field, Panel } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
+import { NeedsCompany, StepHeading } from "./workspace/ResearchSteps";
 
 /**
  * The industry map around one company.
@@ -203,6 +204,12 @@ export default function IndustryMapView() {
     <div className="space-y-3">
       <Heading />
 
+      {/* Before the map, not under it: without a company the sides have no
+          "+ Add", and the reason should be the first thing read. */}
+      {!open ? (
+        <NeedsCompany>The map is drawn around one company. The paper&rsquo;s own map is below, to show what one looks like.</NeedsCompany>
+      ) : null}
+
       {investigations.length > 1 ? (
         <nav aria-label="Companies you have looked at" className="-mx-1 overflow-x-auto px-1 pb-1">
           <ul className="flex items-center gap-2">
@@ -287,22 +294,13 @@ export default function IndustryMapView() {
         </div>
       )}
 
-      {!open ? (
-        <Panel>
-          <p className="text-[13px] leading-6 text-slate-400">
-            <Link href="/studio/investigate" className="text-accent-cyan hover:underline">
-              Start with a company&rsquo;s figures
-            </Link>{" "}
-            and this becomes its map. The paper&rsquo;s own is below either way.
-          </p>
-        </Panel>
-      ) : (
+      {open ? (
         <p className="text-[12px] leading-5 text-slate-600">
           {empty.length === 0
             ? "Every side of the map has something on it."
             : `Nothing yet on: ${empty.map((zone) => ZONE_BY_KEY.get(zone)!.label.toLowerCase()).join(", ")}. The names are in its own filings, not in Studio.`}
         </p>
-      )}
+      ) : null}
 
       {/* The model, and the paper's own. Closed, because a learner who has
           started their own map does not need somebody else's open beside it. */}
@@ -516,18 +514,9 @@ function AddForm({
 function Heading() {
   return (
     <>
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500 lg:hidden">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
-          Research
-        </Link>
-        <span aria-hidden="true"> › </span>
-        <span>The map around it</span>
-      </nav>
-      <StageHeading as="h1" title="The map around it">
-        Everyone who can reach a company&rsquo;s profits: who it buys from, who buys from it, who it
-        competes with, and what affects them all. <em>Measuring the Moat</em> calls it an industry map
-        and says it is a good place to start.
-      </StageHeading>
+      <StepHeading step="map">
+        <em>Measuring the Moat</em> calls this an industry map.
+      </StepHeading>
     </>
   );
 }

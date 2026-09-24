@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils";
 import industries from "@/lib/studio-project/data/industries.json";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
 import { POOLS, exampleBlock, type Pool, type PoolBlock } from "@/lib/studio-project/profit-pool";
-import { Panel, StageHeading, TableScroll } from "./shared";
+import { Panel, TableScroll } from "./shared";
 import StudioAside from "./workspace/StudioAside";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
 import { readableName } from "./company-name";
+import { StepHeading } from "./workspace/ResearchSteps";
 
 /**
  * Where the money is made in an industry: *Measuring the Moat*'s profit pool.
@@ -91,7 +92,7 @@ function PoolChart({
   onPreview: (cik: number | null) => void;
 }) {
   const [ref, width] = useWidth(640);
-  const height = 196;
+  const height = 180;
   const pad = { left: 40, right: 8, top: 10, bottom: 28 };
   const plotWidth = Math.max(120, width - pad.left - pad.right);
   const plotBottom = height - pad.bottom;
@@ -236,8 +237,8 @@ function Readout({ block, own }: { block: PoolBlock; own: boolean }) {
         <strong className="font-semibold text-st-ink">{money(Math.abs(block.economicProfit))}</strong>{" "}
         {above ? "of economic profit a year" : "a year short of what its capital costs"}: the block&rsquo;s area, on{" "}
         {pct(block.capitalShare)} of the capital here.
+        {flags.length ? <span className="text-[12px] text-st-muted"> {flags.join(" ")}</span> : null}
       </p>
-      {flags.length ? <p className="mt-1 text-[12px] leading-5 text-st-muted">{flags.join(" ")}</p> : null}
     </div>
   );
 }
@@ -306,17 +307,7 @@ export default function ProfitPoolView() {
 
   return (
     <div className="space-y-4">
-      <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500 lg:hidden">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
-          Research
-        </Link>
-        <span aria-hidden="true"> › </span>
-        <span>Where the money is made</span>
-      </nav>
-
-      <StageHeading as="h1" title="Where the money is made">
-        Which companies earn more than their capital costs: <em>Measuring the Moat</em>&rsquo;s profit pool.
-      </StageHeading>
+      <StepHeading step="pool" />
 
       {/* Wrapped from sm up, where two rows at most fit the budget. On a phone
           the five took three rows, so there they scroll in one, as the map's
@@ -352,7 +343,7 @@ export default function ProfitPoolView() {
           could have put it elsewhere. The return less that cost, times the capital, is its{" "}
           <strong className="font-semibold text-st-body">economic profit</strong>: what it made beyond that cost. Each
           block is a company. Its height is that gap in percentage points and its width is its capital, so its area is
-          its economic profit.
+          its economic profit. <em>Measuring the Moat</em> calls this picture a profit pool.
         </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-st-muted">
