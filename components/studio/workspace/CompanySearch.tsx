@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { DirectorySource } from "@/lib/filings/company-directory";
 import styles from "./working-pages.module.css";
 
 export type Company = { cik: string; ticker: string; name: string };
 export type CompanyLookup =
   | { kind: "idle" }
   | { kind: "loading"; query: string }
-  | { kind: "done"; query: string; companies: Company[] }
+  | { kind: "done"; query: string; companies: Company[]; source?: DirectorySource }
   | { kind: "error"; query: string; message: string };
 
 /** Shorter than this and nearly every company matches. */
@@ -31,7 +32,8 @@ const SHOWN = 3;
  */
 export function useCompanySearch(query: string, libraryTickers: ReadonlySet<string>) {
   const [lookup, setLookup] = useState<CompanyLookup>({ kind: "idle" });
-  const cache = useRef(new Map<string, Company[]>());
+  const cache = useRef(new Map<string, { companies: Company[]; source?: DirectorySource }>());
+  const [attempt, setAttempt] = useState(0);
   const wanted = query.trim();
 
   useEffect(() => {
@@ -41,24 +43,25 @@ export function useCompanySearch(query: string, libraryTickers: ReadonlySet<stri
     }
     const cached = cache.current.get(wanted.toLowerCase());
     if (cached) {
-      setLookup({ kind: "done", query: wanted, companies: cached });
+      setLookup({ kind: "done", query: wanted, ...cached });
       return;
     }
     const controller = new AbortController();
+    setLookup({ kind: "loading", query: wanted });
     const timer = setTimeout(async () => {
-      setLookup({ kind: "loading", query: wanted });
       try {
         const response = await fetch(`/api/studio/company-search?q=${encodeURIComponent(wanted)}`, { signal: controller.signal });
-        const body = (await response.json()) as { companies?: Company[]; error?: string };
+        const body = (await response.json()) as { companies?: Company[]; error?: string; source?: DirectorySource };
+        if (controller.signal.aborted) return;
         if (!response.ok || !body.companies) {
-          setLookup({ kind: "error", query: wanted, message: body.error ?? "The SEC's list of companies could not be reached just now." });
+          setLookup({ kind: "error", query: wanted, message: "Company search could not connect. Please try again." });
           return;
         }
-        cache.current.set(wanted.toLowerCase(), body.companies);
-        setLookup({ kind: "done", query: wanted, companies: body.companies });
+        cache.current.set(wanted.toLowerCase(), { companies: body.companies, source: body.source });
+        setLookup({ kind: "done", query: wanted, companies: body.companies, source: body.source });
       } catch (error) {
-        if ((error as Error).name !== "AbortError") {
-          setLookup({ kind: "error", query: wanted, message: "The SEC's list of companies could not be reached just now." });
+        if (!controller.signal.aborted && (error as Error).name !== "AbortError") {
+          setLookup({ kind: "error", query: wanted, message: "Company search could not connect. Please try again." });
         }
       }
     }, DELAY_MS);
@@ -66,10 +69,11 @@ export function useCompanySearch(query: string, libraryTickers: ReadonlySet<stri
       clearTimeout(timer);
       controller.abort();
     };
-  }, [wanted]);
+  }, [wanted, attempt]);
 
   const companies = lookup.kind === "done" ? lookup.companies.filter((company) => !libraryTickers.has(company.ticker)).slice(0, SHOWN) : [];
-  return { active: wanted.length >= MIN_QUERY, lookup, companies, wanted };
+  const retry = () => { cache.current.delete(wanted.toLowerCase()); setAttempt((value) => value + 1); };
+  return { active: wanted.length >= MIN_QUERY, lookup, companies, wanted, retry };
 }
 
 type Search = ReturnType<typeof useCompanySearch>;
@@ -98,6 +102,8 @@ export default function CompanySearch({ search }: { search: Search }) {
         <p>Read their reports and work out their figures. They cannot go in your portfolio yet.</p>
         <span role="status">{status}</span>
       </div>
+      {lookup.kind === "error" && <button type="button" onClick={search.retry}>Retry company search</button>}
+      {lookup.kind === "done" && lookup.source?.kind === "saved" && <p>Using the saved SEC company list from {lookup.source.fetchedAt?.slice(0, 10)}. New listings may be missing.</p>}
       {companies.length ? (
         <ul className={styles.companyList}>
           {companies.map((company) => (

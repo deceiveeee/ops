@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
- * The three parts of Portfolio, which were steps 3 to 5 of the old form.
+ * Allocation, risk, historical returns and the buying plan.
  *
  * They wrap onto a second line on a narrow screen rather than scrolling
  * sideways: a tab that sits past the edge is one the learner never finds. On a
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { href: "/studio/portfolio", label: "How much goes where" },
   { href: "/studio/portfolio/risk", label: "Risk and cost" },
+  { href: "/studio/portfolio/returns", label: "Return history" },
   { href: "/studio/portfolio/buying", label: "What to buy" },
 ];
 

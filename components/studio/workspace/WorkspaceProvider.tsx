@@ -20,7 +20,7 @@ import type { StageResult } from "../stages";
  * "leave Studio?" warning would be wrong. Anywhere else is leaving.
  */
 export const isWorkspacePath = (pathname: string) =>
-  pathname === "/studio" || /^\/studio\/(goals|research|investigate|industry|filings|portfolio|review)(\/|$)/.test(pathname);
+  pathname === "/studio" || /^\/studio\/(goals|research|investigate|industry|filings|valuation|portfolio|review)(\/|$)/.test(pathname);
 
 type Session = ReturnType<typeof useStudioProject>;
 
@@ -72,6 +72,8 @@ export function holdsWork(raw: string): boolean {
     project.investigations.length > 0 ||
     project.candidates.length > 0 ||
     project.decisions.length > 0 ||
+    (project.valuations?.length ?? 0) > 0 ||
+    (project.returnHistories?.length ?? 0) > 0 ||
     project.goal.purpose.trim() !== "" ||
     project.alternatives.some((alternative) => alternative.positions.length > 0)
   );

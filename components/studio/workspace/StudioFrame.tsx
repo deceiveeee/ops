@@ -26,6 +26,7 @@ export const SECTIONS = [
     href: "/studio/research",
     covers: ["/studio/research", "/studio/investigate", "/studio/industry", "/studio/filings"],
   },
+  { key: "valuation", label: "Valuation", href: "/studio/valuation", covers: ["/studio/valuation"] },
   { key: "portfolio", label: "Portfolio", href: "/studio/portfolio", covers: ["/studio/portfolio"] },
   { key: "review", label: "Review", href: "/studio/review", covers: ["/studio/review"] },
 ] as const;
@@ -84,7 +85,7 @@ export default function StudioFrame({ children }: { children: ReactNode }) {
 function LiveFrame({ pathname, children }: { pathname: string; children: ReactNode }) {
   const { setAsideSlot } = useWorkspace();
   const guidance = guidanceFor(pathname);
-  const stagePage = STAGE_PAGES.some((base) => within(pathname, base));
+  const stagePage = pathname !== "/studio/portfolio/returns" && STAGE_PAGES.some((base) => within(pathname, base));
   const integratedGuide = pathname === "/studio/goals" || pathname === "/studio/research";
   const toolPage = TOOL_PAGES.some((base) => within(pathname, base));
 
@@ -288,7 +289,7 @@ function SaveState() {
   let text = "";
   let tone: "quiet" | "warn" | "error" = "quiet";
   if (status === "loading") text = "Opening your work…";
-  else if (status === "saving" || (status === "ready" && (dirty || draft))) text = "Saving…";
+  else if (status === "saving" || (status === "ready" && (session.pending || dirty || draft))) text = "Saving…";
   else if (status === "ready") {
     text = externalChange ? "Saved here. Changed since in another tab." : "Saved in this browser";
     if (externalChange) tone = "warn";

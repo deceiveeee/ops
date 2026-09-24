@@ -1,0 +1,82 @@
+.root { min-width: 0; color: var(--ops-text-primary); }
+.editor { min-width: 0; }
+.mobileSummary { display: none; }
+.layout.single { grid-template-columns: 1fr; }
+.mobileTab { display: none; }
+.heading { margin-bottom: 18px; }
+.heading h1 { font-family: var(--font-display), Georgia, serif; font-size: clamp(28px, 3vw, 38px); line-height: 1.18; letter-spacing: -.035em; }
+.heading p { color: var(--ops-text-secondary); font-size: 14px; line-height: 1.6; margin-top: 8px; max-width: 740px; }
+.root :is(button,a,input,select,textarea):focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 3px; }
+.root :is(button,input,select) { min-height: 44px; }
+.root :is(input,select,textarea) { width: 100%; min-width: 0; border: 1px solid var(--ops-control-border); background: var(--ops-surface); color: var(--ops-text-primary); border-radius: 9px; padding: 8px 10px; font-size: 16px; }
+.root textarea { min-height: 70px; resize: vertical; }
+.root label { display: grid; gap: 5px; font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); }
+.root a { color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+.row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.row > label { flex: 1; min-width: 170px; }
+.actions { margin-top: 12px; }
+.button { border: 1px solid var(--ops-control-border); border-radius: 9px; padding: 8px 14px; background: var(--ops-surface); font-size: 13px; font-weight: 600; }
+.primary { background: var(--ops-text-primary); color: var(--ops-surface); border-color: transparent; }
+.button:disabled { opacity: .55; cursor: wait; }
+.panel { border: 1px solid var(--ops-divider); border-radius: 17px; background: var(--ops-surface); padding: 18px; min-width: 0; }
+.panel h2 { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+.panel > p { font-size: 13px; line-height: 1.6; color: var(--ops-text-secondary); }
+.layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; margin-top: 16px; align-items: start; }
+/* Aligned at the bottom: a label that wraps to two lines must not push its box below its neighbour's. */
+.fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; align-items: end; }
+.full { grid-column: 1 / -1; }
+.field { display: grid; gap: 5px; }
+.note { font-size: 12px; line-height: 1.6; color: var(--ops-text-secondary); margin-top: 12px; }
+.panel > .note:first-child { margin-top: 0; }
+.note + .fields { margin-top: 12px; }
+.alert { padding: 12px; border-left: 3px solid #af7214; background: var(--ops-surface-2); font-size: 13px; line-height: 1.6; margin-top: 12px; }
+.tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 16px; border-bottom: 1px solid var(--ops-divider); }
+.tabs button { padding: 8px 12px; font-size: 13px; border-bottom: 2px solid transparent; }
+.tabs button[aria-current=page] { border-color: var(--ops-accent-strong); color: var(--ops-accent-strong); font-weight: 600; }
+.graphic { background: #292e29; color: #f5f8ef; border-radius: 17px; padding: 20px; min-width: 0; }
+.graphic h2 { color: #cbd5c4; font-size: 13px; font-weight: 500; }
+.value { font-size: clamp(30px,4vw,48px); letter-spacing: -.04em; line-height: 1.2; display: block; margin-top: 12px; font-variant-numeric: tabular-nums; }
+.graphic p { font-size: 12px; line-height: 1.6; color: #cbd5c4; margin-top: 10px; }
+.graphic svg { width: 100%; display: block; margin-top: 16px; overflow: visible; }
+.graphic svg text { fill: #cbd5c4 !important; }
+.graphic a { color: #d5f39e; }
+.bridge { border-top: 1px solid #586451; margin-top: 14px; padding-top: 12px; display: grid; gap: 6px; }
+.bridge div { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 1.6; }
+.bridge dt { color: #cbd5c4; }
+.bridge dd { font-variant-numeric: tabular-nums; }
+.scenario { display: grid; grid-template-columns: minmax(0,1fr) auto auto; gap: 10px; align-items: end; }
+.list { display: grid; gap: 8px; margin-top: 14px; }
+.list button { display: flex; justify-content: space-between; text-align: left; gap: 12px; padding: 10px 12px; border: 1px solid var(--ops-divider); border-radius: 10px; font-size: 13px; }
+.list button:hover { background: var(--ops-surface-2); }
+.table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.table :is(th,td) { border-bottom: 1px solid var(--ops-divider); padding: 9px 6px; text-align: left; overflow-wrap: anywhere; }
+.table th { color: var(--ops-text-secondary); font-weight: 500; }
+.table td { font-variant-numeric: tabular-nums; }
+.sourceList { font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.sourceList li { padding: 5px 0; }
+.checkbox { display: flex !important; align-items: flex-start; gap: 10px !important; }
+.checkbox input { width: 18px; height: 18px; min-height: 18px; margin-top: 3px; flex-shrink: 0; }
+.details { margin-top: 14px; border-top: 1px solid var(--ops-divider); font-size: 12px; line-height: 1.7; }
+.details summary { cursor: pointer; padding: 12px 0; }
+.details p { margin-bottom: 10px; }
+.tag { font-size: 12px; color: var(--ops-accent-strong); background: var(--ops-accent-soft); padding: 5px 9px; border-radius: 6px; }
+@media(max-width:767px) {
+  .desktopGraphic { display: none; }
+  .mobileSummary { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; padding: 10px 0 0; }
+  .mobileSummary .button { font-size: 12px; padding: 6px 9px; }
+  .mobileTab { display: inline-block; }
+  .layout { grid-template-columns: 1fr; gap: 12px; }
+  .heading { margin-bottom: 12px; }
+  .heading p { font-size: 13px; }
+  .panel,.graphic { padding: 14px; border-radius: 13px; }
+  .fields { gap: 9px; }
+  /* Half a phone is too narrow for a choice such as "Your own assumption" to show whole. */
+  .fields > label:has(select) { grid-column: 1 / -1; }
+  .tabs { gap: 0; }
+  .tabs button { flex: 1; padding: 8px 6px; font-size: 12px; }
+  .scenario { grid-template-columns: minmax(0,1fr) auto; }
+  .scenario > :first-child { grid-column: 1 / -1; }
+  .value { font-size: 32px; margin-top: 8px; }
+  .graphic svg { margin-top: 10px; max-height: 125px; }
+  .bridge { margin-top: 10px; padding-top: 8px; }
+}
