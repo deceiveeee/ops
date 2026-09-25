@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { exportProjectBackup, importProjectBackup } from "./backup";
 import { createStudioProject } from "./create";
-import { emptyLimits, hasAnyLimit, readLimits, setLimits, validLimits, type StudioLimits } from "./limits";
+import { checkTargets, emptyLimits, hasAnyLimit, lossBudget, readLimits, setLimits, validLimits, type StudioLimits } from "./limits";
 import { validateStudioProject } from "./validate";
 import { applyPlanChange } from "./workspace";
 
@@ -69,6 +69,36 @@ describe("goals and limits as saved numbers", () => {
     expect(hasAnyLimit({ ...emptyLimits(), companyCapPct: 5 })).toBe(true);
     expect(hasAnyLimit({ ...emptyLimits(), cashNeeds: [{ id: "n", label: "", amount: 0, dueDate: "" }] })).toBe(true);
     expect(hasAnyLimit({ ...emptyLimits(), slices: { ...emptyLimits().slices, steady: { minPct: null, targetPct: 30, maxPct: null } } })).toBe(true);
+  });
+
+  it("takes the smaller of willingness and capacity as the loss budget, and says which", () => {
+    expect(lossBudget(20, null)).toEqual({ pct: 20, from: "willingness" });
+    expect(lossBudget(20, 15)).toEqual({ pct: 15, from: "capacity" });
+    expect(lossBudget(10, 15)).toEqual({ pct: 10, from: "willingness" });
+    // A tie is the learner's own limit either way; say willingness, which they set first.
+    expect(lossBudget(15, 15)).toEqual({ pct: 15, from: "willingness" });
+  });
+
+  it("checks that the slice targets add up and sit inside their ranges", () => {
+    expect(checkTargets(filled())).toEqual({ total: 100, totalOff: false, problems: [] });
+    expect(checkTargets(emptyLimits())).toEqual({ total: null, totalOff: false, problems: [] });
+    const off = filled();
+    off.slices.grow = { minPct: 50, targetPct: 70, maxPct: 65 };
+    off.slices.steady = { minPct: 30, targetPct: 25, maxPct: 20 };
+    expect(checkTargets(off)).toEqual({
+      total: 115,
+      totalOff: true,
+      problems: ["Steady: the lowest is above the highest.", "Grow: the target is outside its range."],
+    });
+    // Two targets say nothing about the whole; no total until all three are set.
+    const partial = emptyLimits();
+    partial.slices.ready.targetPct = 20;
+    partial.slices.grow.targetPct = 30;
+    expect(checkTargets(partial)).toEqual({ total: null, totalOff: false, problems: [] });
+    // Rounding in a typed 33.33 + 33.33 + 33.34 is not a problem.
+    const thirds = emptyLimits();
+    thirds.slices.ready.targetPct = 33.33; thirds.slices.steady.targetPct = 33.33; thirds.slices.grow.targetPct = 33.34;
+    expect(checkTargets(thirds)).toMatchObject({ totalOff: false, problems: [] });
   });
 
   it.each<[string, (limits: StudioLimits) => unknown]>([

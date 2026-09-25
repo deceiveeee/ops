@@ -70,6 +70,46 @@ export function hasAnyLimit(limits: StudioLimits | undefined): boolean {
   );
 }
 
+/** How each slice is named on screen, and the job Mission 5 gives it. */
+export const SLICE_NAMES: Record<SliceId, { name: string; job: string }> = {
+  ready: { name: "Ready", job: "Cash for bills" },
+  steady: { name: "Steady", job: "Bonds, for stability" },
+  grow: { name: "Grow", job: "Stocks, for growth" },
+};
+
+/**
+ * The loss budget: the smaller of the fall a learner could sit through
+ * (willingness) and the fall their finances could take (capacity), and which
+ * one set it. Until capacity is given, willingness alone.
+ */
+export function lossBudget(willingnessPct: number, capacityPct: number | null): { pct: number; from: "willingness" | "capacity" } {
+  return capacityPct !== null && capacityPct < willingnessPct
+    ? { pct: capacityPct, from: "capacity" }
+    : { pct: willingnessPct, from: "willingness" };
+}
+
+/**
+ * Whether the slice targets hang together: each target inside its own range,
+ * each range the right way round, and the three targets adding up to 100%.
+ * `total` is null until every target is set, because a sum of some of them
+ * says nothing. `problems` are the slices' own; `totalOff` is the sum's, so a
+ * screen already showing the total need not repeat it.
+ */
+export function checkTargets(limits: StudioLimits): { total: number | null; totalOff: boolean; problems: string[] } {
+  const problems: string[] = [];
+  for (const slice of SLICES) {
+    const { minPct, targetPct, maxPct } = limits.slices[slice];
+    const { name } = SLICE_NAMES[slice];
+    if (minPct !== null && maxPct !== null && minPct > maxPct) problems.push(`${name}: the lowest is above the highest.`);
+    else if (targetPct !== null && ((minPct !== null && targetPct < minPct) || (maxPct !== null && targetPct > maxPct))) {
+      problems.push(`${name}: the target is outside its range.`);
+    }
+  }
+  const targets = SLICES.map((slice) => limits.slices[slice].targetPct);
+  const total = targets.every((value) => value !== null) ? targets.reduce((sum: number, value) => sum + (value ?? 0), 0) : null;
+  return { total, totalOff: total !== null && Math.abs(total - 100) > 1e-9, problems };
+}
+
 export function setLimits(
   project: StudioProject,
   change: (limits: StudioLimits) => StudioLimits,

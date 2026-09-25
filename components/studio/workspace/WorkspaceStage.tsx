@@ -3,6 +3,7 @@
 import { exportStudioCsv } from "@/lib/studio";
 import { addEvidence, removeEvidence, setCandidateStatus, updateCandidate } from "@/lib/studio-project/operations";
 import { exportProjectText } from "@/lib/studio-project/workspace";
+import { readLimits } from "@/lib/studio-project/limits";
 import { downloadFile } from "../shared";
 import { BuildStage, BuyStage, ReviewStage, RiskStage, type StageProps } from "../stages";
 import GoalsWorkspace from "./GoalsWorkspace";
@@ -40,6 +41,7 @@ export default function WorkspaceStage({ stage, eyebrow }: { stage: keyof typeof
     eyebrow,
     headingAs: "h1",
     investigations: project.investigations.map(({ id, company }) => ({ id, company })),
+    lossCapacityPct: readLimits(project).lossCapacityPct,
     /*
      * Research goes straight to the project, not through the plan adapter.
      *

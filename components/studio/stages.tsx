@@ -20,6 +20,7 @@ import FundReportFacts from "./FundReportFacts";
 import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
+import { lossBudget } from "@/lib/studio-project/limits";
 
 /**
  * A holding's ticker, or a company's name where the learner added it themselves.
@@ -62,6 +63,8 @@ export type StageProps = {
   actions?: StageActions;
   /** Workspace only: companies investigated so far, named on the way in to Investigate. */
   investigations?: { id: string; company: string }[];
+  /** Workspace only: the loss the learner's finances could take, from their limits. Null until set. */
+  lossCapacityPct?: number | null;
   /**
    * Workspace only: the research record, which belongs to the project rather
    * than to a portfolio.
@@ -578,7 +581,9 @@ export function RiskStage(props: StageProps) {
   const setStress = (patch: Partial<StudioPlan["stress"]>) =>
     update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
 
-  const lossLimit = plan.goal.budget * plan.goal.lossTolerancePct / 100;
+  // The same loss budget Goals shows: the smaller of willingness and capacity, of the whole portfolio.
+  const loss = lossBudget(plan.goal.lossTolerancePct, props.lossCapacityPct ?? null);
+  const lossLimit = plan.goal.budget * loss.pct / 100;
   const exceeds = Math.abs(calculation.stress.changeDollars) > lossLimit && lossLimit > 0;
 
   return (
@@ -627,8 +632,9 @@ export function RiskStage(props: StageProps) {
       </Panel>
 
       {exceeds ? (
-        <Notice tone="amber" title="This scenario is larger than the loss you said you could live with">
-          You wrote that you could absorb {usdWhole(lossLimit)}. This assumed scenario costs{" "}
+        <Notice tone="amber" title="This scenario is larger than your loss budget">
+          Your loss budget is {usdWhole(lossLimit)}, the loss you could {loss.from === "capacity" ? "afford" : "live with"}. This
+          assumed scenario costs{" "}
           {usdWhole(Math.abs(calculation.stress.changeDollars))}. Either the weights or the limit needs to change —
           Studio will not choose which.
         </Notice>
