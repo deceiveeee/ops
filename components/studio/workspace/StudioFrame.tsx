@@ -6,6 +6,9 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import { STUDIO_MODES } from "@/lib/studio-mode";
+import { checkPortfolio } from "@/lib/studio-project/limit-checks";
+import { readLimits } from "@/lib/studio-project/limits";
+import LimitChecks from "../LimitChecks";
 import { GuidancePanel, Notice, PageIntro, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
 import StudioIcon from "./StudioIcon";
@@ -95,6 +98,7 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
       <div className="space-y-4">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
         <Summary />
+        <AsideLimits />
       </div>
     );
   } else if (toolPage) {
@@ -512,6 +516,13 @@ function Summary() {
       ) : null}
     </Panel>
   );
+}
+
+/** The portfolio against the learner's limits, beside the work. */
+function AsideLimits() {
+  const { plan, calculation, project } = useWorkspace();
+  if (!plan || !calculation || !project || plan.holdings.length === 0) return null;
+  return <LimitChecks checks={checkPortfolio(plan, calculation, readLimits(project)).checks} />;
 }
 
 /** The same three numbers as one line, for screens without room beside the work. */

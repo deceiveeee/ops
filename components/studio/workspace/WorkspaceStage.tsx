@@ -41,7 +41,7 @@ export default function WorkspaceStage({ stage, eyebrow }: { stage: keyof typeof
     eyebrow,
     headingAs: "h1",
     investigations: project.investigations.map(({ id, company }) => ({ id, company })),
-    lossCapacityPct: readLimits(project).lossCapacityPct,
+    limits: readLimits(project),
     /*
      * Research goes straight to the project, not through the plan adapter.
      *

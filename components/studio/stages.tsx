@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CATALOG_GAPS, STUDIO_CATALOG, findStudioInstrument } from "@/lib/studio-catalog";
 import {
@@ -20,7 +20,9 @@ import FundReportFacts from "./FundReportFacts";
 import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
-import { lossBudget } from "@/lib/studio-project/limits";
+import { lossBudget, type StudioLimits } from "@/lib/studio-project/limits";
+import { checkPortfolio, type HoldingRoom } from "@/lib/studio-project/limit-checks";
+import LimitChecks from "./LimitChecks";
 
 /**
  * A holding's ticker, or a company's name where the learner added it themselves.
@@ -63,8 +65,8 @@ export type StageProps = {
   actions?: StageActions;
   /** Workspace only: companies investigated so far, named on the way in to Investigate. */
   investigations?: { id: string; company: string }[];
-  /** Workspace only: the loss the learner's finances could take, from their limits. Null until set. */
-  lossCapacityPct?: number | null;
+  /** Workspace only: the learner's limits, which belong to the project rather than to a portfolio. */
+  limits?: StudioLimits;
   /**
    * Workspace only: the research record, which belongs to the project rather
    * than to a portfolio.
@@ -483,6 +485,9 @@ export function BuildStage(props: StageProps) {
   }
 
   const total = calculation.totalWeightPct;
+  // Workspace only: the weights against the learner's own limits, and what holds each one back.
+  const checked = props.limits ? checkPortfolio(plan, calculation, props.limits) : null;
+  const roomFor = (instrumentId: string) => checked?.holdings.find((room) => room.instrumentId === instrumentId) ?? null;
   return (
     <div className="space-y-5">
       <StageHeading {...headingFor(props)} title="Decide how much goes where">
@@ -509,8 +514,8 @@ export function BuildStage(props: StageProps) {
             </thead>
             <tbody className="block md:table-row-group">
               {calculation.rows.map((row) => (
+                <Fragment key={row.holding.instrumentId}>
                 <tr
-                  key={row.holding.instrumentId}
                   className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-t border-white/8 py-3 first:border-t-0 first:pt-0 md:table-row md:py-0 md:first:border-t"
                 >
                   <td className="block md:table-cell md:py-3 md:pr-3">
@@ -542,6 +547,8 @@ export function BuildStage(props: StageProps) {
                   </td>
                   <td className="block text-right tabular-nums text-white md:table-cell md:py-3">{usd(row.targetValue)}</td>
                 </tr>
+                <WeightRoom symbol={row.instrument?.symbol ?? row.holding.instrumentId} room={roomFor(row.holding.instrumentId)} />
+                </Fragment>
               ))}
               <tr className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-t border-white/15 pt-3 md:table-row md:pt-0">
                 <td className="col-span-2 block text-slate-300 md:table-cell md:py-3 md:pr-3">Cash reserve and anything unassigned</td>
@@ -568,7 +575,33 @@ export function BuildStage(props: StageProps) {
           Every dollar after your cash reserve has a job.
         </Notice>
       )}
+
+      {/* Beside the work from 1280px, in the frame's side column; here below it. */}
+      {checked ? <div className="xl:hidden"><LimitChecks checks={checked.checks} /></div> : null}
     </div>
+  );
+}
+
+/**
+ * What holds one weight back, in a row of its own under the holding: a phone's
+ * first column is too narrow for the sentence, and a table reads it the same.
+ */
+function WeightRoom({ symbol, room }: { symbol: string; room: HoldingRoom | null }) {
+  const tightest = room?.tightest;
+  if (!room || !tightest) return null;
+  const limit = `${tightest.pct.toFixed(1)}% of the whole portfolio`;
+  const text = room.over
+    ? `${(room.weightPct - tightest.pct).toFixed(1)} points over what ${tightest.label} allows (${limit}).`
+    : Math.abs(room.weightPct - tightest.pct) < 0.05
+      ? `At the most ${tightest.label} allows (${limit}).`
+      : `Can rise to ${limit} before it reaches ${tightest.label}.`;
+  return (
+    <tr className="block md:table-row">
+      <td colSpan={4} className={cn("block pb-3 text-[12px] leading-5 md:table-cell md:pb-3 md:pt-0", room.over ? "text-accent-amber" : "text-slate-500")}>
+        <span className="sr-only">{symbol}: </span>
+        {text}
+      </td>
+    </tr>
   );
 }
 
@@ -582,7 +615,7 @@ export function RiskStage(props: StageProps) {
     update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
 
   // The same loss budget Goals shows: the smaller of willingness and capacity, of the whole portfolio.
-  const loss = lossBudget(plan.goal.lossTolerancePct, props.lossCapacityPct ?? null);
+  const loss = lossBudget(plan.goal.lossTolerancePct, props.limits?.lossCapacityPct ?? null);
   const lossLimit = plan.goal.budget * loss.pct / 100;
   const exceeds = Math.abs(calculation.stress.changeDollars) > lossLimit && lossLimit > 0;
 
