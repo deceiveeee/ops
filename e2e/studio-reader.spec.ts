@@ -169,7 +169,11 @@ test.describe("reading a whole report", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     let paged = 0;
     page.on("request", (request) => {
-      if (request.url().includes("_rsc=")) paged += 1;
+      const url = new URL(request.url());
+      // More height reveals footer links and triggers their Next.js prefetches.
+      // Count only actual reader navigations, not those background requests.
+      if (url.pathname === REPORT.split("?")[0] && url.searchParams.has("_rsc")
+        && request.headers()["next-router-prefetch"] !== "1") paged += 1;
     });
     await page.goto(`${REPORT}&section=risk-factors&page=3`);
     await expect
@@ -180,6 +184,7 @@ test.describe("reading a whole report", () => {
 
     // A phone's address bar sliding away as the reader scrolls changes the
     // window's height alone, and the page is not fetched again under them.
+    expect(paged, "the initial phone layout must fetch a fitted report").toBeGreaterThan(0);
     const settled = paged;
     await page.setViewportSize({ width: 390, height: 900 });
     await page.waitForTimeout(1_000);
