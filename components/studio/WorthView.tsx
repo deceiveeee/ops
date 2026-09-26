@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { estimate, forIndustry, forSic, industryNames } from "@/lib/studio-project/cost-of-capital";
 import { FIGURES, type Entries, type FigureKey } from "@/lib/studio-project/investigate";
 import { decomposeRoic, isComputed, type RoicSector } from "@/lib/studio-project/roic";
@@ -189,6 +190,9 @@ export default function WorthView({
         <h2 id="section-worth" className="text-[17px] font-semibold text-white">
           What a price for this company assumes
         </h2>
+        <Link className="inline-flex min-h-11 items-center text-[13px] text-accent-cyan underline underline-offset-4" href={`/studio/valuation?company=${encodeURIComponent(filing.companyName)}`}>
+          Open valuation workspace to save and compare scenarios →
+        </Link>
 
         <StudioAside
           inline={

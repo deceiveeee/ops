@@ -1,0 +1,477 @@
+{
+  "builtOn": "2026-09-20",
+  "method": "SEC Form N-PORT Item B.5, exact ETF share class; reported total returns with distributions reinvested. Reporting month is read from each XML.",
+  "histories": [
+    {
+      "instrumentId": "vti",
+      "symbol": "VTI",
+      "name": "Vanguard Total Stock Market Index Fund",
+      "seriesId": "S000002848",
+      "classId": "C000007808",
+      "currency": "USD",
+      "basis": "net-asset-value",
+      "observations": [
+        {
+          "month": "2025-01",
+          "value": 0.0309631,
+          "accession": "0001752724-25-126209"
+        },
+        {
+          "month": "2025-02",
+          "value": -0.0190846,
+          "accession": "0001752724-25-126209"
+        },
+        {
+          "month": "2025-03",
+          "value": -0.0588448,
+          "accession": "0001752724-25-126209"
+        },
+        {
+          "month": "2025-04",
+          "value": -0.0066968,
+          "accession": "0000036405-25-000128"
+        },
+        {
+          "month": "2025-05",
+          "value": 0.0633885,
+          "accession": "0000036405-25-000128"
+        },
+        {
+          "month": "2025-06",
+          "value": 0.050800099999999994,
+          "accession": "0000036405-25-000128"
+        },
+        {
+          "month": "2025-07",
+          "value": 0.0227923,
+          "accession": "0000036405-25-000235"
+        },
+        {
+          "month": "2025-08",
+          "value": 0.022831100000000003,
+          "accession": "0000036405-25-000235"
+        },
+        {
+          "month": "2025-09",
+          "value": 0.0346464235,
+          "accession": "0000036405-25-000235"
+        },
+        {
+          "month": "2025-10",
+          "value": 0.0217861604,
+          "accession": "0000036405-26-000070"
+        },
+        {
+          "month": "2025-11",
+          "value": 0.0028925866,
+          "accession": "0000036405-26-000070"
+        },
+        {
+          "month": "2025-12",
+          "value": -0.0003150606,
+          "accession": "0000036405-26-000070"
+        },
+        {
+          "month": "2026-01",
+          "value": 0.0158086261,
+          "accession": "0000036405-26-000323"
+        },
+        {
+          "month": "2026-02",
+          "value": -0.0052560488,
+          "accession": "0000036405-26-000323"
+        },
+        {
+          "month": "2026-03",
+          "value": -0.0496114487,
+          "accession": "0000036405-26-000323"
+        },
+        {
+          "month": "2026-04",
+          "value": 0.10350844390000001,
+          "accession": "0000036405-26-000480"
+        },
+        {
+          "month": "2026-05",
+          "value": 0.0515868534,
+          "accession": "0000036405-26-000480"
+        },
+        {
+          "month": "2026-06",
+          "value": -0.0033183643,
+          "accession": "0000036405-26-000480"
+        }
+      ],
+      "sources": [
+        {
+          "accession": "0000036405-25-000128",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640525000128/primary_doc.xml",
+          "filedAt": "2025-08-27",
+          "retrievedAt": "2026-09-05T21:49:35.692Z",
+          "reportDate": "2025-06-30",
+          "sha256": "731abc96015c3bf42f613aabeabfffc00959a5d909a5b09745b0ff8d4a9f94de",
+          "cachedIndexDate": "2025-06-30"
+        },
+        {
+          "accession": "0000036405-25-000235",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640525000235/primary_doc.xml",
+          "filedAt": "2025-11-25",
+          "retrievedAt": "2026-09-05T21:49:35.298Z",
+          "reportDate": "2025-09-30",
+          "sha256": "54402d0735bdb30add8528f3ab84a78ea88fe3dff38a81f30da15ebb2859a44d",
+          "cachedIndexDate": "2025-09-30"
+        },
+        {
+          "accession": "0000036405-26-000070",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640526000070/primary_doc.xml",
+          "filedAt": "2026-02-26",
+          "retrievedAt": "2026-09-05T21:49:34.075Z",
+          "reportDate": "2025-12-31",
+          "sha256": "7ca5b94d9c145b5ce180da8397be7baf092c73812ac2c4517d555c5e1ffd2b3e",
+          "cachedIndexDate": "2025-12-31"
+        },
+        {
+          "accession": "0000036405-26-000323",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640526000323/primary_doc.xml",
+          "filedAt": "2026-05-28",
+          "retrievedAt": "2026-09-05T21:49:33.683Z",
+          "reportDate": "2026-03-31",
+          "sha256": "3484eaf4c930d7424f4f6babd64b224574f84bc5a9bcaf4e71106189b8ceb682",
+          "cachedIndexDate": "2026-03-31"
+        },
+        {
+          "accession": "0000036405-26-000480",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640526000480/primary_doc.xml",
+          "filedAt": "2026-08-28",
+          "retrievedAt": "2026-09-05T21:49:32.656Z",
+          "reportDate": "2026-06-30",
+          "sha256": "0589e6e1994130bb9340b49847040a78be13553699423a447cce711341736cfe",
+          "cachedIndexDate": "2026-06-30"
+        },
+        {
+          "accession": "0001752724-25-126209",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000175272425126209/primary_doc.xml",
+          "filedAt": "2025-05-28",
+          "retrievedAt": "2026-09-05T21:49:36.922Z",
+          "reportDate": "2025-03-31",
+          "sha256": "f02cc857a18b06f12d1bb5c841df170d150591f2a57116d3ae541502380e9cf3",
+          "cachedIndexDate": "2025-03-31"
+        }
+      ]
+    },
+    {
+      "instrumentId": "voo",
+      "symbol": "VOO",
+      "name": "Vanguard 500 Index Fund",
+      "seriesId": "S000002839",
+      "classId": "C000092055",
+      "currency": "USD",
+      "basis": "net-asset-value",
+      "observations": [
+        {
+          "month": "2025-01",
+          "value": 0.027830900000000002,
+          "accession": "0001752724-25-126250"
+        },
+        {
+          "month": "2025-02",
+          "value": -0.013078000000000001,
+          "accession": "0001752724-25-126250"
+        },
+        {
+          "month": "2025-03",
+          "value": -0.056379700000000005,
+          "accession": "0001752724-25-126250"
+        },
+        {
+          "month": "2025-04",
+          "value": -0.006792899999999999,
+          "accession": "0000036405-25-000125"
+        },
+        {
+          "month": "2025-05",
+          "value": 0.0629262,
+          "accession": "0000036405-25-000125"
+        },
+        {
+          "month": "2025-06",
+          "value": 0.050820800000000006,
+          "accession": "0000036405-25-000125"
+        },
+        {
+          "month": "2025-07",
+          "value": 0.0223861,
+          "accession": "0000036405-25-000238"
+        },
+        {
+          "month": "2025-08",
+          "value": 0.020260600000000004,
+          "accession": "0000036405-25-000238"
+        },
+        {
+          "month": "2025-09",
+          "value": 0.0364725867,
+          "accession": "0000036405-25-000238"
+        },
+        {
+          "month": "2025-10",
+          "value": 0.0233932448,
+          "accession": "0000036405-26-000063"
+        },
+        {
+          "month": "2025-11",
+          "value": 0.0024086776,
+          "accession": "0000036405-26-000063"
+        },
+        {
+          "month": "2025-12",
+          "value": 0.0005933621,
+          "accession": "0000036405-26-000063"
+        },
+        {
+          "month": "2026-01",
+          "value": 0.0144652483,
+          "accession": "0000036405-26-000325"
+        },
+        {
+          "month": "2026-02",
+          "value": -0.0076247071,
+          "accession": "0000036405-26-000325"
+        },
+        {
+          "month": "2026-03",
+          "value": -0.049823313,
+          "accession": "0000036405-26-000325"
+        },
+        {
+          "month": "2026-04",
+          "value": 0.1049057487,
+          "accession": "0000036405-26-000473"
+        },
+        {
+          "month": "2026-05",
+          "value": 0.0526044899,
+          "accession": "0000036405-26-000473"
+        },
+        {
+          "month": "2026-06",
+          "value": -0.0095476134,
+          "accession": "0000036405-26-000473"
+        }
+      ],
+      "sources": [
+        {
+          "accession": "0000036405-25-000125",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640525000125/primary_doc.xml",
+          "filedAt": "2025-08-27",
+          "retrievedAt": "2026-09-05T21:49:36.112Z",
+          "reportDate": "2025-06-30",
+          "sha256": "97e58fca911673e378a964932392e9e0cb7f51383d5a6e2fa159ab9c5393200c",
+          "cachedIndexDate": "2025-06-30"
+        },
+        {
+          "accession": "0000036405-25-000238",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640525000238/primary_doc.xml",
+          "filedAt": "2025-11-25",
+          "retrievedAt": "2026-09-05T21:49:34.883Z",
+          "reportDate": "2025-09-30",
+          "sha256": "e6583a86ef4e31fc391083e6a12a30ac4824820601cd9c34b6899aefbeb9e5d5",
+          "cachedIndexDate": "2025-09-30"
+        },
+        {
+          "accession": "0000036405-26-000063",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640526000063/primary_doc.xml",
+          "filedAt": "2026-02-26",
+          "retrievedAt": "2026-09-05T21:49:34.447Z",
+          "reportDate": "2025-12-31",
+          "sha256": "75822fe77a7cc366ec57900edc7ab26710cafea1a575b8e72215e4aa0eec4976",
+          "cachedIndexDate": "2025-12-31"
+        },
+        {
+          "accession": "0000036405-26-000325",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640526000325/primary_doc.xml",
+          "filedAt": "2026-05-28",
+          "retrievedAt": "2026-09-05T21:49:33.242Z",
+          "reportDate": "2026-03-31",
+          "sha256": "1229e8b1e4c9c093de38e13b67b688f0e3df85160006f5d0456515c5fabe0228",
+          "cachedIndexDate": "2026-03-31"
+        },
+        {
+          "accession": "0000036405-26-000473",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000003640526000473/primary_doc.xml",
+          "filedAt": "2026-08-28",
+          "retrievedAt": "2026-09-05T21:49:32.836Z",
+          "reportDate": "2026-06-30",
+          "sha256": "e5b36312ae54cd8e4d614b24a54310e0d1c7a948bc849ab3cb95fb239d8cca0f",
+          "cachedIndexDate": "2026-06-30"
+        },
+        {
+          "accession": "0001752724-25-126250",
+          "url": "https://www.sec.gov/Archives/edgar/data/36405/000175272425126250/primary_doc.xml",
+          "filedAt": "2025-05-28",
+          "retrievedAt": "2026-09-05T21:49:36.474Z",
+          "reportDate": "2025-03-31",
+          "sha256": "1685ed964e0237fa5b745761f83862be63a0695b524fa2a7be0f3ec366b84902",
+          "cachedIndexDate": "2025-03-31"
+        }
+      ]
+    },
+    {
+      "instrumentId": "vxus",
+      "symbol": "VXUS",
+      "name": "Vanguard Total International Stock Index Fund",
+      "seriesId": "S000002932",
+      "classId": "C000094038",
+      "currency": "USD",
+      "basis": "net-asset-value",
+      "observations": [
+        {
+          "month": "2024-11",
+          "value": -0.0024323,
+          "accession": "0001752724-25-076345"
+        },
+        {
+          "month": "2024-12",
+          "value": -0.0257267,
+          "accession": "0001752724-25-076345"
+        },
+        {
+          "month": "2025-01",
+          "value": 0.0334295,
+          "accession": "0001752724-25-076345"
+        },
+        {
+          "month": "2025-02",
+          "value": 0.0183908,
+          "accession": "0001752724-25-163109"
+        },
+        {
+          "month": "2025-03",
+          "value": 0.0025273,
+          "accession": "0001752724-25-163109"
+        },
+        {
+          "month": "2025-04",
+          "value": 0.0311341,
+          "accession": "0001752724-25-163109"
+        },
+        {
+          "month": "2025-05",
+          "value": 0.04646429999999999,
+          "accession": "0000736054-25-000079"
+        },
+        {
+          "month": "2025-06",
+          "value": 0.0389141,
+          "accession": "0000736054-25-000079"
+        },
+        {
+          "month": "2025-07",
+          "value": -0.0092767,
+          "accession": "0000736054-25-000079"
+        },
+        {
+          "month": "2025-08",
+          "value": 0.041843500000000006,
+          "accession": "0000736054-25-000149"
+        },
+        {
+          "month": "2025-09",
+          "value": 0.0363940509,
+          "accession": "0000736054-25-000149"
+        },
+        {
+          "month": "2025-10",
+          "value": 0.015114379,
+          "accession": "0000736054-25-000149"
+        },
+        {
+          "month": "2025-11",
+          "value": 0.0028169014,
+          "accession": "0000736054-26-000091"
+        },
+        {
+          "month": "2025-12",
+          "value": 0.0266128091,
+          "accession": "0000736054-26-000091"
+        },
+        {
+          "month": "2026-01",
+          "value": 0.0574499137,
+          "accession": "0000736054-26-000091"
+        },
+        {
+          "month": "2026-02",
+          "value": 0.053074027600000004,
+          "accession": "0000736054-26-000191"
+        },
+        {
+          "month": "2026-03",
+          "value": -0.0862459167,
+          "accession": "0000736054-26-000191"
+        },
+        {
+          "month": "2026-04",
+          "value": 0.08171257009999999,
+          "accession": "0000736054-26-000191"
+        }
+      ],
+      "sources": [
+        {
+          "accession": "0000736054-25-000079",
+          "url": "https://www.sec.gov/Archives/edgar/data/736054/000073605425000079/primary_doc.xml",
+          "filedAt": "2025-09-25",
+          "retrievedAt": "2026-09-05T21:49:39.427Z",
+          "reportDate": "2025-07-31",
+          "sha256": "e21937193c21967911e53b67ea48a603480b47f738d3537afc5da845c3b2798c",
+          "cachedIndexDate": "2025-07-31"
+        },
+        {
+          "accession": "0000736054-25-000149",
+          "url": "https://www.sec.gov/Archives/edgar/data/736054/000073605425000149/primary_doc.xml",
+          "filedAt": "2025-12-23",
+          "retrievedAt": "2026-09-05T21:49:38.998Z",
+          "reportDate": "2025-10-31",
+          "sha256": "cb41992338086b350d0f59aa7f35e02c1a1a5f948cf4051c18f8c10324e781e7",
+          "cachedIndexDate": "2025-10-31"
+        },
+        {
+          "accession": "0000736054-26-000091",
+          "url": "https://www.sec.gov/Archives/edgar/data/736054/000073605426000091/primary_doc.xml",
+          "filedAt": "2026-03-31",
+          "retrievedAt": "2026-09-05T21:49:38.613Z",
+          "reportDate": "2026-01-31",
+          "sha256": "e263ff3bab0498e099148e839ed52066536b8c328bda14f680a9df6e2e4f77a4",
+          "cachedIndexDate": "2026-01-31"
+        },
+        {
+          "accession": "0000736054-26-000191",
+          "url": "https://www.sec.gov/Archives/edgar/data/736054/000073605426000191/primary_doc.xml",
+          "filedAt": "2026-06-26",
+          "retrievedAt": "2026-09-05T21:49:38.216Z",
+          "reportDate": "2026-04-30",
+          "sha256": "651ef99e1e6008ebebdb85c7a578e1c9a358bf8c8eacf39731c1435bcc81a3f5",
+          "cachedIndexDate": "2026-04-30"
+        },
+        {
+          "accession": "0001752724-25-076345",
+          "url": "https://www.sec.gov/Archives/edgar/data/736054/000175272425076345/primary_doc.xml",
+          "filedAt": "2025-03-31",
+          "retrievedAt": "2026-09-05T21:49:40.449Z",
+          "reportDate": "2025-01-31",
+          "sha256": "bab0a21b3d13b6cfc1317eea17be107be40c7ebe4da6c1196b21aea41696cab7",
+          "cachedIndexDate": "2025-01-31"
+        },
+        {
+          "accession": "0001752724-25-163109",
+          "url": "https://www.sec.gov/Archives/edgar/data/736054/000175272425163109/primary_doc.xml",
+          "filedAt": "2025-06-30",
+          "retrievedAt": "2026-09-05T21:49:39.901Z",
+          "reportDate": "2025-04-30",
+          "sha256": "9d7e69f82dbf5b42b71667de12dbd31893d0dfe4d91aa25c7156a2232b7921b2",
+          "cachedIndexDate": "2025-04-30"
+        }
+      ]
+    }
+  ]
+}

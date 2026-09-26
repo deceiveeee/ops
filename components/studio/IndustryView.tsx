@@ -204,7 +204,7 @@ export default function IndustryView() {
   return (
     <div className="space-y-4">
       <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+        <Link href="/studio/research" className="items-center text-accent-cyan hover:underline [@media(pointer:coarse)]:inline-flex [@media(pointer:coarse)]:min-h-11">
           Research
         </Link>
         <span aria-hidden="true"> › </span>
@@ -350,8 +350,9 @@ export default function IndustryView() {
             <p className="text-[13px] leading-6 text-st-muted">
               The largest by revenue. All ten together are {pct(shown)} of everything filed here.
             </p>
+            {/* A phone drops the bars and keeps the figures, so the share stays in view without scrolling sideways. */}
             <TableScroll>
-              <table className="mt-4 w-full min-w-[520px] text-left text-[13px]">
+              <table className="mt-4 w-full text-left text-[13px] sm:min-w-[520px]">
                 <thead className="text-[11px] uppercase tracking-wide text-st-faint">
                   <tr>
                     <th className="pb-2 font-medium">Company</th>
@@ -373,7 +374,7 @@ export default function IndustryView() {
                       <td className="py-2 text-right tabular-nums text-st-sub">{money(leader.revenue)}</td>
                       <td className="py-2 pl-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-2 w-full max-w-[180px] overflow-hidden rounded-full bg-st-side">
+                          <div className="hidden h-2 w-full max-w-[180px] overflow-hidden rounded-full bg-st-side sm:block">
                             <div
                               className="h-full rounded-full bg-[#0066cc]/70"
                               style={{ width: `${(leader.share / widest) * 100}%` }}
@@ -396,7 +397,7 @@ export default function IndustryView() {
               of two points or less is usually called steady.
             </p>
             <TableScroll>
-              <table className="mt-4 w-full min-w-[520px] text-left text-[13px]">
+              <table className="mt-4 w-full text-left text-[13px] sm:min-w-[520px]">
                 <thead className="text-[11px] uppercase tracking-wide text-st-faint">
                   <tr>
                     <th className="pb-2 font-medium">Company</th>
@@ -417,7 +418,7 @@ export default function IndustryView() {
                       </td>
                       <td className="py-2 pl-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-2 w-full max-w-[140px] overflow-hidden rounded-full bg-st-side">
+                          <div className="hidden h-2 w-full max-w-[140px] overflow-hidden rounded-full bg-st-side sm:block">
                             <div
                               className="h-full rounded-full bg-sky-400/70"
                               style={{ width: `${(row.absoluteChange / widestMove) * 100}%` }}

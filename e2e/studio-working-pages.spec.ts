@@ -16,7 +16,8 @@ test("goal tabs keep rapid edits and show the actual cash split after reload", a
   await expect(canvas).toContainText("$1,800");
   await page.getByRole("tab", { name: /Your limits/ }).click();
   await page.getByLabel("Loss you could live with").fill("15");
-  await expect(canvas).toContainText("$1,500 loss");
+  // Of the whole $12,500, cash included: every limit is a share of the whole portfolio.
+  await expect(canvas).toContainText("$1,875 loss");
   await page.getByLabel("Anything that limits your choices").fill("Keep the emergency money separate.");
   await expect(page.getByRole("status").filter({ hasText: "Saved in this browser" })).toBeVisible();
   await page.reload();
@@ -27,6 +28,45 @@ test("goal tabs keep rapid edits and show the actual cash split after reload", a
   await expect(page.getByLabel("Keep aside as cash")).toHaveValue("2500");
   await page.getByRole("tab", { name: /Your limits/ }).click();
   await expect(page.getByLabel("Anything that limits your choices")).toHaveValue("Keep the emergency money separate.");
+});
+
+test("limits are entered on Goals, checked there, and come back after a reload", async ({ page }) => {
+  await page.goto("/studio/goals");
+  const canvas = page.getByRole("region", { name: "A plan with room to breathe." });
+  await page.getByRole("tab", { name: /Your money/ }).click();
+  await page.getByRole("button", { name: "+ Add a bill" }).click();
+  await page.getByLabel("What for").fill("Tuition");
+  await page.getByLabel("Amount").fill("12000");
+  await page.getByLabel("Due").fill("2028-03-01");
+  // A new practice portfolio holds all $10,000 as cash until weights are set.
+  await expect(canvas).toContainText("Your bills total $12,000. The portfolio holds $10,000 as cash, $2,000 short.");
+  await page.getByRole("tab", { name: /Your mix/ }).click();
+  await page.getByLabel("Ready target, % of the whole portfolio").fill("20");
+  await page.getByLabel("Steady target, % of the whole portfolio").fill("25");
+  await page.getByLabel("Grow target, % of the whole portfolio").fill("70");
+  await expect(canvas).toContainText("115%");
+  await expect(canvas).toContainText("They need to add up to 100%.");
+  await page.getByLabel("Grow target, % of the whole portfolio").fill("55");
+  await expect(canvas).not.toContainText("They need to add up to 100%.");
+  await page.getByLabel("Grow lowest, % of the whole portfolio").fill("60");
+  await expect(canvas).toContainText("Grow: the target is outside its range.");
+  await page.getByLabel("Cap for one company").fill("5");
+  await page.getByRole("tab", { name: /Your limits/ }).click();
+  await expect(canvas).toContainText("Your loss budget: the loss you could live with");
+  await expect(canvas).toContainText("$2,000 loss");
+  await page.getByLabel("Loss you could afford").fill("15");
+  await expect(canvas).toContainText("Your loss budget: the loss you could afford");
+  await expect(canvas).toContainText("$1,500 loss");
+  await expect(page.getByRole("status").filter({ hasText: "Saved in this browser" })).toBeVisible();
+  await page.reload();
+  await page.getByRole("tab", { name: /Your money/ }).click();
+  await expect(page.getByLabel("What for")).toHaveValue("Tuition");
+  await expect(page.getByLabel("Due")).toHaveValue("2028-03-01");
+  await page.getByRole("tab", { name: /Your mix/ }).click();
+  await expect(page.getByLabel("Grow target, % of the whole portfolio")).toHaveValue("55");
+  await expect(page.getByLabel("Cap for one company")).toHaveValue("5");
+  await page.getByRole("tab", { name: /Your limits/ }).click();
+  await expect(page.getByLabel("Loss you could afford")).toHaveValue("15");
 });
 
 test("cash set aside beyond the budget has an explicit explanation", async ({ page }) => {
@@ -104,6 +144,8 @@ test("capture the working pages at all six widths", async ({ page }) => {
     await capture("goals-purpose", width);
     await page.getByRole("tab", { name: /Your money/ }).click();
     await capture("goals-money", width);
+    await page.getByRole("tab", { name: /Your mix/ }).click();
+    await capture("goals-mix", width);
     await page.getByRole("tab", { name: /Your limits/ }).click();
     await capture("goals-limits", width);
     await page.goto("/studio/research");

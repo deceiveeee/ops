@@ -111,6 +111,15 @@ const SAVE_DELAY_MS = 600;
 /** A ticker as the company lookup accepts one. */
 const TICKER = /^[A-Z0-9.-]{1,12}$/;
 
+/**
+ * A box a finger can hit, which an iPhone will not zoom into when it is tapped.
+ *
+ * A fingertip needs about 44px, and iOS zooms the whole page into any box whose
+ * text is under 16px. Neither is true of a mouse, so the desktop form keeps its
+ * density.
+ */
+const TOUCH_BOX = "[@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:text-base";
+
 /** A date as a person writes it, for a filing period a learner has to recognise. */
 const readableDate = (iso: string): string => {
   const parsed = new Date(`${iso}T00:00:00Z`);
@@ -652,7 +661,10 @@ export default function InvestigateView() {
   return (
     <div className="space-y-4">
       <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+        <Link
+          href="/studio/research"
+          className="items-center text-accent-cyan hover:underline [@media(pointer:coarse)]:inline-flex [@media(pointer:coarse)]:min-h-11"
+        >
           Research
         </Link>
         <span aria-hidden="true"> › </span>
@@ -761,7 +773,10 @@ export default function InvestigateView() {
                 onChange={(event) => setCompany(event.target.value)}
                 onBlur={() => void flush()}
                 placeholder="Its ticker symbol"
-                className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
+                className={cn(
+                  "mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none",
+                  TOUCH_BOX,
+                )}
               />
             </label>
             <label className="block">
@@ -769,7 +784,10 @@ export default function InvestigateView() {
               <select
                 value={industry}
                 onChange={(event) => setIndustry(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white focus:border-accent-cyan/50 focus:outline-none"
+                className={cn(
+                  "mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-[14px] text-white focus:border-accent-cyan/50 focus:outline-none",
+                  TOUCH_BOX,
+                )}
               >
                 {industryNames().map((name) => (
                   <option key={name} value={name} className="bg-slate-900">
@@ -897,7 +915,7 @@ export default function InvestigateView() {
                       type="button"
                       onClick={() => setOpenHint(open ? null : figure.key)}
                       aria-expanded={open}
-                      className="min-w-[150px] shrink-0 text-left text-[13px] text-slate-300 hover:text-white"
+                      className="min-w-[150px] shrink-0 text-left text-[13px] text-slate-300 hover:text-white [@media(pointer:coarse)]:min-h-11"
                     >
                       {figure.label}
                       <span className="ml-1 text-slate-600">?</span>
@@ -912,6 +930,7 @@ export default function InvestigateView() {
                       aria-label={filed ? `${figure.label}, as the company filed it` : figure.label}
                       className={cn(
                         "w-full rounded-lg border px-3 py-1.5 text-right text-[14px] tabular-nums text-white placeholder:text-slate-700 focus:outline-none",
+                        TOUCH_BOX,
                         marked
                           ? "border-accent-amber/50 bg-white/[0.03]"
                           : filed
@@ -1008,7 +1027,10 @@ export default function InvestigateView() {
                 onChange={(event) => setRiskFree(event.target.value)}
                 onBlur={() => void flush()}
                 placeholder={TREASURY_RATE.yieldPct.toFixed(2)}
-                className="w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none"
+                className={cn(
+                  "w-20 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-right text-[13px] tabular-nums text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none",
+                  TOUCH_BOX,
+                )}
               />
               <span>%</span>
             </label>
@@ -1021,7 +1043,10 @@ export default function InvestigateView() {
             <StudioAside
               inline={
                 <details className="mt-3">
-                  <summary className="cursor-pointer text-[12px] text-slate-500">Where this number comes from</summary>
+                  {/* Padded rather than made flex, which would drop the disclosure's arrow. */}
+                  <summary className="cursor-pointer text-[12px] text-slate-500 [@media(pointer:coarse)]:py-[13px]">
+                    Where this number comes from
+                  </summary>
                   <ul className="mt-2 space-y-1 text-[12px] leading-5 text-slate-500">
                     {cost.provenance.map((line, index) => (
                       <li key={index}>{line}</li>
@@ -1184,7 +1209,10 @@ export default function InvestigateView() {
                 <select
                   value={assetClass}
                   onChange={(event) => setAssetClass(event.target.value as LearnerInstrument["assetClass"])}
-                  className="min-h-11 rounded-lg border border-white/10 bg-white/[0.03] px-2 text-[13px] text-white focus:border-accent-cyan/50 focus:outline-none"
+                  className={cn(
+                    "min-h-11 rounded-lg border border-white/10 bg-white/[0.03] px-2 text-[13px] text-white focus:border-accent-cyan/50 focus:outline-none",
+                    TOUCH_BOX,
+                  )}
                 >
                   {ASSET_CLASSES.map((option) => (
                     <option key={option.value} value={option.value} className="bg-slate-900">

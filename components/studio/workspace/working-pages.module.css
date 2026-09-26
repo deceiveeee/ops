@@ -17,6 +17,28 @@
 .goalFields :is(input,textarea,select):focus { border-color: #725ca1; box-shadow: 0 0 0 3px #b5a2da40; }
 .goalFields textarea { min-height: 78px; }
 .goalFields .fieldNote { font-size: 12px; line-height: 1.7; color: #6b6573; }
+.goalFields strong { font-weight: 600; color: #3f344d; }
+.sliceTable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sliceTable :is(th,td) { padding: 6px 4px; text-align: left; vertical-align: middle; }
+.sliceTable thead th { font-size: 12px; font-weight: 500; color: #6b6573; padding-block: 0 4px; }
+.sliceTable tbody th { font-weight: 600; color: #3f344d; }
+.sliceTable tbody th i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; box-shadow: 0 0 0 1px #29272f33; }
+.sliceTable tbody th small { display: block; font-size: 12px; font-weight: 400; line-height: 1.4; color: #6b6573; }
+.sliceTable tbody tr + tr { border-top: 1px solid #e4e0e9; }
+.percentBox { display: inline-flex; align-items: center; gap: 4px; }
+.percentBox input { width: 68px; min-height: 44px; padding: 8px; border: 1px solid #cbc5d6; border-radius: 10px; background: #fff; text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; }
+.percentBox input:focus { outline: none; border-color: #725ca1; box-shadow: 0 0 0 3px #b5a2da40; }
+.percentBox span { font-size: 13px; color: #6b6573; }
+.capFields { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.bills { display: grid; gap: 10px; border-top: 1px solid #e4e0e9; padding-top: 14px; }
+.billRow { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto; gap: 10px; align-items: end; min-width: 0; margin: 0; padding: 0; border: 0; }
+.billRemove { min-height: 44px; padding: 0 4px; font-size: 13px; color: #6b6573; text-decoration: underline; text-underline-offset: 3px; }
+.billAdd { justify-self: start; min-height: 44px; padding: 0 14px; border: 1px dashed #b9b0c7; border-radius: 10px; font-size: 13px; font-weight: 500; color: #5c4590; }
+.mixLegend { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: 5px; }
+.mixLegend dt { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #c7cebf; }
+.mixLegend i { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.mixLegend dd { margin-left: 14px; font-size: 18px; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.mixLegend dd small { font-size: 12px; color: #c7cebf; }
 .editorFooter { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 24px; border-top: 1px solid #e4e0e9; }
 .editorFooter > span { font-size: 12px; color: #6b6672; }
 .editorFooter :is(a,button) { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 13px; font-weight: 500; color: #5c4590; }
@@ -139,6 +161,9 @@
   .goalFields { padding: 20px; }
   .panelTabs button { gap: 4px; font-size: 12px; }
   .panelTabs button span { display: none; }
+  /* A narrow editor column: slimmer boxes leave the slice names room for their jobs. */
+  .percentBox input { width: 52px; padding-inline: 6px; }
+  .sliceTable :is(th,td) { padding: 5px 2px; }
   .researchRoutes { grid-template-columns: 1fr 1.3fr 1fr; }
   .researchRoutes a { padding: 14px; gap: 8px; }
   .researchRoutes a > svg:last-child:not(:first-child) { display: none; }
@@ -166,8 +191,22 @@
   .amountHeadline strong { font-size: 34px; }
   .amountHeadline p { display: none; }
   .moneyDiagram { margin-top: 10px; max-height: 32px; }
-  .moneyLegend { margin-top: 2px; }
-  .moneyLegend dd { font-size: 16px; }
+  /* The sentence under the bar gives the same two amounts; a phone keeps the sentence. */
+  .moneyLegend { display: none; }
+  /* Twelve months of the monthly box, and the two caps, are the boxes just above. */
+  .moneyCanvas:is([data-panel=money],[data-panel=mix]) .canvasFoot { display: none; }
+  /* The targets are in the table just above, dotted in the bar's colours. */
+  .moneyCanvas[data-panel=mix] .mixLegend { display: none; }
+  .sliceTable { font-size: 12px; }
+  .sliceTable :is(th,td) { padding: 5px 2px; }
+  .percentBox input { width: 52px; padding-inline: 6px; font-size: 16px; }
+  /* Two rows a bill: what it is for beside Remove, then amount and date. */
+  .billRow { grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; gap: 8px; }
+  .billRow > div:first-of-type { grid-column: 1 / 3; grid-row: 1; }
+  .billRow > .billRemove { grid-column: 3; grid-row: 1; }
+  .billRow > div:nth-of-type(2) { grid-column: 1; grid-row: 2; }
+  .billRow > div:nth-of-type(3) { grid-column: 2 / 4; grid-row: 2; }
+  .mixLegend dd { font-size: 16px; }
   .moneyCanvas .canvasExplanation,.moneyCanvas .canvasWarning { margin-top: 10px; }
   .canvasFoot { margin-top: 12px; padding-top: 12px; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
   .canvasFoot span { max-width: 65%; }

@@ -394,6 +394,12 @@ export interface StudioProject {
   rules: StudioRules;
   stress: StudioStress;
   decisions: DecisionRecord[];
+  /** Saved valuation scenarios, independent of portfolio membership. Optional for older v2 backups. */
+  valuations?: import("./valuation-cases").ValuationCase[];
+  /** Local, explicitly dividend-adjusted monthly histories. Never mixed with raw prices. */
+  returnHistories?: import("./total-returns").ReturnHistory[];
+  /** Limits Studio can check. Absent in work saved before they existed, which reads as every limit unset. */
+  limits?: import("./limits").StudioLimits;
   /**
    * The exact v1 record this project was migrated from, kept verbatim.
    *
