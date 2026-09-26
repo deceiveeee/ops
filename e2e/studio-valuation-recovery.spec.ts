@@ -1,7 +1,39 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
 
 const apple = { cik: "0000320193", ticker: "AAPL", name: "Apple Inc." };
+async function scenarioAction(page: Page, name: string) {
+  const action = page.getByRole("button", { name, exact: true });
+  if (!await action.isVisible()) await page.getByText("Scenario options", { exact: true }).click();
+  await action.click();
+}
+
+test("invalid figures on a phone lead back to the right input and secondary views receive focus", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto("/studio/valuation");
+  await page.getByRole("button", { name: "Try a worked example" }).click();
+  await page.getByRole("tab", { name: "Figures", exact: true }).click();
+  const borrowings = page.getByLabel("Borrowings ($m)", { exact: true });
+  const receipt = page.getByLabel("Company shares per traded share", { exact: true });
+  await borrowings.fill("30o");
+  // Mobile hides the result panel here; the problem must still be visible beside the inputs.
+  await expect(page.getByRole("region", { name: "Figures for this valuation" }).getByRole("status")).toContainText("Borrowings ($m) is not a number");
+  await page.getByRole("tab", { name: "Value and price", exact: true }).click();
+  await page.getByRole("button", { name: "Review this input →", exact: true }).click();
+  await expect(page.getByRole("tab", { name: "Figures", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(borrowings).toBeFocused();
+  await borrowings.fill("300");
+  await receipt.fill("0");
+  await page.getByRole("tab", { name: "Value and price", exact: true }).click();
+  await page.getByRole("button", { name: "Review this input →", exact: true }).click();
+  await expect(receipt).toBeFocused();
+  await receipt.fill("1");
+
+  await page.getByText("Scenario options", { exact: true }).click();
+  await page.getByRole("button", { name: "Sources", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { name: "Where the figures came from", exact: true })).toBeFocused();
+});
 
 test("a pending company load cannot replace a reopened saved scenario", async ({ page }) => {
   let finishRequest!: () => void;
@@ -13,7 +45,7 @@ test("a pending company load cannot replace a reopened saved scenario", async ({
   });
   await page.goto("/studio/valuation");
   await page.getByRole("button", { name: "Try a worked example" }).click();
-  await page.getByRole("button", { name: "Choose company", exact: true }).click();
+  await scenarioAction(page, "Choose company");
   await page.getByRole("searchbox", { name: "Find a company" }).fill("Apple");
   await page.getByRole("button", { name: /AAPL.*Load figures/ }).click();
   await expect(page.getByLabel("Open a saved scenario")).toBeDisabled();
@@ -38,7 +70,7 @@ test("search failure offers retry and a manual company that survives reload", as
   await expect(page.getByRole("status").filter({ hasText: /^Saved in this browser$/ })).toBeVisible();
   await page.reload();
   await expect(page.getByLabel("Annual operating profit after tax ($m)", { exact: true })).toHaveValue("150");
-  await page.getByRole("tab", { name: "Sources", exact: true }).click();
+  await scenarioAction(page, "Sources");
   await expect(page.getByRole("region", { name: "Sources for this valuation" })).toContainText("entered by you");
 });
 
