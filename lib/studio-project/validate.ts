@@ -219,11 +219,18 @@ export function validateStudioProject(value: unknown): string[] {
   if (!list(value.alternatives, 100) || value.alternatives.length === 0) issues.push("The project needs between 1 and 100 portfolio alternatives.");
   else for (const alternative of value.alternatives) {
     if (!object(alternative)) { issues.push("A portfolio alternative is invalid."); continue; }
-    if (!keys(alternative, ["id", "name", "createdAt", "updatedAt", "positions", "currentCash", "contributionAmount", "reasoning"])
+    if (!keys(alternative, ["id", "name", "createdAt", "updatedAt", "positions", "currentCash", "contributionAmount", "reasoning", "valuationLinks", "comparisonBasis"])
       || !uniqueId(alternative.id) || !text(alternative.name, 300) || !dated(alternative) || !text(alternative.reasoning)) {
       issues.push("A portfolio alternative contains missing, repeated, or invalid fields.");
     }
     if (id(alternative.id)) alternativeIds.add(alternative.id);
+    if (alternative.comparisonBasis !== undefined) {
+      const basis = alternative.comparisonBasis;
+      if (!object(basis) || !keys(basis, ["goal", "limits", "stress"]) || !validLimits(basis.limits)
+        || validateStudioPlan({ ...common, goal: basis.goal, stress: basis.stress }).length) {
+        issues.push("The saved allocation comparison has invalid goals, limits or scenario assumptions.");
+      }
+    }
     if (!list(alternative.positions, 100)) { issues.push("An alternative needs a positions list with at most 100 investments."); continue; }
     const holdings = alternative.positions.map((position) => {
       if (!object(position)) return position;
@@ -234,6 +241,17 @@ export function validateStudioProject(value: unknown): string[] {
       return { ...position, research: emptyResearch };
     });
     issues.push(...validateStudioPlan({ ...common, holdings, currentCash: alternative.currentCash, contributionAmount: alternative.contributionAmount }));
+    if (alternative.valuationLinks !== undefined) {
+      const held = new Set(alternative.positions.filter(object).map((position) => position.instrumentId));
+      const linked = new Set<string>();
+      if (!list(alternative.valuationLinks, 100)) issues.push("A portfolio can keep at most 100 valuation links.");
+      else for (const link of alternative.valuationLinks) {
+        if (!object(link) || !keys(link, ["instrumentId", "snapshot"]) || !id(link.instrumentId)
+          || !held.has(link.instrumentId) || linked.has(link.instrumentId) || !validValuationCase(link.snapshot)) {
+          issues.push("A portfolio valuation link is invalid, repeated, or belongs to a holding that is missing.");
+        } else linked.add(link.instrumentId);
+      }
+    }
   }
   if (value.selectedAlternativeId !== null && (!id(value.selectedAlternativeId) || !alternativeIds.has(value.selectedAlternativeId))) {
     issues.push("The selected portfolio alternative is missing.");

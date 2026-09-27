@@ -88,7 +88,7 @@ export default function StudioFrame({ children }: { children: ReactNode }) {
 function LiveFrame({ pathname, children }: { pathname: string; children: ReactNode }) {
   const { setAsideSlot } = useWorkspace();
   const guidance = guidanceFor(pathname);
-  const stagePage = pathname !== "/studio/portfolio/returns" && STAGE_PAGES.some((base) => within(pathname, base));
+  const stagePage = !["/studio/portfolio/returns", "/studio/portfolio/weights"].includes(pathname) && STAGE_PAGES.some((base) => within(pathname, base));
   const integratedGuide = pathname === "/studio/goals" || pathname === "/studio/research";
   const toolPage = TOOL_PAGES.some((base) => within(pathname, base));
 

@@ -1,0 +1,80 @@
+.root { min-width: 0; }
+.heading { margin: 0 0 14px; }
+.heading h1 { font-family: var(--font-display),Georgia,serif; font-size: 32px; line-height: 1.15; letter-spacing: -.03em; }
+.heading p { margin-top: 6px; color: var(--ops-text-secondary); font-size: 13px; line-height: 1.5; }
+.editor { min-width: 0; }
+.context { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 12px; }
+.tabs { display: grid; grid-template-columns: repeat(3,1fr); border-bottom: 1px solid var(--ops-divider); margin-top: 12px; }
+.tabs button { text-align: left; padding: 8px 10px; font-size: 13px; border-bottom: 2px solid transparent; color: var(--ops-text-secondary); }
+.tabs button[aria-selected=true] { border-color: var(--ops-accent-strong); color: var(--ops-accent-strong); font-weight: 600; }
+.work { margin-top: 14px; padding: 20px; }
+.work h2 { font-family: var(--font-display),Georgia,serif; font-size: 25px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; margin: 4px 0 10px; }
+.work .intro { font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
+.stageTitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); min-height: 25px; }
+.stageTitle button { min-height: 26px; text-decoration: underline; text-underline-offset: 3px; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.root table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.root table :is(th,td) { padding: 10px 0; border-bottom: 1px solid var(--ops-divider); text-align: right; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.root table th { font-weight: 500; }
+.root table th:first-child { text-align: left; width: 44%; padding-right: 14px; }
+.root table thead th { font-weight: 400; color: var(--ops-text-secondary); font-size: 12px; padding-top: 0; }
+.weightsTable th strong { display: block; font-size: 14px; font-weight: 600; }
+.weightsTable th button { font-size: 12px; min-height: 32px; color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+.weightsTable td label { max-width: 120px; margin-left: auto; }
+.weightsTable td input { text-align: right; font-variant-numeric: tabular-nums; }
+.weightsTable td small { display: block; font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); margin-top: 4px; }
+.allocationBars { margin-top: 15px; padding: 14px 16px; border-radius: 10px; background: #242e28; color: #ecf1e7; }
+.allocationBars > div + div { margin-top: 10px; }
+.allocationBars > div > div:first-child { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+.bar { height: 7px; display: flex; margin-top: 6px; background: #ffffff16; border-radius: 2px; overflow: hidden; }
+.bar span { background: #a5cced; }
+.bar i { background: #d5dfd0; }
+.allocationBars small { display: block; margin-top: 10px; color: #c0ccbc; font-size: 12px; line-height: 1.5; }
+.pager { display: flex; justify-content: end; align-items: center; gap: 14px; font-size: 12px; margin-top: 8px; }
+.pager button { padding: 4px 12px; border: 1px solid var(--ops-control-border); border-radius: 8px; }
+.root button:disabled { cursor: default; opacity: .5; }
+.root .checkPicker { margin-top: 14px; }
+.checksTable td[data-status=not-met] { color: #915414; font-weight: 600; }
+.checksTable td[data-status=met] { color: #296449; }
+.work .explanation { padding: 12px 14px; margin-top: 12px; background: var(--ops-surface-2); border-left: 2px solid var(--ops-accent-strong); font-size: 13px; line-height: 1.6; color: var(--ops-text-primary); }
+.explanation button { text-decoration: underline; text-underline-offset: 3px; min-height: 30px; }
+.work .note,.footnote { margin-top: 12px; color: var(--ops-text-secondary); font-size: 12px; line-height: 1.5; }
+.work .shocks { font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); padding-bottom: 12px; }
+.scenarioHeadline { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 12px; padding: 16px; background: #242e28; color: #ecf1e7; border-radius: 10px; align-items: center; margin-bottom: 14px; }
+.scenarioHeadline div { display: grid; gap: 4px; }
+.scenarioHeadline div:last-child { text-align: right; }
+.scenarioHeadline span,.scenarioHeadline small { font-size: 12px; color: #c0ccbc; }
+.scenarioHeadline strong { font-family: var(--font-display),Georgia,serif; font-size: 32px; font-weight: 400; line-height: 1.2; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.scenarioTable small { display: block; font-size: 12px; color: var(--ops-text-secondary); }
+.root .scenarioTable :is(th,td) { padding-block: 8px; }
+.evidence { padding: 18px; margin-top: 16px; border-radius: 10px; background: #242e28; color: #ecf1e7; }
+.evidence span,.evidence p { font-size: 12px; color: #c0ccbc; line-height: 1.6; }
+.evidence h3 { font-size: 14px; line-height: 1.5; margin-top: 8px; }
+.evidence strong { display: block; font-family: var(--font-display),Georgia,serif; font-weight: 400; font-size: 26px; margin: 8px 0; }
+.evidence a { display: inline-block; color: #d5f39e; margin-top: 10px; font-size: 13px; }
+.textLink { display: inline-block; margin-top: 12px; font-size: 13px; }
+.actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.problem { font-size: 13px; line-height: 1.5; margin-top: 12px; padding: 10px; border-left: 2px solid #915414; background: var(--ops-surface-2); }
+.problem button { text-decoration: underline; text-underline-offset: 3px; }
+.message { font-size: 12px; line-height: 1.5; margin-top: 10px; color: var(--ops-accent-strong); }
+@media(max-width:1023px) {
+  .heading p { display: none; }
+}
+@media(max-width:767px) {
+  .heading h1 { font-size: 28px; }
+  .context { gap: 8px; }
+  .context > button { font-size: 12px; padding: 8px 10px; max-width: 110px; line-height: 1.4; }
+  .tabs button { font-size: 12px; padding-inline: 6px; }
+  .work { padding: 14px; margin-top: 12px; }
+  .work h2 { font-size: 22px; }
+  .work .intro { font-size: 12px; margin-bottom: 10px; }
+  .root table :is(th,td) { padding-block: 8px; font-size: 12px; }
+  .root table th:first-child { width: 35%; padding-right: 8px; }
+  .weightsTable td:last-child { width: 42%; }
+  .weightsTable td small { line-height: 1.4; }
+  .allocationBars { padding: 12px; margin-top: 12px; }
+  .scenarioHeadline { padding: 12px; gap: 8px; }
+  .scenarioHeadline strong { font-size: 26px; }
+  .work .explanation { font-size: 12px; padding: 10px; }
+  .footnote { margin-top: 10px; }
+}

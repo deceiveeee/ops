@@ -142,6 +142,9 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
 
   // The scenario on the Risk page against the loss budget.
   const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
+  // Zero capacity is an explicit zero-loss limit. Legacy willingness zero
+  // with no capacity remains the existing "not set" convention.
+  const hasLossBudget = budget.pct > 0 || limits.lossCapacityPct === 0;
   const allowed = whole * budget.pct / 100;
   const loses = Math.max(0, -calculation.stress.changeDollars);
   const setBy = `the loss you could ${budget.from === "capacity" ? "afford" : "live with"}`;
@@ -151,11 +154,11 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
     .slice(0, 3)
     .map((row) => `${symbol(calculation.rows.find((r) => r.holding.instrumentId === row.instrumentId)!)} ${dollars(-row.changeDollars)}`);
   const lossMet = loses <= allowed + 0.005;
-  const loss: LimitCheck = budget.pct <= 0
+  const loss: LimitCheck = !hasLossBudget
     ? { key: "loss", title: CHECK_TITLES.loss, status: "not-checked", detail: "Set the loss you could live with on Goals." }
     : {
       key: "loss", title: CHECK_TITLES.loss, status: lossMet ? "met" : "not-met",
-      detail: `The scenario on the Risk page loses ${dollars(loses)}. Your loss budget is ${dollars(allowed)}, ${setBy}.${lossMet || !biggest.length ? "" : ` Most of the loss: ${biggest.join(", ")}.`}`,
+      detail: `This allocation loses ${dollars(loses)} in the scenario. Your loss budget is ${dollars(allowed)}, ${setBy}.${lossMet || !biggest.length ? "" : ` Most of the loss: ${biggest.join(", ")}.`}`,
     };
 
   /*
@@ -175,7 +178,7 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
     const highest = slice ? limits.slices[slice].maxPct : null;
     if (slice && highest !== null) ceilings.push({ label: `${SLICE_NAMES[slice].name}'s highest`, pct: highest - (sliceShares[slice] - weightPct) });
     const fall = -(calculation.stress.rows.find((r) => r.instrumentId === row.holding.instrumentId)?.changePct ?? 0) / 100;
-    if (budget.pct > 0 && fall - cashFall > EPS) ceilings.push({ label: "your loss budget", pct: weightPct + (budget.pct - lossPct) / (fall - cashFall) });
+    if (hasLossBudget && fall - cashFall > EPS) ceilings.push({ label: "your loss budget", pct: weightPct + (budget.pct - lossPct) / (fall - cashFall) });
     const clamped = ceilings.map((ceiling) => ({ ...ceiling, pct: Math.max(0, ceiling.pct) }));
     const tightest = clamped.reduce<WeightCeiling | null>((low, ceiling) => (!low || ceiling.pct < low.pct - EPS ? ceiling : low), null);
     return { instrumentId: row.holding.instrumentId, weightPct, slice, ceilings: clamped, tightest, over: tightest !== null && weightPct > tightest.pct + EPS };

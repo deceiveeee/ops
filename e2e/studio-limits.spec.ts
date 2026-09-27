@@ -45,13 +45,13 @@ test("says beside each weight which limit holds it back, and lists every check",
   await expect(limits).toContainText("No bills listed.");
   await expect(limits).toContainText("Slices are inside their ranges · Not checked");
   await expect(limits).toContainText("AAPL is 10.0%, 5.0 points over your cap for one company (5%).");
-  await expect(limits).toContainText("The scenario on the Risk page loses $2,100. Your loss budget is $2,000, the loss you could live with. Most of the loss: VTI $1,800, AAPL $300.");
+  await expect(limits).toContainText("This allocation loses $2,100 in the scenario. Your loss budget is $2,000, the loss you could live with. Most of the loss: VTI $1,800, AAPL $300.");
 
   await page.getByLabel("AAPL target percentage").fill("5");
   await expect(table).toContainText("AAPL: At the most your cap for one company allows (5.0% of the whole portfolio).");
   await expect(table).toContainText("VTI: Can rise to 61.7% of the whole portfolio before it reaches your loss budget.");
   await expect(limits.locator("summary")).toContainText("2 met · 2 not checked");
-  await expect(limits).toContainText("The scenario on the Risk page loses $1,950. Your loss budget is $2,000, the loss you could live with.");
+  await expect(limits).toContainText("This allocation loses $1,950 in the scenario. Your loss budget is $2,000, the loss you could live with.");
 });
 
 test("a phone keeps the list under the table, closed to one line", async ({ page }) => {

@@ -117,7 +117,7 @@ export default function ValuationEditor({ record, alternatives, disabled, focusO
           <button className={`${styles.button} ${styles.primary} ${design.next}`} onClick={() => setView("Value")}>Continue to value and price →</button>
         </>}
         {view === "Value" && <>
-          <div className={design.stageTitle}><span>Step 3 of 3</span><span>Price is your input</span></div>
+          <div className={design.stageTitle}><span>Step 3 of 3</span><Link href={`/studio/portfolio/weights?valuation=${encodeURIComponent(draft.id)}`}>Portfolio weights →</Link></div>
           <h2>Compare value and price</h2>
           <p className={design.intro}>Use a price from a dated quote. The estimate comes from your assumptions.</p>
           <div className={styles.fields}>{field("price")}<label>Price date<input type="date" value={draft.priceAsOf} onChange={(e) => change({ priceAsOf: e.target.value })} /></label></div>
