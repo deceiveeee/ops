@@ -110,7 +110,13 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   await expect(checks.getByRole("row").filter({ hasText: "No holding is over its cap" }).getByRole("cell")).toHaveText(["Not met", "Met"]);
   await expect(checks.getByRole("row").filter({ hasText: "The scenario stays within your loss budget" }).getByRole("cell")).toHaveText(["Not met", "Not met"]);
   await expect(page.getByText("This allocation loses $15,500 in the scenario.", { exact: false })).toBeVisible();
-  await page.getByLabel("Explain a check", { exact: true }).selectOption("caps");
+  const checkPicker = page.getByRole("combobox", { name: "Explain a check", exact: true });
+  await expect(checkPicker.getByRole("option")).toHaveText(["Bills", "Slice ranges", "Holding caps", "Loss budget"]);
+  await checkPicker.focus();
+  await page.keyboard.press("Home");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  await expect(checkPicker).toHaveValue("caps");
   await expect(page.getByText("No company above 5%.", { exact: false })).toBeVisible();
 
   await view(page, "Loss scenario").click();
@@ -137,6 +143,7 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   const valuations = page.getByRole("combobox", { name: "Saved valuation", exact: true });
   await expect(valuations.getByRole("option")).toHaveText(["No valuation attached", "Apple base case · AAPL"]);
   await valuations.selectOption("weights-apple");
+  await expect(page.getByText("1 company share per traded share · saved 2026-09-25.", { exact: true })).toBeVisible();
   await expect(page.getByText("2% growth · 20% return on new capital · 10% cost of capital.", { exact: true })).toBeVisible();
   expect(await storedProject(page)).toEqual(original);
 
@@ -302,9 +309,12 @@ test("portfolio weights, checks, scenario, evidence and saving fit six screen wi
   test.setTimeout(120_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await openFixture(page);
+  const project = fixture();
+  project.alternatives[0].name = "Original allocation for long-term goals";
+  project.valuations![0].name = "Apple base case with conservative assumptions";
+  await openFixture(page, project);
   await page.getByLabel("AAPL proposed percentage", { exact: true }).fill("6.25");
-  const report = ["# Portfolio weights visual measurements", "", "Three holdings, $100,000 budget, $20,000 reserve. Preview reduces AAPL from 8% to 5% of all money.", ""];
+  const report = ["# Portfolio weights visual measurements", "", "Three holdings, $100,000 budget, $20,000 reserve. Preview reduces AAPL from 8% to 5% of all money. Long allocation and valuation names exercise wrapping.", ""];
   mkdirSync(".agent-shots", { recursive: true });
   for (const width of [390, 768, 1024, 1280, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });

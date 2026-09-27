@@ -137,3 +137,16 @@ items: truncated native option labels on phones and singular-share wording in
 saved evidence. The [completion review](../design/studio-portfolio-weights-2026-09-25.md#completion-review-26-september)
 records the exact inspection scope, all six width measurements and test
 results. This completion adds no new financial model or source claim.
+
+
+### Label-polish follow-up
+
+The two P2 presentation findings recorded above are resolved: visible native
+selection labels can wrap, and a ratio of one uses “company share”. Shorter
+check names retain the full explanations, and a shorter scenario heading
+keeps long-name phone states within the screen budget. No financial claim,
+calculation, source boundary or saved-record behavior changes. The latest
+[release record](../design/studio-portfolio-weights-2026-09-25.md#label-polish-after-pr-13)
+records 230 passing browser tests, five skips, TypeScript and lint, all six
+widths, visual review, and the distinction between local verification and the
+Vercel preview that required sign-in.
