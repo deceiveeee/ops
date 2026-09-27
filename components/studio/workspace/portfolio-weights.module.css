@@ -78,3 +78,11 @@
   .work .explanation { font-size: 12px; padding: 10px; }
   .footnote { margin-top: 10px; }
 }
+
+.selectField { position: relative; display: grid; min-width: 0; border-radius: 9px; }
+.root .selectField select { position: absolute; inset: 0; height: 100%; opacity: 0; cursor: pointer; }
+.selectValue { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 10px; border: 1px solid var(--ops-control-border); border-radius: 9px; background: var(--ops-surface); color: var(--ops-text-primary); font-size: 16px; line-height: 1.5; pointer-events: none; }
+.selectValue > span { min-width: 0; overflow-wrap: anywhere; }
+.selectValue svg { flex-shrink: 0; }
+.selectField:has(select:focus-visible) { outline: 2px solid var(--ops-accent-strong); outline-offset: 3px; }
+.selectField:has(select:disabled) { opacity: .5; }

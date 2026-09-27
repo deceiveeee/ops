@@ -168,3 +168,53 @@ Status: ready for review, with the two nonblocking visual polish items listed
 above. Source scope, learner sequence, plain-language review, numerical
 checks, persistence, keyboard use, screen measurements and visual review are
 recorded separately; passing tests alone is not the basis for this status.
+
+## Label polish after PR #13
+
+PR #13 merged after its deployment checks passed. Its Vercel preview required
+sign-in in the available browser, so no live-preview walkthrough is claimed.
+The local production suite had already covered valuation entry, proposal
+editing, saving, explicit selection and persistence.
+
+The follow-up keeps native dropdown selection and keyboard behavior, with a
+wrapping visible value and a visible focus outline. The native control retains
+the complete option text for assistive technology; the repeated visual label
+is hidden from screen readers. The check picker uses Bills, Slice ranges,
+Holding caps and Loss budget, alongside the existing full check explanations.
+Evidence now uses the singular “company share” when the numeric ratio is one.
+
+This changes presentation and wording only. The source coverage, financial
+arithmetic, persistence and learner sequence retain their audited boundaries.
+The existing browser flow now exercises keyboard selection and the corrected
+singular wording; its six-width capture uses long allocation and valuation
+names. The initial long-name capture exposed a 1.519-screen phone scenario
+view. Its heading is now “What drives the change?”, preserving the complete
+explanation and bringing that state back to 1.49 screens.
+
+Final checks passed: production build and full browser suite, 230 passed and
+5 skipped in 6.4 minutes; TypeScript; lint with the same two existing onboarding
+hook warnings. No failed case was skipped. The existing unit-suite result
+above remains the last full unit run; this presentation-only follow-up did
+not change financial calculations or storage logic.
+
+All 30 captures at 390, 768, 1024, 1280, 1440 and 1920px fit within 1.29–1.49
+screens, with no horizontal overflow or page errors. Visual inspection covered
+all five states at 390 and 1440px, the scenario at 768px, and weights at 1024,
+1280 and 1920px. P0: none. P1: none. P2: both previously recorded findings
+are resolved; no additional defects were found in these inspected states.
+
+A separate manual walkthrough in the local production build began with an
+empty practice portfolio, added a hypothetical holding, saved a proposal,
+confirmed that saving preserved the original selection, explicitly selected
+the proposal, and verified the selection after reload. The phone dropdown
+opened with a pointer, closed with Escape, retained its full wrapping name
+and showed a visible focus outline. This one-holding state measured 1.27
+screens, with zero horizontal overflow and no console errors.
+
+Evidence: `polish-browser-full.log`, `polish-typecheck.log`,
+`polish-lint.log`, and the refreshed
+`.agent-shots/portfolio-weights-report.md` with its 30 images.
+
+Status: Ready for review. The live Vercel preview remains unverified because
+it required sign-in; the manual walkthrough and automated suite both used
+the local production build.

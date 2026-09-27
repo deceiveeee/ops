@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type Ref } from "react";
 import { workingAlternative, type PortfolioAlternative, type StudioProject } from "@/lib/studio-project/schema";
 import { allocationView, chooseWeightProposal, comparisonNeedsReview, eligibleValuations, holdingInputsChanged, saveWeightProposal } from "@/lib/studio-project/portfolio-weights";
 import { validateStudioProject } from "@/lib/studio-project/validate";
 import { readInput, valuationResult, type ValuationCase } from "@/lib/studio-project/valuation-cases";
+import type { CheckKey } from "@/lib/studio-project/limit-checks";
 import type { StudioCalculation } from "@/lib/studio";
 import { useWorkspace } from "./WorkspaceProvider";
 import ViewTabs from "./ViewTabs";
@@ -19,6 +20,7 @@ const VIEWS = [{ id: "Weights", label: "Weights" }, { id: "Limits", label: "Limi
 type View = typeof VIEWS[number]["id"] | "Valuation" | "Keep";
 const status = { met: "Met", "not-met": "Not met", "not-checked": "Not checked" };
 const PAGE_SIZE = 3;
+const CHECK_NAMES: Record<CheckKey, string> = { bills: "Bills", slices: "Slice ranges", caps: "Holding caps", loss: "Loss budget" };
 
 export default function PortfolioWeightsWorkspace() {
   const { project } = useWorkspace();
@@ -144,7 +146,7 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
   const failedCount = preview.checks.checks.filter((item) => item.status === "not-met").length;
   return <fieldset disabled={busy} className={styles.editor}>
     <div className={styles.context}>
-      <label>Start from allocation<select aria-label="Start from allocation" ref={picker} value={source.id} onChange={(event) => { if (!dirty || !cacheFailed || window.confirm("Discard this preview and open another saved allocation?")) onOpen(event.target.value); }}>{project.alternatives.map((item) => <option key={item.id} value={item.id}>{item.name}{item.id === current.id ? " · selected" : ""}</option>)}</select></label>
+      <WrappingSelect label="Start from allocation" valueLabel={source.name} selectRef={picker} value={source.id} onChange={(event) => { if (!dirty || !cacheFailed || window.confirm("Discard this preview and open another saved allocation?")) onOpen(event.target.value); }}>{project.alternatives.map((item) => <option key={item.id} value={item.id}>{item.name}{item.id === current.id ? " · selected" : ""}</option>)}</WrappingSelect>
       <button className={common.button} onClick={() => show("Keep")}>Review proposal →</button>
     </div>
     {message && <p role="status" className={styles.message}>{message}</p>}
@@ -166,11 +168,11 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
         <div className={styles.stageTitle}><span>Same goals, two allocations</span><Link href="/studio/goals">Edit limits ↗</Link></div><h2 ref={heading} tabIndex={-1}>Does the proposal fit?</h2>
         <p className={styles.intro}>Checks use the whole portfolio, including your cash reserve. An unset limit is shown as not checked.</p>
         <table className={styles.checksTable}><caption className={styles.srOnly}>Selected and proposed allocation limit checks</caption><thead><tr><th scope="col">Your limit</th><th scope="col">Selected</th><th scope="col">Proposed</th></tr></thead><tbody>{preview.checks.checks.map((item) => <tr key={item.key}><th scope="row">{item.title}</th><td>{status[base.checks.checks.find((v) => v.key === item.key)!.status]}</td><td data-status={item.status}>{status[item.status]}</td></tr>)}</tbody></table>
-        <label className={styles.checkPicker}>Explain a check<select aria-label="Explain a check" value={check} onChange={(event) => setCheck(event.target.value)}>{preview.checks.checks.map((item) => <option value={item.key} key={item.key}>{item.title}</option>)}</select></label><p className={styles.explanation}><strong>Proposed allocation: </strong>{selectedCheck.detail}</p>
+        <WrappingSelect className={styles.checkPicker} label="Explain a check" valueLabel={CHECK_NAMES[selectedCheck.key]} value={check} onChange={(event) => setCheck(event.target.value)}>{preview.checks.checks.map((item) => <option value={item.key} key={item.key}>{CHECK_NAMES[item.key]}</option>)}</WrappingSelect><p className={styles.explanation}><strong>Proposed allocation: </strong>{selectedCheck.detail}</p>
         <p className={styles.note}>Company caps check direct holdings. Fund overlap and sector exposure need separate review in <Link href="/studio/portfolio/risk">Risk and cost</Link>.</p>
       </>}
       {view === "Scenario" && <>
-        <div className={styles.stageTitle}><span>One assumed market move</span><Link href="/studio/portfolio/risk">Edit scenario ↗</Link></div><h2 ref={heading} tabIndex={-1}>Where does the change come from?</h2>
+        <div className={styles.stageTitle}><span>One assumed market move</span><Link href="/studio/portfolio/risk">Edit scenario ↗</Link></div><h2 ref={heading} tabIndex={-1}>What drives the change?</h2>
         <p className={styles.intro}>Each holding’s change adds to the portfolio’s result. A 10% whole-portfolio weight falling 30% subtracts 3 percentage points.</p>
         <p className={styles.shocks}>US stocks {pct(project.stress.usStocksPct)} · International {pct(project.stress.internationalStocksPct)} · Global {pct(project.stress.globalStocksPct)} · Bonds {pct(project.stress.bondsPct)} · Cash {pct(project.stress.cashPct)}</p>
         {valid && base.calculation.valid ? <>
@@ -181,8 +183,8 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
       </>}
       {view === "Valuation" && <>
         <div className={styles.stageTitle}><span>Evidence behind a weight</span></div><h2 ref={heading} tabIndex={-1}>Keep the valuation you used</h2>
-        <label>Company holding<select value={holding} onChange={(event) => setHolding(event.target.value)}>{original.positions.filter((p) => instrument(p.instrumentId)?.kind === "stock").map((p) => <option key={p.instrumentId} value={p.instrumentId}>{label(p.instrumentId)}</option>)}</select></label>
-        <label className={styles.checkPicker}>Saved valuation<select value={links[holding] ?? snapshot?.id ?? ""} onChange={(event) => setLinks({ ...links, [holding]: event.target.value })}><option value="">No valuation attached</option>{snapshot && !options.some((v) => v.id === snapshot.id) && <option value={snapshot.id}>Kept: {snapshot.name}</option>}{options.map((value) => <option key={value.id} value={value.id}>{value.name} · {value.ticker || value.company}</option>)}</select></label>
+        <WrappingSelect label="Company holding" valueLabel={label(holding)} value={holding} onChange={(event) => setHolding(event.target.value)}>{original.positions.filter((p) => instrument(p.instrumentId)?.kind === "stock").map((p) => <option key={p.instrumentId} value={p.instrumentId}>{label(p.instrumentId)}</option>)}</WrappingSelect>
+        <WrappingSelect className={styles.checkPicker} label="Saved valuation" valueLabel={snapshot ? `${snapshot.name} · ${snapshot.ticker || snapshot.company}` : "No valuation attached"} value={links[holding] ?? snapshot?.id ?? ""} onChange={(event) => setLinks({ ...links, [holding]: event.target.value })}><option value="">No valuation attached</option>{snapshot && !options.some((v) => v.id === snapshot.id) && <option value={snapshot.id}>Kept: {snapshot.name}</option>}{options.map((value) => <option key={value.id} value={value.id}>{value.name} · {value.ticker || value.company}</option>)}</WrappingSelect>
         {manuallyMatched && <p className={styles.note}>Matched using your company name. Confirm the listing and share ratio yourself before keeping this valuation.</p>}
         {snapshot ? <ValuationEvidence snapshot={snapshot} obsolete={Boolean(obsolete)} pending={links[holding] !== undefined} /> : <p className={styles.explanation}>{options.length ? "Choose a scenario to preserve its figures and assumptions with this proposal." : "No compatible, completed valuation is saved for this holding. Check the company, ticker and traded-share ratio in Valuation."}</p>}
         {obsolete && options.some((value) => value.id === snapshot?.id) && <button className={common.button} onClick={() => setLinks({ ...links, [holding]: snapshot!.id })}>Use the latest valuation in this preview</button>}
@@ -239,5 +241,17 @@ function Contribution({ name, before, after, budget }: { name: string; before: n
 }
 function ValuationEvidence({ snapshot, obsolete, pending }: { snapshot: ValuationCase; obsolete: boolean; pending: boolean }) {
   const result = valuationResult(snapshot);
-  return <div className={styles.evidence}><span>{obsolete ? "Valuation changed · review this saved version" : pending ? "Preview of the valuation to keep" : "Version kept with the allocation"}</span><h3>{snapshot.company} · {snapshot.name}</h3><strong>{result.ok ? `${result.value.toLocaleString("en-US", { style: "currency", currency: "USD" })} per traded share` : "Inputs need review"}</strong><p>{snapshot.inputs.growth}% growth · {snapshot.inputs.returnOnCapital}% return on new capital · {snapshot.inputs.costOfCapital}% cost of capital.</p><p>{snapshot.inputs.receipt} company shares per traded share · saved {snapshot.updatedAt.slice(0, 10)}.</p><Link href={`/studio/valuation?case=${encodeURIComponent(snapshot.id)}`}>Open valuation →</Link></div>;
+  return <div className={styles.evidence}><span>{obsolete ? "Valuation changed · review this saved version" : pending ? "Preview of the valuation to keep" : "Version kept with the allocation"}</span><h3>{snapshot.company} · {snapshot.name}</h3><strong>{result.ok ? `${result.value.toLocaleString("en-US", { style: "currency", currency: "USD" })} per traded share` : "Inputs need review"}</strong><p>{snapshot.inputs.growth}% growth · {snapshot.inputs.returnOnCapital}% return on new capital · {snapshot.inputs.costOfCapital}% cost of capital.</p><p>{snapshot.inputs.receipt} company {readInput(snapshot.inputs.receipt) === 1 ? "share" : "shares"} per traded share · saved {snapshot.updatedAt.slice(0, 10)}.</p><Link href={`/studio/valuation?case=${encodeURIComponent(snapshot.id)}`}>Open valuation →</Link></div>;
+}
+
+/** Keep native selection and keyboard behavior while letting the visible value wrap. */
+function WrappingSelect({ label, valueLabel, selectRef, className, children, ...props }: ComponentPropsWithoutRef<"select"> & {
+  label: string;
+  valueLabel: string;
+  selectRef?: Ref<HTMLSelectElement>;
+}) {
+  return <label className={className}>{label}<span className={styles.selectField}>
+    <select {...props} ref={selectRef} aria-label={label}>{children}</select>
+    <span className={styles.selectValue} aria-hidden="true"><span>{valueLabel}</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="m3 4.5 3 3 3-3" stroke="currentColor" strokeWidth="1.5" /></svg></span>
+  </span></label>;
 }
