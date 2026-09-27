@@ -22,8 +22,13 @@ export default function PortfolioNav() {
   const pathname = usePathname() ?? "";
   return (
     <nav aria-label="Portfolio" className="mb-4">
-      <details className="rounded-lg border border-[var(--ops-control-border)] bg-[var(--ops-surface)] px-3 text-[13px] sm:hidden">
-        <summary className="flex min-h-11 cursor-pointer items-center justify-between">{TABS.find((tab) => tab.href === pathname)?.label ?? "Portfolio pages"}<span aria-hidden="true">⌄</span></summary>
+      <details className="group rounded-lg border border-[var(--ops-control-border)] bg-[var(--ops-surface)] px-3 text-[13px] sm:hidden">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between [&::-webkit-details-marker]:hidden">
+          {TABS.find((tab) => tab.href === pathname)?.label ?? "Portfolio pages"}
+          <svg aria-hidden="true" viewBox="0 0 12 12" className="h-3 w-3 text-[var(--ops-text-tertiary)] transition-transform group-open:rotate-180">
+            <path d="M2 4.5 6 8l4-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </summary>
         <ul className="border-t border-[var(--ops-divider)] pb-2">{TABS.map((tab) => <li key={tab.href}><Link href={tab.href} aria-current={pathname === tab.href ? "page" : undefined} className="flex min-h-11 items-center" onClick={(event) => { const disclosure = event.currentTarget.closest("details"); if (disclosure) disclosure.open = false; }}>{tab.label}</Link></li>)}</ul>
       </details>
       <ul className="hidden gap-x-4 sm:flex sm:flex-wrap sm:gap-x-6 sm:border-b sm:border-[var(--ops-divider)]">

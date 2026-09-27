@@ -48,7 +48,7 @@ async function openFixture(page: Page, project = fixture()) {
   const backup = exportProjectBackup(project);
   if (!backup.ok) throw new Error(backup.error);
   await page.goto(ROUTE);
-  await expect(page.getByRole("heading", { name: "Portfolio weights", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Compare allocations", exact: true })).toBeVisible();
   await saved(page);
   await page.evaluate(async (raw) => {
     window.localStorage.setItem("ops-studio-mode", "practice");
@@ -90,12 +90,14 @@ async function storedProject(page: Page): Promise<StudioProject> {
 
 async function openEvidence(page: Page) {
   await view(page, "Weights").click();
-  await appleRow(page).getByRole("button", { name: /^Valuation/ }).click();
+  await appleRow(page).getByRole("button", { name: /^(Add valuation|Valuation kept) for AAPL$/ }).click();
   await expect(page.getByRole("heading", { name: "Keep the valuation you used", exact: true })).toBeFocused();
 }
 
 test("previews weights, explains limits and scenario dollars, then saves and explicitly chooses a proposal", async ({ page }) => {
   const original = await openFixture(page);
+  await expect(picker(page)).not.toBeFocused();
+  await expect(appleRow(page).getByRole("button", { name: "Add valuation for AAPL", exact: true })).toBeVisible();
   await expect(appleRow(page)).toContainText("$8,000 · 8% of all money");
   await expect(page.getByLabel("Cash and investment comparison", { exact: true })).toContainText("$32,000 cash · 32%");
   await page.getByLabel("AAPL proposed percentage", { exact: true }).fill("6.25");
@@ -120,7 +122,7 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   await expect(page.getByText("No company above 5%.", { exact: false })).toBeVisible();
 
   await view(page, "Loss scenario").click();
-  const contributions = page.getByRole("table", { name: "Contribution to the scenario change", exact: true });
+  const contributions = page.getByRole("table", { name: "Contribution to the scenario change, largest first", exact: true });
   // Original: $8k*30% + $40k*30% + $20k*10% = $16,400.
   // Proposal: $5k*30% + $40k*30% + $20k*10% = $15,500; $35k cash at 0% adds $0.
   const rows = [
@@ -145,6 +147,8 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   await valuations.selectOption("weights-apple");
   await expect(page.getByText("1 company share per traded share · saved 2026-09-25.", { exact: true })).toBeVisible();
   await expect(page.getByText("2% growth · 20% return on new capital · 10% cost of capital.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Price you entered: $15.00 on Sep 24, 2026.", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 company share per traded share · saved Sep 25, 2026.", { exact: true })).toBeVisible();
   expect(await storedProject(page)).toEqual(original);
 
   await page.getByRole("button", { name: "Review proposal →", exact: true }).click();
@@ -153,6 +157,7 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   await expect(page.getByRole("region", { name: "Keep for this allocation", exact: true })).toContainText("1 limit not met · 2 not checked.");
   await page.getByRole("button", { name: "Save proposal", exact: true }).click();
   await expect(picker(page).getByRole("option")).toHaveCount(2);
+  await expect(page.getByText("Saved as a separate proposal. Your selected allocation has not changed.", { exact: true })).toBeVisible();
   await saved(page);
   const afterSave = await storedProject(page);
   const proposal = afterSave.alternatives[1];
@@ -173,6 +178,10 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   await page.getByRole("button", { name: "Use this allocation", exact: true }).click();
   await expect(page.getByText("This is now your selected allocation. Your other allocations remain saved.", { exact: true })).toBeVisible();
   await expect(picker(page)).toBeFocused();
+  // Nothing is left to save: the page must not offer a duplicate of what was just chosen.
+  await expect(page.getByText("Your selected allocation", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Save proposal", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Use this allocation", exact: true })).toHaveCount(0);
   await saved(page);
   const chosen = await storedProject(page);
   expect(chosen.selectedAlternativeId).toBe(proposal.id);
@@ -201,7 +210,7 @@ test("opens the matching holding from valuation without changing saved allocatio
   await page.goto("/studio/valuation?case=weights-apple");
   await expect(page.getByRole("combobox", { name: "Saved scenario", exact: true })).toHaveValue("weights-apple");
   await page.getByRole("tab", { name: "Value and price", exact: true }).click();
-  const link = page.getByRole("link", { name: "Portfolio weights →", exact: true });
+  const link = page.getByRole("link", { name: "Compare allocations →", exact: true });
   await expect(link).toHaveAttribute("href", "/studio/portfolio/weights?valuation=weights-apple");
   await link.focus();
   await page.keyboard.press("Enter");
@@ -342,5 +351,114 @@ test("portfolio weights, checks, scenario, evidence and saving fit six screen wi
   }
   report.push("", `Page errors: ${errors.length}`);
   writeFileSync(".agent-shots/portfolio-weights-report.md", report.join("\n"));
+  expect(errors).toEqual([]);
+});
+
+/** The three-holding fixture plus TSM at 5%: one holding more than a page. */
+function fourHoldings(): StudioProject {
+  const project = fixture();
+  return {
+    ...project,
+    candidates: [...project.candidates, { ...project.candidates[0], id: "cand-weights-tsm", instrumentId: "tsm" }],
+    alternatives: project.alternatives.map((alternative) => ({ ...alternative, positions: [...alternative.positions, { ...alternative.positions[0], instrumentId: "tsm", targetWeightPct: 5 }] })),
+  };
+}
+
+test("with more holdings than fit, the loss scenario still adds up to its total", async ({ page }) => {
+  await openFixture(page, fourHoldings());
+  await page.getByLabel("AAPL proposed percentage", { exact: true }).fill("6.25");
+  await view(page, "Loss scenario").click();
+  const scenario = page.getByRole("tabpanel", { name: "Loss scenario", exact: true });
+  // Selected: $8k*30% + $40k*30% + $20k*10% + $4k*40% = $18,000.
+  // Proposed: $5k*30% + $40k*30% + $20k*10% + $4k*40% = $17,100; cash at 0% adds $0.
+  await expect(scenario).toContainText("-$18,000");
+  await expect(scenario).toContainText("-$17,100");
+  const contributions = page.getByRole("table", { name: "Contribution to the scenario change, largest first", exact: true });
+  const body = contributions.locator("tbody tr");
+  // Largest first; TSM, the smallest, is summed in its own row rather than left off.
+  await expect(body.locator("th")).toHaveText(["VTI", "AAPL", "AGG", /^1 more holding/, "Cash reserve + unassigned"]);
+  await expect(body.nth(3).getByRole("cell")).toHaveText(["-$1,600-1.6 points", "-$1,600-1.6 points"]);
+  // Every row shown adds up to the total above it.
+  const sums = await body.evaluateAll((rows) => [1, 2].map((column) => rows.reduce((sum, row) => sum + Number(row.children[column].childNodes[0].textContent!.replace(/[$,]/g, "")), 0)));
+  expect(sums).toEqual([-18_000, -17_100]);
+
+  const more = page.getByRole("button", { name: "Show 1 more holding", exact: true });
+  await more.focus();
+  await page.keyboard.press("Enter");
+  await expect(body.locator("th")).toHaveText(["VTI", "AAPL", "AGG", "TSM", "Cash reserve + unassigned"]);
+  const fewer = page.getByRole("button", { name: "Show the largest 3 only", exact: true });
+  await expect(fewer).toBeFocused();
+  await expect(fewer).toHaveAttribute("aria-expanded", "true");
+  await page.keyboard.press("Enter");
+  await expect(more).toBeFocused();
+  await expect(more).toHaveAttribute("aria-expanded", "false");
+});
+
+test("weights that add up to exactly 100% save, and a missing reason is explained", async ({ page }) => {
+  const original = await openFixture(page);
+  // 5.4 + 69.9 + 24.7 is 100, but adds to 100.00000000000001 in binary floating point.
+  await page.getByLabel("AAPL proposed percentage", { exact: true }).fill("5.4");
+  await page.getByLabel("VTI proposed percentage", { exact: true }).fill("69.9");
+  await page.getByLabel("AGG proposed percentage", { exact: true }).fill("24.7");
+  await expect(page.getByLabel("Cash and investment comparison", { exact: true })).toContainText("$20,000 cash · 20%");
+  await page.getByRole("button", { name: "Review proposal →", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save proposal", exact: true })).toBeDisabled();
+  await expect(page.getByText("Write your reason to save it.", { exact: true })).toBeVisible();
+  await page.getByLabel("Why these weights?", { exact: true }).fill("Invest everything after the reserve.");
+  await expect(page.getByText("Write your reason to save it.", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Save proposal", exact: true }).click();
+  await expect(page.getByText("Saved as a separate proposal. Your selected allocation has not changed.", { exact: true })).toBeVisible();
+  await saved(page);
+  const stored = await storedProject(page);
+  expect(stored.alternatives).toHaveLength(2);
+  expect(stored.alternatives[0]).toEqual(original.alternatives[0]);
+  expect(stored.alternatives[1].positions.map((holding) => holding.targetWeightPct)).toEqual([5.4, 69.9, 24.7]);
+});
+
+test("the unchanged selected allocation offers nothing to save", async ({ page }) => {
+  const original = await openFixture(page);
+  await page.getByRole("button", { name: "Review proposal →", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Original allocation", exact: true })).toBeFocused();
+  await expect(page.getByText("Your selected allocation", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Save proposal", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Back to weights", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Try a different mix", exact: true })).toBeFocused();
+  expect(await storedProject(page)).toEqual(original);
+});
+
+test("four holdings, their pages and every view fit six screen widths", async ({ page }) => {
+  test.setTimeout(150_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await openFixture(page, fourHoldings());
+  await page.getByLabel("AAPL proposed percentage", { exact: true }).fill("6.25");
+  const report = ["# Portfolio weights with four holdings", "", "One holding more than a page: Weights pages its rows; the loss scenario sums the smallest in one row.", ""];
+  mkdirSync(".agent-shots", { recursive: true });
+  for (const width of [390, 768, 1024, 1280, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const state of ["weights", "limits", "scenario", "evidence", "keep"] as const) {
+      if (state === "weights") await view(page, "Weights").click();
+      else if (state === "limits") await view(page, "Limits").click();
+      else if (state === "scenario") await view(page, "Loss scenario").click();
+      else if (state === "evidence") {
+        await openEvidence(page);
+        await page.getByRole("combobox", { name: "Saved valuation", exact: true }).selectOption("weights-apple");
+      } else {
+        await page.getByRole("button", { name: "Review proposal →", exact: true }).click();
+        await page.getByLabel("Proposal name", { exact: true }).fill("Lower company concentration");
+        await page.getByLabel("Why these weights?", { exact: true }).fill("Reduce the direct company holding to my cap, then review the remaining loss-budget excess.");
+      }
+      await page.screenshot({ path: `.agent-shots/portfolio-weights-four-${state}-${width}.png`, fullPage: true });
+      const size = await page.evaluate(() => ({
+        screens: document.documentElement.scrollHeight / innerHeight,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }));
+      report.push(`- ${width}px · ${state}: ${size.screens.toFixed(2)} screens; overflow ${size.overflow}px`);
+      expect.soft(size.screens, `${state} at ${width}px`).toBeLessThanOrEqual(1.5);
+      expect.soft(size.overflow, `${state} at ${width}px`).toBe(0);
+    }
+  }
+  report.push("", `Page errors: ${errors.length}`);
+  writeFileSync(".agent-shots/portfolio-weights-four-report.md", report.join("\n"));
   expect(errors).toEqual([]);
 });

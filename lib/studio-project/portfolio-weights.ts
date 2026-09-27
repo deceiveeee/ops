@@ -124,7 +124,9 @@ export function saveWeightProposal(
     if (!Number.isFinite(weight) || weight < 0 || weight > 100) throw new Error("Every weight must be a number from 0% to 100%. A blank weight is unfinished.");
     return { ...position, targetWeightPct: weight };
   });
-  if (positions.reduce((sum, position) => sum + position.targetWeightPct, 0) > 100) {
+  // Round the way calculateStudio does: 0.01 + 64.15 + 35.84 is 100 exactly,
+  // but binary floating point adds it to 100.00000000000001.
+  if (Math.round(positions.reduce((sum, position) => sum + position.targetWeightPct, 0) * 1_000_000) / 1_000_000 > 100) {
     throw new Error("The proposed weights exceed 100% of the money available after the cash reserve.");
   }
   const links = new Map((source.valuationLinks ?? []).map((link) => [link.instrumentId, structuredClone(link)]));

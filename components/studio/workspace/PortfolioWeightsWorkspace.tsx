@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type Ref } from "react";
+import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactNode, type Ref } from "react";
 import { workingAlternative, type PortfolioAlternative, type StudioProject } from "@/lib/studio-project/schema";
 import { allocationView, chooseWeightProposal, comparisonNeedsReview, eligibleValuations, holdingInputsChanged, saveWeightProposal } from "@/lib/studio-project/portfolio-weights";
 import { validateStudioProject } from "@/lib/studio-project/validate";
@@ -25,6 +25,9 @@ const CHECK_NAMES: Record<CheckKey, string> = { bills: "Bills", slices: "Slice r
 export default function PortfolioWeightsWorkspace() {
   const { project } = useWorkspace();
   const [sourceId, setSourceId] = useState("");
+  // Opening an allocation from this page keeps focus on the picker and can
+  // carry a confirmation; arriving from elsewhere does neither.
+  const [arrival, setArrival] = useState<Arrival>({ notice: "", focusPicker: false });
   // Wait for the entry URL before mounting the editor; navigation can retain the loaded project.
   const [requestedValue, setRequestedValue] = useState<string | null>(null);
   useEffect(() => { const params = new URLSearchParams(window.location.search); setSourceId(params.get("proposal") ?? ""); setRequestedValue(params.get("valuation") ?? ""); }, []);
@@ -32,18 +35,21 @@ export default function PortfolioWeightsWorkspace() {
   const current = workingAlternative(project);
   const source = project.alternatives.find((item) => item.id === sourceId) ?? current;
   if (!current || !source) return null;
-  const open = (id: string) => {
+  const open = (id: string, notice = "") => {
     setSourceId(id);
+    setArrival({ notice, focusPicker: true });
     const url = new URL(window.location.href); url.searchParams.set("proposal", id); url.searchParams.delete("valuation");
     window.history.replaceState(null, "", `${url.pathname}${url.search}`);
   };
   return <div className={`${common.root} ${styles.root}`}>
-    <header className={styles.heading}><h1>Portfolio weights</h1><p>Compare a proposed mix with your saved allocation.</p></header>
-    {!source.positions.length ? <section className={common.panel}><h2>Add investments to compare</h2><p>Your valuations remain saved. Add holdings in Research, then return to try their weights.</p><Link className={styles.textLink} href="/studio/research">Open Research →</Link></section> : <WeightsEditor key={source.id} project={project} current={current} source={source} requestedValue={requestedValue} onOpen={open} />}
+    <header className={styles.heading}><h1>Compare allocations</h1><p>Compare a proposed mix with your saved allocation.</p></header>
+    {!source.positions.length ? <section className={common.panel}><h2>Add investments to compare</h2><p>Add holdings in Research, then return to try their weights.</p><Link className={styles.textLink} href="/studio/research">Open Research →</Link></section> : <WeightsEditor key={source.id} project={project} current={current} source={source} requestedValue={requestedValue} arrival={arrival} onOpen={open} />}
   </div>;
 }
 
-function WeightsEditor({ project, current, source, requestedValue, onOpen }: { project: StudioProject; current: PortfolioAlternative; source: PortfolioAlternative; requestedValue: string; onOpen: (id: string) => void }) {
+type Arrival = { notice: string; focusPicker: boolean };
+
+function WeightsEditor({ project, current, source, requestedValue, arrival, onOpen }: { project: StudioProject; current: PortfolioAlternative; source: PortfolioAlternative; requestedValue: string; arrival: Arrival; onOpen: (id: string, notice?: string) => void }) {
   const { session, report, catalog, setDraft } = useWorkspace();
   const cacheKey = `ops-weight-preview:${project.id}:${source.id}`;
   const [cached] = useState(() => readPreview(cacheKey, project, source));
@@ -59,12 +65,17 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
   const [page, setPage] = useState(0);
   const [check, setCheck] = useState("loss");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(arrival.notice);
   const [focusHeading, setFocusHeading] = useState(false);
   const [focusPicker, setFocusPicker] = useState(false);
+  const [allContributions, setAllContributions] = useState(false);
+  const [focusToggle, setFocusToggle] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
   const picker = useRef<HTMLSelectElement>(null);
-  useEffect(() => { picker.current?.focus(); }, []);
+  // Only a switch made on this page returns focus to the picker.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (arrival.focusPicker) picker.current?.focus(); }, []);
   const changed = Object.entries(weights).some(([id, value]) => readInput(value) !== original.positions.find((position) => position.instrumentId === id)?.targetWeightPct) || Object.keys(links).length > 0;
   const dirty = changed || name !== defaultName || reasoning !== acceptedReason;
   const [cacheFailed, setCacheFailed] = useState(false);
@@ -96,11 +107,16 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
   const isCurrent = original.id === current.id;
   const changedBasis = comparisonNeedsReview(project, original);
   const changedHoldings = holdingInputsChanged(project, original);
-  const saveAsNew = isCurrent || changed || changedBasis;
+  const saveAsNew = changed || changedBasis;
+  // The selected allocation, unchanged: saving would only duplicate it.
+  const nothingToSave = isCurrent && !saveAsNew;
   const instrument = (id: string) => catalog.find((item) => item.id === id);
   const label = (id: string) => instrument(id)?.symbol ?? id;
   const show = (next: View) => { setView(next); setPage(0); setFocusHeading(true); };
   useEffect(() => { if (focusHeading) { heading.current?.focus(); setFocusHeading(false); } }, [view, focusHeading]);
+  // Showing or hiding rows replaces the button that was pressed; keep focus on its counterpart.
+  useEffect(() => { if (focusToggle) { toggle.current?.focus(); setFocusToggle(false); } }, [allContributions, focusToggle]);
+  const showAllContributions = (all: boolean) => { setAllContributions(all); setFocusToggle(true); };
   useEffect(() => {
     if (!requestedValue) return;
     const match = original.positions.find((position) => eligibleValuations(project, position.instrumentId).some((value) => value.id === requestedValue));
@@ -122,7 +138,7 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
       return next;
     }));
     setBusy(false);
-    if (result.ok) { try { window.sessionStorage.removeItem(cacheKey); } catch { /* The proposal is already persisted. */ } onOpen(savedId); }
+    if (result.ok) { try { window.sessionStorage.removeItem(cacheKey); } catch { /* The proposal is already persisted. */ } onOpen(savedId, "Saved as a separate proposal. Your selected allocation has not changed."); }
     else setMessage(problem || result.error);
   };
   const choose = async () => {
@@ -133,9 +149,15 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
     if (result.ok) { setAcceptedReason(reasoning); setMessage("This is now your selected allocation. Your other allocations remain saved."); setFocusPicker(true); }
     else setMessage(problem || result.error);
   };
-  const contributionRows = Array.from(new Set([...base.calculation.rows.map((row) => row.holding.instrumentId), ...preview.calculation.rows.map((row) => row.holding.instrumentId)]));
-  const visible = (view === "Scenario" ? contributionRows : original.positions.map((p) => p.instrumentId)).slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const totalRows = view === "Scenario" ? contributionRows.length : original.positions.length;
+  // Largest change first, so the rows answer "where does the change come from?".
+  // The rest are summed in one row: the rows shown always add up to the total.
+  const size = (id: string) => Math.max(Math.abs(scenarioChange(base.calculation, id)), Math.abs(scenarioChange(preview.calculation, id)));
+  const contributionRows = Array.from(new Set([...base.calculation.rows.map((row) => row.holding.instrumentId), ...preview.calculation.rows.map((row) => row.holding.instrumentId)]))
+    .sort((a, b) => size(b) - size(a));
+  const shownContributions = allContributions ? contributionRows : contributionRows.slice(0, PAGE_SIZE);
+  const otherContributions = contributionRows.slice(shownContributions.length);
+  const visible = original.positions.map((p) => p.instrumentId).slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const totalRows = original.positions.length;
   const snapshot = links[holding] !== undefined ? project.valuations?.find((value) => value.id === links[holding]) : original.valuationLinks?.find((link) => link.instrumentId === holding)?.snapshot;
   const live = snapshot && project.valuations?.find((value) => value.id === snapshot.id);
   const obsolete = snapshot && (!live || live.updatedAt !== snapshot.updatedAt);
@@ -159,7 +181,7 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
         <table className={styles.weightsTable}><caption className={styles.srOnly}>Saved and proposed weights after the cash reserve</caption><thead><tr><th scope="col">Investment</th><th scope="col">Selected</th><th scope="col">Proposed</th></tr></thead><tbody>{visible.map((id) => {
           const old = base.calculation.rows.find((row) => row.holding.instrumentId === id);
           const row = preview.calculation.rows.find((row) => row.holding.instrumentId === id);
-          return <tr key={id}><th scope="row"><strong>{label(id)}</strong>{instrument(id)?.kind === "stock" && <button onClick={() => { setHolding(id); show("Valuation"); }}>Valuation {original.valuationLinks?.some((link) => link.instrumentId === id) || links[id] ? "↗" : "+"}</button>}</th><td>{pct(old?.holding.targetWeightPct ?? 0)}</td><td><label><span className={styles.srOnly}>{label(id)} proposed percentage</span><input inputMode="decimal" value={weights[id]} maxLength={30} onChange={(event) => { setWeights({ ...weights, [id]: event.target.value }); setMessage(""); }} /></label><small>{valid && row ? `${money(row.targetValue)} · ${pct(row.targetPortfolioWeightPct)} of all money` : "Check percentages"}</small></td></tr>;
+          return <tr key={id}><th scope="row"><strong>{label(id)}</strong>{instrument(id)?.kind === "stock" && <ValuationButton kept={links[id] !== undefined ? Boolean(links[id]) : Boolean(original.valuationLinks?.some((link) => link.instrumentId === id))} holding={label(id)} onClick={() => { setHolding(id); show("Valuation"); }} />}</th><td>{pct(old?.holding.targetWeightPct ?? 0)}</td><td><label><span className={styles.srOnly}>{label(id)} proposed percentage</span><input inputMode="decimal" value={weights[id]} maxLength={30} onChange={(event) => { setWeights({ ...weights, [id]: event.target.value }); setMessage(""); }} /></label><small>{valid && row ? `${money(row.targetValue)} · ${pct(row.targetPortfolioWeightPct)} of all money` : "Check percentages"}</small></td></tr>;
         })}</tbody></table>
         <Pager page={page} setPage={setPage} total={totalRows} />
         <AllocationBars current={base.calculation} preview={preview.calculation} />
@@ -173,11 +195,17 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
       </>}
       {view === "Scenario" && <>
         <div className={styles.stageTitle}><span>One assumed market move</span><Link href="/studio/portfolio/risk">Edit scenario ↗</Link></div><h2 ref={heading} tabIndex={-1}>What drives the change?</h2>
-        <p className={styles.intro}>Each holding’s change adds to the portfolio’s result. A 10% whole-portfolio weight falling 30% subtracts 3 percentage points.</p>
+        <p className={styles.intro}>Each holding adds its change to the total: 10% of all money falling 30% subtracts 3 percentage points.</p>
         <p className={styles.shocks}>US stocks {pct(project.stress.usStocksPct)} · International {pct(project.stress.internationalStocksPct)} · Global {pct(project.stress.globalStocksPct)} · Bonds {pct(project.stress.bondsPct)} · Cash {pct(project.stress.cashPct)}</p>
         {valid && base.calculation.valid ? <>
           <div className={styles.scenarioHeadline}><div><span>Selected allocation</span><strong>{money(base.calculation.stress.changeDollars)}</strong><small>{pct(base.calculation.stress.changePct)} of all money</small></div><span aria-hidden="true">→</span><div><span>Proposed allocation</span><strong>{money(preview.calculation.stress.changeDollars)}</strong><small>{pct(preview.calculation.stress.changePct)} of all money</small></div></div>
-          <table className={styles.scenarioTable}><caption className={styles.srOnly}>Contribution to the scenario change</caption><thead><tr><th scope="col">Holding</th><th scope="col">Selected</th><th scope="col">Proposed</th></tr></thead><tbody>{visible.map((id) => <Contribution key={id} name={label(id)} before={base.calculation.stress.rows.find((row) => row.instrumentId === id)?.changeDollars ?? 0} after={preview.calculation.stress.rows.find((row) => row.instrumentId === id)?.changeDollars ?? 0} budget={project.goal.budget} />)}<Contribution name="Cash reserve + unassigned" before={cashChange(base.calculation)} after={cashChange(preview.calculation)} budget={project.goal.budget} /></tbody></table><Pager page={page} setPage={setPage} total={totalRows} />
+          <table className={styles.scenarioTable}><caption className={styles.srOnly}>Contribution to the scenario change, largest first</caption><thead><tr><th scope="col">Holding</th><th scope="col">Selected</th><th scope="col">Proposed</th></tr></thead><tbody>
+            {shownContributions.map((id) => <Contribution key={id} name={label(id)} before={scenarioChange(base.calculation, id)} after={scenarioChange(preview.calculation, id)} budget={project.goal.budget} />)}
+            {otherContributions.length > 0 && <Contribution name={`${otherContributions.length} more ${otherContributions.length === 1 ? "holding" : "holdings"}`} before={otherContributions.reduce((sum, id) => sum + scenarioChange(base.calculation, id), 0)} after={otherContributions.reduce((sum, id) => sum + scenarioChange(preview.calculation, id), 0)} budget={project.goal.budget}
+              action={<button ref={toggle} className={styles.inlineAction} aria-expanded={false} aria-label={`Show ${otherContributions.length} more ${otherContributions.length === 1 ? "holding" : "holdings"}`} onClick={() => showAllContributions(true)}>Show</button>} />}
+            <Contribution name="Cash reserve + unassigned" before={cashChange(base.calculation)} after={cashChange(preview.calculation)} budget={project.goal.budget} />
+          </tbody></table>
+          {allContributions && contributionRows.length > PAGE_SIZE && <button ref={toggle} className={styles.inlineAction} aria-expanded onClick={() => showAllContributions(false)}>Show the largest {PAGE_SIZE} only</button>}
         </> : <p className={styles.explanation}>Complete valid weights for both allocations to compare the scenario.</p>}
         <p className={styles.note}>These are assumed price changes, before costs, taxes and distributions. They are not forecasts, a worst-case loss, or a measure of volatility.</p>
       </>}
@@ -188,14 +216,21 @@ function WeightsEditor({ project, current, source, requestedValue, onOpen }: { p
         {manuallyMatched && <p className={styles.note}>Matched using your company name. Confirm the listing and share ratio yourself before keeping this valuation.</p>}
         {snapshot ? <ValuationEvidence snapshot={snapshot} obsolete={Boolean(obsolete)} pending={links[holding] !== undefined} /> : <p className={styles.explanation}>{options.length ? "Choose a scenario to preserve its figures and assumptions with this proposal." : "No compatible, completed valuation is saved for this holding. Check the company, ticker and traded-share ratio in Valuation."}</p>}
         {obsolete && options.some((value) => value.id === snapshot?.id) && <button className={common.button} onClick={() => setLinks({ ...links, [holding]: snapshot!.id })}>Use the latest valuation in this preview</button>}
-        <p className={styles.note}>A valuation supports your reasoning. Its price gap does not specify an investment return or choose a weight.</p>{!snapshot && <Link className={styles.textLink} href="/studio/valuation">Open Valuation →</Link>}
+        <p className={styles.note}>A valuation supports your reasoning. Its price gap does not specify an investment return or choose a weight.</p>
+        <div className={styles.actions}><button className={common.button} onClick={() => show("Weights")}>Back to weights</button>{!snapshot && <Link className={styles.textLink} href="/studio/valuation">Open Valuation →</Link>}</div>
       </>}
-      {view === "Keep" && <>
+      {view === "Keep" && nothingToSave && <>
+        <div className={styles.stageTitle}><span>Your selected allocation</span></div><h2 ref={heading} tabIndex={-1}>{candidate.name}</h2>
+        <p className={styles.intro}>This is the allocation the buying and review pages use. To prepare a proposal, change a weight or keep a valuation with a holding. Saving a proposal never changes this allocation.</p>
+        <div className={styles.actions}><button className={`${common.button} ${common.primary}`} onClick={() => show("Weights")}>Back to weights</button></div>
+      </>}
+      {view === "Keep" && !nothingToSave && <>
         <div className={styles.stageTitle}><span>{saveAsNew ? "Keep a separate alternative" : "Saved proposal"}</span></div><h2 ref={heading} tabIndex={-1}>{saveAsNew ? "Save the proposal and your reason" : candidate.name}</h2>
         <p className={styles.intro}>Saving keeps the selected allocation intact. Choose a saved proposal to make it the allocation used by the buying and review pages.</p>
         {saveAsNew && <label>Proposal name<input value={name} maxLength={300} onChange={(event) => setName(event.target.value)} /></label>}
         <label className={styles.checkPicker}>Why these weights?<textarea aria-label="Why these weights?" value={reasoning} maxLength={10000} onChange={(event) => setReasoning(event.target.value)} placeholder="Explain the trade-off you are accepting." /></label>
         <p className={styles.explanation}>{failedCount} {failedCount === 1 ? "limit" : "limits"} not met · {preview.checks.checks.filter((item) => item.status === "not-checked").length} not checked. <button onClick={() => show("Limits")}>Review limits</button></p>
+        {valid && !stale && !changedHoldings && (saveAsNew ? !name.trim() || !reasoning.trim() : !reasoning.trim()) && <p className={styles.hint}>{saveAsNew && !name.trim() ? "Name the proposal and write your reason to save it." : saveAsNew ? "Write your reason to save it." : "Write why you are choosing these weights."}</p>}
         <div className={styles.actions}>{saveAsNew ? <button className={`${common.button} ${common.primary}`} disabled={!valid || stale || changedHoldings || !name.trim() || !reasoning.trim()} onClick={() => void save()}>Save proposal</button> : <button className={`${common.button} ${common.primary}`} disabled={!valid || stale || changedHoldings || !reasoning.trim()} onClick={() => void choose()}>Use this allocation</button>}<button className={common.button} onClick={() => show("Weights")}>Back to weights</button></div>
         <p className={styles.note}>You can keep a proposal that exceeds a limit; its failed checks remain visible. Selecting an allocation places no orders.</p>
       </>}
@@ -236,12 +271,30 @@ function AllocationBars({ current, preview }: { current: StudioCalculation; prev
   return <div className={styles.allocationBars} aria-label="Cash and investment comparison">{[{ name: "Selected", value: current }, { name: "Proposed", value: preview }].map(({ name, value }) => <div key={name}><div><span>{name}</span><span>{value.valid ? `${money(value.targetCash)} cash · ${pct(value.targetCashWeightPct)}` : "Complete valid weights"}</span></div><div className={styles.bar} aria-hidden="true">{value.valid && <><span style={{ width: `${100 - value.targetCashWeightPct}%` }} /><i style={{ width: `${value.targetCashWeightPct}%` }} /></>}</div></div>)}<small>Filled: investments · pale: cash reserve and unassigned money.</small></div>;
 }
 function cashChange(calculation: StudioCalculation) { return calculation.stress.changeDollars - calculation.stress.rows.reduce((sum, row) => sum + row.changeDollars, 0); }
-function Contribution({ name, before, after, budget }: { name: string; before: number; after: number; budget: number }) {
-  return <tr><th scope="row">{name}</th><td>{money(before)}<small>{points(before / budget * 100)}</small></td><td>{money(after)}<small>{points(after / budget * 100)}</small></td></tr>;
+function scenarioChange(calculation: StudioCalculation, id: string) { return calculation.stress.rows.find((row) => row.instrumentId === id)?.changeDollars ?? 0; }
+function Contribution({ name, before, after, budget, action }: { name: string; before: number; after: number; budget: number; action?: ReactNode }) {
+  return <tr><th scope="row">{name}{action}</th><td>{money(before)}<small>{points(before / budget * 100)}</small></td><td>{money(after)}<small>{points(after / budget * 100)}</small></td></tr>;
 }
 function ValuationEvidence({ snapshot, obsolete, pending }: { snapshot: ValuationCase; obsolete: boolean; pending: boolean }) {
   const result = valuationResult(snapshot);
-  return <div className={styles.evidence}><span>{obsolete ? "Valuation changed · review this saved version" : pending ? "Preview of the valuation to keep" : "Version kept with the allocation"}</span><h3>{snapshot.company} · {snapshot.name}</h3><strong>{result.ok ? `${result.value.toLocaleString("en-US", { style: "currency", currency: "USD" })} per traded share` : "Inputs need review"}</strong><p>{snapshot.inputs.growth}% growth · {snapshot.inputs.returnOnCapital}% return on new capital · {snapshot.inputs.costOfCapital}% cost of capital.</p><p>{snapshot.inputs.receipt} company {readInput(snapshot.inputs.receipt) === 1 ? "share" : "shares"} per traded share · saved {snapshot.updatedAt.slice(0, 10)}.</p><Link href={`/studio/valuation?case=${encodeURIComponent(snapshot.id)}`}>Open valuation →</Link></div>;
+  const entered = readInput(snapshot.inputs.price);
+  const price = Number.isFinite(entered) && entered > 0 ? entered : null;
+  return <div className={styles.evidence}><span>{obsolete ? "Valuation changed · review this saved version" : pending ? "Preview of the valuation to keep" : "Version kept with the allocation"}</span><h3>{snapshot.company} · {snapshot.name}</h3><strong>{result.ok ? `${result.value.toLocaleString("en-US", { style: "currency", currency: "USD" })} per traded share` : "Inputs need review"}</strong>{price !== null && <p>Price you entered: {price.toLocaleString("en-US", { style: "currency", currency: "USD" })}{snapshot.priceAsOf ? ` on ${shortDate(snapshot.priceAsOf)}` : ""}.</p>}<p>{snapshot.inputs.growth}% growth · {snapshot.inputs.returnOnCapital}% return on new capital · {snapshot.inputs.costOfCapital}% cost of capital.</p><p>{shareBasis(snapshot)} · saved {shortDate(snapshot.updatedAt)}.</p><Link href={`/studio/valuation?case=${encodeURIComponent(snapshot.id)}`}>Open valuation →</Link></div>;
+}
+function ValuationButton({ kept, holding, onClick }: { kept: boolean; holding: string; onClick: () => void }) {
+  const text = kept ? "Valuation kept" : "Add valuation";
+  return <button aria-label={`${text} for ${holding}`} onClick={onClick}>{text}</button>;
+}
+/** "2026-09-24" or an ISO time, as "Sep 24, 2026", read as a calendar date in any time zone. */
+function shortDate(value: string) {
+  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
+  if (!year || !month || !day) return value;
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" });
+}
+function shareBasis(snapshot: ValuationCase) {
+  const ratio = readInput(snapshot.inputs.receipt);
+  if (!Number.isFinite(ratio)) return `${snapshot.inputs.receipt} company shares per traded share`;
+  return `${ratio.toLocaleString("en-US", { maximumSignificantDigits: 12 })} company ${ratio === 1 ? "share" : "shares"} per traded share`;
 }
 
 /** Keep native selection and keyboard behavior while letting the visible value wrap. */
