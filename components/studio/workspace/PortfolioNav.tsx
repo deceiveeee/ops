@@ -7,13 +7,12 @@ import { cn } from "@/lib/utils";
 /**
  * Allocation, risk, historical returns and the buying plan.
  *
- * They wrap onto a second line on a narrow screen rather than scrolling
- * sideways: a tab that sits past the edge is one the learner never finds. On a
- * phone that is two rows of two, each on its own line, so the underline under
- * the first row does not float above nothing.
+ * Links wrap on tablets. A disclosure keeps every destination reachable on a
+ * phone while leaving room for the portfolio's controls and results.
  */
 const TABS = [
   { href: "/studio/portfolio", label: "How much goes where" },
+  { href: "/studio/portfolio/weights", label: "Compare allocations" },
   { href: "/studio/portfolio/risk", label: "Risk and cost" },
   { href: "/studio/portfolio/returns", label: "Return history" },
   { href: "/studio/portfolio/buying", label: "What to buy" },
@@ -23,7 +22,16 @@ export default function PortfolioNav() {
   const pathname = usePathname() ?? "";
   return (
     <nav aria-label="Portfolio" className="mb-4">
-      <ul className="grid grid-cols-2 gap-x-4 sm:flex sm:flex-wrap sm:gap-x-6 sm:border-b sm:border-[var(--ops-divider)]">
+      <details className="group rounded-lg border border-[var(--ops-control-border)] bg-[var(--ops-surface)] px-3 text-[13px] sm:hidden">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between [&::-webkit-details-marker]:hidden">
+          {TABS.find((tab) => tab.href === pathname)?.label ?? "Portfolio pages"}
+          <svg aria-hidden="true" viewBox="0 0 12 12" className="h-3 w-3 text-[var(--ops-text-tertiary)] transition-transform group-open:rotate-180">
+            <path d="M2 4.5 6 8l4-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </summary>
+        <ul className="border-t border-[var(--ops-divider)] pb-2">{TABS.map((tab) => <li key={tab.href}><Link href={tab.href} aria-current={pathname === tab.href ? "page" : undefined} className="flex min-h-11 items-center" onClick={(event) => { const disclosure = event.currentTarget.closest("details"); if (disclosure) disclosure.open = false; }}>{tab.label}</Link></li>)}</ul>
+      </details>
+      <ul className="hidden gap-x-4 sm:flex sm:flex-wrap sm:gap-x-6 sm:border-b sm:border-[var(--ops-divider)]">
         {TABS.map((tab) => {
           const active = pathname === tab.href;
           return (

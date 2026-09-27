@@ -315,6 +315,10 @@ export interface PortfolioAlternative {
   contributionAmount: number;
   /** Why this construction, and what the learner accepted in choosing it. */
   reasoning: string;
+  /** Exact valuation records explicitly kept when this alternative was saved. */
+  valuationLinks?: { instrumentId: string; snapshot: import("./valuation-cases").ValuationCase }[];
+  /** Goals, limits and scenario used when this weight proposal was saved. */
+  comparisonBasis?: { goal: StudioGoal; limits: import("./limits").StudioLimits; stress: StudioStress };
 }
 
 export interface StudioGoal {

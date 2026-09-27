@@ -140,6 +140,7 @@ export function applyPlanChange(project: StudioProject, change: (plan: StudioPla
     ...item, updatedAt: new Date().toISOString(), currentCash: after.currentCash,
     contributionAmount: after.contributionAmount,
     positions: after.holdings.map(({ research: _research, ...position }) => position),
+    ...(item.valuationLinks ? { valuationLinks: item.valuationLinks.filter((link) => after.holdings.some((holding) => holding.instrumentId === link.instrumentId)) } : {}),
   } : item) };
 }
 
