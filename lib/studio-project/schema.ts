@@ -318,7 +318,7 @@ export interface PortfolioAlternative {
   /** Exact valuation records explicitly kept when this alternative was saved. */
   valuationLinks?: { instrumentId: string; snapshot: import("./valuation-cases").ValuationCase }[];
   /** Goals, limits and scenario used when this weight proposal was saved. */
-  comparisonBasis?: { goal: StudioGoal; limits: import("./limits").StudioLimits; stress: StudioStress };
+  comparisonBasis?: { goal: StudioGoal; limits: import("./limits").StudioLimits; stress: StudioStress; scenarioName?: string; scenarios?: StudioScenario[] };
 }
 
 export interface StudioGoal {
@@ -339,6 +339,13 @@ export interface StudioRules {
   contributionRule: string;
   sellRule: string;
   guardrails: string;
+}
+
+/** A further learner-chosen scenario, checked the same way as the first. */
+export interface StudioScenario {
+  id: string;
+  name: string;
+  stress: StudioStress;
 }
 
 /** Learner-chosen price changes. Not forecasts, and not loss probabilities. */
@@ -404,6 +411,10 @@ export interface StudioProject {
   returnHistories?: import("./total-returns").ReturnHistory[];
   /** Limits Studio can check. Absent in work saved before they existed, which reads as every limit unset. */
   limits?: import("./limits").StudioLimits;
+  /** The first scenario's name, once there is more than one. Absent in older work. */
+  scenarioName?: string;
+  /** Up to four more scenarios, each checked like `stress`. Absent in older work, which has one scenario. */
+  scenarios?: StudioScenario[];
   /**
    * The exact v1 record this project was migrated from, kept verbatim.
    *

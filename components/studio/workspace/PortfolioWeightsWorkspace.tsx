@@ -7,7 +7,8 @@ import { allocationView, chooseWeightProposal, comparisonNeedsReview, eligibleVa
 import { validateStudioProject } from "@/lib/studio-project/validate";
 import { readInput, valuationResult, type ValuationCase } from "@/lib/studio-project/valuation-cases";
 import type { CheckKey } from "@/lib/studio-project/limit-checks";
-import type { StudioCalculation } from "@/lib/studio";
+import { scenarioResult, type StudioCalculation } from "@/lib/studio";
+import { readScenarios } from "@/lib/studio-project/scenarios";
 import { useWorkspace } from "./WorkspaceProvider";
 import ViewTabs from "./ViewTabs";
 import common from "./quant-workspace.module.css";
@@ -69,6 +70,7 @@ function WeightsEditor({ project, current, source, requestedValue, arrival, onOp
   const [focusHeading, setFocusHeading] = useState(false);
   const [focusPicker, setFocusPicker] = useState(false);
   const [allContributions, setAllContributions] = useState(false);
+  const [scenarioId, setScenarioId] = useState<string | null>(null);
   const [focusToggle, setFocusToggle] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
@@ -151,7 +153,11 @@ function WeightsEditor({ project, current, source, requestedValue, arrival, onOp
   };
   // Largest change first, so the rows answer "where does the change come from?".
   // The rest are summed in one row: the rows shown always add up to the total.
-  const size = (id: string) => Math.max(Math.abs(scenarioChange(base.calculation, id)), Math.abs(scenarioChange(preview.calculation, id)));
+  // Several scenarios: show one at a time, opening on the one that costs the proposal most.
+  const scenarios = readScenarios(project).map((item) => ({ ...item, before: scenarioResult(base.calculation, item.stress), after: scenarioResult(preview.calculation, item.stress) }));
+  const worstForProposal = scenarios.reduce((low, item) => (item.after.changeDollars < low.after.changeDollars - 0.005 ? item : low), scenarios[0]);
+  const scenario = scenarios.find((item) => item.id === scenarioId) ?? worstForProposal;
+  const size = (id: string) => Math.max(Math.abs(scenarioChange(scenario.before, id)), Math.abs(scenarioChange(scenario.after, id)));
   const contributionRows = Array.from(new Set([...base.calculation.rows.map((row) => row.holding.instrumentId), ...preview.calculation.rows.map((row) => row.holding.instrumentId)]))
     .sort((a, b) => size(b) - size(a));
   const shownContributions = allContributions ? contributionRows : contributionRows.slice(0, PAGE_SIZE);
@@ -194,30 +200,35 @@ function WeightsEditor({ project, current, source, requestedValue, arrival, onOp
         <p className={styles.note}>Company caps check direct holdings. Fund overlap and sector exposure need separate review in <Link href="/studio/portfolio/risk">Risk and cost</Link>.</p>
       </>}
       {view === "Scenario" && <>
-        <div className={styles.stageTitle}><span>One assumed market move</span><Link href="/studio/portfolio/risk">Edit scenario ↗</Link></div><h2 ref={heading} tabIndex={-1}>What drives the change?</h2>
+        <div className={styles.stageTitle}>
+          {scenarios.length > 1
+            ? <WrappingSelect className={styles.scenarioPick} label="Scenario" valueLabel={`${scenario.name}${scenario.id === worstForProposal.id ? " · worst for the proposal" : ""}`} value={scenario.id} onChange={(event) => setScenarioId(event.target.value)}>{scenarios.map((item) => <option key={item.id} value={item.id}>{item.name}{item.id === worstForProposal.id ? " · worst for the proposal" : ""}</option>)}</WrappingSelect>
+            : <span>One assumed market move</span>}
+          <Link href="/studio/portfolio/risk">{scenarios.length > 1 ? "Edit scenarios ↗" : "Edit scenario ↗"}</Link>
+        </div><h2 ref={heading} tabIndex={-1}>What drives the change?</h2>
         <p className={styles.intro}>Each holding adds its change to the total: 10% of all money falling 30% subtracts 3 percentage points.</p>
-        <p className={styles.shocks}>US stocks {pct(project.stress.usStocksPct)} · International {pct(project.stress.internationalStocksPct)} · Global {pct(project.stress.globalStocksPct)} · Bonds {pct(project.stress.bondsPct)} · Cash {pct(project.stress.cashPct)}</p>
+        <p className={styles.shocks}>US stocks {pct(scenario.stress.usStocksPct)} · International {pct(scenario.stress.internationalStocksPct)} · Global {pct(scenario.stress.globalStocksPct)} · Bonds {pct(scenario.stress.bondsPct)} · Cash {pct(scenario.stress.cashPct)}</p>
         {valid && base.calculation.valid ? <>
-          <div className={styles.scenarioHeadline}><div><span>Selected allocation</span><strong>{money(base.calculation.stress.changeDollars)}</strong><small>{pct(base.calculation.stress.changePct)} of all money</small></div><span aria-hidden="true">→</span><div><span>Proposed allocation</span><strong>{money(preview.calculation.stress.changeDollars)}</strong><small>{pct(preview.calculation.stress.changePct)} of all money</small></div></div>
+          <div className={styles.scenarioHeadline}><div><span>Selected allocation</span><strong>{money(scenario.before.changeDollars)}</strong><small>{pct(scenario.before.changePct)} of all money</small></div><span aria-hidden="true">→</span><div><span>Proposed allocation</span><strong>{money(scenario.after.changeDollars)}</strong><small>{pct(scenario.after.changePct)} of all money</small></div></div>
           <table className={styles.scenarioTable}><caption className={styles.srOnly}>Contribution to the scenario change, largest first</caption><thead><tr><th scope="col">Holding</th><th scope="col">Selected</th><th scope="col">Proposed</th></tr></thead><tbody>
-            {shownContributions.map((id) => <Contribution key={id} name={label(id)} before={scenarioChange(base.calculation, id)} after={scenarioChange(preview.calculation, id)} budget={project.goal.budget} />)}
-            {otherContributions.length > 0 && <Contribution name={`${otherContributions.length} more ${otherContributions.length === 1 ? "holding" : "holdings"}`} before={otherContributions.reduce((sum, id) => sum + scenarioChange(base.calculation, id), 0)} after={otherContributions.reduce((sum, id) => sum + scenarioChange(preview.calculation, id), 0)} budget={project.goal.budget}
+            {shownContributions.map((id) => <Contribution key={id} name={label(id)} before={scenarioChange(scenario.before, id)} after={scenarioChange(scenario.after, id)} budget={project.goal.budget} />)}
+            {otherContributions.length > 0 && <Contribution name={`${otherContributions.length} more ${otherContributions.length === 1 ? "holding" : "holdings"}`} before={otherContributions.reduce((sum, id) => sum + scenarioChange(scenario.before, id), 0)} after={otherContributions.reduce((sum, id) => sum + scenarioChange(scenario.after, id), 0)} budget={project.goal.budget}
               action={<button ref={toggle} className={styles.inlineAction} aria-expanded={false} aria-label={`Show ${otherContributions.length} more ${otherContributions.length === 1 ? "holding" : "holdings"}`} onClick={() => showAllContributions(true)}>Show</button>} />}
-            <Contribution name="Cash reserve + unassigned" before={cashChange(base.calculation)} after={cashChange(preview.calculation)} budget={project.goal.budget} />
+            <Contribution name="Cash reserve + unassigned" before={cashChange(scenario.before)} after={cashChange(scenario.after)} budget={project.goal.budget} />
           </tbody></table>
           {allContributions && contributionRows.length > PAGE_SIZE && <button ref={toggle} className={styles.inlineAction} aria-expanded onClick={() => showAllContributions(false)}>Show the largest {PAGE_SIZE} only</button>}
         </> : <p className={styles.explanation}>Complete valid weights for both allocations to compare the scenario.</p>}
         <p className={styles.note}>These are assumed price changes, before costs, taxes and distributions. They are not forecasts, a worst-case loss, or a measure of volatility.</p>
       </>}
       {view === "Valuation" && <>
-        <div className={styles.stageTitle}><span>Evidence behind a weight</span></div><h2 ref={heading} tabIndex={-1}>Keep the valuation you used</h2>
+        <div className={styles.stageTitle}><span>Evidence behind a weight</span><button onClick={() => show("Weights")}>Back to weights</button></div><h2 ref={heading} tabIndex={-1}>Keep the valuation you used</h2>
         <WrappingSelect label="Company holding" valueLabel={label(holding)} value={holding} onChange={(event) => setHolding(event.target.value)}>{original.positions.filter((p) => instrument(p.instrumentId)?.kind === "stock").map((p) => <option key={p.instrumentId} value={p.instrumentId}>{label(p.instrumentId)}</option>)}</WrappingSelect>
         <WrappingSelect className={styles.checkPicker} label="Saved valuation" valueLabel={snapshot ? `${snapshot.name} · ${snapshot.ticker || snapshot.company}` : "No valuation attached"} value={links[holding] ?? snapshot?.id ?? ""} onChange={(event) => setLinks({ ...links, [holding]: event.target.value })}><option value="">No valuation attached</option>{snapshot && !options.some((v) => v.id === snapshot.id) && <option value={snapshot.id}>Kept: {snapshot.name}</option>}{options.map((value) => <option key={value.id} value={value.id}>{value.name} · {value.ticker || value.company}</option>)}</WrappingSelect>
         {manuallyMatched && <p className={styles.note}>Matched using your company name. Confirm the listing and share ratio yourself before keeping this valuation.</p>}
         {snapshot ? <ValuationEvidence snapshot={snapshot} obsolete={Boolean(obsolete)} pending={links[holding] !== undefined} /> : <p className={styles.explanation}>{options.length ? "Choose a scenario to preserve its figures and assumptions with this proposal." : "No compatible, completed valuation is saved for this holding. Check the company, ticker and traded-share ratio in Valuation."}</p>}
         {obsolete && options.some((value) => value.id === snapshot?.id) && <button className={common.button} onClick={() => setLinks({ ...links, [holding]: snapshot!.id })}>Use the latest valuation in this preview</button>}
         <p className={styles.note}>A valuation supports your reasoning. Its price gap does not specify an investment return or choose a weight.</p>
-        <div className={styles.actions}><button className={common.button} onClick={() => show("Weights")}>Back to weights</button>{!snapshot && <Link className={styles.textLink} href="/studio/valuation">Open Valuation →</Link>}</div>
+        {!snapshot && <Link className={styles.textLink} href="/studio/valuation">Open Valuation →</Link>}
       </>}
       {view === "Keep" && nothingToSave && <>
         <div className={styles.stageTitle}><span>Your selected allocation</span></div><h2 ref={heading} tabIndex={-1}>{candidate.name}</h2>
@@ -270,8 +281,9 @@ function Pager({ page, setPage, total }: { page: number; setPage: (page: number)
 function AllocationBars({ current, preview }: { current: StudioCalculation; preview: StudioCalculation }) {
   return <div className={styles.allocationBars} aria-label="Cash and investment comparison">{[{ name: "Selected", value: current }, { name: "Proposed", value: preview }].map(({ name, value }) => <div key={name}><div><span>{name}</span><span>{value.valid ? `${money(value.targetCash)} cash · ${pct(value.targetCashWeightPct)}` : "Complete valid weights"}</span></div><div className={styles.bar} aria-hidden="true">{value.valid && <><span style={{ width: `${100 - value.targetCashWeightPct}%` }} /><i style={{ width: `${value.targetCashWeightPct}%` }} /></>}</div></div>)}<small>Filled: investments · pale: cash reserve and unassigned money.</small></div>;
 }
-function cashChange(calculation: StudioCalculation) { return calculation.stress.changeDollars - calculation.stress.rows.reduce((sum, row) => sum + row.changeDollars, 0); }
-function scenarioChange(calculation: StudioCalculation, id: string) { return calculation.stress.rows.find((row) => row.instrumentId === id)?.changeDollars ?? 0; }
+type ScenarioChange = StudioCalculation["stress"];
+function cashChange(stress: ScenarioChange) { return stress.changeDollars - stress.rows.reduce((sum, row) => sum + row.changeDollars, 0); }
+function scenarioChange(stress: ScenarioChange, id: string) { return stress.rows.find((row) => row.instrumentId === id)?.changeDollars ?? 0; }
 function Contribution({ name, before, after, budget, action }: { name: string; before: number; after: number; budget: number; action?: ReactNode }) {
   return <tr><th scope="row">{name}{action}</th><td>{money(before)}<small>{points(before / budget * 100)}</small></td><td>{money(after)}<small>{points(after / budget * 100)}</small></td></tr>;
 }

@@ -387,22 +387,7 @@ export function calculateStudio(plan: StudioPlan, catalog: readonly StudioInstru
     coveragePct: fundCents > 0 ? pct(knownFundCents / fundCents * 100) : 100,
     unknownInstrumentIds: fundRows.filter((row) => row.instrument?.expenseRatioPct === null && row.targetValue > 0).map((row) => row.holding.instrumentId),
   };
-  const shockFor = (instrument: StudioInstrument | null) => {
-    switch (instrument?.assetClass) {
-      case "us-equity": return plan.stress.usStocksPct;
-      case "international-equity": return plan.stress.internationalStocksPct;
-      case "global-equity": return plan.stress.globalStocksPct;
-      case "fixed-income": return plan.stress.bondsPct;
-      default: return 0;
-    }
-  };
-  const stressRows = rows.map((row) => {
-    const changePct = shockFor(row.instrument);
-    const changeDollars = money(row.targetValue * changePct / 100);
-    return { instrumentId: row.holding.instrumentId, changePct, changeDollars, endingValue: money(row.targetValue + changeDollars) };
-  });
-  const cashChange = money(targetCashCents / 100 * plan.stress.cashPct / 100);
-  const changeDollars = money(stressRows.reduce((total, row) => total + row.changeDollars, cashChange));
+  const stress = scenarioResult({ rows, targetCash: targetCashCents / 100, budget: budgetCents / 100 }, plan.stress);
   const contributionCents = cents(plan.contributionAmount);
   const futureTargets = apportion(currentTotalCents + contributionCents, [...fractions, cashFraction]);
   const gaps = plan.holdings.map((_, index) => valid ? Math.max(0, futureTargets[index] - currentValuesCents[index]) : 0);
@@ -443,11 +428,45 @@ export function calculateStudio(plan: StudioPlan, catalog: readonly StudioInstru
   return {
     valid, issues, budget: budgetCents / 100, investableBudget: investableCents / 100, totalWeightPct,
     targetCash: targetCashCents / 100, targetCashWeightPct: pct(cashFraction * 100), currentTotal: currentTotalCents / 100,
-    rows, fees, stress: { rows: stressRows, changeDollars, changePct: budgetCents ? pct(changeDollars / (budgetCents / 100) * 100) : 0, endingValue: money(budgetCents / 100 + changeDollars) },
+    rows, fees, stress,
     contributions: { rows: plan.holdings.map((holding, index) => ({ instrumentId: holding.instrumentId, amount: buyCents[index] / 100 })), cash: (contributionCents - buyCents.reduce((total, value) => total + value, 0)) / 100, amount: contributionCents / 100 },
     orders: valid ? rows.map(orderFor) : [],
     overlaps: [...exposureMap.values()].filter((exposure) => exposure.instrumentIds.length > 1).map((exposure) => ({ ...exposure, portfolioWeightPct: pct(exposure.portfolioWeightPct) })).sort((a, b) => b.portfolioWeightPct - a.portfolioWeightPct),
     exposureCoveragePct: pct(knownExposurePct),
+  };
+}
+
+/**
+ * One hypothetical scenario applied to calculated target amounts.
+ *
+ * Every scenario goes through this, the first included, so a second scenario
+ * can never be priced by different arithmetic. Each asset class takes its
+ * assumed change; cash (reserve and unassigned) takes the cash change.
+ */
+export function scenarioResult(
+  calculation: Pick<StudioCalculation, "rows" | "targetCash" | "budget">,
+  stress: StudioPlan["stress"],
+): StudioCalculation["stress"] {
+  const shockFor = (instrument: StudioInstrument | null) => {
+    switch (instrument?.assetClass) {
+      case "us-equity": return stress.usStocksPct;
+      case "international-equity": return stress.internationalStocksPct;
+      case "global-equity": return stress.globalStocksPct;
+      case "fixed-income": return stress.bondsPct;
+      default: return 0;
+    }
+  };
+  const rows = calculation.rows.map((row) => {
+    const changePct = shockFor(row.instrument);
+    const changeDollars = money(row.targetValue * changePct / 100);
+    return { instrumentId: row.holding.instrumentId, changePct, changeDollars, endingValue: money(row.targetValue + changeDollars) };
+  });
+  const cashChange = money(calculation.targetCash * stress.cashPct / 100);
+  const changeDollars = money(rows.reduce((total, row) => total + row.changeDollars, cashChange));
+  return {
+    rows, changeDollars,
+    changePct: calculation.budget ? pct(changeDollars / calculation.budget * 100) : 0,
+    endingValue: money(calculation.budget + changeDollars),
   };
 }
 

@@ -1,6 +1,7 @@
-import { exportStudioText, type StudioPlan } from "@/lib/studio";
+import { calculateStudio, exportStudioText, scenarioResult, type StudioPlan } from "@/lib/studio";
 import { STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { startCandidate, updateCandidate } from "./operations";
+import { readScenarios } from "./scenarios";
 import {
   candidateStanding,
   findCandidate,
@@ -172,7 +173,18 @@ export function exportProjectText(project: StudioProject): string {
     ];
     return lines.filter(Boolean).join("\n");
   });
-  return [...alternatives, "ALL RESEARCH (INCLUDING INVESTMENTS NOT HELD)", ...research,
+  // Several scenarios: each one's assumptions and what the selected allocation would lose in it.
+  const scenarios = readScenarios(project);
+  const selected = calculateStudio(projectToPlan(project), projectCatalog(project));
+  const usd = (value: number) => value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  const scenarioLines = scenarios.length > 1 && selected.valid ? [
+    "SCENARIOS (ASSUMPTIONS YOU CHOSE, NOT FORECASTS)",
+    ...scenarios.map(({ name, stress }) => {
+      const result = scenarioResult(selected, stress);
+      return `${name}: US stocks ${stress.usStocksPct}%; international stocks ${stress.internationalStocksPct}%; global stocks ${stress.globalStocksPct}%; bonds ${stress.bondsPct}%; cash ${stress.cashPct}%. Selected allocation: ${usd(result.changeDollars)} (${result.changePct}%).`;
+    }),
+  ] : [];
+  return [...alternatives, ...scenarioLines, "ALL RESEARCH (INCLUDING INVESTMENTS NOT HELD)", ...research,
     "DECISIONS", ...project.decisions.map((decision) => `${decision.at}: ${decision.summary}\n${decision.reason}`),
   ].join("\n\n");
 }

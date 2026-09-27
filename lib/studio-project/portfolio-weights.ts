@@ -2,6 +2,7 @@ import { calculateStudio, type StudioCalculation, type StudioPlan } from "@/lib/
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { checkPortfolio, type PortfolioChecks } from "./limit-checks";
 import { readLimits } from "./limits";
+import { readScenarios } from "./scenarios";
 import { workingAlternative, type PortfolioAlternative, type StudioProject } from "./schema";
 import { readInput, validValuationCase, valuationResult, type ValuationCase } from "./valuation-cases";
 import { validateStudioProject } from "./validate";
@@ -46,7 +47,7 @@ export function allocationView(project: StudioProject, alternative: PortfolioAlt
 } {
   const plan = projectToPlan({ ...project, alternatives: [alternative], selectedAlternativeId: alternative.id });
   const calculation = calculateStudio(plan, projectCatalog(project));
-  return { plan, calculation, checks: checkPortfolio(plan, calculation, readLimits(project)) };
+  return { plan, calculation, checks: checkPortfolio(plan, calculation, readLimits(project), readScenarios(project)) };
 }
 
 export interface WeightProposalEdits {
@@ -59,7 +60,10 @@ export interface WeightProposalEdits {
 }
 
 export function comparisonBasis(project: StudioProject) {
-  return structuredClone({ goal: project.goal, limits: readLimits(project), stress: project.stress });
+  // Extra scenarios join the basis only when there are some, so a proposal
+  // saved before scenarios existed still matches a project with just one.
+  const scenarios = project.scenarios?.length ? { scenarioName: project.scenarioName ?? "", scenarios: project.scenarios } : {};
+  return structuredClone({ goal: project.goal, limits: readLimits(project), stress: project.stress, ...scenarios });
 }
 
 /** JSON object member order can change during an import without changing any input. */

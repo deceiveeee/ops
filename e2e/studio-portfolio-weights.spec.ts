@@ -145,7 +145,6 @@ test("previews weights, explains limits and scenario dollars, then saves and exp
   const valuations = page.getByRole("combobox", { name: "Saved valuation", exact: true });
   await expect(valuations.getByRole("option")).toHaveText(["No valuation attached", "Apple base case · AAPL"]);
   await valuations.selectOption("weights-apple");
-  await expect(page.getByText("1 company share per traded share · saved 2026-09-25.", { exact: true })).toBeVisible();
   await expect(page.getByText("2% growth · 20% return on new capital · 10% cost of capital.", { exact: true })).toBeVisible();
   await expect(page.getByText("Price you entered: $15.00 on Sep 24, 2026.", { exact: true })).toBeVisible();
   await expect(page.getByText("1 company share per traded share · saved Sep 25, 2026.", { exact: true })).toBeVisible();

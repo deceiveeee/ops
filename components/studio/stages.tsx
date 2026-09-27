@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CATALOG_GAPS, STUDIO_CATALOG, findStudioInstrument } from "@/lib/studio-catalog";
 import {
@@ -10,6 +10,7 @@ import {
   exportStudioJson,
   exportStudioText,
   removeStudioHolding,
+  scenarioResult,
   updateStudioHolding,
   type StudioCalculation,
   type StudioPlan,
@@ -17,7 +18,9 @@ import {
 import { Choice, Fact, Field, Notice, NumberInput, Panel, Stat, StageHeading, TableScroll, downloadFile, pct, usd, usdWhole } from "./shared";
 import ResearchRecord from "./ResearchRecord";
 import FundReportFacts from "./FundReportFacts";
-import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
+import type { CandidateInvestigation, CandidateStatus, StudioScenario, StudioStress } from "@/lib/studio-project/schema";
+import { MAX_SCENARIOS } from "@/lib/studio-project/scenarios";
+import ViewTabs from "./workspace/ViewTabs";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
 import { lossBudget, type StudioLimits } from "@/lib/studio-project/limits";
@@ -82,6 +85,17 @@ export type StageProps = {
     setStatus: (instrumentId: string, status: CandidateStatus, rejectedBecause?: string) => Reported;
     addEvidence: (instrumentId: string, entry: EvidenceEdit) => Reported;
     removeEvidence: (instrumentId: string, evidenceId: string) => Reported;
+  };
+  /**
+   * Workspace only: every scenario, the first included, which belong to the
+   * project. `add` resolves to the new scenario's id, or null if it failed.
+   */
+  scenarios?: {
+    list: StudioScenario[];
+    add: (copyOf: string) => Promise<string | null>;
+    update: (id: string, patch: Partial<StudioStress>) => Reported;
+    rename: (id: string, name: string) => Reported;
+    remove: (id: string) => Reported;
   };
 };
 
@@ -486,7 +500,7 @@ export function BuildStage(props: StageProps) {
 
   const total = calculation.totalWeightPct;
   // Workspace only: the weights against the learner's own limits, and what holds each one back.
-  const checked = props.limits ? checkPortfolio(plan, calculation, props.limits) : null;
+  const checked = props.limits ? checkPortfolio(plan, calculation, props.limits, props.scenarios?.list) : null;
   const roomFor = (instrumentId: string) => checked?.holdings.find((room) => room.instrumentId === instrumentId) ?? null;
   return (
     <div className="space-y-5">
@@ -611,13 +625,49 @@ function WeightRoom({ symbol, room }: { symbol: string; room: HoldingRoom | null
 
 export function RiskStage(props: StageProps) {
   const { plan, calculation, update } = props;
-  const setStress = (patch: Partial<StudioPlan["stress"]>) =>
-    update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
+  const scenarios = props.scenarios;
+  const list = scenarios?.list ?? [{ id: "first", name: "Scenario 1", stress: plan.stress }];
+  const [view, setView] = useState<"scenarios" | "costs">("scenarios");
+  const [selectedId, setSelectedId] = useState(list[0].id);
+  const [busy, setBusy] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const [focusName, setFocusName] = useState(false);
+  useEffect(() => { if (focusName) { nameRef.current?.focus(); setFocusName(false); } }, [focusName, selectedId]);
+  const selected = list.find((scenario) => scenario.id === selectedId) ?? list[0];
+  const several = list.length > 1;
+  const setStress = (patch: Partial<StudioPlan["stress"]>) => scenarios
+    ? scenarios.update(selected.id, patch)
+    : update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
+
+  // Every scenario is priced by the same arithmetic; the worst is the one that loses most here.
+  const results = list.map((scenario) => ({ ...scenario, result: scenarioResult(calculation, scenario.stress) }));
+  const shown = results.find((scenario) => scenario.id === selected.id) ?? results[0];
+  const worst = results.reduce((low, scenario) => (scenario.result.changeDollars < low.result.changeDollars - 0.005 ? scenario : low), results[0]);
+  const byLoss = [...results].sort((a, b) => a.result.changeDollars - b.result.changeDollars);
 
   // The same loss budget Goals shows: the smaller of willingness and capacity, of the whole portfolio.
   const loss = lossBudget(plan.goal.lossTolerancePct, props.limits?.lossCapacityPct ?? null);
+  const hasBudget = loss.pct > 0 || props.limits?.lossCapacityPct === 0;
   const lossLimit = plan.goal.budget * loss.pct / 100;
-  const exceeds = Math.abs(calculation.stress.changeDollars) > lossLimit && lossLimit > 0;
+  const loses = (change: number) => Math.max(0, -change);
+  const over = (change: number) => hasBudget && loses(change) > lossLimit + 0.005;
+  const exceeds = calculation.valid && over(worst.result.changeDollars);
+
+  const add = async () => {
+    if (!scenarios) return;
+    setBusy(true);
+    const id = await scenarios.add(selected.id);
+    setBusy(false);
+    if (id) { setSelectedId(id); setFocusName(true); }
+  };
+  const remove = async () => {
+    if (!scenarios) return;
+    setBusy(true);
+    const result = await scenarios.remove(selected.id);
+    setBusy(false);
+    if (result.ok) { setSelectedId(list.find((scenario) => scenario.id !== selected.id)!.id); setFocusName(true); }
+  };
+  const open = (id: string) => { setSelectedId(id); setFocusName(true); };
 
   return (
     <div className="space-y-5">
@@ -625,101 +675,218 @@ export function RiskStage(props: StageProps) {
         These are assumptions you choose, not forecasts. Nothing here predicts what markets will do.
       </StageHeading>
 
-      <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Assume prices change by</div>
-        {/*
-          One field per asset class the catalog can actually hold. International
-          was missing while every reviewed fund tracked a US index; adding VXUS
-          made its shock apply to a real holding with no way to set it, so the
-          scenario silently used a stored default. Global has no instrument yet
-          and stays out for the same reason in reverse — a control with nothing
-          to act on.
-        */}
-        <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Field
-            label="US stocks" type="number" min={-100} max={100} suffix="%"
-            value={plan.stress.usStocksPct}
-            onChange={(value) => setStress({ usStocksPct: num(value) })}
-          />
-          <Field
-            label="International stocks" type="number" min={-100} max={100} suffix="%"
-            value={plan.stress.internationalStocksPct}
-            onChange={(value) => setStress({ internationalStocksPct: num(value) })}
-          />
-          <Field
-            label="Bonds" type="number" min={-100} max={100} suffix="%"
-            value={plan.stress.bondsPct}
-            onChange={(value) => setStress({ bondsPct: num(value) })}
-          />
-          <Field
-            label="Cash" type="number" min={-100} max={100} suffix="%"
-            value={plan.stress.cashPct}
-            onChange={(value) => setStress({ cashPct: num(value) })}
-          />
-        </div>
-        <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <Stat label="Change in this scenario" value={usd(calculation.stress.changeDollars)} />
-          <Stat label="As a share of the portfolio" value={pct(calculation.stress.changePct)} />
-          <Stat label="Value afterwards" value={usd(calculation.stress.endingValue)} />
-        </div>
-      </Panel>
+      <ViewTabs
+        label="Risk and cost views"
+        idPrefix="risk"
+        className="flex gap-6 border-b border-st-hair"
+        tabs={[
+          { id: "scenarios", label: several ? `Scenarios (${list.length})` : "Scenario", className: TAB },
+          { id: "costs", label: "Costs and overlap", className: TAB },
+        ]}
+        selected={view}
+        onSelect={setView}
+      />
 
-      {exceeds ? (
-        <Notice tone="amber" title="This scenario is larger than your loss budget">
-          Your loss budget is {usdWhole(lossLimit)}, the loss you could {loss.from === "capacity" ? "afford" : "live with"}. This
-          assumed scenario costs{" "}
-          {usdWhole(Math.abs(calculation.stress.changeDollars))}. Either the weights or the limit needs to change —
-          Studio will not choose which.
-        </Notice>
-      ) : null}
+      <div role="tabpanel" id="risk-panel" aria-labelledby={`risk-tab-${view}`} className="space-y-5">
+        {view === "scenarios" ? (
+          <>
+            {!calculation.valid ? (
+              <Notice tone="amber" title="Fix the weights first">
+                {calculation.issues[0] ?? "The portfolio's amounts need fixing."} Until then there is no allocation to test.
+              </Notice>
+            ) : null}
+            <Panel>
+              {scenarios && several ? (
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+                  <label className="flex min-w-0 max-w-md flex-1 items-center gap-3">
+                    <span className="shrink-0 text-[13px] font-semibold text-st-ink">Scenario name</span>
+                    <input
+                      key={selected.id}
+                      ref={nameRef}
+                      defaultValue={selected.name}
+                      maxLength={60}
+                      onBlur={(event) => { if (event.target.value !== selected.name) void scenarios.rename(selected.id, event.target.value); }}
+                      className="min-h-11 w-full min-w-0 rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge [@media(pointer:coarse)]:text-base"
+                    />
+                  </label>
+                  <div className="text-[12px] text-st-faint">{list.findIndex((scenario) => scenario.id === selected.id) + 1} of {list.length}</div>
+                </div>
+              ) : null}
+              <div className="ops-caption text-[12px] text-st-faint">Assume prices change by</div>
+              {/*
+                One field per asset class the catalog can actually hold. International
+                was missing while every reviewed fund tracked a US index; adding VXUS
+                made its shock apply to a real holding with no way to set it, so the
+                scenario silently used a stored default. Global has no instrument yet
+                and stays out for the same reason in reverse — a control with nothing
+                to act on. Two to a row on a phone: four stacked took a whole screen.
+              */}
+              <div key={selected.id} className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <Field
+                  label="US stocks" type="number" min={-100} max={100} suffix="%"
+                  value={selected.stress.usStocksPct}
+                  onChange={(value) => setStress({ usStocksPct: num(value) })}
+                />
+                <Field
+                  label="International stocks" type="number" min={-100} max={100} suffix="%"
+                  value={selected.stress.internationalStocksPct}
+                  onChange={(value) => setStress({ internationalStocksPct: num(value) })}
+                />
+                <Field
+                  label="Bonds" type="number" min={-100} max={100} suffix="%"
+                  value={selected.stress.bondsPct}
+                  onChange={(value) => setStress({ bondsPct: num(value) })}
+                />
+                <Field
+                  label="Cash" type="number" min={-100} max={100} suffix="%"
+                  value={selected.stress.cashPct}
+                  onChange={(value) => setStress({ cashPct: num(value) })}
+                />
+              </div>
+              {calculation.valid && !several ? (
+                <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <Stat label="Change in this scenario" value={usd(shown.result.changeDollars)} />
+                  <Stat label="As a share of the portfolio" value={pct(shown.result.changePct)} />
+                  <Stat label="Value afterwards" value={usd(shown.result.endingValue)} />
+                </div>
+              ) : null}
+              {scenarios ? (
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-st-hair pt-3">
+                  {list.length < MAX_SCENARIOS ? (
+                    <button type="button" disabled={busy} onClick={() => void add()} className={SECONDARY}>
+                      {several ? "Add a scenario" : "Add a second scenario"}
+                    </button>
+                  ) : null}
+                  {several ? (
+                    <button type="button" disabled={busy} onClick={() => void remove()} className={TEXT_BUTTON}>
+                      Remove this scenario
+                    </button>
+                  ) : null}
+                  <p className="min-w-0 flex-1 basis-60 text-[12px] leading-5 text-st-muted">
+                    {list.length >= MAX_SCENARIOS
+                      ? `${MAX_SCENARIOS} is the most you can compare. Remove one to add another.`
+                      : several
+                      ? `A new scenario starts as a copy of this one. Up to ${MAX_SCENARIOS}.`
+                      : "One scenario tests one story. Add another to see which costs this portfolio most; your loss budget is then checked against the worst."}
+                  </p>
+                </div>
+              ) : null}
+            </Panel>
 
-      <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Yearly cost of the funds you hold</div>
-        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <Stat
-            label="At today's amounts"
-            value={usd(calculation.fees.annualKnownCost)}
-            detail="Fund operating costs only"
-          />
-          <Stat label="As a share of the portfolio" value={pct(calculation.fees.weightedKnownExpenseRatioPct, 3)} />
-          <Stat
-            label="Costs known"
-            value={pct(calculation.fees.coveragePct, 0)}
-            detail={calculation.fees.coveragePct < 100 ? "Some funds have no filed cost" : "Every fund has a filed cost"}
-          />
-        </div>
-        <p className="mt-3 text-[13px] leading-6 text-slate-500">
-          Trading charges, spreads and taxes are separate and are not included here.
-        </p>
-      </Panel>
+            {several && calculation.valid ? (
+              <Panel>
+                <table className="w-full table-fixed text-[13px]">
+                  <caption className="ops-caption pb-2 text-left text-[12px] text-st-faint">Your scenarios, largest loss first</caption>
+                  <thead>
+                    <tr className="border-b border-st-hair text-left text-[12px] text-st-faint">
+                      <th scope="col" className="w-[42%] py-2 pr-2 font-normal">Scenario</th>
+                      <th scope="col" className="py-2 pr-2 text-right font-normal">Change</th>
+                      <th scope="col" className="hidden py-2 pr-2 text-right font-normal sm:table-cell">Of the portfolio</th>
+                      <th scope="col" className="py-2 text-right font-normal">Loss budget</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {byLoss.map((scenario) => (
+                      <tr key={scenario.id} className="border-b border-st-hair last:border-0">
+                        <th scope="row" className="py-0.5 pr-2 text-left font-normal">
+                          <button
+                            type="button"
+                            aria-pressed={scenario.id === selected.id}
+                            onClick={() => open(scenario.id)}
+                            className="min-h-8 max-w-full truncate text-left text-st-ink underline decoration-st-bound underline-offset-4 hover:decoration-st-ink aria-pressed:font-semibold aria-pressed:no-underline [@media(pointer:coarse)]:min-h-11"
+                          >
+                            {scenario.name}
+                          </button>
+                        </th>
+                        <td className="py-1.5 pr-2 text-right tabular-nums text-st-ink">{usdWhole(scenario.result.changeDollars)}</td>
+                        <td className="hidden py-1.5 pr-2 text-right tabular-nums text-st-ink sm:table-cell">{pct(scenario.result.changePct)}</td>
+                        <td className={cn("py-1.5 text-right", over(scenario.result.changeDollars) ? "font-semibold text-st-warn" : "text-st-muted")}>
+                          {!hasBudget ? "Not set" : over(scenario.result.changeDollars) ? "Over" : "Within"}
+                          {scenario.id === worst.id ? <span className="font-normal text-st-muted"> · worst</span> : null}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {/* One sentence: which scenario is worst, against the budget, and what "worst" does not mean. */}
+                <p className={cn("mt-3 text-[13px] leading-6", exceeds ? "text-st-warn" : "text-st-muted")}>
+                  “{worst.name}” is the worst you set, not the worst that could happen.{" "}
+                  {!hasBudget
+                    ? "Set the loss you could live with on Goals to check it."
+                    : exceeds
+                      ? `It costs ${usdWhole(loses(worst.result.changeDollars))}, more than your loss budget of ${usdWhole(lossLimit)}, the loss you could ${loss.from === "capacity" ? "afford" : "live with"}. Either the weights or the limit needs to change — Studio will not choose which.`
+                      : `It costs ${usdWhole(loses(worst.result.changeDollars))}, within your loss budget of ${usdWhole(lossLimit)}.`}
+                </p>
+              </Panel>
+            ) : null}
 
-      <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Companies you own more than once</div>
-        {calculation.overlaps.length === 0 ? (
-          <p className="mt-2 text-[14px] leading-6 text-slate-300">
-            No repeated company appears in the holdings that have been documented. That is not proof there is none —
-            only {pct(calculation.exposureCoveragePct)} of the portfolio&rsquo;s holdings are documented.
-          </p>
+            {exceeds && !several ? (
+              <Notice tone="amber" title="This scenario is larger than your loss budget">
+                Your loss budget is {usdWhole(lossLimit)}, the loss you could {loss.from === "capacity" ? "afford" : "live with"}. This
+                assumed scenario costs {usdWhole(loses(worst.result.changeDollars))}. Either the weights or the limit needs to change —
+                Studio will not choose which.
+              </Notice>
+            ) : null}
+          </>
         ) : (
           <>
-            <ul className="mt-2 space-y-1">
-              {calculation.overlaps.slice(0, 8).map((overlap) => (
-                <li key={overlap.label} className="text-[14px] leading-6 text-slate-300">
-                  <span className="tabular-nums text-white">{pct(overlap.portfolioWeightPct, 2)}</span> {overlap.label},
-                  held through {overlap.instrumentIds.map((id) => symbolOf(calculation, id)).join(" and ")}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-[13px] leading-6 text-slate-500">
-              Based on {pct(calculation.exposureCoveragePct)} of the portfolio. Holdings the filings do not list stay
-              unknown, so the real overlap can only be larger.
-            </p>
+            <Panel>
+              <div className="ops-caption text-[12px] text-st-faint">Yearly cost of the funds you hold</div>
+              <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <Stat
+                  label="At today's amounts"
+                  value={usd(calculation.fees.annualKnownCost)}
+                  detail="Fund operating costs only"
+                />
+                <Stat label="As a share of the portfolio" value={pct(calculation.fees.weightedKnownExpenseRatioPct, 3)} />
+                <Stat
+                  label="Costs known"
+                  value={pct(calculation.fees.coveragePct, 0)}
+                  detail={calculation.fees.coveragePct < 100 ? "Some funds have no filed cost" : "Every fund has a filed cost"}
+                />
+              </div>
+              <p className="mt-3 text-[13px] leading-6 text-slate-500">
+                Trading charges, spreads and taxes are separate and are not included here.
+              </p>
+            </Panel>
+
+            <Panel>
+              <div className="ops-caption text-[12px] text-st-faint">Companies you own more than once</div>
+              {calculation.overlaps.length === 0 ? (
+                <p className="mt-2 text-[14px] leading-6 text-slate-300">
+                  No repeated company appears in the holdings that have been documented. That is not proof there is none —
+                  only {pct(calculation.exposureCoveragePct)} of the portfolio&rsquo;s holdings are documented.
+                </p>
+              ) : (
+                <>
+                  <ul className="mt-2 space-y-1">
+                    {calculation.overlaps.slice(0, 8).map((overlap) => (
+                      <li key={overlap.label} className="text-[14px] leading-6 text-slate-300">
+                        <span className="tabular-nums text-white">{pct(overlap.portfolioWeightPct, 2)}</span> {overlap.label},
+                        held through {overlap.instrumentIds.map((id) => symbolOf(calculation, id)).join(" and ")}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3 text-[13px] leading-6 text-slate-500">
+                    Based on {pct(calculation.exposureCoveragePct)} of the portfolio. Holdings the filings do not list stay
+                    unknown, so the real overlap can only be larger.
+                  </p>
+                </>
+              )}
+            </Panel>
           </>
         )}
-      </Panel>
+      </div>
     </div>
   );
 }
+
+const TAB =
+  "min-h-11 border-b-2 border-transparent -mb-px text-[14px] text-st-muted hover:text-st-ink aria-selected:border-[var(--ops-accent-strong)] aria-selected:font-semibold aria-selected:text-[var(--ops-accent-strong)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]";
+const SECONDARY =
+  "inline-flex min-h-11 items-center rounded-lg border border-st-bound bg-st-paper px-4 text-[14px] font-semibold text-st-ink hover:bg-st-canvas disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]";
+const TEXT_BUTTON =
+  "min-h-11 text-[14px] text-st-ink underline decoration-st-bound underline-offset-4 hover:decoration-st-ink disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]";
 
 // ---------------------------------------------------------------------------
 // 5. Buying worksheet
