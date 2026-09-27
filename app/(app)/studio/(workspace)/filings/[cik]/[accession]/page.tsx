@@ -686,11 +686,11 @@ function Shell({
   return (
     <div className="space-y-4">
       <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+        <Link href="/studio/research" className="items-center text-accent-cyan hover:underline [@media(pointer:coarse)]:inline-flex [@media(pointer:coarse)]:min-h-11">
           Research
         </Link>
         <span aria-hidden="true"> › </span>
-        <Link href={back} className="text-accent-cyan hover:underline">
+        <Link href={back} className="items-center text-accent-cyan hover:underline [@media(pointer:coarse)]:inline-flex [@media(pointer:coarse)]:min-h-11">
           Company reports
         </Link>
         {ticker ? (

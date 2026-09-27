@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { StudioGuidance } from "@/lib/studio-guidance";
 
@@ -20,16 +20,30 @@ export function Panel({ children, className }: { children: ReactNode; className?
   );
 }
 
+/**
+ * What follows a page's title on screens without room beside the work.
+ *
+ * The workspace frame decides what it is; the page's title decides where it
+ * goes. Placed by the frame instead, it sat above the page's tabs and title and
+ * pushed both most of a phone screen down.
+ */
+export const PageIntro = createContext<ReactNode>(null);
+
 export function StageHeading({
   eyebrow, title, children, as: Heading = "h2",
 }: { eyebrow?: string; title: string; children?: ReactNode; as?: "h1" | "h2" }) {
+  const intro = useContext(PageIntro);
   return (
-    <div>
-      {/* A label, not a warning, so it takes no accent colour. */}
-      {eyebrow ? <div className="ops-caption text-[12px] text-slate-500">{eyebrow}</div> : null}
-      <Heading className={cn("ops-display text-2xl leading-tight text-white sm:text-3xl", eyebrow && "mt-2")}>{title}</Heading>
-      {children ? <p className="ops-body mt-3 max-w-2xl text-[15px] leading-7 text-slate-300">{children}</p> : null}
-    </div>
+    <>
+      <div>
+        {/* A label, not a warning, so it takes no accent colour. */}
+        {eyebrow ? <div className="ops-caption text-[12px] text-slate-500">{eyebrow}</div> : null}
+        <Heading className={cn("ops-display text-2xl leading-tight text-white sm:text-3xl", eyebrow && "mt-2")}>{title}</Heading>
+        {children ? <p className="ops-body mt-3 max-w-2xl text-[15px] leading-7 text-slate-300">{children}</p> : null}
+      </div>
+      {/* Only under the page's own title, never a section's. */}
+      {Heading === "h1" ? intro : null}
+    </>
   );
 }
 
@@ -83,10 +97,11 @@ export function GuidancePanel({ guidance }: { guidance: StudioGuidance }) {
   return (
     <div className="border-l-2 border-st-blue-edge pl-4 sm:pl-5">
       <div className="ops-caption text-[12px] text-st-blue">Before you start</div>
-      <p className="ops-body mt-2 text-[15px] leading-7 text-st-sub">{guidance.definition}</p>
+      {/* A size smaller on a phone, where it sits between the page's title and its work. */}
+      <p className="ops-body mt-2 text-[14px] leading-6 text-st-sub sm:text-[15px] sm:leading-7">{guidance.definition}</p>
       {/* Only the definition stays open. The screen budget caps preamble at half
           a viewport, and the learner has to be able to act without scrolling. */}
-      <details className="group mt-3">
+      <details className="group mt-1 sm:mt-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[13px] font-semibold text-st-blue">
           <span>How to do this, with an example</span>
           <span className="text-[12px] font-normal text-st-muted group-open:hidden">Show</span>
@@ -186,8 +201,9 @@ export function Field({
   const id = useId();
   const hintId = `${id}-hint`;
   const buffered = useBufferedInput(value, onChange);
+  // 16px on a touch screen, because iOS zooms the whole page into any box whose text is smaller.
   const inputClass =
-    "min-h-11 w-full rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge";
+    "min-h-11 w-full rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink placeholder:text-st-faint focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge [@media(pointer:coarse)]:text-base";
   /*
    * A unit belongs inside the control it qualifies, not beside it.
    *
@@ -197,7 +213,7 @@ export function Field({
    * width of its column and the row finally has a rhythm. The padding scales
    * with the affix because a symbol and the word "years" need different room.
    */
-  const affix = "pointer-events-none absolute inset-y-0 flex items-center text-[15px] text-st-muted";
+  const affix = "pointer-events-none absolute inset-y-0 flex items-center text-[15px] text-st-muted [@media(pointer:coarse)]:text-base";
   const pad = (text: string | undefined, side: "l" | "r") => {
     if (!text) return undefined;
     if (text.length <= 1) return side === "l" ? "pl-7" : "pr-7";
@@ -279,7 +295,7 @@ export function Choice<T extends string>({
         id={id}
         value={value}
         onChange={(event) => onChange(event.currentTarget.value as T)}
-        className="mt-auto min-h-11 w-full rounded-lg border border-st-bound bg-st-canvas px-3 py-2 text-[15px] text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge"
+        className="mt-auto min-h-11 w-full rounded-lg border border-st-bound bg-st-canvas px-3 py-2 text-[15px] text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge [@media(pointer:coarse)]:text-base"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

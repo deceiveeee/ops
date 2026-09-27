@@ -104,9 +104,12 @@ test.describe("reading a whole report", () => {
     await expect(main(page)).toContainText(/Page 1 of \d+/);
 
     await main(page).getByRole("link", { name: "Next page →" }).click();
-    await expect(page).toHaveURL(/page=2/);
     await expect(main(page)).toContainText(/Page 2 of \d+/);
     await expect(main(page).getByRole("link", { name: "← Previous page" })).toBeVisible();
+    // ReaderFit can replace a page number with the first paragraph's stable
+    // `at` offset. Assert the reading position survives, whichever URL it uses.
+    await page.reload();
+    await expect(main(page)).toContainText(/Page 2 of \d+/);
   });
 
   test("finds PVC resin in the four sections that mention it, and opens the passage", async ({ page }) => {

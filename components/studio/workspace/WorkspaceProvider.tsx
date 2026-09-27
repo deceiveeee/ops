@@ -5,6 +5,7 @@ import { calculateStudio, type StudioCalculation, type StudioPlan } from "@/lib/
 import { STUDIO_MODE_KEY } from "@/lib/studio-mode";
 import { STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { importProjectBackup } from "@/lib/studio-project/backup";
+import { hasAnyLimit } from "@/lib/studio-project/limits";
 import type { StudioMode, StudioProject } from "@/lib/studio-project/schema";
 import type { SessionResult } from "@/lib/studio-project/session";
 import { createIndexedDbProjectStorage } from "@/lib/studio-project/storage";
@@ -20,7 +21,7 @@ import type { StageResult } from "../stages";
  * "leave Studio?" warning would be wrong. Anywhere else is leaving.
  */
 export const isWorkspacePath = (pathname: string) =>
-  pathname === "/studio" || /^\/studio\/(goals|research|investigate|industry|filings|portfolio|review)(\/|$)/.test(pathname);
+  pathname === "/studio" || /^\/studio\/(goals|research|investigate|industry|filings|valuation|portfolio|review)(\/|$)/.test(pathname);
 
 type Session = ReturnType<typeof useStudioProject>;
 
@@ -72,6 +73,9 @@ export function holdsWork(raw: string): boolean {
     project.investigations.length > 0 ||
     project.candidates.length > 0 ||
     project.decisions.length > 0 ||
+    (project.valuations?.length ?? 0) > 0 ||
+    (project.returnHistories?.length ?? 0) > 0 ||
+    hasAnyLimit(project.limits) ||
     project.goal.purpose.trim() !== "" ||
     project.alternatives.some((alternative) => alternative.positions.length > 0)
   );

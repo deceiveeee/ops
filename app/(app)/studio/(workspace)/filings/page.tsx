@@ -51,7 +51,7 @@ export default async function CompanyReportsPage({
   return (
     <div className="space-y-4">
       <nav aria-label="Breadcrumb" className="text-[13px] text-slate-500">
-        <Link href="/studio/research" className="text-accent-cyan hover:underline">
+        <Link href="/studio/research" className="items-center text-accent-cyan hover:underline [@media(pointer:coarse)]:inline-flex [@media(pointer:coarse)]:min-h-11">
           Research
         </Link>
         <span aria-hidden="true"> › </span>
@@ -71,7 +71,7 @@ export default async function CompanyReportsPage({
             defaultValue={symbol}
             placeholder="NFLX, AAPL, KO"
             autoComplete="off"
-            className="mt-1 block min-h-11 w-44 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-[15px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+            className="mt-1 block min-h-11 w-44 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-[15px] text-white placeholder:text-slate-600 focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 [@media(pointer:coarse)]:text-base"
           />
         </label>
         <button

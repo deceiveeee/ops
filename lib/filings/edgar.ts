@@ -80,6 +80,7 @@ async function readFixture(directory: string, url: string): Promise<EdgarResult<
 async function secFetch(
   url: string,
   revalidateSeconds: number,
+  timeoutMs = 15_000,
 ): Promise<EdgarResult<{ body: string }>> {
   const fixtures = process.env.OPS_EDGAR_FIXTURE_DIR?.trim();
   if (fixtures) return readFixture(fixtures, url);
@@ -91,6 +92,7 @@ async function secFetch(
     const res = await fetch(url, {
       headers: { "User-Agent": ua, Accept: "*/*" },
       next: { revalidate: revalidateSeconds },
+      signal: AbortSignal.timeout(timeoutMs),
     });
     if (res.status === 404) {
       return { ok: false, reason: "not-found", message: "EDGAR has no document at that address." };
@@ -273,7 +275,7 @@ export async function resolveTicker(symbol: string): Promise<EdgarResult<{ compa
  * the companies a report names against it.
  */
 export async function fetchCompanyTickers(): Promise<EdgarResult<{ json: unknown }>> {
-  const res = await secFetch("https://www.sec.gov/files/company_tickers.json", 86_400);
+  const res = await secFetch("https://www.sec.gov/files/company_tickers.json", 86_400, 4_000);
   if (!res.ok) return res;
   try {
     return { ok: true, json: JSON.parse(res.body) };

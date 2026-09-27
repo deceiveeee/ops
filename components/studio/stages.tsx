@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CATALOG_GAPS, STUDIO_CATALOG, findStudioInstrument } from "@/lib/studio-catalog";
 import {
@@ -20,6 +20,9 @@ import FundReportFacts from "./FundReportFacts";
 import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
+import { lossBudget, type StudioLimits } from "@/lib/studio-project/limits";
+import { checkPortfolio, type HoldingRoom } from "@/lib/studio-project/limit-checks";
+import LimitChecks from "./LimitChecks";
 
 /**
  * A holding's ticker, or a company's name where the learner added it themselves.
@@ -62,6 +65,8 @@ export type StageProps = {
   actions?: StageActions;
   /** Workspace only: companies investigated so far, named on the way in to Investigate. */
   investigations?: { id: string; company: string }[];
+  /** Workspace only: the learner's limits, which belong to the project rather than to a portfolio. */
+  limits?: StudioLimits;
   /**
    * Workspace only: the research record, which belongs to the project rather
    * than to a portfolio.
@@ -480,6 +485,9 @@ export function BuildStage(props: StageProps) {
   }
 
   const total = calculation.totalWeightPct;
+  // Workspace only: the weights against the learner's own limits, and what holds each one back.
+  const checked = props.limits ? checkPortfolio(plan, calculation, props.limits) : null;
+  const roomFor = (instrumentId: string) => checked?.holdings.find((room) => room.instrumentId === instrumentId) ?? null;
   return (
     <div className="space-y-5">
       <StageHeading {...headingFor(props)} title="Decide how much goes where">
@@ -488,10 +496,15 @@ export function BuildStage(props: StageProps) {
       </StageHeading>
 
       <Panel>
+        {/*
+          Below 768px each investment is two lines -- the name and its box, then
+          what that comes to -- instead of four columns that ran off the edge and
+          put the box being typed in half out of sight.
+        */}
         <TableScroll>
-          <table className="w-full min-w-[34rem] text-left text-[14px]">
+          <table className="block w-full text-left text-[14px] md:table md:min-w-[34rem]">
             <caption className="sr-only">Target weight and dollar amount for each investment</caption>
-            <thead className="text-slate-400">
+            <thead className="sr-only text-slate-400 md:not-sr-only">
               <tr>
                 <th scope="col" className="py-2 pr-3 font-normal">Investment</th>
                 <th scope="col" className="py-2 pr-3 text-right font-normal">Share of the investable money</th>
@@ -499,14 +512,17 @@ export function BuildStage(props: StageProps) {
                 <th scope="col" className="py-2 text-right font-normal">Dollars</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="block md:table-row-group">
               {calculation.rows.map((row) => (
-                <tr key={row.holding.instrumentId} className="border-t border-white/8">
-                  <td className="py-3 pr-3">
+                <Fragment key={row.holding.instrumentId}>
+                <tr
+                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-t border-white/8 py-3 first:border-t-0 first:pt-0 md:table-row md:py-0 md:first:border-t"
+                >
+                  <td className="block md:table-cell md:py-3 md:pr-3">
                     <div className="font-semibold text-white">{row.instrument?.symbol ?? row.holding.instrumentId}</div>
                     <div className="text-[13px] text-slate-500">{row.instrument?.name ?? "Not in the research library"}</div>
                   </td>
-                  <td className="py-3 pr-3 text-right">
+                  <td className="block whitespace-nowrap text-right md:table-cell md:py-3 md:pr-3">
                     <label className="sr-only" htmlFor={`weight-${row.holding.instrumentId}`}>
                       {row.instrument?.symbol ?? row.holding.instrumentId} target percentage
                     </label>
@@ -520,22 +536,28 @@ export function BuildStage(props: StageProps) {
                           updateStudioHolding(current, row.holding.instrumentId, { targetWeightPct: num(raw) }),
                         )
                       }
-                      className="min-h-11 w-24 rounded-lg border border-white/12 bg-white/[0.03] px-3 text-right text-[15px] tabular-nums text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40"
+                      className="min-h-11 w-24 rounded-lg border border-white/12 bg-white/[0.03] px-3 text-right text-[15px] tabular-nums text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 [@media(pointer:coarse)]:text-base"
                     />
+                    {/* The column heading says what the number is; below 768px there is no column heading. */}
+                    <span aria-hidden="true" className="ml-1.5 text-slate-400 md:hidden">%</span>
                   </td>
-                  <td className="py-3 pr-3 text-right tabular-nums text-slate-300">
+                  <td className="block text-[13px] tabular-nums text-slate-400 md:table-cell md:py-3 md:pr-3 md:text-right md:text-[14px] md:text-slate-300">
                     {pct(row.targetPortfolioWeightPct)}
+                    <span className="md:hidden"> of the whole portfolio</span>
                   </td>
-                  <td className="py-3 text-right tabular-nums text-white">{usd(row.targetValue)}</td>
+                  <td className="block text-right tabular-nums text-white md:table-cell md:py-3">{usd(row.targetValue)}</td>
                 </tr>
+                <WeightRoom symbol={row.instrument?.symbol ?? row.holding.instrumentId} room={roomFor(row.holding.instrumentId)} />
+                </Fragment>
               ))}
-              <tr className="border-t border-white/15">
-                <td className="py-3 pr-3 text-slate-300">Cash reserve and anything unassigned</td>
-                <td className="py-3 pr-3" />
-                <td className="py-3 pr-3 text-right tabular-nums text-slate-300">
+              <tr className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-t border-white/15 pt-3 md:table-row md:pt-0">
+                <td className="col-span-2 block text-slate-300 md:table-cell md:py-3 md:pr-3">Cash reserve and anything unassigned</td>
+                <td className="hidden md:table-cell md:py-3 md:pr-3" />
+                <td className="block text-[13px] tabular-nums text-slate-400 md:table-cell md:py-3 md:pr-3 md:text-right md:text-[14px] md:text-slate-300">
                   {pct(calculation.targetCashWeightPct)}
+                  <span className="md:hidden"> of the whole portfolio</span>
                 </td>
-                <td className="py-3 text-right tabular-nums text-white">{usd(calculation.targetCash)}</td>
+                <td className="block text-right tabular-nums text-white md:table-cell md:py-3">{usd(calculation.targetCash)}</td>
               </tr>
             </tbody>
           </table>
@@ -553,7 +575,33 @@ export function BuildStage(props: StageProps) {
           Every dollar after your cash reserve has a job.
         </Notice>
       )}
+
+      {/* Beside the work from 1280px, in the frame's side column; here below it. */}
+      {checked ? <div className="xl:hidden"><LimitChecks checks={checked.checks} /></div> : null}
     </div>
+  );
+}
+
+/**
+ * What holds one weight back, in a row of its own under the holding: a phone's
+ * first column is too narrow for the sentence, and a table reads it the same.
+ */
+function WeightRoom({ symbol, room }: { symbol: string; room: HoldingRoom | null }) {
+  const tightest = room?.tightest;
+  if (!room || !tightest) return null;
+  const limit = `${tightest.pct.toFixed(1)}% of the whole portfolio`;
+  const text = room.over
+    ? `${(room.weightPct - tightest.pct).toFixed(1)} points over what ${tightest.label} allows (${limit}).`
+    : Math.abs(room.weightPct - tightest.pct) < 0.05
+      ? `At the most ${tightest.label} allows (${limit}).`
+      : `Can rise to ${limit} before it reaches ${tightest.label}.`;
+  return (
+    <tr className="block md:table-row">
+      <td colSpan={4} className={cn("block pb-3 text-[12px] leading-5 md:table-cell md:pb-3 md:pt-0", room.over ? "text-accent-amber" : "text-slate-500")}>
+        <span className="sr-only">{symbol}: </span>
+        {text}
+      </td>
+    </tr>
   );
 }
 
@@ -566,7 +614,9 @@ export function RiskStage(props: StageProps) {
   const setStress = (patch: Partial<StudioPlan["stress"]>) =>
     update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
 
-  const lossLimit = plan.goal.budget * plan.goal.lossTolerancePct / 100;
+  // The same loss budget Goals shows: the smaller of willingness and capacity, of the whole portfolio.
+  const loss = lossBudget(plan.goal.lossTolerancePct, props.limits?.lossCapacityPct ?? null);
+  const lossLimit = plan.goal.budget * loss.pct / 100;
   const exceeds = Math.abs(calculation.stress.changeDollars) > lossLimit && lossLimit > 0;
 
   return (
@@ -615,8 +665,9 @@ export function RiskStage(props: StageProps) {
       </Panel>
 
       {exceeds ? (
-        <Notice tone="amber" title="This scenario is larger than the loss you said you could live with">
-          You wrote that you could absorb {usdWhole(lossLimit)}. This assumed scenario costs{" "}
+        <Notice tone="amber" title="This scenario is larger than your loss budget">
+          Your loss budget is {usdWhole(lossLimit)}, the loss you could {loss.from === "capacity" ? "afford" : "live with"}. This
+          assumed scenario costs{" "}
           {usdWhole(Math.abs(calculation.stress.changeDollars))}. Either the weights or the limit needs to change —
           Studio will not choose which.
         </Notice>

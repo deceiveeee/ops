@@ -6,7 +6,10 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import { STUDIO_MODES } from "@/lib/studio-mode";
-import { GuidancePanel, Notice, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
+import { checkPortfolio } from "@/lib/studio-project/limit-checks";
+import { readLimits } from "@/lib/studio-project/limits";
+import LimitChecks from "../LimitChecks";
+import { GuidancePanel, Notice, PageIntro, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
 import StudioIcon from "./StudioIcon";
 import styles from "./studio-design.module.css";
@@ -26,6 +29,7 @@ export const SECTIONS = [
     href: "/studio/research",
     covers: ["/studio/research", "/studio/investigate", "/studio/industry", "/studio/filings"],
   },
+  { key: "valuation", label: "Valuation", href: "/studio/valuation", covers: ["/studio/valuation"] },
   { key: "portfolio", label: "Portfolio", href: "/studio/portfolio", covers: ["/studio/portfolio"] },
   { key: "review", label: "Review", href: "/studio/review", covers: ["/studio/review"] },
 ] as const;
@@ -84,7 +88,7 @@ export default function StudioFrame({ children }: { children: ReactNode }) {
 function LiveFrame({ pathname, children }: { pathname: string; children: ReactNode }) {
   const { setAsideSlot } = useWorkspace();
   const guidance = guidanceFor(pathname);
-  const stagePage = STAGE_PAGES.some((base) => within(pathname, base));
+  const stagePage = pathname !== "/studio/portfolio/returns" && STAGE_PAGES.some((base) => within(pathname, base));
   const integratedGuide = pathname === "/studio/goals" || pathname === "/studio/research";
   const toolPage = TOOL_PAGES.some((base) => within(pathname, base));
 
@@ -94,6 +98,7 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
       <div className="space-y-4">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
         <Summary />
+        <AsideLimits />
       </div>
     );
   } else if (toolPage) {
@@ -106,18 +111,23 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
     );
   }
 
+  /*
+   * Narrow screens keep the definition above the work, where a first-time
+   * learner meets it before the questions that use it. The page's title places
+   * it, below the page's tabs and title rather than above them.
+   */
+  const intro =
+    stagePage && guidance && !integratedGuide ? (
+      <div className="space-y-4 xl:hidden">
+        <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
+        <Strip />
+      </div>
+    ) : null;
+
   return (
     <Layout pathname={pathname} bar={<ProjectBar pathname={pathname} />} aside={aside}>
       <Problems />
-      {/* Narrow screens keep the definition above the work, where a first-time
-          learner meets it before the questions that use it. */}
-      {stagePage && guidance && !integratedGuide ? (
-        <div className="mb-5 space-y-4 xl:hidden">
-          <Strip />
-          <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
-        </div>
-      ) : null}
-      {children}
+      <PageIntro.Provider value={intro}>{children}</PageIntro.Provider>
     </Layout>
   );
 }
@@ -130,7 +140,7 @@ function Layout({
       <div className="lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-8">
         <Sidebar pathname={pathname} />
         <div className="min-w-0">
-          <div className={cn("flex min-h-[3.25rem] flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-[var(--ops-divider)] pb-4", styles.projectBar)}>
+          <div className={cn("flex min-h-[3.25rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-[var(--ops-divider)] pb-3 sm:gap-y-3 sm:pb-4", styles.projectBar)}>
             {bar}
           </div>
           <div className={cn("mt-6", aside ? "xl:grid xl:grid-cols-[minmax(0,1fr)_17rem] xl:items-start xl:gap-8" : undefined)}>
@@ -283,7 +293,7 @@ function SaveState() {
   let text = "";
   let tone: "quiet" | "warn" | "error" = "quiet";
   if (status === "loading") text = "Opening your work…";
-  else if (status === "saving" || (status === "ready" && (dirty || draft))) text = "Saving…";
+  else if (status === "saving" || (status === "ready" && (session.pending || dirty || draft))) text = "Saving…";
   else if (status === "ready") {
     text = externalChange ? "Saved here. Changed since in another tab." : "Saved in this browser";
     if (externalChange) tone = "warn";
@@ -508,13 +518,20 @@ function Summary() {
   );
 }
 
+/** The portfolio against the learner's limits, beside the work. */
+function AsideLimits() {
+  const { plan, calculation, project } = useWorkspace();
+  if (!plan || !calculation || !project || plan.holdings.length === 0) return null;
+  return <LimitChecks checks={checkPortfolio(plan, calculation, readLimits(project)).checks} />;
+}
+
 /** The same three numbers as one line, for screens without room beside the work. */
 function Strip() {
   const { plan, calculation } = useWorkspace();
   if (!plan || !calculation) return null;
   const fullyAssigned = Math.abs(calculation.totalWeightPct - 100) <= 0.01;
   return (
-    <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[13px]">
+    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-[13px] sm:gap-x-5 sm:px-4 sm:py-3">
       <span className="text-slate-500">
         To invest <span className="tabular-nums text-white">{usdWhole(calculation.investableBudget)}</span>
       </span>
