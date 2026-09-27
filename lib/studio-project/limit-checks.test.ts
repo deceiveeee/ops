@@ -48,7 +48,7 @@ describe("checking a portfolio against its limits", () => {
     // Willingness always has a value, so the scenario is always checked: $16,400 against 20% of $100,000.
     expect(check(result, "loss")).toMatchObject({
       status: "met",
-      detail: "The scenario on the Risk page loses $16,400. Your loss budget is $20,000, the loss you could live with.",
+      detail: "This allocation loses $16,400 in the scenario. Your loss budget is $20,000, the loss you could live with.",
     });
   });
 
@@ -92,7 +92,7 @@ describe("checking a portfolio against its limits", () => {
     // Capacity 15% is below willingness 20%: the budget is $15,000.
     expect(check(run(portfolio(), limits({ lossCapacityPct: 15 })), "loss")).toMatchObject({
       status: "not-met",
-      detail: "The scenario on the Risk page loses $16,400. Your loss budget is $15,000, the loss you could afford. Most of the loss: VTI $12,000, AAPL $2,400, AGG $2,000.",
+      detail: "This allocation loses $16,400 in the scenario. Your loss budget is $15,000, the loss you could afford. Most of the loss: VTI $12,000, AAPL $2,400, AGG $2,000.",
     });
   });
 
@@ -140,5 +140,23 @@ describe("checking a portfolio against its limits", () => {
     for (const item of result.checks) expect(item.status).toBe("not-checked");
     expect(check(result, "caps").detail).toBe("The weights add up to more than 100%. Fix that first.");
     expect(result.holdings).toEqual([]);
+  });
+
+  it.each([0, 20])("enforces an explicit zero loss capacity with willingness %s", (willingness) => {
+    const plan = portfolio();
+    plan.goal.lossTolerancePct = willingness;
+    const result = run(plan, limits({ lossCapacityPct: 0 }));
+    expect(check(result, "loss").status).toBe("not-met");
+    expect(check(result, "loss").detail).toContain("Your loss budget is $0");
+    expect(room(result, "aapl").ceilings).toContainEqual({ label: "your loss budget", pct: 0 });
+    expect(room(result, "aapl").over).toBe(true);
+  });
+
+  it("meets an explicit zero loss capacity when the scenario loses nothing", () => {
+    const plan = portfolio();
+    plan.holdings = plan.holdings.map((holding) => ({ ...holding, targetWeightPct: 0 }));
+    const result = run(plan, limits({ lossCapacityPct: 0 }));
+    expect(check(result, "loss").status).toBe("met");
+    expect(check(result, "loss").detail).toContain("This allocation loses $0 in the scenario. Your loss budget is $0");
   });
 });

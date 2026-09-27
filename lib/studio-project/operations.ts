@@ -601,6 +601,7 @@ export function removePosition(
             {
               ...alternative,
               positions: alternative.positions.filter((position) => position.instrumentId !== instrumentId),
+              ...(alternative.valuationLinks ? { valuationLinks: alternative.valuationLinks.filter((link) => link.instrumentId !== instrumentId) } : {}),
             },
             now,
           )
@@ -631,6 +632,8 @@ export function duplicateAlternative(
     createdAt: now,
     updatedAt: now,
     positions: source.positions.map((position) => ({ ...position })),
+    ...(source.valuationLinks ? { valuationLinks: structuredClone(source.valuationLinks) } : {}),
+    ...(source.comparisonBasis ? { comparisonBasis: structuredClone(source.comparisonBasis) } : {}),
   };
   return { ...project, alternatives: [...project.alternatives, copy], updatedAt: now };
 }

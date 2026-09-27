@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     globals: true,
     // Nested agent checkouts have their own test runs and module contexts.
-    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/.claude/worktrees/**", "e2e/**"],
+    exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/.claude/worktrees/**", "tmp/**", "e2e/**"],
   },
   resolve: { alias: { "@": path.resolve(__dirname, "./") } },
 });
