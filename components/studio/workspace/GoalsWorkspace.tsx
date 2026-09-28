@@ -8,6 +8,7 @@ import {
   checkTargets, lossBudget, readLimits, setLimits, SLICE_NAMES, SLICES,
   type CashNeed, type SliceId, type SliceTarget, type StudioLimits,
 } from "@/lib/studio-project/limits";
+import { chosenBeforeChange, type BasisPart } from "@/lib/studio-project/portfolio-weights";
 import type { StageProps } from "../stages";
 import { Choice, Field, usdWhole, useBufferedInput } from "../shared";
 import StudioIcon from "./StudioIcon";
@@ -30,6 +31,16 @@ const percentOrNull = (raw: string) => {
   return Math.min(100, Math.max(0, Number(trimmed)));
 };
 const SLICE_COLOURS: Record<SliceId, string> = { ready: "#8f9985", steady: "#bfb1e5", grow: "#d5f39e" };
+// Spelled out here: a browser's own short month is "Sep" in one and "Sept" in another.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const chosenOn = (at: string) => { const date = new Date(at); return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`; };
+const PART_WORDS: Record<BasisPart, string> = { goal: "your goal", limits: "your limits", scenario: "the loss scenario" };
+/** "your limits have", "your goal and the loss scenario have", "your goal has". */
+const changedWords = (parts: BasisPart[]) => {
+  const words = parts.map(part => PART_WORDS[part]);
+  const listed = words.length > 1 ? `${words.slice(0, -1).join(", ")} and ${words.at(-1)}` : words[0];
+  return `${listed} ${parts.length === 1 && parts[0] !== "limits" ? "has" : "have"}`;
+};
 
 export default function GoalsWorkspace({ plan, calculation, update }: StageProps) {
   const { project, session, report } = useWorkspace();
@@ -51,6 +62,7 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
   const reserveShare = budget > 0 ? Math.max(0, Math.min(1, cashReserve / budget)) : 0;
   const billsTotal = limits.cashNeeds.reduce((sum, need) => sum + need.amount, 0);
   const selectedIndex = PANELS.findIndex(item => item.id === panel);
+  const chosen = project ? chosenBeforeChange(project) : null;
   return (
     <div className={styles.page}>
       <header className={styles.pageHeading}>
@@ -58,6 +70,17 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
         <h1>Give the money a <em>job.</em></h1>
         <p>{STUDIO_GUIDANCE.goal.definition}</p>
       </header>
+      {/*
+        * Here, where a goal or limit is changed, the allocation chosen under the
+        * old one is named. Always in the page and filled when needed, because a
+        * status that appears already holding its words is not reliably read out.
+        */}
+      <div role="status" className={chosen ? styles.chosenNotice : undefined}>
+        {chosen ? <>
+          <span>You chose <strong>{chosen.name}</strong> on {chosenOn(chosen.chosenAt)}, and {changedWords(chosen.changed)} changed since.</span>{" "}
+          <Link href="/studio/portfolio/weights">Check it still fits →</Link>
+        </> : null}
+      </div>
       <div className={styles.goalLayout}>
         <section className={styles.goalEditor} aria-label="Edit your goal">
           <div role="tablist" aria-label="Goal details" className={styles.panelTabs}>

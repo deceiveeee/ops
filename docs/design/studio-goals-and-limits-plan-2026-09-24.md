@@ -125,8 +125,9 @@ or 25% limit is not an OPS default just because it appears in the documents.
 - Changing a limit marks the decisions it affects for review. Built with Compare allocations
   (`studio-portfolio-weights-2026-09-25.md`), not as a separate step: choosing an allocation
   writes a decision record with its reason, and each saved proposal keeps the goals, limits
-  and scenario it was compared under, saying so when they have changed since. Still open: a
-  learner who changes a limit on Goals is not told there which chosen allocation predates it.
+  and scenario it was compared under, saying so when they have changed since. Goals, where
+  they are changed, names the chosen allocation a change predates, by the same rule, and says
+  nothing again once the change is undone.
 - A read-through as a first-time learner: every term is taught or explained before it is
   used, and the wording is plain.
 - Every page within the screen budget at 390, 768, 1024, 1280, 1440 and 1920 px, with nothing
