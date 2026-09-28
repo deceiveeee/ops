@@ -21,7 +21,7 @@ import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-proje
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
 import { lossBudget, type StudioLimits } from "@/lib/studio-project/limits";
-import { checkPortfolio, type HoldingRoom } from "@/lib/studio-project/limit-checks";
+import { checkPortfolio, describeRoom, type HoldingRoom } from "@/lib/studio-project/limit-checks";
 import LimitChecks from "./LimitChecks";
 
 /**
@@ -587,14 +587,9 @@ export function BuildStage(props: StageProps) {
  * first column is too narrow for the sentence, and a table reads it the same.
  */
 function WeightRoom({ symbol, room }: { symbol: string; room: HoldingRoom | null }) {
-  const tightest = room?.tightest;
-  if (!room || !tightest) return null;
-  const limit = `${tightest.pct.toFixed(1)}% of the whole portfolio`;
-  const text = room.over
-    ? `${(room.weightPct - tightest.pct).toFixed(1)} points over what ${tightest.label} allows (${limit}).`
-    : Math.abs(room.weightPct - tightest.pct) < 0.05
-      ? `At the most ${tightest.label} allows (${limit}).`
-      : `Can rise to ${limit} before it reaches ${tightest.label}.`;
+  // The same sentence the readable plan prints.
+  const text = room ? describeRoom(room) : null;
+  if (!room || !text) return null;
   return (
     <tr className="block md:table-row">
       <td colSpan={4} className={cn("block pb-3 text-[12px] leading-5 md:table-cell md:pb-3 md:pt-0", room.over ? "text-accent-amber" : "text-slate-500")}>
@@ -857,6 +852,13 @@ export function ReviewStage(props: StageProps) {
       <StageHeading {...headingFor(props)} title="Write the rules and keep a copy">
         Decide now what you will do later, while nothing is happening and you can think clearly.
       </StageHeading>
+
+      {/* The rules sit on top of these limits. From 1280px the line is beside the work, in the side column. */}
+      {props.limits && plan.holdings.length > 0 ? (
+        <div className="xl:hidden">
+          <LimitChecks checks={checkPortfolio(plan, calculation, props.limits).checks} />
+        </div>
+      ) : null}
 
       <Panel>
         <div className="grid gap-4 sm:grid-cols-2">

@@ -186,3 +186,14 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
 
   return { checks: [bills, slices, caps, loss], holdings, sliceShares, unsorted };
 }
+
+/** What holds one weight back, in words: the same sentence on Portfolio and in the readable plan. */
+export function describeRoom(room: HoldingRoom): string | null {
+  const tightest = room.tightest;
+  if (!tightest) return null;
+  const limit = `${tightest.pct.toFixed(1)}% of the whole portfolio`;
+  if (room.over) return `${(room.weightPct - tightest.pct).toFixed(1)} points over what ${tightest.label} allows (${limit}).`;
+  return Math.abs(room.weightPct - tightest.pct) < 0.05
+    ? `At the most ${tightest.label} allows (${limit}).`
+    : `Can rise to ${limit} before it reaches ${tightest.label}.`;
+}

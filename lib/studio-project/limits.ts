@@ -110,6 +110,30 @@ export function checkTargets(limits: StudioLimits): { total: number | null; tota
   return { total, totalOff: total !== null && Math.abs(total - 100) > 1e-9, problems };
 }
 
+/**
+ * Every limit written out for the readable plan, unset ones included: a limit
+ * that was never decided is worth seeing on the page someone keeps.
+ */
+export function limitsText(limits: StudioLimits, willingnessPct: number): string[] {
+  const pct = (value: number | null) => (value === null ? "not set" : `${Number(value.toFixed(2))}%`);
+  const money = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+  // A row nobody filled in is not a bill.
+  const bills = limits.cashNeeds.filter((need) => need.amount > 0 || need.label.trim() !== "");
+  const budget = lossBudget(willingnessPct, limits.lossCapacityPct);
+  return [
+    "Every percentage is a share of the whole portfolio, cash included.",
+    bills.length
+      ? `Bills you know are coming: ${bills.map((need) => `${need.label.trim() || "Unnamed bill"} ${money(need.amount)}, ${need.dueDate ? `due ${need.dueDate}` : "no date yet"}`).join("; ")}.`
+      : "Bills you know are coming: none listed.",
+    `Loss you could live with: ${pct(willingnessPct)}. Loss you could afford: ${pct(limits.lossCapacityPct)}. Loss budget: ${pct(budget.pct)}, the loss you could ${budget.from === "capacity" ? "afford" : "live with"}.`,
+    ...SLICES.map((slice) => {
+      const { minPct, targetPct, maxPct } = limits.slices[slice];
+      return `${SLICE_NAMES[slice].name} (${SLICE_NAMES[slice].job.toLowerCase()}): target ${pct(targetPct)}, lowest ${pct(minPct)}, highest ${pct(maxPct)}.`;
+    }),
+    `Cap for one company: ${pct(limits.companyCapPct)}. Cap for one fund: ${pct(limits.fundCapPct)}.`,
+  ];
+}
+
 export function setLimits(
   project: StudioProject,
   change: (limits: StudioLimits) => StudioLimits,

@@ -29,7 +29,8 @@ export default function LimitChecks({ checks }: { checks: LimitCheck[] }) {
   return (
     <details className="group rounded-2xl border border-st-hair bg-st-paper px-5 sm:px-6">
       <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)]">
-        <span className="text-[14px] font-semibold text-st-ink">Your limits</span>
+        {/* The colon is for a screen reader, which otherwise hears "Your limits1 not met". */}
+        <span className="text-[14px] font-semibold text-st-ink">Your limits<span className="sr-only">: </span></span>
         <span className={cn("text-[13px]", count("not-met") ? "text-accent-amber" : "text-st-muted")}>
           {summary}
           <span aria-hidden="true" className="ml-2 inline-block transition-transform group-open:rotate-180">▾</span>
