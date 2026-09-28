@@ -1,7 +1,7 @@
 # Studio: goals and limits — plan
 
-Status: agreed 24 September 2026, with all four decisions as recommended, and being built
-in the order at the end. This is step 2 of the order in
+Status: agreed 24 September 2026, with all four decisions as recommended. Built 24–27
+September: all four steps at the end are done. This is step 2 of the order in
 `studio-valuation-and-portfolio-weights-2026-09-20.md`.
 
 ## The problem, in one paragraph
@@ -122,8 +122,11 @@ or 25% limit is not an OPS default just because it appears in the documents.
   loses 21%, which is above 10%.
 - Saved work from before this change opens with every new limit unset and nothing else
   altered.
-- Changing a limit marks the decisions it affects for review. Studio has a place to store
-  decision records, but nothing writes to it yet, so this is built with step 3.
+- Changing a limit marks the decisions it affects for review. Built with Compare allocations
+  (`studio-portfolio-weights-2026-09-25.md`), not as a separate step: choosing an allocation
+  writes a decision record with its reason, and each saved proposal keeps the goals, limits
+  and scenario it was compared under, saying so when they have changed since. Still open: a
+  learner who changes a limit on Goals is not told there which chosen allocation predates it.
 - A read-through as a first-time learner: every term is taught or explained before it is
   used, and the wording is plain.
 - Every page within the screen budget at 390, 768, 1024, 1280, 1440 and 1920 px, with nothing
