@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactNode, type Ref } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { workingAlternative, type PortfolioAlternative, type StudioProject } from "@/lib/studio-project/schema";
 import { allocationView, chooseWeightProposal, comparisonNeedsReview, eligibleValuations, holdingInputsChanged, saveWeightProposal } from "@/lib/studio-project/portfolio-weights";
 import { validateStudioProject } from "@/lib/studio-project/validate";
@@ -11,6 +11,7 @@ import { scenarioResult, type StudioCalculation } from "@/lib/studio";
 import { readScenarios } from "@/lib/studio-project/scenarios";
 import { useWorkspace } from "./WorkspaceProvider";
 import ViewTabs from "./ViewTabs";
+import WrappingSelect from "./WrappingSelect";
 import common from "./quant-workspace.module.css";
 import styles from "./portfolio-weights.module.css";
 
@@ -202,7 +203,7 @@ function WeightsEditor({ project, current, source, requestedValue, arrival, onOp
       {view === "Scenario" && <>
         <div className={styles.stageTitle}>
           {scenarios.length > 1
-            ? <WrappingSelect className={styles.scenarioPick} label="Scenario" valueLabel={`${scenario.name}${scenario.id === worstForProposal.id ? " · worst for the proposal" : ""}`} value={scenario.id} onChange={(event) => setScenarioId(event.target.value)}>{scenarios.map((item) => <option key={item.id} value={item.id}>{item.name}{item.id === worstForProposal.id ? " · worst for the proposal" : ""}</option>)}</WrappingSelect>
+            ? <WrappingSelect className={styles.scenarioPick} fieldClassName={styles.scenarioField} valueClassName={styles.scenarioValue} label="Scenario" valueLabel={`${scenario.name}${scenario.id === worstForProposal.id ? " · worst for the proposal" : ""}`} value={scenario.id} onChange={(event) => setScenarioId(event.target.value)}>{scenarios.map((item) => <option key={item.id} value={item.id}>{item.name}{item.id === worstForProposal.id ? " · worst for the proposal" : ""}</option>)}</WrappingSelect>
             : <span>One assumed market move</span>}
           <Link href="/studio/portfolio/risk">{scenarios.length > 1 ? "Edit scenarios ↗" : "Edit scenario ↗"}</Link>
         </div><h2 ref={heading} tabIndex={-1}>What drives the change?</h2>
@@ -244,6 +245,7 @@ function WeightsEditor({ project, current, source, requestedValue, arrival, onOp
         {valid && !stale && !changedHoldings && (saveAsNew ? !name.trim() || !reasoning.trim() : !reasoning.trim()) && <p className={styles.hint}>{saveAsNew && !name.trim() ? "Name the proposal and write your reason to save it." : saveAsNew ? "Write your reason to save it." : "Write why you are choosing these weights."}</p>}
         <div className={styles.actions}>{saveAsNew ? <button className={`${common.button} ${common.primary}`} disabled={!valid || stale || changedHoldings || !name.trim() || !reasoning.trim()} onClick={() => void save()}>Save proposal</button> : <button className={`${common.button} ${common.primary}`} disabled={!valid || stale || changedHoldings || !reasoning.trim()} onClick={() => void choose()}>Use this allocation</button>}<button className={common.button} onClick={() => show("Weights")}>Back to weights</button></div>
         <p className={styles.note}>You can keep a proposal that exceeds a limit; its failed checks remain visible. Selecting an allocation places no orders.</p>
+        {!isCurrent && <Link className={styles.textLink} href={`/studio/portfolio/returns?view=compare&a=${encodeURIComponent(current.id)}&b=${encodeURIComponent(original.id)}`}>See both over past months in Return history →</Link>}
       </>}
       {!valid && <p role="status" className={styles.problem}>{Object.values(weights).some((value) => !Number.isFinite(readInput(value)) || readInput(value) < 0 || readInput(value) > 100) ? "Enter each weight as a number from 0 to 100. Blank weights stay unfinished." : preview.calculation.issues[0]}</p>}
       {stale && <p role="alert" className={styles.problem}>The starting allocation changed elsewhere. <button onClick={() => { try { window.sessionStorage.removeItem(cacheKey); } catch { /* Reload still reads the saved allocation. */ } window.location.reload(); }}>Discard preview and reload it</button> before saving.</p>}
@@ -309,14 +311,3 @@ function shareBasis(snapshot: ValuationCase) {
   return `${ratio.toLocaleString("en-US", { maximumSignificantDigits: 12 })} company ${ratio === 1 ? "share" : "shares"} per traded share`;
 }
 
-/** Keep native selection and keyboard behavior while letting the visible value wrap. */
-function WrappingSelect({ label, valueLabel, selectRef, className, children, ...props }: ComponentPropsWithoutRef<"select"> & {
-  label: string;
-  valueLabel: string;
-  selectRef?: Ref<HTMLSelectElement>;
-}) {
-  return <label className={className}>{label}<span className={styles.selectField}>
-    <select {...props} ref={selectRef} aria-label={label}>{children}</select>
-    <span className={styles.selectValue} aria-hidden="true"><span>{valueLabel}</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="m3 4.5 3 3 3-3" stroke="currentColor" strokeWidth="1.5" /></svg></span>
-  </span></label>;
-}

@@ -1,22 +1,39 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import data from "@/lib/studio-project/data/fund-total-returns.json";
 import { cumulativeReturn, importMonthlyReturns, validSourceUrl, type MonthlyReturn, type ReturnHistory, type ReturnBasis } from "@/lib/studio-project/total-returns";
 import { useWorkspace } from "./WorkspaceProvider";
 import { downloadFile } from "../shared";
 import ViewTabs from "./ViewTabs";
+import ReturnComparisonWorkspace from "./ReturnComparisonWorkspace";
 import styles from "./quant-workspace.module.css";
 
-type View = "history" | "import" | "growth";
+type View = "history" | "import" | "growth" | "compare";
 const VIEWS: { id: View; label: string; className?: string }[] = [
   { id: "history", label: "Inspect history" },
   { id: "growth", label: "Growth of 100", className: styles.mobileTab },
+  { id: "compare", label: "Two allocations" },
   { id: "import", label: "Import a local history" },
 ];
 
 export default function ReturnHistoryWorkspace() {
   const { project, catalog, session, report } = useWorkspace();
   const [view, setView] = useState<View>("history");
+  // Arriving from Compare allocations: open the comparison with those two allocations.
+  const [compareIds, setCompareIds] = useState<{ a?: string; b?: string }>({});
+  const [returnToCompare, setReturnToCompare] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("view") === "compare") { setCompareIds({ a: params.get("a") ?? undefined, b: params.get("b") ?? undefined }); setView("compare"); }
+  }, []);
+  const openView = (next: View) => {
+    setView(next);
+    if (next !== "compare" && next !== "import") {
+      const url = new URL(window.location.href);
+      ["view", "a", "b"].forEach((key) => url.searchParams.delete(key));
+      window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    }
+  };
   const [importStep, setImportStep] = useState<"source" | "file">("source");
   const [choice, setChoice] = useState("public-vti");
   const [instrumentId, setInstrumentId] = useState("aapl");
@@ -49,14 +66,16 @@ export default function ReturnHistoryWorkspace() {
     setPending(true);
     try {
       const result = report(await session.update((current) => ({ ...current, updatedAt: record.importedAt, returnHistories: [...(current.returnHistories ?? []), record] })));
-      if (result.ok) { setChoice(record.id); setMonthIndex(0); setView("history"); setImportStep("source"); setCsv(""); setConfirmed(false); }
+      if (result.ok) { setChoice(record.id); setMonthIndex(0); setView(returnToCompare ? "compare" : "history"); setReturnToCompare(false); setImportStep("source"); setCsv(""); setConfirmed(false); }
       else setError(result.error);
     } finally { setPending(false); }
   };
   return <div className={styles.root}>
-    <header className={styles.heading}><h1>Return history</h1><p>Total return includes price changes and reinvested payouts, such as dividends. These histories include those payouts once.</p></header>
-    <ViewTabs label="Return history views" idPrefix="returns" className={styles.tabs} tabs={VIEWS} selected={view} onSelect={setView} />
-    {view !== "import" ? <>
+    <header className={styles.heading}><h1>Return history</h1><p>Total return: price changes plus reinvested payouts, such as dividends, each counted once.</p></header>
+    <ViewTabs label="Return history views" idPrefix="returns" className={styles.tabs} tabs={VIEWS} selected={view} onSelect={(next) => { setReturnToCompare(false); openView(next); }} />
+    {view === "compare" ? <div role="tabpanel" id="returns-panel" aria-labelledby="returns-tab-compare">
+      <ReturnComparisonWorkspace initialA={compareIds.a} initialB={compareIds.b} onImport={(id) => { setInstrumentId(id); setImportStep("source"); setError(""); setReturnToCompare(true); setView("import"); }} />
+    </div> : view !== "import" ? <>
       {view === "history" && <p className={styles.mobileSummary}>{name} · {compound === null ? "Incomplete history" : `${(compound * 100).toFixed(2)}% total return`} · {rows.length} months</p>}
       <div className={`${styles.layout} ${view === "growth" ? styles.single : ""}`} role="tabpanel" id="returns-panel" aria-labelledby={`returns-tab-${view}`}>
       {view === "history" && <section className={styles.panel} aria-label="History source and months">
@@ -70,6 +89,7 @@ export default function ReturnHistoryWorkspace() {
       </section>}
       <section className={`${styles.graphic} ${view === "history" ? styles.desktopGraphic : ""}`} aria-label="Reinvested return chart"><h2>{name} · distributions reinvested</h2><strong className={styles.value}>{compound === null ? "Incomplete history" : `${(compound * 100).toFixed(2)}%`}</strong><p>{rows[0]?.month} to {rows.at(-1)?.month} · compounded return</p><ReturnChart rows={rows} /><p>{compound === null ? "Missing months are not filled with zero." : `100 becomes ${(100 * (1 + compound)).toFixed(2)} in the history's currency.`}</p><p>Fund reports include their reported expenses. Personal taxes and investor trading costs are not included here.</p></section>
     </div></> : <section className={styles.panel} style={{ marginTop: 16 }} role="tabpanel" id="returns-panel" aria-label="Import a total-return history">
+      {returnToCompare && <p className={styles.note}>After this history is saved, you return to the comparison. <button className={styles.button} onClick={() => { setReturnToCompare(false); setView("compare"); }}>Back to the comparison</button></p>}
       {importStep === "source" ? <>
       <h2>1. Identify the source</h2>
       <div className={styles.fields}>

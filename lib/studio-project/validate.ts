@@ -4,6 +4,7 @@ import { validValuationCase } from "./valuation-cases";
 import { validReturnHistory } from "./total-returns";
 import { validLimits } from "./limits";
 import { FIRST_SCENARIO_ID, MAX_SCENARIO_NAME, MAX_SCENARIOS } from "./scenarios";
+import { MAX_SAVED_COMPARISONS, validSavedComparison } from "./return-comparison-saved";
 
 /** The seven figures Studio asks for. Anything else in a stored record is junk. */
 const FIGURE_KEYS = new Set<string>(FIGURES.map((figure) => figure.key));
@@ -29,7 +30,7 @@ const emptyResearch = { why: "", mainRisk: "", whatWouldChangeMyMind: "", review
 export function validateStudioProject(value: unknown): string[] {
   if (!object(value) || value.schemaVersion !== 2) return ["This is not a supported Studio project."];
   const issues: string[] = [];
-  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom", "valuations", "returnHistories", "limits", "scenarioName", "scenarios"])) {
+  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom", "valuations", "returnHistories", "limits", "scenarioName", "scenarios", "returnComparisons"])) {
     issues.push("This project contains fields this version does not understand. Keep the original backup.");
   }
   // Goal/rule/position units are unchanged from v1. Reuse that validator rather
@@ -280,6 +281,10 @@ export function validateStudioProject(value: unknown): string[] {
   if (value.valuations !== undefined && (!list(value.valuations, 1000) || !value.valuations.every((v) => validValuationCase(v) && uniqueId(v.id)))) issues.push("A saved valuation contains invalid or repeated fields.");
   if (value.returnHistories !== undefined && (!list(value.returnHistories, 100) || !value.returnHistories.every((v) => validReturnHistory(v) && uniqueId(v.id)))) issues.push("A return history contains invalid dates, adjustments or repeated fields.");
   if (value.limits !== undefined && !validLimits(value.limits)) issues.push("Your limits contain a value outside 0-100%, an impossible date, or a field this version does not understand.");
+  // Each saved comparison is recomputed from its own data; a result that disagrees makes it invalid.
+  if (value.returnComparisons !== undefined && (!list(value.returnComparisons, MAX_SAVED_COMPARISONS) || !value.returnComparisons.every((item) => validSavedComparison(item) && uniqueId(item.id)))) {
+    issues.push(`Saved return comparisons must be at most ${MAX_SAVED_COMPARISONS}, each with data that reproduces its results.`);
+  }
   const original = value.migratedFrom;
   if (original !== null) {
     if (!object(original) || !keys(original, ["schemaVersion", "raw", "migratedAt"])

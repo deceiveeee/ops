@@ -415,6 +415,8 @@ export interface StudioProject {
   scenarioName?: string;
   /** Up to four more scenarios, each checked like `stress`. Absent in older work, which has one scenario. */
   scenarios?: StudioScenario[];
+  /** Saved historical comparisons of two allocations, each with its own data. Absent in older work. */
+  returnComparisons?: import("./return-comparison-saved").SavedReturnComparison[];
   /**
    * The exact v1 record this project was migrated from, kept verbatim.
    *

@@ -1,0 +1,148 @@
+.root { margin-top: 16px; min-width: 0; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--ops-divider); }
+.tabs button { min-height: 44px; padding: 8px 6px; font-size: 13px; text-align: left; color: var(--ops-text-secondary); border-bottom: 2px solid transparent; }
+.tabs button[aria-selected=true] { color: var(--ops-accent-strong); border-color: var(--ops-accent-strong); font-weight: 600; }
+.panel { margin-top: 14px; padding: 20px; container-type: inline-size; }
+.panel h2 { font-family: var(--font-display), Georgia, serif; font-size: 24px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; margin: 2px 0 12px; }
+.stageTitle { font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.message { font-size: 13px; line-height: 1.5; color: var(--ops-accent-strong); margin-bottom: 10px; }
+.problem { margin-top: 12px; padding: 10px 12px; border-left: 2px solid #915414; background: var(--ops-surface-2); font-size: 13px; line-height: 1.6; }
+.note { margin-top: 10px; font-size: 12px; line-height: 1.6; color: var(--ops-text-secondary); }
+.link { display: inline-block; margin-top: 12px; font-size: 13px; }
+.inlineButton { min-height: 0; font-size: 13px; color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; text-align: left; }
+.panel .inlineButton { min-height: 0; }
+.warn { color: #915414; }
+.quiet { color: var(--ops-text-secondary); }
+
+/* Choose data */
+.pickers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pickers label { display: grid; gap: 5px; font-size: 12px; color: var(--ops-text-secondary); }
+.coverage { width: 100%; margin-top: 14px; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.coverage :is(th, td) { padding: 6px 6px 6px 0; border-bottom: 1px solid var(--ops-divider); text-align: left; vertical-align: middle; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.tableCaption { caption-side: top; text-align: left; padding-bottom: 4px; font-size: 12px; color: var(--ops-text-secondary); }
+.coverage thead th { font-size: 12px; font-weight: 400; color: var(--ops-text-secondary); }
+.coverage thead th:first-child { width: 22%; }
+.coverage thead th:nth-child(2), .coverage thead th:nth-child(3) { width: 14%; }
+.coverage tbody th { font-weight: 600; }
+.coverage small, .cashRow small { display: block; font-size: 12px; font-weight: 400; color: var(--ops-text-secondary); }
+.historyPick { display: block; }
+@container (min-width: 600px) { .coverage .span { display: inline; margin-left: 6px; } }
+.pager { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 8px; font-size: 12px; }
+.pager button { min-height: 36px; padding: 4px 12px; border: 1px solid var(--ops-control-border); border-radius: 8px; }
+.pager button:disabled { opacity: .5; }
+.period { margin-top: 12px; font-size: 13px; line-height: 1.6; }
+.narrow { margin-top: 6px; font-size: 13px; }
+.narrow summary { cursor: pointer; color: var(--ops-accent-strong); min-height: 32px; display: inline-flex; align-items: center; }
+.range { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-top: 6px; }
+.range label { display: grid; gap: 4px; font-size: 12px; color: var(--ops-text-secondary); }
+.range select, .range input { min-height: 40px; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 14px; }
+.actions .narrow { margin-top: 0; flex: 1 1 200px; }
+
+/* Compare */
+/* Chart beside the results where the panel is wide enough; stacked otherwise. */
+.compareGrid { display: grid; gap: 12px; }
+@container (min-width: 640px) { .compareGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; } }
+@container (min-width: 900px) { .compareGrid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 24px; } }
+.chart { container-type: inline-size; margin: 0; padding: 14px 14px 10px; border-radius: 14px; background: #292e29; color: #f5f8ef; }
+/* The left gutter holds the 100 label, clear of where both lines start. */
+.plot { position: relative; height: 180px; margin-left: 30px; margin-right: 34%; }
+.plot svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.base { stroke: #6f7a6d; stroke-width: 1; stroke-dasharray: 2 3; }
+.marker { stroke: #f5f8ef; stroke-width: 1; opacity: .7; }
+.lineA { fill: none; stroke: #d5f39e; stroke-width: 2.5; }
+.lineB { fill: none; stroke: #a5cced; stroke-width: 2.5; stroke-dasharray: 6 4; }
+/* Room to the right of the lines is the 34% margin: 34/66 of the plot's own width. */
+.endLabel { position: absolute; left: calc(100% + 10px); transform: translateY(-50%); display: flex; align-items: baseline; gap: 6px; width: max-content; max-width: calc(51.5% - 12px); font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+.endLabel i { flex-shrink: 0; align-self: center; width: 16px; height: 0; border-top: 2.5px solid currentColor; }
+.labelA { color: #d5f39e; }
+.labelB { color: #a5cced; }
+.labelB i { border-top-style: dashed; }
+.legend { display: none; flex-wrap: wrap; gap: 2px 16px; margin-bottom: 8px; }
+.legend span { display: flex; gap: 6px; min-width: 0; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+.legend i { flex-shrink: 0; width: 16px; height: 0; margin-top: .7em; border-top: 2.5px solid currentColor; }
+.keyedChart .legend { display: flex; }
+.keyedChart .plot, .keyedChart .axis { margin-right: 0; }
+
+.legend .labelB i { border-top-style: dashed; }
+.baseLabel { position: absolute; left: -30px; transform: translateY(-50%); font-size: 12px; color: #aeb9aa; }
+.axis { display: flex; justify-content: space-between; gap: 12px; margin-left: 30px; margin-right: 34%; margin-top: 6px; font-size: 12px; color: #cbd5c4; }
+/* No room beside the lines: the key goes above them. After .plot and .axis so it wins. */
+@container (max-width: 479px) {
+  .legend { display: flex; }
+  .endLabel { display: none; }
+  .plot, .axis { margin-right: 0; }
+  .plot { height: 150px; }
+}
+@media (max-width: 767px) { .plot { height: 112px; } }
+.define { margin: 0 0 12px; font-size: 13px; line-height: 1.6; }
+.results { width: 100%; margin-top: 0; border-collapse: collapse; table-layout: fixed; font-size: 13px; font-variant-numeric: tabular-nums; }
+.results :is(th, td) { padding: 8px 6px 8px 0; border-bottom: 1px solid var(--ops-divider); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.results thead th { font-size: 12px; font-weight: 600; }
+.results thead th:first-child { width: 40%; }
+.results tbody th { font-weight: 400; color: var(--ops-text-secondary); }
+.results td small { display: block; font-size: 12px; color: var(--ops-text-secondary); }
+.key { display: grid; gap: 2px; margin-top: 4px; font-size: 12px; line-height: 1.5; }
+.key span { min-width: 0; overflow-wrap: anywhere; }
+.keyA, .keyB { display: inline-block; width: 14px; height: 0; margin-right: 6px; vertical-align: middle; border-top: 3px solid #6c8a2f; }
+.keyB { border-top: 3px dashed #3f7fb3; }
+.details { margin-top: 12px; font-size: 13px; line-height: 1.6; }
+.details summary { cursor: pointer; color: var(--ops-accent-strong); min-height: 24px; display: flex; align-items: center; }
+.details p, .details ul { margin-top: 8px; }
+.matrix { margin-top: 8px; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.matrix caption { text-align: left; font-size: 12px; color: var(--ops-text-secondary); padding-bottom: 4px; }
+.matrix :is(th, td) { padding: 4px 10px 4px 0; text-align: right; border-bottom: 1px solid var(--ops-divider); }
+.matrix th:first-child { text-align: left; }
+.sources { padding-left: 16px; list-style: disc; font-size: 12px; }
+
+/* Inspect a month */
+.monthPicker { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 10px; margin-top: 10px; }
+.monthControl { display: grid; min-width: 0; }
+.monthHead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12px; color: var(--ops-text-secondary); }
+.monthHead strong { font-size: 15px; color: var(--ops-text-primary); font-variant-numeric: tabular-nums; }
+.monthControl input[type=range] { width: 100%; min-height: 32px; accent-color: var(--ops-accent-strong); }
+.stepButton { min-width: 40px; min-height: 40px; border: 1px solid var(--ops-control-border); border-radius: 8px; font-size: 16px; }
+.stepButton:disabled { opacity: .4; }
+.monthTable { width: 100%; margin-top: 12px; border-collapse: collapse; table-layout: fixed; font-size: 13px; font-variant-numeric: tabular-nums; }
+.monthTable :is(th, td) { padding: 7px 6px 7px 0; border-bottom: 1px solid var(--ops-divider); text-align: right; vertical-align: top; overflow-wrap: anywhere; }
+.monthTable th:first-child { text-align: left; width: 40%; }
+.monthTable thead th { font-size: 12px; font-weight: 600; }
+.monthTable tbody th { font-weight: 600; }
+.monthTable small { display: block; font-size: 12px; font-weight: 400; color: var(--ops-text-secondary); }
+/* Wide enough: each figure and its weight on one line. */
+@container (min-width: 600px) { .monthTable tbody small { display: inline; margin-left: 8px; } }
+.monthTable tfoot :is(th, td) { font-weight: 700; border-bottom: 0; border-top: 2px solid var(--ops-text-primary); }
+
+/* Saved */
+.saveForm { display: grid; gap: 10px; }
+.saveForm label { display: grid; gap: 5px; font-size: 12px; color: var(--ops-text-secondary); }
+.saveForm textarea { min-height: 72px; }
+.saveForm > button { justify-self: start; }
+.savedList { margin-top: 14px; display: grid; gap: 8px; }
+.savedList li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 14px; padding: 10px 12px; border: 1px solid var(--ops-divider); border-radius: 10px; }
+.savedList li[aria-current=true] { border-color: var(--ops-accent-strong); }
+.savedList small { display: block; font-size: 12px; color: var(--ops-text-secondary); margin-top: 2px; }
+.savedActions { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.banner { margin-bottom: 12px; padding: 10px 12px; border-left: 2px solid var(--ops-accent-strong); background: var(--ops-surface-2); font-size: 13px; line-height: 1.6; }
+.banner ul { padding-left: 16px; list-style: disc; }
+.bannerActions { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; }
+
+@media (max-width: 767px) {
+  .tabs button { font-size: 12px; padding-inline: 4px; }
+  .panel { padding: 14px; }
+  .panel h2 { font-size: 21px; margin-bottom: 8px; }
+  .pickers { grid-template-columns: 1fr; gap: 8px; }
+  .results thead th:first-child { width: 41%; }
+  .results :is(th, td) { padding-block: 6px; }
+  .chart { padding: 12px 12px 8px; }
+  .coverage thead th:first-child { width: 24%; }
+  .coverage thead th:nth-child(2), .coverage thead th:nth-child(3) { width: 17%; }
+}
+
+/* Touch screens: 44px targets. */
+@media (pointer: coarse) {
+  .inlineButton, .details summary, .narrow summary { position: relative; }
+  .inlineButton::after, .details summary::after, .narrow summary::after { content: ""; position: absolute; inset: -12px -6px; }
+  .stepButton, .pager button { min-width: 44px; min-height: 44px; }
+}
