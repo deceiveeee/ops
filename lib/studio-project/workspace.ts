@@ -1,4 +1,6 @@
 import { calculateStudio, exportStudioText, scenarioResult, type StudioPlan } from "@/lib/studio";
+import { checkPortfolio, describeRoom, type CheckStatus } from "./limit-checks";
+import { limitsText, readLimits } from "./limits";
 import { STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { startCandidate, updateCandidate } from "./operations";
 import { readScenarios } from "./scenarios";
@@ -145,10 +147,30 @@ export function applyPlanChange(project: StudioProject, change: (plan: StudioPla
   } : item) };
 }
 
+const STATUS_WORD: Record<CheckStatus, string> = { met: "met", "not-met": "not met", "not-checked": "not checked" };
+
 export function exportProjectText(project: StudioProject): string {
-  const alternatives = project.alternatives.map((alternative) =>
-    `PORTFOLIO: ${alternative.name}\n${alternative.reasoning}\n${exportStudioText(projectToPlan({ ...project, selectedAlternativeId: alternative.id }), projectCatalog(project))}`,
-  );
+  const catalog = projectCatalog(project);
+  const limits = readLimits(project);
+  /*
+   * Each portfolio is followed by its own checks: two alternatives can differ
+   * on every one of them against the same limits.
+   */
+  const alternatives = project.alternatives.map((alternative) => {
+    const plan = projectToPlan({ ...project, selectedAlternativeId: alternative.id });
+    const checked = checkPortfolio(plan, calculateStudio(plan, catalog), limits, readScenarios(project));
+    const rooms = checked.holdings.flatMap((room) => {
+      const text = describeRoom(room);
+      return text ? [`${catalog.find((item) => item.id === room.instrumentId)?.symbol ?? room.instrumentId}: ${text}`] : [];
+    });
+    return [
+      `PORTFOLIO: ${alternative.name}\n${alternative.reasoning}\n${exportStudioText(plan, catalog)}`,
+      "",
+      "Checked against your limits",
+      ...checked.checks.map((check) => `${check.title}: ${STATUS_WORD[check.status]}. ${check.detail}`),
+      ...(rooms.length ? ["", "What limits each weight", ...rooms] : []),
+    ].join("\n");
+  });
   /*
    * A line is printed when it has something in it.
    *
@@ -184,7 +206,9 @@ export function exportProjectText(project: StudioProject): string {
       return `${name}: US stocks ${stress.usStocksPct}%; international stocks ${stress.internationalStocksPct}%; global stocks ${stress.globalStocksPct}%; bonds ${stress.bondsPct}%; cash ${stress.cashPct}%. Selected allocation: ${usd(result.changeDollars)} (${result.changePct}%).`;
     }),
   ] : [];
-  return [...alternatives, ...scenarioLines, "ALL RESEARCH (INCLUDING INVESTMENTS NOT HELD)", ...research,
+  // The limits first: the portfolios after them are checked against them, then the scenarios they were tested in.
+  return [`YOUR LIMITS\n${limitsText(limits, project.goal.lossTolerancePct).join("\n")}`, ...alternatives, ...scenarioLines,
+    "ALL RESEARCH (INCLUDING INVESTMENTS NOT HELD)", ...research,
     "DECISIONS", ...project.decisions.map((decision) => `${decision.at}: ${decision.summary}\n${decision.reason}`),
   ].join("\n\n");
 }

@@ -75,6 +75,23 @@ function rangeText(min: number | null, max: number | null): string {
 }
 
 /**
+ * A scenario against the loss budget, in dollars of the whole portfolio. One
+ * rule for the check below and for the Risk page itself, which kept its own
+ * copy and drifted: it called a large enough gain "larger than your loss
+ * budget", and never checked an explicit zero. `changeDollars` is the
+ * scenario's change; by default the first scenario's, as the plan holds it.
+ */
+export function scenarioLoss(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits, changeDollars = calculation.stress.changeDollars) {
+  const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
+  // Zero capacity is an explicit zero-loss limit. Legacy willingness zero
+  // with no capacity remains the existing "not set" convention.
+  const set = budget.pct > 0 || limits.lossCapacityPct === 0;
+  const allowed = calculation.budget * budget.pct / 100;
+  const loses = Math.max(0, -changeDollars);
+  return { set, allowed, loses, from: budget.from, met: loses <= allowed + 0.005 };
+}
+
+/**
  * `scenarios` is every scenario, the first included (see readScenarios). With
  * one, or none passed, the loss check reads exactly as it always has. With
  * several, the loss budget is held against the worst of them for this
@@ -155,18 +172,13 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
   // The first scenario that loses most; a gain counts as no loss.
   const worst = tested.reduce((low, item) => (item.result.changeDollars < low.result.changeDollars - 0.005 ? item : low), tested[0]);
   const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
-  // Zero capacity is an explicit zero-loss limit. Legacy willingness zero
-  // with no capacity remains the existing "not set" convention.
-  const hasLossBudget = budget.pct > 0 || limits.lossCapacityPct === 0;
-  const allowed = whole * budget.pct / 100;
-  const loses = Math.max(0, -worst.result.changeDollars);
+  const { set: hasLossBudget, allowed, loses, met: lossMet } = scenarioLoss(plan, calculation, limits, worst.result.changeDollars);
   const setBy = `the loss you could ${budget.from === "capacity" ? "afford" : "live with"}`;
   const biggest = worst.result.rows
     .filter((row) => row.changeDollars < 0)
     .sort((a, b) => a.changeDollars - b.changeDollars)
     .slice(0, 3)
     .map((row) => `${symbol(calculation.rows.find((r) => r.holding.instrumentId === row.instrumentId)!)} ${dollars(-row.changeDollars)}`);
-  const lossMet = loses <= allowed + 0.005;
   const lossTitle = several ? "Every scenario stays within your loss budget" : CHECK_TITLES.loss;
   const where = several ? `in “${worst.name}”, the worst of your ${tested.length} scenarios` : "in the scenario";
   const loss: LimitCheck = !hasLossBudget
@@ -206,4 +218,15 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
   });
 
   return { checks: [bills, slices, caps, loss], holdings, sliceShares, unsorted };
+}
+
+/** What holds one weight back, in words: the same sentence on Portfolio and in the readable plan. */
+export function describeRoom(room: HoldingRoom): string | null {
+  const tightest = room.tightest;
+  if (!tightest) return null;
+  const limit = `${tightest.pct.toFixed(1)}% of the whole portfolio`;
+  if (room.over) return `${(room.weightPct - tightest.pct).toFixed(1)} points over what ${tightest.label} allows (${limit}).`;
+  return Math.abs(room.weightPct - tightest.pct) < 0.05
+    ? `At the most ${tightest.label} allows (${limit}).`
+    : `Can rise to ${limit} before it reaches ${tightest.label}.`;
 }

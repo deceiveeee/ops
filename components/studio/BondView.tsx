@@ -13,8 +13,9 @@ import {
   type BondTerms,
 } from "@/lib/studio-project/bond-cash-flows";
 import { setAccruedInterest } from "@/lib/studio-project/operations";
-import { Choice, Field, Panel, Stat, StageHeading, usd } from "./shared";
-import StudioAside from "./workspace/StudioAside";
+import { cn } from "@/lib/utils";
+import { Choice, Field, STAGE_TAB, STAGE_TABS, Stat, StageHeading, usd } from "./shared";
+import ViewTabs from "./workspace/ViewTabs";
 import { useWorkspace } from "./workspace/WorkspaceProvider";
 
 /**
@@ -35,9 +36,6 @@ import { useWorkspace } from "./workspace/WorkspaceProvider";
  * seller up front.
  */
 
-const LOOK_FOR =
-  "What actually leaves your account on the day you settle, and what comes back afterwards. A bond's quoted price covers the loan only: the interest built up since the last payment is added to it, and it goes to whoever held the bond through those days.";
-
 const link = "text-accent-cyan underline underline-offset-2 hover:text-white";
 const button =
   "inline-flex min-h-11 items-center rounded-lg border border-accent-cyan/40 bg-accent-cyan/10 px-4 text-[14px] font-semibold text-white transition-colors hover:border-accent-cyan/70 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40";
@@ -50,6 +48,8 @@ function longDate(iso: string): string {
 }
 
 const money = (value: number) => usd(value);
+/** "$100" rather than "$100.00", where the cents are always zero. */
+const dollars = (value: number) => usd(value).replace(/\.00$/, "");
 const per100 = (value: number) => value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
 
 const BONDS = STUDIO_CATALOG.filter((instrument): instrument is StudioInstrument & { bond: NonNullable<StudioInstrument["bond"]> } =>
@@ -68,6 +68,7 @@ export default function BondView() {
   const [fee, setFee] = useState("0");
   const [saved, setSaved] = useState<string | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
+  const [view, setView] = useState<BondTab>("pay");
 
   const terms: BondTerms | null = useMemo(
     () =>
@@ -114,7 +115,7 @@ export default function BondView() {
       setProblem(`Not saved — ${result.error}`);
       return;
     }
-    setSaved(`Saved for What to buy: ${per100(worked.accrued)} per $100, as at ${settlement}.`);
+    setSaved(`Saved for What to buy, beside the price there: ${per100(worked.accrued)} per $100, as at ${settlement}.`);
   };
 
   if (!instrument || !terms) {
@@ -132,16 +133,23 @@ export default function BondView() {
 
   return (
     <div className="space-y-4">
-      <StageHeading as="h1" title="What this bond costs on the day you settle">
-        A quote covers the loan itself. The interest built up since the last payment is added to it, and the day count that
-        works it out is the issuer&rsquo;s own rule.
+      {/*
+        * The page's one idea, before the numbers that show it. It was said
+        * twice, under the title and again in a "What to look for" box, and the
+        * two together took a sixth of a phone screen. With one bond there is no
+        * choice to name it, so its name heads the page; its terms are with what
+        * it pays.
+        */}
+      <StageHeading as="h1" eyebrow={BONDS.length > 1 ? undefined : instrument.name} title="What this bond costs on the day you settle">
+        A quoted price covers the loan only. The interest built up since the last payment is added on top.
       </StageHeading>
 
       <section aria-labelledby="bond-settlement" className="space-y-3">
         <h2 id="bond-settlement" className="sr-only">
           This issue, and what you would buy
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Two to a row even on a phone: one to a row, four short entries took most of the screen. */}
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {BONDS.length > 1 ? (
             <Choice
               label="Which bond"
@@ -153,7 +161,7 @@ export default function BondView() {
           <Field label="The day you settle" type="text" placeholder="2026-09-15" value={settlement} onChange={setSettlement} />
           <Field
             label="Face value you would buy"
-            hint={`In ${money(instrument.quantityStep)} steps, from ${money(instrument.minimumUnits)}`}
+            hint={`In ${dollars(instrument.quantityStep)} steps, from ${dollars(instrument.minimumUnits)}`}
             type="number"
             min={0}
             prefix="$"
@@ -170,27 +178,7 @@ export default function BondView() {
           />
           <Field label="Fee your broker charges" type="number" min={0} prefix="$" value={fee} onChange={setFee} />
         </div>
-
-        <p className="text-[13px] leading-5 text-slate-400">
-          {instrument.name}. Interest of {instrument.bond.couponPct}% a year on the face value, paid twice a year, from{" "}
-          {longDate(terms.datedDate)} to {longDate(terms.maturity)}, when the face value comes back.
-        </p>
       </section>
-
-      <StudioAside
-        inline={
-          <p className="rounded-xl border border-white/12 bg-white/[0.03] p-3 text-[14px] leading-6 text-slate-300">
-            <span className="font-semibold text-white">What to look for. </span>
-            {LOOK_FOR}
-          </p>
-        }
-        beside={
-          <Panel>
-            <h2 className="text-[14px] font-semibold text-white">What to look for here</h2>
-            <p className="mt-2 text-[13px] leading-5 text-slate-400">{LOOK_FOR}</p>
-          </Panel>
-        }
-      />
 
       {worked && "reason" in worked ? (
         <p role="alert" className="text-[14px] leading-6 text-accent-amber">
@@ -198,67 +186,64 @@ export default function BondView() {
         </p>
       ) : rest ? (
         <>
-          <section aria-labelledby="bond-cost" className="space-y-3">
-            <h3 id="bond-cost" className="text-[15px] font-semibold text-white">
-              On {longDate(settlement)}
-            </h3>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <Stat
-                label="Interest built up"
-                value={rest.payment ? money(rest.payment.accrued) : `${per100(rest.accrued)} per $100`}
-                detail={`${rest.period.accruedDays} of ${rest.period.days} days since ${longDate(rest.period.start)}`}
-              />
-              <Stat
-                label="The loan itself"
-                value={rest.payment ? money(rest.payment.principal) : "—"}
-                detail={`${quotedValue || "—"} per $100 of face value`}
-              />
-              <Stat
-                label="What leaves the account"
-                value={rest.payment ? money(rest.payment.total) : "—"}
-                detail={rest.payment ? `Price, interest${rest.payment.fee ? " and fee" : ""}, together` : rest.paymentProblem ?? ""}
-              />
-              <Stat
-                label="Yield at this price"
-                value={rest.rate === null ? "—" : `${rest.rate.toFixed(3)}%`}
-                detail="What the remaining payments return if held to the end"
-              />
-            </div>
-            <p className="text-[13px] leading-5 text-slate-400">
-              The next payment, on {next ? longDate(next.date) : "—"}, is a whole six months of interest however long you have
-              held it — which is why the {rest.payment ? money(rest.payment.accrued) : "interest built up"} goes to the seller
-              now.
-            </p>
-          </section>
-
-          <section aria-labelledby="bond-payments" className="space-y-2">
-            <h3 id="bond-payments" className="text-[15px] font-semibold text-white">
-              What it pays you afterwards
-            </h3>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <Stat label="Payments left" value={String(rest.flows.length)} detail={next ? `Next on ${longDate(next.date)}` : ""} />
-              <Stat label="Each payment" value={next ? money(next.amount) : "—"} detail="Twice a year" />
-              <Stat
-                label="Last payment"
-                value={last ? money(last.amount) : "—"}
-                detail={last ? `${longDate(last.date)}, with the face value` : ""}
-              />
-              <Stat label="Everything still to come" value={money(total)} detail="Interest and face value together" />
-            </div>
-          </section>
+          {/*
+            * What leaves the account on the day, and what comes back afterwards,
+            * one at a time. Together they made this page 2.6 screens on a phone.
+            * The entries above serve both.
+            */}
+          <ViewTabs label="This bond" idPrefix="bond" className={STAGE_TABS} tabs={BOND_TABS} selected={view} onSelect={setView} />
+          <div role="tabpanel" id="bond-panel" aria-labelledby={`bond-tab-${view}`} className="space-y-3">
+          {view === "pay" ? (
+          <>
+          {/* In the order they add up: the loan, the interest on top, what leaves the account. */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <Stat
+              label="The loan itself"
+              value={rest.payment ? money(rest.payment.principal) : "—"}
+              detail={`${quotedValue || "—"} per $100 of face value`}
+            />
+            <Stat
+              label="Interest built up"
+              value={rest.payment ? money(rest.payment.accrued) : `${per100(rest.accrued)} per $100`}
+              detail={`${rest.period.accruedDays} of ${rest.period.days} days since ${longDate(rest.period.start)}`}
+            />
+            <Stat
+              label="What leaves the account"
+              value={rest.payment ? money(rest.payment.total) : "—"}
+              detail={rest.payment ? `Price, interest${rest.payment.fee ? " and fee" : ""}, together` : rest.paymentProblem ?? ""}
+            />
+            <Stat
+              label="Yield at this price"
+              value={rest.rate === null ? "—" : `${rest.rate.toFixed(3)}%`}
+              detail="What the remaining payments return if held to the end"
+            />
+          </div>
+          <p className="text-[13px] leading-5 text-slate-400">
+            The next payment, on {next ? longDate(next.date) : "—"}, is a whole six months of interest however long you have
+            held it — which is why the {rest.payment ? money(rest.payment.accrued) : "interest built up"} goes to the seller
+            now.
+          </p>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <button type="button" onClick={() => void carry()} disabled={!held} className={button}>
               Use this interest figure in What to buy
             </button>
-            <p className="text-[13px] leading-5 text-slate-500">
-              {held ? (
+            {/*
+              * What the button does, then what it did, in the one line: a saved
+              * message below the note took a phone past a screen and a half. The
+              * link to What to buy comes with the save, when there is something
+              * there to see.
+              */}
+            <p role="status" className={cn("text-[13px] leading-5", saved ? "text-accent-green" : "text-slate-500")}>
+              {saved ? (
                 <>
-                  It is added beside the price there, never inside it.{" "}
+                  {saved}{" "}
                   <Link href="/studio/portfolio/buying" className={link}>
                     Open What to buy
                   </Link>
                 </>
+              ) : held ? (
+                "It goes beside the price there, never inside it."
               ) : (
                 <>
                   Add this bond to your plan first, in{" "}
@@ -271,24 +256,52 @@ export default function BondView() {
             </p>
           </div>
 
-          {saved ? (
-            <p role="status" className="text-[13px] leading-6 text-accent-green">
-              {saved}
-            </p>
-          ) : null}
           {problem ? (
             <p role="alert" className="text-[13px] leading-6 text-accent-amber">
               {problem}
             </p>
           ) : null}
 
-          <p className="text-[12px] leading-5 text-slate-500">
-            Day count and price: the issuer&rsquo;s own rule, 31 CFR part 356, appendix B — a half-year is its actual 181 to 184
-            days, and the part-period is discounted with simple interest. A broker may settle on a different day and add its own
-            charge, so confirm the figure with them.
+          {/* One tap away rather than always open: on a phone it was a ninth of the screen under the work. */}
+          <details>
+            {/* Padded rather than made flex, which would drop the disclosure's arrow. */}
+            <summary className="cursor-pointer text-[12px] text-slate-500 [@media(pointer:coarse)]:py-[13px]">
+              Where these figures come from
+            </summary>
+            <p className="mt-2 text-[12px] leading-5 text-slate-500">
+              Day count and price: the issuer&rsquo;s own rule, 31 CFR part 356, appendix B — a half-year is its actual 181 to
+              184 days, and the part-period is discounted with simple interest. A broker may settle on a different day and add
+              its own charge, so confirm the figure with them.
+            </p>
+          </details>
+          </>
+          ) : (
+          <>
+          <p className="text-[14px] leading-6 text-slate-300">
+            Interest of {instrument.bond.couponPct}% a year on the face value, paid twice a year, from{" "}
+            {longDate(terms.datedDate)} to {longDate(terms.maturity)}, when the face value comes back.
           </p>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <Stat label="Payments left" value={String(rest.flows.length)} detail={next ? `Next on ${longDate(next.date)}` : ""} />
+            <Stat label="Each payment" value={next ? money(next.amount) : "—"} detail="Twice a year" />
+            <Stat
+              label="Last payment"
+              value={last ? money(last.amount) : "—"}
+              detail={last ? `${longDate(last.date)}, with the face value` : ""}
+            />
+            <Stat label="Everything still to come" value={money(total)} detail="Interest and face value together" />
+          </div>
+          </>
+          )}
+          </div>
         </>
       ) : null}
     </div>
   );
 }
+
+type BondTab = "pay" | "back";
+const BOND_TABS: { id: BondTab; label: string; className: string }[] = [
+  { id: "pay", label: "What you pay", className: STAGE_TAB },
+  { id: "back", label: "What it pays you", className: STAGE_TAB },
+];

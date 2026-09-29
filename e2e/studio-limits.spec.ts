@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 /**
@@ -67,4 +68,35 @@ test("a phone keeps the list under the table, closed to one line", async ({ page
   await expect(limits.locator("summary")).toContainText("1 not met · 3 not checked");
   const size = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(size).toBe(0);
+});
+
+test("Review carries the limits, and the readable plan writes them out with each portfolio's checks", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const saved = page.getByRole("status").filter({ hasText: /^Saved in this browser$/ });
+  await page.goto("/studio/goals");
+  await page.getByRole("tab", { name: /Your mix/ }).click();
+  await page.getByLabel("Cap for one company").fill("5");
+  await expect(saved).toBeVisible();
+  await page.goto("/studio/research");
+  await addToPortfolio(page, "VTI");
+  await addToPortfolio(page, "AAPL");
+  await page.goto("/studio/portfolio");
+  await page.getByLabel("VTI target percentage").fill("60");
+  await page.getByLabel("AAPL target percentage").fill("10");
+  await expect(saved).toBeVisible();
+
+  await page.goto("/studio/review");
+  // AAPL is over its cap and the scenario loses $2,100 against $2,000; bills and slices are not set.
+  const limits = page.getByRole("main").locator("details").filter({ hasText: "Your limits" }).filter({ visible: true });
+  await expect(limits.locator("summary")).toContainText("2 not met · 2 not checked");
+
+  await page.getByRole("tab", { name: "Keep a copy" }).click();
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download the readable plan" }).click();
+  const text = readFileSync(await (await download).path(), "utf8");
+  expect(text.indexOf("YOUR LIMITS")).toBeLessThan(text.indexOf("PORTFOLIO: "));
+  expect(text).toContain("Cap for one company: 5%. Cap for one fund: not set.");
+  expect(text).toContain("No holding is over its cap: not met. AAPL is 10.0%, 5.0 points over your cap for one company (5%).");
+  expect(text).toContain("The scenario stays within your loss budget: not met. This allocation loses $2,100 in the scenario.");
+  expect(text).toContain("AAPL: 5.0 points over what your cap for one company allows (5.0% of the whole portfolio).");
 });

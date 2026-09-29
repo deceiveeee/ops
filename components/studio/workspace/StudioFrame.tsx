@@ -47,9 +47,15 @@ const sectionFor = (pathname: string): Section | undefined =>
 const STAGE_PAGES = ["/studio/goals", "/studio/research", "/studio/portfolio", "/studio/review"];
 /** Research tools with their own introductions, whose sources belong beside the work. */
 const TOOL_PAGES = ["/studio/investigate", "/studio/industry", "/studio/filings"];
+/**
+ * The bond worksheet explains itself, under its title. Under Portfolio it took
+ * the allocation guide and the weights' totals as well, neither about a bond.
+ */
+const BOND_PAGE = "/studio/portfolio/bond";
 
 /** The explanation that belongs with each page's work. */
 function guidanceFor(pathname: string): StudioGuidanceKey | null {
+  if (within(pathname, BOND_PAGE)) return null;
   if (within(pathname, "/studio/goals")) return "goal";
   if (within(pathname, "/studio/research") || TOOL_PAGES.some((base) => within(pathname, base))) return "research";
   if (within(pathname, "/studio/portfolio/risk")) return "risk";
@@ -115,13 +121,16 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
   /*
    * Narrow screens keep the definition above the work, where a first-time
    * learner meets it before the questions that use it. The page's title places
-   * it, below the page's tabs and title rather than above them.
+   * it, below the page's tabs and title rather than above them. The weights'
+   * totals come with it where weights are the work; Review's work is rules and
+   * copies, and Risk's a scenario with its own totals, and on both the strip
+   * took a phone past a screen and a half.
    */
   const intro =
     stagePage && guidance && !integratedGuide ? (
       <div className="space-y-4 xl:hidden">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
-        <Strip />
+        {within(pathname, "/studio/review") || within(pathname, "/studio/portfolio/risk") ? null : <Strip />}
       </div>
     ) : null;
 

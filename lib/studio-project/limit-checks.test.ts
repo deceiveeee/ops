@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { addStudioHolding, calculateStudio, createStudioPlan, updateStudioHolding, type StudioPlan } from "@/lib/studio";
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
-import { checkPortfolio } from "./limit-checks";
+import { checkPortfolio, scenarioLoss } from "./limit-checks";
 import { emptyLimits, type StudioLimits } from "./limits";
 
 /*
@@ -158,5 +158,39 @@ describe("checking a portfolio against its limits", () => {
     const result = run(plan, limits({ lossCapacityPct: 0 }));
     expect(check(result, "loss").status).toBe("met");
     expect(check(result, "loss").detail).toContain("This allocation loses $0 in the scenario. Your loss budget is $0");
+  });
+});
+
+/*
+ * The rule the Risk page shares with the check above. Its own copy compared
+ * the size of the change with the budget, so a gain larger than the budget
+ * was reported as over it.
+ */
+describe("the scenario against the loss budget", () => {
+  const loss = (plan: StudioPlan, set: StudioLimits) => scenarioLoss(plan, calculateStudio(plan, STUDIO_CATALOG), set);
+  // The same holdings moving up: 40,000 x 30% + 8,000 x 30% + 20,000 x 10% = a $16,400 gain.
+  const rising = () => {
+    const plan = portfolio();
+    return { ...plan, stress: { ...plan.stress, usStocksPct: 30, internationalStocksPct: 30, bondsPct: 10, cashPct: 0 } };
+  };
+
+  it("counts a loss in dollars of the whole portfolio", () => {
+    expect(loss(portfolio(), limits())).toEqual({ set: true, allowed: 20_000, loses: 16_400, from: "willingness", met: true });
+    expect(loss(portfolio(), limits({ lossCapacityPct: 15 }))).toMatchObject({ allowed: 15_000, from: "capacity", met: false });
+  });
+
+  it("never calls a gain a loss, however small the budget", () => {
+    const plan = rising();
+    plan.goal = { ...plan.goal, lossTolerancePct: 5 };
+    // $16,400 is more than a $5,000 budget, but it is gained, not lost.
+    expect(loss(plan, limits())).toMatchObject({ set: true, allowed: 5_000, loses: 0, met: true });
+    expect(loss(rising(), limits({ lossCapacityPct: 0 }))).toMatchObject({ set: true, allowed: 0, loses: 0, met: true });
+  });
+
+  it("holds an explicit zero capacity as a budget, and a zero willingness alone as none", () => {
+    expect(loss(portfolio(), limits({ lossCapacityPct: 0 }))).toMatchObject({ set: true, allowed: 0, loses: 16_400, met: false });
+    const unset = portfolio();
+    unset.goal = { ...unset.goal, lossTolerancePct: 0 };
+    expect(loss(unset, limits()).set).toBe(false);
   });
 });

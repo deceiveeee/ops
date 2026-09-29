@@ -106,3 +106,23 @@ the frame places above the work on narrow screens for every stage page
 (Portfolio, Risk and cost, What to buy, Review) so a first-time learner reads
 the definition before the questions. Changing that is a Studio-wide decision,
 recorded here rather than made inside this feature.
+
+## Merged with the Risk tabs from main, 29 September 2026
+
+Main (#17) split Risk and cost into three tabs, **Loss scenario**, **Fund costs**
+and **Overlap**, so each fits a phone, put the loss budget beside the scenario's
+result, and made one rule, `scenarioLoss`, for the limit check and the Risk
+page. The merge keeps all of that and this work's several scenarios:
+
+- `scenarioLoss` now takes a scenario's change, so the check, the Risk page and
+  the scenario table use one rule for the worst scenario.
+- With several scenarios the first tab reads "Loss scenarios (n)"; the editor,
+  table and sentence about the worst are unchanged.
+- With one scenario, "Add a second scenario" is a link beside "Assume prices
+  change by" rather than a row of its own: the tab is 1.47 screens at 390px
+  (main's limit is 1.5). What the worst of several means is said once there
+  are several.
+- Review's limits line and the text export now test every scenario, as
+  Portfolio, Compare allocations and the side column already did.
+- Several scenarios below 1280px are still over 1.5 screens (three: 1.75 at
+  390, 1.55 at 1024), as recorded above.

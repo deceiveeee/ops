@@ -12,6 +12,14 @@ export const usdWhole = (value: number) =>
 
 export const pct = (value: number, digits = 1) => `${value.toFixed(digits)}%`;
 
+/**
+ * Tabs that split one page's work, for ViewTabs: Review, Risk and cost, the bond.
+ * Sharing the width on a phone, each at its label's width from 640px.
+ */
+export const STAGE_TABS = "flex border-b border-st-hair";
+export const STAGE_TAB =
+  "min-h-11 flex-1 border-b-2 border-transparent px-2 text-[14px] text-slate-400 -mb-px aria-selected:border-[var(--ops-accent-strong)] aria-selected:font-semibold aria-selected:text-[var(--ops-accent-strong)] sm:flex-none sm:px-4";
+
 export function Panel({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn("rounded-2xl border border-st-hair bg-st-paper p-5 sm:p-6", className)}>

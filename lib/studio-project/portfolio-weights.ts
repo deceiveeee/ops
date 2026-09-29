@@ -85,6 +85,29 @@ export function comparisonNeedsReview(project: StudioProject, alternative: Portf
   return alternative.comparisonBasis !== undefined && !sameInputs(alternative.comparisonBasis, comparisonBasis(project));
 }
 
+export type BasisPart = "goal" | "limits" | "scenario";
+
+/**
+ * The allocation the learner chose, once the goal, limits or scenario it was
+ * compared under have changed: named on Goals, where such a change is made,
+ * by the same rule Compare allocations uses. Only an allocation someone chose
+ * -- which left a decision behind -- is named.
+ */
+export function chosenBeforeChange(project: StudioProject): { name: string; chosenAt: string; changed: BasisPart[] } | null {
+  const chosen = project.alternatives.find((item) => item.id === project.selectedAlternativeId);
+  const basis = chosen?.comparisonBasis;
+  if (!chosen || !basis) return null;
+  const decision = [...project.decisions].reverse().find((item) => item.affects.at(-1) === chosen.id);
+  if (!decision) return null;
+  const now = comparisonBasis(project);
+  const changed = ([
+    ["goal", sameInputs(basis.goal, now.goal)],
+    ["limits", sameInputs(basis.limits, now.limits)],
+    ["scenario", sameInputs(basis.stress, now.stress)],
+  ] as const).filter(([, same]) => !same).map(([part]) => part);
+  return changed.length ? { name: chosen.name, chosenAt: decision.at, changed } : null;
+}
+
 /** Proposals may change weights, but cannot restore outdated buying inputs. */
 export function holdingInputsChanged(project: StudioProject, alternative: PortfolioAlternative) {
   const selected = workingAlternative(project);

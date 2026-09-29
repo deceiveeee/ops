@@ -316,6 +316,7 @@ test("a passage kept against the live filing is found again after the text shift
   // backup and restore — the same way a learner's work would arrive from
   // another browser.
   await page.goto("/studio/review");
+  await page.getByRole("tab", { name: "Keep a copy" }).click();
   const download = await Promise.all([
     page.waitForEvent("download"),
     page.getByRole("button", { name: "Download a backup" }).click(),

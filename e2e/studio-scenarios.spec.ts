@@ -83,13 +83,13 @@ async function enter(page: Page, label: string, value: string) {
 
 test("scenarios can be added, named, edited and removed, and the worst is held against the loss budget everywhere", async ({ page }) => {
   await open(page, fixture());
-  await expect(page.getByRole("tab", { name: "Scenario", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tab", { name: "Loss scenario", exact: true })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByText("-$16,400.00", { exact: true })).toBeVisible();
-  await expect(page.getByText("This scenario is larger than your loss budget", { exact: true })).toBeVisible();
+  await expect(page.getByText("That loss is $1,400.00 more than your loss budget.", { exact: false })).toBeVisible();
 
   // A second scenario starts as a copy of the first and takes focus for its name.
   await page.getByRole("button", { name: "Add a second scenario", exact: true }).click();
-  await expect(page.getByRole("tab", { name: "Scenarios (2)", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Loss scenarios (2)", exact: true })).toBeVisible();
   const name = page.getByLabel("Scenario name", { exact: true });
   await expect(name).toBeFocused();
   await expect(name).toHaveValue("Scenario 2");
@@ -142,7 +142,7 @@ test("scenarios can be added, named, edited and removed, and the worst is held a
   await page.goto(RISK);
   await table(page).getByRole("button", { name: "Rates rise", exact: true }).click();
   await page.getByRole("button", { name: "Remove this scenario", exact: true }).click();
-  await expect(page.getByRole("tab", { name: "Scenario", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Loss scenario", exact: true })).toBeVisible();
   await expect(table(page)).toHaveCount(0);
   await saved(page);
   const one = await stored(page);
@@ -156,24 +156,26 @@ test("a gain is not a loss, and weights over 100% show no scenario result", asyn
   await enter(page, "US stocks", "40");
   await enter(page, "Bonds", "5");
   await expect(page.getByText("$20,200.00", { exact: true })).toBeVisible();
-  await expect(page.getByText("This scenario is larger than your loss budget", { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/more than your loss budget/)).toHaveCount(0);
 
   await open(page, fixture([50, 50, 25]));
   await expect(page.getByText("Fix the weights first", { exact: true })).toBeVisible();
   await expect(page.getByText("Change in this scenario", { exact: true })).toHaveCount(0);
-  await expect(page.getByText("This scenario is larger than your loss budget", { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/more than your loss budget/)).toHaveCount(0);
 });
 
-test("costs and overlap sit in their own view", async ({ page }) => {
+test("fund costs and overlap each sit in their own view", async ({ page }) => {
   await open(page, fixture());
-  await page.getByRole("tab", { name: "Scenario", exact: true }).focus();
+  await page.getByRole("tab", { name: "Loss scenario", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
-  const costs = page.getByRole("tab", { name: "Costs and overlap", exact: true });
+  const costs = page.getByRole("tab", { name: "Fund costs", exact: true });
   await expect(costs).toBeFocused();
   await expect(costs).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByText("Yearly cost of the funds you hold", { exact: true })).toBeVisible();
-  await expect(page.getByText("Companies you own more than once", { exact: true })).toBeVisible();
+  await expect(page.getByText("What the funds you hold charge each year.", { exact: true })).toBeVisible();
   await expect(page.getByLabel("US stocks", { exact: true })).toHaveCount(0);
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Overlap", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByText("The same company or government, held through more than one of your investments.", { exact: true })).toBeVisible();
 });
 
 test("the scenario page with one, three and five scenarios, at six widths", async ({ page }) => {
