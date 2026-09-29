@@ -12,7 +12,7 @@ import {
   createSavedComparison, MAX_COMPARISON_NAME, MAX_COMPARISON_REASON, MAX_SAVED_COMPARISONS, removeReturnComparison,
   saveReturnComparison, type SavedReturnComparison,
 } from "@/lib/studio-project/return-comparison-saved";
-import { monthAt, monthNumber } from "@/lib/studio-project/total-returns";
+import { monthAt, monthNumber, validSourceUrl } from "@/lib/studio-project/total-returns";
 import { useWorkspace } from "./WorkspaceProvider";
 import ViewTabs from "./ViewTabs";
 import WrappingSelect from "./WrappingSelect";
@@ -396,7 +396,7 @@ function Details({ input, a, b, nameA, nameB, covariance }: { input: ComparisonI
       <thead><tr><th scope="col"><span className={styles.srOnly}>Investment</span></th>{input.series.map((item) => <th scope="col" key={item.instrumentId}>{label(item.instrumentId)}</th>)}</tr></thead>
       <tbody>{input.series.map((row, i) => <tr key={row.instrumentId}><th scope="row">{label(row.instrumentId)}</th>{covariance[i].map((value, j) => <td key={j}>{(value * 10_000).toFixed(3)}</td>)}</tr>)}</tbody></table>}
     <p>Portfolio variance is the weights applied to that table, and matches the variance of the portfolio’s own monthly returns.</p>
-    <ul className={styles.sources}>{input.series.map((item) => <li key={item.instrumentId}><strong>{label(item.instrumentId)}</strong>: {item.sourceName}. {item.currency}, {item.basis === "net-asset-value" ? "fund net asset value" : "market price"}, distributions included once.{item.sourceUrl && <> <a href={item.sourceUrl} target="_blank" rel="noreferrer">Source</a></>}</li>)}</ul>
+    <ul className={styles.sources}>{input.series.map((item) => <li key={item.instrumentId}><strong>{label(item.instrumentId)}</strong>: {item.sourceName}. {item.currency}, {item.basis === "net-asset-value" ? "fund net asset value" : "market price"}, distributions included once.{item.sourceUrl && validSourceUrl(item.sourceUrl) && <> <a href={item.sourceUrl} target="_blank" rel="noreferrer">Source</a></>}</li>)}</ul>
     <p>Method: {`monthly-rebalanced-cash-zero-v1`}. Sources and checks: the portfolio return comparison audit.</p>
   </details>;
 }

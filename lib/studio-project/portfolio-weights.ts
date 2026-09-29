@@ -81,11 +81,29 @@ function sameInputs(left: unknown, right: unknown): boolean {
     && keys.every((key) => Object.prototype.hasOwnProperty.call(after, key) && sameInputs(before[key], after[key]));
 }
 
-export function comparisonNeedsReview(project: StudioProject, alternative: PortfolioAlternative) {
-  return alternative.comparisonBasis !== undefined && !sameInputs(alternative.comparisonBasis, comparisonBasis(project));
+export type BasisPart = "goal" | "limits" | "scenario";
+type Basis = NonNullable<PortfolioAlternative["comparisonBasis"]>;
+
+/**
+ * Which of the goal, the limits and the scenarios differ between two bases:
+ * the one rule behind Compare allocations' "needs review" and the notice on
+ * Goals, so the two cannot disagree. A scenario counts by its price changes,
+ * the first's and every other's, in order. Its name is only a label, so a
+ * rename changes nothing a proposal was checked against; and a basis saved
+ * before there could be more than one scenario reads as having no others.
+ */
+function changedParts(before: Basis, after: Basis): BasisPart[] {
+  const scenario = (basis: Basis) => ({ first: basis.stress, others: (basis.scenarios ?? []).map((item) => item.stress) });
+  return ([
+    ["goal", sameInputs(before.goal, after.goal)],
+    ["limits", sameInputs(before.limits, after.limits)],
+    ["scenario", sameInputs(scenario(before), scenario(after))],
+  ] as const).filter(([, same]) => !same).map(([part]) => part);
 }
 
-export type BasisPart = "goal" | "limits" | "scenario";
+export function comparisonNeedsReview(project: StudioProject, alternative: PortfolioAlternative) {
+  return alternative.comparisonBasis !== undefined && changedParts(alternative.comparisonBasis, comparisonBasis(project)).length > 0;
+}
 
 /**
  * The allocation the learner chose, once the goal, limits or scenario it was
@@ -99,12 +117,7 @@ export function chosenBeforeChange(project: StudioProject): { name: string; chos
   if (!chosen || !basis) return null;
   const decision = [...project.decisions].reverse().find((item) => item.affects.at(-1) === chosen.id);
   if (!decision) return null;
-  const now = comparisonBasis(project);
-  const changed = ([
-    ["goal", sameInputs(basis.goal, now.goal)],
-    ["limits", sameInputs(basis.limits, now.limits)],
-    ["scenario", sameInputs(basis.stress, now.stress)],
-  ] as const).filter(([, same]) => !same).map(([part]) => part);
+  const changed = changedParts(basis, comparisonBasis(project));
   return changed.length ? { name: chosen.name, chosenAt: decision.at, changed } : null;
 }
 

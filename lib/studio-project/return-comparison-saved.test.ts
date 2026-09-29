@@ -140,11 +140,25 @@ describe("untrusted backups", () => {
     ["a cash return", (record: ReturnType<typeof saved>) => ({ ...record, cashReturnPct: 0.3 })],
     ["an unknown field", (record: ReturnType<typeof saved>) => ({ ...record, forecast: 0.07 })],
     ["a weight over 100%", (record: ReturnType<typeof saved>) => ({ ...record, input: { ...record.input, a: { ...record.input.a, positions: record.input.a.positions.map((p) => ({ ...p, targetWeightPct: 80 })) } } })],
+    // The page makes the source a link, so only a web address will do, as for an imported history.
+    ["a script as the source link", (record: ReturnType<typeof saved>) => ({ ...record, input: { ...record.input, series: record.input.series.map((item, i) => i === 1 ? { ...item, sourceUrl: "javascript:alert(document.domain)" } : item) } })],
+    ["a data link as the source", (record: ReturnType<typeof saved>) => ({ ...record, input: { ...record.input, series: record.input.series.map((item, i) => i === 1 ? { ...item, sourceUrl: "data:text/html,<script>alert(1)</script>" } : item) } })],
   ])("refuses %s", (_label, tamper) => {
     const record = tamper(saved());
     expect(validSavedComparison(record)).toBe(false);
     const value = { ...project(), returnComparisons: [record] } as unknown as StudioProject;
     expect(validateStudioProject(value)).toContainEqual(expect.stringMatching(/^Saved return comparisons/));
+  });
+
+  it("refuses a backup whose comparison links its source to a script", () => {
+    const backup = exportProjectBackup(saveReturnComparison(project(), saved(), LATER));
+    if (!backup.ok) throw new Error(backup.error);
+    const file = JSON.parse(backup.raw);
+    file.returnComparisons[0].input.series[1].sourceUrl = "javascript:alert(document.domain)";
+    expect(importProjectBackup(JSON.stringify(file)).ok).toBe(false);
+    // An ordinary web address, or none, still restores.
+    file.returnComparisons[0].input.series[1].sourceUrl = "https://example.com/returns.csv";
+    expect(importProjectBackup(JSON.stringify(file)).ok).toBe(true);
   });
 
   it("keeps practice and personal comparisons apart", () => {

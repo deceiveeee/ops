@@ -189,3 +189,11 @@ one basis, funds and stocks with a monthly history, and no individual bonds.
 Monthly data cannot see a fall within a month. Cash earns 0%. No trading
 costs, taxes, contributions or inflation. These are today's weights replayed
 over past months, not an account's performance or an investable strategy.
+
+## Review fix, 29 September 2026
+
+A saved comparison's source link was checked only for length, then shown as
+a "Source" link, so a doctored backup could carry a `javascript:` or `data:`
+link. It must now be a web address (http or https), the rule an imported
+history already follows, or the backup is refused; the page also shows a
+link only for a web address.

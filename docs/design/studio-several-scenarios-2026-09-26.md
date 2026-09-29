@@ -126,3 +126,15 @@ page. The merge keeps all of that and this work's several scenarios:
   Portfolio, Compare allocations and the side column already did.
 - Several scenarios below 1280px are still over 1.5 screens (three: 1.75 at
   390, 1.55 at 1024), as recorded above.
+
+## Review fixes, 29 September 2026
+
+- Goals' notice about a chosen allocation read only the first scenario, while
+  Compare allocations read them all: changing a second scenario asked for a
+  fresh proposal there and said nothing on Goals. Both now call one function,
+  `changedParts`, so they cannot disagree; a test holds them together across
+  every kind of change. With several scenarios the notice says "your loss
+  scenarios have changed".
+- Renaming a scenario marked the chosen allocation and every proposal as
+  needing review, though a name changes no figure. A scenario now counts by
+  its price changes only, the first's and every other's, in order.

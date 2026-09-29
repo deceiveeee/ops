@@ -7,6 +7,7 @@ import {
   MIN_COMPARISON_MONTHS, type AllocationResult, type AllocationSnapshot, type ComparisonInput, type SeriesSnapshot,
 } from "./return-comparison";
 import type { StudioProject } from "./schema";
+import { validSourceUrl } from "./total-returns";
 
 export const MAX_SAVED_COMPARISONS = 20;
 export const MAX_COMPARISON_NAME = 300;
@@ -67,7 +68,8 @@ function validAllocation(value: unknown): value is AllocationSnapshot {
 function validSeries(value: unknown): value is SeriesSnapshot {
   if (!plainObject(value) || !onlyKeys(value, ["instrumentId", "key", "kind", "label", "sourceName", "sourceUrl", "currency", "basis", "method", "seriesId", "classId", "importedAt", "builtOn", "accessions", "values"])) return false;
   return shortText(value.instrumentId, 200) && shortText(value.key, 300) && (value.kind === "public" || value.kind === "import")
-    && shortText(value.label, 400) && shortText(value.sourceName, 400) && shortText(value.sourceUrl, 2000, true)
+    // A web address, as an imported history's must be: the page makes it a link, and a backup is untrusted.
+    && shortText(value.label, 400) && shortText(value.sourceName, 400) && shortText(value.sourceUrl, 2000, true) && validSourceUrl(value.sourceUrl as string)
     && typeof value.currency === "string" && /^[A-Z]{3}$/.test(value.currency)
     && (value.basis === "net-asset-value" || value.basis === "market-price")
     && (value.method === "reported-total-return" || value.method === "adjusted-close")
