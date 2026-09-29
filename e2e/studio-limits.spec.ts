@@ -90,6 +90,7 @@ test("Review carries the limits, and the readable plan writes them out with each
   const limits = page.getByRole("main").locator("details").filter({ hasText: "Your limits" }).filter({ visible: true });
   await expect(limits.locator("summary")).toContainText("2 not met · 2 not checked");
 
+  await page.getByRole("tab", { name: "Keep a copy" }).click();
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download the readable plan" }).click();
   const text = readFileSync(await (await download).path(), "utf8");

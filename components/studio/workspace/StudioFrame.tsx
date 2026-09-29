@@ -114,13 +114,15 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
   /*
    * Narrow screens keep the definition above the work, where a first-time
    * learner meets it before the questions that use it. The page's title places
-   * it, below the page's tabs and title rather than above them.
+   * it, below the page's tabs and title rather than above them. The weights'
+   * totals come with it where weights are the work; Review's work is rules and
+   * copies, and the strip took it past a screen and a half on a phone.
    */
   const intro =
     stagePage && guidance && !integratedGuide ? (
       <div className="space-y-4 xl:hidden">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
-        <Strip />
+        {within(pathname, "/studio/review") ? null : <Strip />}
       </div>
     ) : null;
 

@@ -23,6 +23,7 @@ import { longDate } from "@/lib/studio-project/cost-of-capital";
 import { lossBudget, type StudioLimits } from "@/lib/studio-project/limits";
 import { checkPortfolio, describeRoom, type HoldingRoom } from "@/lib/studio-project/limit-checks";
 import LimitChecks from "./LimitChecks";
+import ViewTabs from "./workspace/ViewTabs";
 
 /**
  * A holding's ticker, or a company's name where the learner added it themselves.
@@ -846,6 +847,7 @@ export function ReviewStage(props: StageProps) {
   const { plan, calculation, update, importBackup, reset, actions } = props;
   const setRules = (patch: Partial<StudioPlan["rules"]>) =>
     update((current) => ({ ...current, rules: { ...current.rules, ...patch }, updatedAt: new Date().toISOString() }));
+  const [view, setView] = useState<ReviewView>("rules");
 
   return (
     <div className="space-y-5">
@@ -860,27 +862,15 @@ export function ReviewStage(props: StageProps) {
         </div>
       ) : null}
 
+      {/*
+        * Three jobs, one at a time. Stacked, they made Review 2.4 screens on a
+        * phone; the written rules alone are most of a screen there.
+        */}
+      <ViewTabs label="Review" idPrefix="review" className="flex border-b border-st-hair" tabs={REVIEW_VIEWS} selected={view} onSelect={setView} />
+      <div role="tabpanel" id="review-panel" aria-labelledby={`review-tab-${view}`}>
+      {view === "rules" ? (
       <Panel>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Choice
-            label="How often you will check"
-            value={plan.rules.reviewFrequency}
-            onChange={(value) => setRules({ reviewFrequency: value })}
-            options={[
-              { value: "monthly", label: "Every month" },
-              { value: "quarterly", label: "Every three months" },
-              { value: "yearly", label: "Once a year" },
-            ]}
-          />
-          <Field
-            label="Act when a holding drifts this far from target"
-            hint="In percentage points of the whole portfolio."
-            type="number" min={0} max={100} suffix="points"
-            value={plan.rules.driftThresholdPct}
-            onChange={(value) => setRules({ driftThresholdPct: num(value) })}
-          />
-        </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3">
           <Field
             label="What I do with new money"
             value={plan.rules.contributionRule}
@@ -904,10 +894,27 @@ export function ReviewStage(props: StageProps) {
           />
         </div>
       </Panel>
-
+      ) : view === "check" ? (
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Where you are against the plan</div>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+        {/* When to look, what makes a look turn into action, and where things stand when you do. */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Choice
+            label="How often you will check"
+            value={plan.rules.reviewFrequency}
+            onChange={(value) => setRules({ reviewFrequency: value })}
+            options={[
+              { value: "monthly", label: "Every month" },
+              { value: "quarterly", label: "Every three months" },
+              { value: "yearly", label: "Once a year" },
+            ]}
+          />
+          <Field
+            label="Act when a holding drifts this far from target"
+            hint="In percentage points of the whole portfolio."
+            type="number" min={0} max={100} suffix="points"
+            value={plan.rules.driftThresholdPct}
+            onChange={(value) => setRules({ driftThresholdPct: num(value) })}
+          />
           <Field
             label="What the investments are worth now"
             hint="Leave at zero until you have actually bought something."
@@ -938,10 +945,9 @@ export function ReviewStage(props: StageProps) {
           </ul>
         ) : null}
       </Panel>
-
+      ) : (
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Take your work with you</div>
-        <p className="mt-2 text-[14px] leading-6 text-slate-400">
+        <p className="text-[14px] leading-6 text-slate-400">
           Studio saves in this browser only. Clearing site data erases it, so keep a backup.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
@@ -1003,6 +1009,16 @@ export function ReviewStage(props: StageProps) {
           </button>
         </div>
       </Panel>
+      )}
+      </div>
     </div>
   );
 }
+
+type ReviewView = "rules" | "check" | "copy";
+const REVIEW_TAB = "min-h-11 flex-1 border-b-2 border-transparent px-2 text-[14px] text-slate-400 -mb-px aria-selected:border-[var(--ops-accent-strong)] aria-selected:font-semibold aria-selected:text-[var(--ops-accent-strong)] sm:flex-none sm:px-4";
+const REVIEW_VIEWS: { id: ReviewView; label: string; className: string }[] = [
+  { id: "rules", label: "Your rules", className: REVIEW_TAB },
+  { id: "check", label: "When you check", className: REVIEW_TAB },
+  { id: "copy", label: "Keep a copy", className: REVIEW_TAB },
+];
