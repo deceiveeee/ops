@@ -43,6 +43,7 @@ test("charges nothing for a settlement on a payment date, where the next period 
   await settleOn(page, "2027-02-15");
   await expect(page.getByText("0 of 181 days since 15 February 2027")).toBeVisible();
   await expect(page.getByText("$0.00", { exact: true }).first()).toBeVisible();
+  await page.getByRole("tab", { name: "What it pays you" }).click();
   await expect(page.getByText("Payments left")).toBeVisible();
   // One payment fewer than before it, because that day's payment goes to the seller.
   await expect(page.getByText("19", { exact: true })).toBeVisible();
@@ -52,12 +53,16 @@ test("refuses a date before interest starts instead of inventing one", async ({ 
   await page.goto(BOND);
   await settleOn(page, "2026-08-14");
   await expect(page.getByRole("alert").filter({ hasText: "Interest starts" })).toContainText("Interest starts on 2026-08-15");
+  // Neither half of the answer, not a tab left to open onto a blank.
+  await expect(page.getByRole("tab")).toHaveCount(0);
   await expect(page.getByText("Payments left")).toHaveCount(0);
 });
 
 test("lists what the bond pays afterwards, ending with the face value", async ({ page }) => {
   await page.goto(BOND);
   await settleOn(page, "2026-09-15");
+  await page.getByRole("tab", { name: "What it pays you" }).click();
+  await expect(page.getByText("Interest of 4.625% a year on the face value, paid twice a year")).toBeVisible();
   await expect(page.getByText("20", { exact: true })).toBeVisible();
   await expect(page.getByText("$23.13", { exact: true })).toBeVisible();
   await expect(page.getByText("$1,023.13", { exact: true })).toBeVisible();
@@ -75,7 +80,35 @@ test("says where the figure has to go before it can be used, and does not preten
 
 test("names the rule it follows", async ({ page }) => {
   await page.goto(BOND);
+  await page.getByText("Where these figures come from").click();
   await expect(page.getByText("31 CFR part 356, appendix B")).toBeVisible();
+});
+
+test("carries the interest figure to What to buy, which then counts it", async ({ page }) => {
+  await page.goto("/studio/research");
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill("91282CRF0");
+  const card = page.getByRole("button", { expanded: false }).filter({ hasText: /^91282CRF0/ }).first().locator("xpath=..");
+  await card.getByRole("button", { name: "Add to portfolio" }).click();
+  await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
+  await page.goto("/studio/portfolio");
+  await page.getByLabel("91282CRF0 target percentage").fill("50");
+  await expect(page.getByRole("status").filter({ hasText: /^Saved in this browser$/ })).toBeVisible();
+
+  await page.goto("/studio/portfolio/buying");
+  const unknown = page.getByText("Accrued interest is unknown and excluded.", { exact: false });
+  await expect(unknown).toBeVisible();
+  await page.getByRole("link", { name: "Work out the interest built up by the day you settle" }).click();
+  await expect(page).toHaveURL(BOND);
+
+  await settleOn(page, "2026-09-15");
+  await page.getByRole("button", { name: "Use this interest figure in What to buy" }).click();
+  // Treasury's own 3.89606 per $1,000, per $100.
+  const saved = page.getByRole("status").filter({ hasText: "Saved for What to buy" });
+  await expect(saved).toContainText("0.389606 per $100, as at 2026-09-15");
+  await saved.getByRole("link", { name: "Open What to buy" }).click();
+  await expect(page).toHaveURL("/studio/portfolio/buying");
+  await expect(page.getByText("Work out what to buy")).toBeVisible();
+  await expect(unknown).toHaveCount(0);
 });
 
 test("is reachable from the bond's row in What to buy", async ({ page }) => {
@@ -89,16 +122,56 @@ test("is reachable from the bond's row in What to buy", async ({ page }) => {
   }
 });
 
-test("keeps the page within the screen budget at 1440, and off the page edge on a phone", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+test("the two tabs move by keyboard, and What you pay opens first", async ({ page }) => {
   await page.goto(BOND);
   await settleOn(page, "2026-09-15");
+  const tabs = page.getByRole("tablist", { name: "This bond" });
+  await expect(tabs.getByRole("tab", { selected: true })).toHaveText("What you pay");
+  await tabs.getByRole("tab", { name: "What you pay" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(tabs.getByRole("tab", { name: "What it pays you" })).toBeFocused();
+  await expect(page.getByRole("tabpanel")).toHaveAttribute("aria-labelledby", "bond-tab-back");
   await expect(page.getByText("Everything still to come")).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(1_350);
+  await expect(page.getByText("What leaves the account")).toHaveCount(0);
+  // The entries serve both tabs, so they stay put.
+  await expect(page.getByLabel("The day you settle", { exact: true })).toHaveValue("2026-09-15");
+});
 
-  await page.setViewportSize({ width: 390, height: 900 });
-  await page.reload();
+/*
+ * Held or not, and with the save's message showing: a tab is a screen and a
+ * half at most, at every width. Stacked, the two halves were 2.6 on a phone.
+ */
+test("every Bond tab fits a screen and a half at every width", async ({ page }) => {
+  test.setTimeout(180_000);
+  const report: string[] = [];
+  const measure = async (state: string) => {
+    for (const width of [390, 768, 1024, 1280, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const name of ["What you pay", "What it pays you"]) {
+        await page.getByRole("tab", { name }).click();
+        const size = await page.evaluate(() => ({ screens: document.documentElement.scrollHeight / innerHeight, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth }));
+        report.push(`${state} ${width} ${name}: ${size.screens.toFixed(2)}`);
+        expect.soft(size.screens, `${state}, ${name} at ${width}`).toBeLessThanOrEqual(1.5);
+        expect.soft(size.overflow, `${state}, ${name} at ${width}`).toBe(0);
+      }
+    }
+  };
+  await page.goto(BOND);
   await settleOn(page, "2026-09-15");
-  await expect(page.getByText("Everything still to come")).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await measure("not held");
+
+  await page.goto("/studio/research");
+  await page.getByRole("searchbox", { name: "Find an investment" }).fill("91282CRF0");
+  const card = page.getByRole("button", { expanded: false }).filter({ hasText: /^91282CRF0/ }).first().locator("xpath=..");
+  await card.getByRole("button", { name: "Add to portfolio" }).click();
+  await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
+  await page.goto(BOND);
+  await settleOn(page, "2026-09-15");
+  await measure("held");
+
+  await page.getByRole("tab", { name: "What you pay" }).click();
+  await page.getByRole("button", { name: "Use this interest figure in What to buy" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Saved for What to buy" })).toBeVisible();
+  await measure("saved");
+  console.log(report.join("\n"));
 });

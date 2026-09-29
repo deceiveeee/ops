@@ -73,6 +73,22 @@ function rangeText(min: number | null, max: number | null): string {
   return min !== null ? `at least ${plain(min)}` : `at most ${plain(max ?? 0)}`;
 }
 
+/**
+ * The Risk page's scenario against the loss budget, in dollars of the whole
+ * portfolio. One rule for the check below and for the Risk page itself, which
+ * kept its own copy and drifted: it called a large enough gain "larger than
+ * your loss budget", and never checked an explicit zero.
+ */
+export function scenarioLoss(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits) {
+  const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
+  // Zero capacity is an explicit zero-loss limit. Legacy willingness zero
+  // with no capacity remains the existing "not set" convention.
+  const set = budget.pct > 0 || limits.lossCapacityPct === 0;
+  const allowed = calculation.budget * budget.pct / 100;
+  const loses = Math.max(0, -calculation.stress.changeDollars);
+  return { set, allowed, loses, from: budget.from, met: loses <= allowed + 0.005 };
+}
+
 export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits): PortfolioChecks {
   const keys: CheckKey[] = ["bills", "slices", "caps", "loss"];
   if (!calculation.valid || calculation.budget <= 0) {
@@ -142,18 +158,13 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
 
   // The scenario on the Risk page against the loss budget.
   const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
-  // Zero capacity is an explicit zero-loss limit. Legacy willingness zero
-  // with no capacity remains the existing "not set" convention.
-  const hasLossBudget = budget.pct > 0 || limits.lossCapacityPct === 0;
-  const allowed = whole * budget.pct / 100;
-  const loses = Math.max(0, -calculation.stress.changeDollars);
+  const { set: hasLossBudget, allowed, loses, met: lossMet } = scenarioLoss(plan, calculation, limits);
   const setBy = `the loss you could ${budget.from === "capacity" ? "afford" : "live with"}`;
   const biggest = calculation.stress.rows
     .filter((row) => row.changeDollars < 0)
     .sort((a, b) => a.changeDollars - b.changeDollars)
     .slice(0, 3)
     .map((row) => `${symbol(calculation.rows.find((r) => r.holding.instrumentId === row.instrumentId)!)} ${dollars(-row.changeDollars)}`);
-  const lossMet = loses <= allowed + 0.005;
   const loss: LimitCheck = !hasLossBudget
     ? { key: "loss", title: CHECK_TITLES.loss, status: "not-checked", detail: "Set the loss you could live with on Goals." }
     : {

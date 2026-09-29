@@ -14,14 +14,14 @@ import {
   type StudioCalculation,
   type StudioPlan,
 } from "@/lib/studio";
-import { Choice, Fact, Field, Notice, NumberInput, Panel, Stat, StageHeading, TableScroll, downloadFile, pct, usd, usdWhole } from "./shared";
+import { Choice, Fact, Field, Notice, NumberInput, Panel, STAGE_TAB, STAGE_TABS, Stat, StageHeading, TableScroll, downloadFile, pct, usd, usdWhole } from "./shared";
 import ResearchRecord from "./ResearchRecord";
 import FundReportFacts from "./FundReportFacts";
 import type { CandidateInvestigation, CandidateStatus } from "@/lib/studio-project/schema";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
-import { lossBudget, type StudioLimits } from "@/lib/studio-project/limits";
-import { checkPortfolio, describeRoom, type HoldingRoom } from "@/lib/studio-project/limit-checks";
+import { emptyLimits, type StudioLimits } from "@/lib/studio-project/limits";
+import { checkPortfolio, describeRoom, scenarioLoss, type HoldingRoom } from "@/lib/studio-project/limit-checks";
 import LimitChecks from "./LimitChecks";
 import ViewTabs from "./workspace/ViewTabs";
 
@@ -610,17 +610,24 @@ export function RiskStage(props: StageProps) {
   const setStress = (patch: Partial<StudioPlan["stress"]>) =>
     update((current) => ({ ...current, stress: { ...current.stress, ...patch }, updatedAt: new Date().toISOString() }));
 
-  // The same loss budget Goals shows: the smaller of willingness and capacity, of the whole portfolio.
-  const loss = lossBudget(plan.goal.lossTolerancePct, props.limits?.lossCapacityPct ?? null);
-  const lossLimit = plan.goal.budget * loss.pct / 100;
-  const exceeds = Math.abs(calculation.stress.changeDollars) > lossLimit && lossLimit > 0;
+  // The same loss budget Goals shows, by the same rule as the limit check: a gain is never over it.
+  const loss = scenarioLoss(plan, calculation, props.limits ?? emptyLimits());
+  const [view, setView] = useState<RiskView>("scenario");
 
   return (
     <div className="space-y-5">
       <StageHeading {...headingFor(props)} title="Check the risk and the cost">
-        These are assumptions you choose, not forecasts. Nothing here predicts what markets will do.
+        These are assumptions you choose, not forecasts.
       </StageHeading>
 
+      {/*
+        * Three questions, one at a time. Stacked, the scenario, the fund costs
+        * and the overlap made this page 2.3 screens on a phone. The scenario
+        * opens first: Compare allocations' "Edit scenario" link lands here.
+        */}
+      <ViewTabs label="Risk and cost" idPrefix="risk" className={STAGE_TABS} tabs={RISK_VIEWS} selected={view} onSelect={setView} />
+      <div role="tabpanel" id="risk-panel" aria-labelledby={`risk-tab-${view}`}>
+      {view === "scenario" ? (
       <Panel>
         <div className="ops-caption text-[11px] text-slate-500">Assume prices change by</div>
         {/*
@@ -630,8 +637,11 @@ export function RiskStage(props: StageProps) {
           scenario silently used a stored default. Global has no instrument yet
           and stays out for the same reason in reverse — a control with nothing
           to act on.
+
+          Two to a row even on a phone: one to a row, four short numbers took
+          a third of the screen.
         */}
-        <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
           <Field
             label="US stocks" type="number" min={-100} max={100} suffix="%"
             value={plan.stress.usStocksPct}
@@ -653,24 +663,31 @@ export function RiskStage(props: StageProps) {
             onChange={(value) => setStress({ cashPct: num(value) })}
           />
         </div>
-        <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {/*
+          * The budget beside the result, whether or not it is passed: comparing
+          * the two is the point of the scenario. It was a box that appeared only
+          * once the loss went over, a sixth of a phone screen on its own.
+          */}
+        <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Stat label="Change in this scenario" value={usd(calculation.stress.changeDollars)} />
           <Stat label="As a share of the portfolio" value={pct(calculation.stress.changePct)} />
           <Stat label="Value afterwards" value={usd(calculation.stress.endingValue)} />
+          <Stat
+            label="Your loss budget"
+            value={loss.set ? usd(loss.allowed) : "Not set"}
+            detail={loss.set ? `The loss you could ${loss.from === "capacity" ? "afford" : "live with"}` : "Set it on Goals"}
+          />
         </div>
+        {loss.set && !loss.met ? (
+          <p className="mt-4 text-[14px] leading-6 text-accent-amber">
+            That loss is {usd(loss.loses - loss.allowed)} more than your loss budget. Either the weights or the limit needs to
+            change — Studio will not choose which.
+          </p>
+        ) : null}
       </Panel>
-
-      {exceeds ? (
-        <Notice tone="amber" title="This scenario is larger than your loss budget">
-          Your loss budget is {usdWhole(lossLimit)}, the loss you could {loss.from === "capacity" ? "afford" : "live with"}. This
-          assumed scenario costs{" "}
-          {usdWhole(Math.abs(calculation.stress.changeDollars))}. Either the weights or the limit needs to change —
-          Studio will not choose which.
-        </Notice>
-      ) : null}
-
+      ) : view === "costs" ? (
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Yearly cost of the funds you hold</div>
+        <p className="text-[14px] leading-6 text-slate-300">What the funds you hold charge each year.</p>
         <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Stat
             label="At today's amounts"
@@ -688,9 +705,10 @@ export function RiskStage(props: StageProps) {
           Trading charges, spreads and taxes are separate and are not included here.
         </p>
       </Panel>
-
+      ) : (
       <Panel>
-        <div className="ops-caption text-[11px] text-slate-500">Companies you own more than once</div>
+        {/* A company or a government: the Treasury note and a bond fund repeat the same issuer. */}
+        <p className="text-[14px] leading-6 text-slate-300">The same company or government, held through more than one of your investments.</p>
         {calculation.overlaps.length === 0 ? (
           <p className="mt-2 text-[14px] leading-6 text-slate-300">
             No repeated company appears in the holdings that have been documented. That is not proof there is none —
@@ -713,9 +731,18 @@ export function RiskStage(props: StageProps) {
           </>
         )}
       </Panel>
+      )}
+      </div>
     </div>
   );
 }
+
+type RiskView = "scenario" | "costs" | "overlap";
+const RISK_VIEWS: { id: RiskView; label: string; className: string }[] = [
+  { id: "scenario", label: "Loss scenario", className: STAGE_TAB },
+  { id: "costs", label: "Fund costs", className: STAGE_TAB },
+  { id: "overlap", label: "Overlap", className: STAGE_TAB },
+];
 
 // ---------------------------------------------------------------------------
 // 5. Buying worksheet
@@ -866,7 +893,7 @@ export function ReviewStage(props: StageProps) {
         * Three jobs, one at a time. Stacked, they made Review 2.4 screens on a
         * phone; the written rules alone are most of a screen there.
         */}
-      <ViewTabs label="Review" idPrefix="review" className="flex border-b border-st-hair" tabs={REVIEW_VIEWS} selected={view} onSelect={setView} />
+      <ViewTabs label="Review" idPrefix="review" className={STAGE_TABS} tabs={REVIEW_VIEWS} selected={view} onSelect={setView} />
       <div role="tabpanel" id="review-panel" aria-labelledby={`review-tab-${view}`}>
       {view === "rules" ? (
       <Panel>
@@ -1016,9 +1043,8 @@ export function ReviewStage(props: StageProps) {
 }
 
 type ReviewView = "rules" | "check" | "copy";
-const REVIEW_TAB = "min-h-11 flex-1 border-b-2 border-transparent px-2 text-[14px] text-slate-400 -mb-px aria-selected:border-[var(--ops-accent-strong)] aria-selected:font-semibold aria-selected:text-[var(--ops-accent-strong)] sm:flex-none sm:px-4";
 const REVIEW_VIEWS: { id: ReviewView; label: string; className: string }[] = [
-  { id: "rules", label: "Your rules", className: REVIEW_TAB },
-  { id: "check", label: "When you check", className: REVIEW_TAB },
-  { id: "copy", label: "Keep a copy", className: REVIEW_TAB },
+  { id: "rules", label: "Your rules", className: STAGE_TAB },
+  { id: "check", label: "When you check", className: STAGE_TAB },
+  { id: "copy", label: "Keep a copy", className: STAGE_TAB },
 ];
