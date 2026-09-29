@@ -228,6 +228,7 @@ test("evidence survives a backup and a restore", async ({ page }) => {
 
   // The app's own backup, taken through the button a learner would press.
   await page.goto("/studio/review");
+  await page.getByRole("tab", { name: "Keep a copy" }).click();
   const download = await Promise.all([
     page.waitForEvent("download"),
     page.getByRole("button", { name: "Download a backup" }).click(),

@@ -32,6 +32,8 @@ function renderReview(actions: StageActions) {
     actions,
   };
   render(<ReviewStage {...props} />);
+  // The downloads are Review's third tab.
+  fireEvent.click(screen.getByRole("tab", { name: "Keep a copy" }));
 }
 
 const noAction = () => {};
