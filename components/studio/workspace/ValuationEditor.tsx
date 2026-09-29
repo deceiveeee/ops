@@ -30,6 +30,8 @@ export default function ValuationEditor({ record, alternatives, disabled, focusO
   const reasoningId = useId();
   const [draft, setDraft] = useState(record);
   const latest = useRef(record);
+  // Edits sent to storage and not yet answered. While any is out, the saved record is older than the page.
+  const inFlight = useRef(0);
   const [view, setView] = useState<View>(FIGURES.some((key) => !record.inputs[key].trim()) ? "Figures" : "Assumptions");
   const [sourceView, setSourceView] = useState("figures");
   const [calculation, setCalculation] = useState(false);
@@ -41,7 +43,9 @@ export default function ValuationEditor({ record, alternatives, disabled, focusO
   const savedSelect = useRef<HTMLSelectElement>(null);
   useEffect(() => { if (focusOnOpen) savedSelect.current?.focus(); }, [focusOnOpen]);
   useEffect(() => {
-    if (!session.pending && !session.dirty && session.status === "ready") { latest.current = record; setDraft(record); }
+    // Follow the saved record (another tab, a reload) only when none of this editor's own edits are still in the air:
+    // an edit typed just as an earlier save lands would otherwise be replaced by that older save.
+    if (inFlight.current === 0 && !session.pending && !session.dirty && session.status === "ready") { latest.current = record; setDraft(record); }
   }, [record, session.pending, session.dirty, session.status]);
   useEffect(() => { if (focusKey && inputs.current[focusKey]) { inputs.current[focusKey]?.focus(); setFocusKey(null); } }, [view, focusKey]);
   useEffect(() => { if (focusHeading) { secondaryHeading.current?.focus(); setFocusHeading(false); } }, [view, focusHeading]);
@@ -50,7 +54,8 @@ export default function ValuationEditor({ record, alternatives, disabled, focusO
   const change = (patch: Partial<ValuationCase>) => {
     const next = { ...latest.current, ...patch, updatedAt: new Date().toISOString() };
     latest.current = next; setDraft(next);
-    void session.update((current) => saveValuation(current, next)).then(report);
+    inFlight.current += 1;
+    void session.update((current) => saveValuation(current, next)).finally(() => { inFlight.current -= 1; }).then(report);
   };
   const changeInput = (key: ValuationInput, value: string) => change({ inputs: { ...latest.current.inputs, [key]: value }, ...(key === "costOfCapital" ? { costReference: null } : {}) });
   const field = (key: ValuationInput, help?: string) => <label key={key}>{VALUATION_LABELS[key]}<input ref={(el) => { inputs.current[key] = el; }} aria-label={VALUATION_LABELS[key]} aria-describedby={help ? `${reasoningId}-${key}-help` : undefined} inputMode="decimal" value={draft.inputs[key]} maxLength={100} onChange={(e) => changeInput(key, e.target.value)} />{help && <span id={`${reasoningId}-${key}-help`} className={design.fieldHelp}>{help}</span>}</label>;
