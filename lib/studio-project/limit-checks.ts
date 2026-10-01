@@ -1,6 +1,7 @@
-import type { StudioCalculation, StudioPlan } from "@/lib/studio";
+import { scenarioResult, type StudioCalculation, type StudioPlan } from "@/lib/studio";
 import type { StudioInstrument } from "@/lib/studio-catalog";
 import { lossBudget, SLICE_NAMES, SLICES, type SliceId, type StudioLimits } from "./limits";
+import type { StudioScenario } from "./schema";
 
 /**
  * A portfolio checked against the learner's own limits.
@@ -74,22 +75,29 @@ function rangeText(min: number | null, max: number | null): string {
 }
 
 /**
- * The Risk page's scenario against the loss budget, in dollars of the whole
- * portfolio. One rule for the check below and for the Risk page itself, which
- * kept its own copy and drifted: it called a large enough gain "larger than
- * your loss budget", and never checked an explicit zero.
+ * A scenario against the loss budget, in dollars of the whole portfolio. One
+ * rule for the check below and for the Risk page itself, which kept its own
+ * copy and drifted: it called a large enough gain "larger than your loss
+ * budget", and never checked an explicit zero. `changeDollars` is the
+ * scenario's change; by default the first scenario's, as the plan holds it.
  */
-export function scenarioLoss(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits) {
+export function scenarioLoss(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits, changeDollars = calculation.stress.changeDollars) {
   const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
   // Zero capacity is an explicit zero-loss limit. Legacy willingness zero
   // with no capacity remains the existing "not set" convention.
   const set = budget.pct > 0 || limits.lossCapacityPct === 0;
   const allowed = calculation.budget * budget.pct / 100;
-  const loses = Math.max(0, -calculation.stress.changeDollars);
+  const loses = Math.max(0, -changeDollars);
   return { set, allowed, loses, from: budget.from, met: loses <= allowed + 0.005 };
 }
 
-export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits): PortfolioChecks {
+/**
+ * `scenarios` is every scenario, the first included (see readScenarios). With
+ * one, or none passed, the loss check reads exactly as it always has. With
+ * several, the loss budget is held against the worst of them for this
+ * allocation, and each holding's room against the tightest.
+ */
+export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation, limits: StudioLimits, scenarios: StudioScenario[] = []): PortfolioChecks {
   const keys: CheckKey[] = ["bills", "slices", "caps", "loss"];
   if (!calculation.valid || calculation.budget <= 0) {
     const detail = calculation.totalWeightPct > 100 + EPS
@@ -156,20 +164,28 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
       ? { key: "caps", title: CHECK_TITLES.caps, status: "not-met", detail: overCaps.join(" ") }
       : { key: "caps", title: CHECK_TITLES.caps, status: "met", detail: `${capsSet.charAt(0).toUpperCase()}${capsSet.slice(1)}.` };
 
-  // The scenario on the Risk page against the loss budget.
+  // The scenarios on the Risk page against the loss budget: every one of them must fit.
+  const several = scenarios.length > 1;
+  const tested = several
+    ? scenarios.map((scenario) => ({ name: scenario.name, stress: scenario.stress, result: scenarioResult(calculation, scenario.stress) }))
+    : [{ name: "", stress: plan.stress, result: calculation.stress }];
+  // The first scenario that loses most; a gain counts as no loss.
+  const worst = tested.reduce((low, item) => (item.result.changeDollars < low.result.changeDollars - 0.005 ? item : low), tested[0]);
   const budget = lossBudget(plan.goal.lossTolerancePct, limits.lossCapacityPct);
-  const { set: hasLossBudget, allowed, loses, met: lossMet } = scenarioLoss(plan, calculation, limits);
+  const { set: hasLossBudget, allowed, loses, met: lossMet } = scenarioLoss(plan, calculation, limits, worst.result.changeDollars);
   const setBy = `the loss you could ${budget.from === "capacity" ? "afford" : "live with"}`;
-  const biggest = calculation.stress.rows
+  const biggest = worst.result.rows
     .filter((row) => row.changeDollars < 0)
     .sort((a, b) => a.changeDollars - b.changeDollars)
     .slice(0, 3)
     .map((row) => `${symbol(calculation.rows.find((r) => r.holding.instrumentId === row.instrumentId)!)} ${dollars(-row.changeDollars)}`);
+  const lossTitle = several ? "Every scenario stays within your loss budget" : CHECK_TITLES.loss;
+  const where = several ? `in “${worst.name}”, the worst of your ${tested.length} scenarios` : "in the scenario";
   const loss: LimitCheck = !hasLossBudget
-    ? { key: "loss", title: CHECK_TITLES.loss, status: "not-checked", detail: "Set the loss you could live with on Goals." }
+    ? { key: "loss", title: lossTitle, status: "not-checked", detail: "Set the loss you could live with on Goals." }
     : {
-      key: "loss", title: CHECK_TITLES.loss, status: lossMet ? "met" : "not-met",
-      detail: `This allocation loses ${dollars(loses)} in the scenario. Your loss budget is ${dollars(allowed)}, ${setBy}.${lossMet || !biggest.length ? "" : ` Most of the loss: ${biggest.join(", ")}.`}`,
+      key: "loss", title: lossTitle, status: lossMet ? "met" : "not-met",
+      detail: `This allocation loses ${dollars(loses)} ${where}. Your loss budget is ${dollars(allowed)}, ${setBy}.${lossMet || !biggest.length ? "" : ` Most of the loss: ${biggest.join(", ")}.`}`,
     };
 
   /*
@@ -178,8 +194,6 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
    * the rest of the slice; and the loss budget less the scenario's loss, over
    * how much more this holding falls than the cash it replaces.
    */
-  const lossPct = -calculation.stress.changeDollars / whole * 100;
-  const cashFall = -plan.stress.cashPct / 100;
   const holdings: HoldingRoom[] = calculation.rows.map((row) => {
     const weightPct = row.targetPortfolioWeightPct;
     const slice = sliceOf(row.instrument);
@@ -188,8 +202,16 @@ export function checkPortfolio(plan: StudioPlan, calculation: StudioCalculation,
     if (cap) ceilings.push(cap);
     const highest = slice ? limits.slices[slice].maxPct : null;
     if (slice && highest !== null) ceilings.push({ label: `${SLICE_NAMES[slice].name}'s highest`, pct: highest - (sliceShares[slice] - weightPct) });
-    const fall = -(calculation.stress.rows.find((r) => r.instrumentId === row.holding.instrumentId)?.changePct ?? 0) / 100;
-    if (hasLossBudget && fall - cashFall > EPS) ceilings.push({ label: "your loss budget", pct: weightPct + (budget.pct - lossPct) / (fall - cashFall) });
+    // One ceiling per scenario in which this holding falls further than cash; the tightest stands.
+    let lossCeiling: WeightCeiling | null = null;
+    if (hasLossBudget) for (const { name, stress, result } of tested) {
+      const fall = -(result.rows.find((r) => r.instrumentId === row.holding.instrumentId)?.changePct ?? 0) / 100;
+      const cashFall = -stress.cashPct / 100;
+      if (fall - cashFall <= EPS) continue;
+      const pct = weightPct + (budget.pct - (-result.changeDollars / whole * 100)) / (fall - cashFall);
+      if (!lossCeiling || pct < lossCeiling.pct - EPS) lossCeiling = { label: several ? `your loss budget in “${name}”` : "your loss budget", pct };
+    }
+    if (lossCeiling) ceilings.push(lossCeiling);
     const clamped = ceilings.map((ceiling) => ({ ...ceiling, pct: Math.max(0, ceiling.pct) }));
     const tightest = clamped.reduce<WeightCeiling | null>((low, ceiling) => (!low || ceiling.pct < low.pct - EPS ? ceiling : low), null);
     return { instrumentId: row.holding.instrumentId, weightPct, slice, ceilings: clamped, tightest, over: tightest !== null && weightPct > tightest.pct + EPS };

@@ -12,6 +12,9 @@
 .work .intro { font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
 .stageTitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); min-height: 25px; }
 .stageTitle button { min-height: 26px; text-decoration: underline; text-underline-offset: 3px; }
+.scenarioPick { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.scenarioField { max-width: min(320px, 62vw); }
+.scenarioPick .scenarioValue { min-height: 36px; padding: 4px 8px; font-size: 13px; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .root table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
 .root table :is(th,td) { padding: 10px 0; border-bottom: 1px solid var(--ops-divider); text-align: right; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
@@ -57,8 +60,20 @@
 .problem { font-size: 13px; line-height: 1.5; margin-top: 12px; padding: 10px; border-left: 2px solid #915414; background: var(--ops-surface-2); }
 .problem button { text-decoration: underline; text-underline-offset: 3px; }
 .message { font-size: 12px; line-height: 1.5; margin-top: 10px; color: var(--ops-accent-strong); }
-@media(max-width:1023px) {
+.hint { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--ops-text-secondary); }
+.root .inlineAction { min-height: 0; margin-left: 8px; font-size: 12px; color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+.root button.inlineAction:not(td *, th *) { display: block; margin: 8px 0 0 auto; min-height: 30px; }
+/* Studio switches to its tablet layout at 1100px. */
+@media(max-width:1100px) {
   .heading p { display: none; }
+  .stageTitle { min-height: 0; }
+  .work h2 { margin: 2px 0 8px; }
+  .root .scenarioTable :is(th,td) { padding-block: 6px; }
+  .root .weightsTable :is(th,td) { padding-block: 7px; }
+  .allocationBars { padding: 10px 12px; margin-top: 12px; }
+  .allocationBars > div + div { margin-top: 8px; }
+  .allocationBars small { margin-top: 6px; }
+  .scenarioHeadline strong { font-size: 28px; }
 }
 @media(max-width:767px) {
   .heading h1 { font-size: 28px; }
@@ -70,7 +85,10 @@
   .work .intro { font-size: 12px; margin-bottom: 10px; }
   .root table :is(th,td) { padding-block: 8px; font-size: 12px; }
   .root table th:first-child { width: 35%; padding-right: 8px; }
-  .weightsTable td:last-child { width: 42%; }
+  /* Room for "$40,000 · 40% of all money" on one line under each box. */
+  .weightsTable thead th:first-child { width: 28%; }
+  .weightsTable thead th:nth-child(2) { width: 16%; }
+  .weightsTable td:first-of-type { padding-right: 10px; }
   .weightsTable td small { line-height: 1.4; }
   .allocationBars { padding: 12px; margin-top: 12px; }
   .scenarioHeadline { padding: 12px; gap: 8px; }
@@ -79,10 +97,12 @@
   .footnote { margin-top: 10px; }
 }
 
-.selectField { position: relative; display: grid; min-width: 0; border-radius: 9px; }
-.root .selectField select { position: absolute; inset: 0; height: 100%; opacity: 0; cursor: pointer; }
-.selectValue { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 10px; border: 1px solid var(--ops-control-border); border-radius: 9px; background: var(--ops-surface); color: var(--ops-text-primary); font-size: 16px; line-height: 1.5; pointer-events: none; }
-.selectValue > span { min-width: 0; overflow-wrap: anywhere; }
-.selectValue svg { flex-shrink: 0; }
-.selectField:has(select:focus-visible) { outline: 2px solid var(--ops-accent-strong); outline-offset: 3px; }
-.selectField:has(select:disabled) { opacity: .5; }
+/* Touch screens: 44px targets. Small links in header rows and sentences keep
+   their layout and extend their hit area instead of growing the row. */
+@media (pointer: coarse) {
+  .weightsTable th button { min-height: 44px; }
+  .scenarioPick .scenarioValue { min-height: 44px; font-size: 16px; }
+  .root button.inlineAction:not(td *, th *) { min-height: 44px; }
+  :is(.stageTitle, .explanation, .problem, .scenarioTable) :is(a, button),.textLink,.evidence a { position: relative; }
+  :is(.stageTitle, .explanation, .problem, .scenarioTable) :is(a, button)::after,.textLink::after,.evidence a::after { content: ""; position: absolute; inset: -13px -6px; }
+}

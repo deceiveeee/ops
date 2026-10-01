@@ -1,8 +1,9 @@
-import { calculateStudio, exportStudioText, type StudioPlan } from "@/lib/studio";
+import { calculateStudio, exportStudioText, scenarioResult, type StudioPlan } from "@/lib/studio";
 import { checkPortfolio, describeRoom, type CheckStatus } from "./limit-checks";
 import { limitsText, readLimits } from "./limits";
 import { STUDIO_CATALOG, type StudioInstrument } from "@/lib/studio-catalog";
 import { startCandidate, updateCandidate } from "./operations";
+import { readScenarios } from "./scenarios";
 import {
   candidateStanding,
   findCandidate,
@@ -157,7 +158,7 @@ export function exportProjectText(project: StudioProject): string {
    */
   const alternatives = project.alternatives.map((alternative) => {
     const plan = projectToPlan({ ...project, selectedAlternativeId: alternative.id });
-    const checked = checkPortfolio(plan, calculateStudio(plan, catalog), limits);
+    const checked = checkPortfolio(plan, calculateStudio(plan, catalog), limits, readScenarios(project));
     const rooms = checked.holdings.flatMap((room) => {
       const text = describeRoom(room);
       return text ? [`${catalog.find((item) => item.id === room.instrumentId)?.symbol ?? room.instrumentId}: ${text}`] : [];
@@ -194,8 +195,19 @@ export function exportProjectText(project: StudioProject): string {
     ];
     return lines.filter(Boolean).join("\n");
   });
-  // The limits first: the portfolios after them are checked against them.
-  return [`YOUR LIMITS\n${limitsText(limits, project.goal.lossTolerancePct).join("\n")}`, ...alternatives,
+  // Several scenarios: each one's assumptions and what the selected allocation would lose in it.
+  const scenarios = readScenarios(project);
+  const selected = calculateStudio(projectToPlan(project), projectCatalog(project));
+  const usd = (value: number) => value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  const scenarioLines = scenarios.length > 1 && selected.valid ? [
+    "SCENARIOS (ASSUMPTIONS YOU CHOSE, NOT FORECASTS)",
+    ...scenarios.map(({ name, stress }) => {
+      const result = scenarioResult(selected, stress);
+      return `${name}: US stocks ${stress.usStocksPct}%; international stocks ${stress.internationalStocksPct}%; global stocks ${stress.globalStocksPct}%; bonds ${stress.bondsPct}%; cash ${stress.cashPct}%. Selected allocation: ${usd(result.changeDollars)} (${result.changePct}%).`;
+    }),
+  ] : [];
+  // The limits first: the portfolios after them are checked against them, then the scenarios they were tested in.
+  return [`YOUR LIMITS\n${limitsText(limits, project.goal.lossTolerancePct).join("\n")}`, ...alternatives, ...scenarioLines,
     "ALL RESEARCH (INCLUDING INVESTMENTS NOT HELD)", ...research,
     "DECISIONS", ...project.decisions.map((decision) => `${decision.at}: ${decision.summary}\n${decision.reason}`),
   ].join("\n\n");

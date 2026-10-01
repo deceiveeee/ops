@@ -108,3 +108,11 @@ failures. An earlier full run of the same
 day failed one company report reader test, which shares no code with valuation;
 it and a second reader test that failed once on a rerun each passed repeatedly
 when run alone.
+
+Follow-up visual review: comparison and sensitivity have no P0/P1 defects at
+390, 1440 and 1920px; the reports confirm all six widths remain within the
+screen budget. The header appearing mid-page in sensitivity captures is a
+full-page capture artifact: the live header has `position: sticky; top: 0px`.
+One P2 remains: on phones, a long company name can obscure the scenario name
+inside the native saved-scenario selector. Consider showing the scenario name
+first in a later navigation polish pass.

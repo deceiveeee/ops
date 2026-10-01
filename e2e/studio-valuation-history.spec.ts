@@ -133,6 +133,8 @@ test("the view switches are tabs a keyboard can move between", async ({ page }) 
   await page.goto("/studio/portfolio/returns");
   await page.getByRole("tab", { name: "Inspect history" }).focus();
   await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Two allocations" })).toBeFocused();
+  await page.keyboard.press("ArrowRight");
   await expect(page.getByRole("tab", { name: "Import a local history" })).toBeFocused();
   await expect(page.getByRole("tabpanel")).toHaveAccessibleName("Import a total-return history");
 });

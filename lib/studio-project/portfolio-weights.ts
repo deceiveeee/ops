@@ -2,6 +2,7 @@ import { calculateStudio, type StudioCalculation, type StudioPlan } from "@/lib/
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { checkPortfolio, type PortfolioChecks } from "./limit-checks";
 import { readLimits } from "./limits";
+import { readScenarios } from "./scenarios";
 import { workingAlternative, type PortfolioAlternative, type StudioProject } from "./schema";
 import { readInput, validValuationCase, valuationResult, type ValuationCase } from "./valuation-cases";
 import { validateStudioProject } from "./validate";
@@ -46,7 +47,7 @@ export function allocationView(project: StudioProject, alternative: PortfolioAlt
 } {
   const plan = projectToPlan({ ...project, alternatives: [alternative], selectedAlternativeId: alternative.id });
   const calculation = calculateStudio(plan, projectCatalog(project));
-  return { plan, calculation, checks: checkPortfolio(plan, calculation, readLimits(project)) };
+  return { plan, calculation, checks: checkPortfolio(plan, calculation, readLimits(project), readScenarios(project)) };
 }
 
 export interface WeightProposalEdits {
@@ -59,7 +60,10 @@ export interface WeightProposalEdits {
 }
 
 export function comparisonBasis(project: StudioProject) {
-  return structuredClone({ goal: project.goal, limits: readLimits(project), stress: project.stress });
+  // Extra scenarios join the basis only when there are some, so a proposal
+  // saved before scenarios existed still matches a project with just one.
+  const scenarios = project.scenarios?.length ? { scenarioName: project.scenarioName ?? "", scenarios: project.scenarios } : {};
+  return structuredClone({ goal: project.goal, limits: readLimits(project), stress: project.stress, ...scenarios });
 }
 
 /** JSON object member order can change during an import without changing any input. */
@@ -77,11 +81,29 @@ function sameInputs(left: unknown, right: unknown): boolean {
     && keys.every((key) => Object.prototype.hasOwnProperty.call(after, key) && sameInputs(before[key], after[key]));
 }
 
-export function comparisonNeedsReview(project: StudioProject, alternative: PortfolioAlternative) {
-  return alternative.comparisonBasis !== undefined && !sameInputs(alternative.comparisonBasis, comparisonBasis(project));
+export type BasisPart = "goal" | "limits" | "scenario";
+type Basis = NonNullable<PortfolioAlternative["comparisonBasis"]>;
+
+/**
+ * Which of the goal, the limits and the scenarios differ between two bases:
+ * the one rule behind Compare allocations' "needs review" and the notice on
+ * Goals, so the two cannot disagree. A scenario counts by its price changes,
+ * the first's and every other's, in order. Its name is only a label, so a
+ * rename changes nothing a proposal was checked against; and a basis saved
+ * before there could be more than one scenario reads as having no others.
+ */
+function changedParts(before: Basis, after: Basis): BasisPart[] {
+  const scenario = (basis: Basis) => ({ first: basis.stress, others: (basis.scenarios ?? []).map((item) => item.stress) });
+  return ([
+    ["goal", sameInputs(before.goal, after.goal)],
+    ["limits", sameInputs(before.limits, after.limits)],
+    ["scenario", sameInputs(scenario(before), scenario(after))],
+  ] as const).filter(([, same]) => !same).map(([part]) => part);
 }
 
-export type BasisPart = "goal" | "limits" | "scenario";
+export function comparisonNeedsReview(project: StudioProject, alternative: PortfolioAlternative) {
+  return alternative.comparisonBasis !== undefined && changedParts(alternative.comparisonBasis, comparisonBasis(project)).length > 0;
+}
 
 /**
  * The allocation the learner chose, once the goal, limits or scenario it was
@@ -95,12 +117,7 @@ export function chosenBeforeChange(project: StudioProject): { name: string; chos
   if (!chosen || !basis) return null;
   const decision = [...project.decisions].reverse().find((item) => item.affects.at(-1) === chosen.id);
   if (!decision) return null;
-  const now = comparisonBasis(project);
-  const changed = ([
-    ["goal", sameInputs(basis.goal, now.goal)],
-    ["limits", sameInputs(basis.limits, now.limits)],
-    ["scenario", sameInputs(basis.stress, now.stress)],
-  ] as const).filter(([, same]) => !same).map(([part]) => part);
+  const changed = changedParts(basis, comparisonBasis(project));
   return changed.length ? { name: chosen.name, chosenAt: decision.at, changed } : null;
 }
 
@@ -147,7 +164,9 @@ export function saveWeightProposal(
     if (!Number.isFinite(weight) || weight < 0 || weight > 100) throw new Error("Every weight must be a number from 0% to 100%. A blank weight is unfinished.");
     return { ...position, targetWeightPct: weight };
   });
-  if (positions.reduce((sum, position) => sum + position.targetWeightPct, 0) > 100) {
+  // Round the way calculateStudio does: 0.01 + 64.15 + 35.84 is 100 exactly,
+  // but binary floating point adds it to 100.00000000000001.
+  if (Math.round(positions.reduce((sum, position) => sum + position.targetWeightPct, 0) * 1_000_000) / 1_000_000 > 100) {
     throw new Error("The proposed weights exceed 100% of the money available after the cash reserve.");
   }
   const links = new Map((source.valuationLinks ?? []).map((link) => [link.instrumentId, structuredClone(link)]));

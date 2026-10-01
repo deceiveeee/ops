@@ -4,6 +4,7 @@ import { exportStudioCsv } from "@/lib/studio";
 import { addEvidence, removeEvidence, setCandidateStatus, updateCandidate } from "@/lib/studio-project/operations";
 import { exportProjectText } from "@/lib/studio-project/workspace";
 import { readLimits } from "@/lib/studio-project/limits";
+import { addScenario, readScenarios, removeScenario, renameScenario, updateScenario } from "@/lib/studio-project/scenarios";
 import { downloadFile } from "../shared";
 import { BuildStage, BuyStage, ReviewStage, RiskStage, type StageProps } from "../stages";
 import GoalsWorkspace from "./GoalsWorkspace";
@@ -42,6 +43,18 @@ export default function WorkspaceStage({ stage, eyebrow }: { stage: keyof typeof
     headingAs: "h1",
     investigations: project.investigations.map(({ id, company }) => ({ id, company })),
     limits: readLimits(project),
+    // Scenarios belong to the project, so they are saved directly, like research.
+    scenarios: {
+      list: readScenarios(project),
+      add: async (copyOf) => {
+        const id = `scenario-${crypto.randomUUID()}`;
+        const result = report(await session.update((current) => addScenario(current, copyOf, new Date().toISOString(), id)));
+        return result.ok ? id : null;
+      },
+      update: async (id, patch) => report(await session.update((current) => updateScenario(current, id, patch, new Date().toISOString()))),
+      rename: async (id, name) => report(await session.update((current) => renameScenario(current, id, name, new Date().toISOString()))),
+      remove: async (id) => report(await session.update((current) => removeScenario(current, id, new Date().toISOString()))),
+    },
     /*
      * Research goes straight to the project, not through the plan adapter.
      *

@@ -9,6 +9,7 @@ import {
   type CashNeed, type SliceId, type SliceTarget, type StudioLimits,
 } from "@/lib/studio-project/limits";
 import { chosenBeforeChange, type BasisPart } from "@/lib/studio-project/portfolio-weights";
+import { readScenarios } from "@/lib/studio-project/scenarios";
 import type { StageProps } from "../stages";
 import { Choice, Field, usdWhole, useBufferedInput } from "../shared";
 import StudioIcon from "./StudioIcon";
@@ -35,11 +36,12 @@ const SLICE_COLOURS: Record<SliceId, string> = { ready: "#8f9985", steady: "#bfb
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const chosenOn = (at: string) => { const date = new Date(at); return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`; };
 const PART_WORDS: Record<BasisPart, string> = { goal: "your goal", limits: "your limits", scenario: "the loss scenario" };
-/** "your limits have", "your goal and the loss scenario have", "your goal has". */
-const changedWords = (parts: BasisPart[]) => {
-  const words = parts.map(part => PART_WORDS[part]);
+/** "your limits have", "your goal and the loss scenario have", "your goal has"; "your loss scenarios have" once there are several. */
+const changedWords = (parts: BasisPart[], severalScenarios: boolean) => {
+  const words = parts.map(part => part === "scenario" && severalScenarios ? "your loss scenarios" : PART_WORDS[part]);
   const listed = words.length > 1 ? `${words.slice(0, -1).join(", ")} and ${words.at(-1)}` : words[0];
-  return `${listed} ${parts.length === 1 && parts[0] !== "limits" ? "has" : "have"}`;
+  const plural = parts.length > 1 || parts[0] === "limits" || (parts[0] === "scenario" && severalScenarios);
+  return `${listed} ${plural ? "have" : "has"}`;
 };
 
 export default function GoalsWorkspace({ plan, calculation, update }: StageProps) {
@@ -77,7 +79,7 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
         */}
       <div role="status" className={chosen ? styles.chosenNotice : undefined}>
         {chosen ? <>
-          <span>You chose <strong>{chosen.name}</strong> on {chosenOn(chosen.chosenAt)}, and {changedWords(chosen.changed)} changed since.</span>{" "}
+          <span>You chose <strong>{chosen.name}</strong> on {chosenOn(chosen.chosenAt)}, and {changedWords(chosen.changed, readScenarios(project!).length > 1)} changed since.</span>{" "}
           <Link href="/studio/portfolio/weights">Check it still fits →</Link>
         </> : null}
       </div>

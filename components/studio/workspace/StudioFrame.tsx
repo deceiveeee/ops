@@ -8,6 +8,7 @@ import { STUDIO_GUIDANCE, type StudioGuidanceKey } from "@/lib/studio-guidance";
 import { STUDIO_MODES } from "@/lib/studio-mode";
 import { checkPortfolio } from "@/lib/studio-project/limit-checks";
 import { readLimits } from "@/lib/studio-project/limits";
+import { readScenarios } from "@/lib/studio-project/scenarios";
 import LimitChecks from "../LimitChecks";
 import { GuidancePanel, Notice, PageIntro, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
@@ -531,7 +532,7 @@ function Summary() {
 function AsideLimits() {
   const { plan, calculation, project } = useWorkspace();
   if (!plan || !calculation || !project || plan.holdings.length === 0) return null;
-  return <LimitChecks checks={checkPortfolio(plan, calculation, readLimits(project)).checks} />;
+  return <LimitChecks checks={checkPortfolio(plan, calculation, readLimits(project), readScenarios(project)).checks} />;
 }
 
 /** The same three numbers as one line, for screens without room beside the work. */

@@ -218,3 +218,79 @@ Evidence: `polish-browser-full.log`, `polish-typecheck.log`,
 Status: Ready for review. The live Vercel preview remains unverified because
 it required sign-in; the manual walkthrough and automated suite both used
 the local production build.
+
+## Review fixes from PR #12, reapplied to main, 27 September
+
+PR #12 (Claude's review of the Codex branch, 26 September) was still open when
+#13 and #14 merged Codex's own version to `main`. Its fixes are reapplied on
+`feat/return-comparison`, based on `main` at `275dae3`, keeping #14's wrapping
+selection controls and its heading "What drives the change?". The text below
+is that review as written; its measurements and test counts describe the
+PR #12 branch, and are re-verified for this tree in the return-comparison
+record.
+
+### The 26 September review
+
+Codex stopped before its final run, so the work was moved from the
+`codex/portfolio-weights` worktree onto `feat/portfolio-weights` in the shared
+checkout (byte-for-byte copy, verified file by file) and reviewed there. The
+calculation module, validation, persistence and hand-worked unit cases held
+up. Four defects were found by exercising the page, not by reading the tests:
+
+1. **Weights adding to exactly 100% could not be saved.** The preview rounds the
+   total as `calculateStudio` does; saving compared the raw floating-point sum.
+   5.4 + 69.9 + 24.7 adds to 100.00000000000001, so Save was offered and then
+   refused with "exceed 100%". A search of two-decimal splits found the case
+   common. Saving now rounds the same way. Three unit cases (each asserting its
+   own floating-point premise) failed before the fix and pass after it; a
+   browser case saves 5.4 / 69.9 / 24.7 through the page.
+2. **Loss scenario rows did not add up to their total.** The table paged three
+   holdings at a time, so page one of four showed rows totalling −$16,400
+   under a −$18,000 headline. Rows now run largest change first; the rest are
+   summed in one "1 more holding" row with **Show** (focus moves to its
+   counterpart when rows are shown or hidden), and the cash row stays. A
+   browser case sums the cells on screen and matches both totals.
+3. **Choosing an allocation offered to save a duplicate of it.** After **Use
+   this allocation**, the view became a save form named "… proposal proposal".
+   The unchanged selected allocation now has nothing to save.
+4. **Four holdings broke the screen budget.** The six-width test used three
+   holdings, so the pager never appeared: with four, Weights measured 1.53 and
+   Loss scenario 1.55 screens at 390 and 768px. Phone columns now keep each
+   amount on one line, the scenario heading and intro are shorter ("Where the
+   change comes from"; "10% of all money falling 30% subtracts 3 percentage
+   points"), and spacing is tighter up to 1,100px, Studio's tablet breakpoint.
+   A second six-width test now uses four holdings.
+
+Also corrected: one page name, **Compare allocations** (the heading and the
+Valuation link said "Portfolio weights"); **Add valuation** / **Valuation
+kept**, named with the holding, in place of "Valuation +"; the evidence card
+shows the entered price and date the price gap is measured from, "1 company
+share", and readable dates; a way back to the weights from the evidence view;
+a confirmation after saving; a hint when only the learner's name or reason is
+missing; no focus jump on arrival; the Section menu's chevron on the phone
+Portfolio menu; and 44px touch targets. Small links in header rows and
+sentences extend their hit area on touch screens instead of growing the row;
+an emulated touch phone confirmed taps 21px above and below the centre of all
+six such controls land on them.
+
+Screens at a 900px viewport, three holdings / four holdings:
+
+| Width | Weights | Limits | Loss scenario | Evidence | Keep |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 390 | 1.40 / 1.46 | 1.44 / 1.44 | 1.41 / 1.46 | 1.45 / 1.45 | 1.36 / 1.36 |
+| 768 | 1.43 / 1.48 | 1.37 / 1.37 | 1.43 / 1.49 | 1.45 / 1.45 | 1.34 / 1.34 |
+| 1024 | 1.36 / 1.42 | 1.31 / 1.31 | 1.37 / 1.43 | 1.39 / 1.39 | 1.27 / 1.27 |
+| 1280–1920 | 1.41 / 1.47 | 1.35 / 1.35 | 1.42 / 1.48 | 1.43 / 1.43 | 1.29 / 1.29 |
+
+No horizontal overflow or page errors at any width. Evidence:
+`.agent-shots/portfolio-weights-report.md`,
+`.agent-shots/portfolio-weights-four-report.md` and their PNG captures, which
+were read, not only measured.
+
+Release checks, 26 September, on this branch: TypeScript passed; lint passed
+with the two existing onboarding hook warnings; unit tests passed 1,173 of
+1,173 (86 files); the production build passed; the full browser suite passed
+234 tests with 5 optional or environment-dependent skips and no failures. This
+includes Codex's report-reader test correction (`b6d3236`). Not inspected:
+dark theme (Studio uses the site's fixed light theme) and a physical phone;
+touch behaviour was checked in an emulated touch browser.

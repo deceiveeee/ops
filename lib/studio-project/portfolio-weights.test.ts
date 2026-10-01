@@ -102,6 +102,19 @@ describe("portfolio weight comparisons", () => {
     expect(JSON.stringify(value)).toBe(before);
   });
 
+  // Each set adds to exactly 100 by hand, but to 100.00000000000001 in binary
+  // floating point; the preview accepted them, so saving must too.
+  it.each([["0.01", "64.15", "35.84"], ["5.4", "69.9", "24.7"], ["1.37", "69.37", "29.26"]])("saves weights of %s + %s + %s, exactly 100%%", (vti, aapl, agg) => {
+    expect(Number(vti) + Number(aapl) + Number(agg)).toBeGreaterThan(100);
+    const saved = save(project(), { weights: { vti, aapl, agg } });
+    expect(saved.alternatives[1].positions.map((row) => row.targetWeightPct)).toEqual([Number(vti), Number(aapl), Number(agg)]);
+    expect(allocationView(saved, saved.alternatives[1]).calculation.targetCash).toBe(20_000);
+  });
+
+  it("still refuses weights one hundredth of a point over 100%", () => {
+    expect(() => save(project(), { weights: { vti: "0.01", aapl: "64.15", agg: "35.85" } })).toThrow(/exceed 100/);
+  });
+
   it("refuses overweight, unknown positions, unknown sources and invalid portfolio calculations", () => {
     expect(() => save(project(), { weights: { vti: "90" } })).toThrow(/exceed 100/);
     expect(() => save(project(), { weights: { missing: "5" } })).toThrow(/no longer in/);

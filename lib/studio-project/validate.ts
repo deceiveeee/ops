@@ -3,6 +3,8 @@ import { FIGURES } from "./investigate";
 import { validValuationCase } from "./valuation-cases";
 import { validReturnHistory } from "./total-returns";
 import { validLimits } from "./limits";
+import { FIRST_SCENARIO_ID, MAX_SCENARIO_NAME, MAX_SCENARIOS } from "./scenarios";
+import { MAX_SAVED_COMPARISONS, validSavedComparison } from "./return-comparison-saved";
 
 /** The seven figures Studio asks for. Anything else in a stored record is junk. */
 const FIGURE_KEYS = new Set<string>(FIGURES.map((figure) => figure.key));
@@ -28,7 +30,7 @@ const emptyResearch = { why: "", mainRisk: "", whatWouldChangeMyMind: "", review
 export function validateStudioProject(value: unknown): string[] {
   if (!object(value) || value.schemaVersion !== 2) return ["This is not a supported Studio project."];
   const issues: string[] = [];
-  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom", "valuations", "returnHistories", "limits"])) {
+  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom", "valuations", "returnHistories", "limits", "scenarioName", "scenarios", "returnComparisons"])) {
     issues.push("This project contains fields this version does not understand. Keep the original backup.");
   }
   // Goal/rule/position units are unchanged from v1. Reuse that validator rather
@@ -40,6 +42,20 @@ export function validateStudioProject(value: unknown): string[] {
   };
   issues.push(...validateStudioPlan(common));
   if (!id(value.id) || !dated(value)) issues.push("The project identity or saved dates are invalid.");
+  // Further scenarios reuse the one definition of a valid price change.
+  const validScenarios = (name: unknown, scenarios: unknown) => {
+    if (name !== undefined && !text(name, MAX_SCENARIO_NAME)) return false;
+    if (scenarios === undefined) return true;
+    if (!list(scenarios, MAX_SCENARIOS - 1)) return false;
+    const seen = new Set<string>();
+    return scenarios.every((scenario) => {
+      if (!object(scenario) || !keys(scenario, ["id", "name", "stress"]) || !id(scenario.id) || scenario.id === FIRST_SCENARIO_ID
+        || seen.has(scenario.id) || !text(scenario.name, MAX_SCENARIO_NAME) || validateStudioPlan({ ...common, stress: scenario.stress }).length) return false;
+      seen.add(scenario.id);
+      return true;
+    });
+  };
+  if (!validScenarios(value.scenarioName, value.scenarios)) issues.push(`Scenarios must be at most ${MAX_SCENARIOS}, each with a name of up to ${MAX_SCENARIO_NAME} characters and price changes between -100% and +100%.`);
 
   const recordIds = new Set<string>();
   const instruments = new Set<string>();
@@ -226,8 +242,8 @@ export function validateStudioProject(value: unknown): string[] {
     if (id(alternative.id)) alternativeIds.add(alternative.id);
     if (alternative.comparisonBasis !== undefined) {
       const basis = alternative.comparisonBasis;
-      if (!object(basis) || !keys(basis, ["goal", "limits", "stress"]) || !validLimits(basis.limits)
-        || validateStudioPlan({ ...common, goal: basis.goal, stress: basis.stress }).length) {
+      if (!object(basis) || !keys(basis, ["goal", "limits", "stress", "scenarioName", "scenarios"]) || !validLimits(basis.limits)
+        || validateStudioPlan({ ...common, goal: basis.goal, stress: basis.stress }).length || !validScenarios(basis.scenarioName, basis.scenarios)) {
         issues.push("The saved allocation comparison has invalid goals, limits or scenario assumptions.");
       }
     }
@@ -265,6 +281,10 @@ export function validateStudioProject(value: unknown): string[] {
   if (value.valuations !== undefined && (!list(value.valuations, 1000) || !value.valuations.every((v) => validValuationCase(v) && uniqueId(v.id)))) issues.push("A saved valuation contains invalid or repeated fields.");
   if (value.returnHistories !== undefined && (!list(value.returnHistories, 100) || !value.returnHistories.every((v) => validReturnHistory(v) && uniqueId(v.id)))) issues.push("A return history contains invalid dates, adjustments or repeated fields.");
   if (value.limits !== undefined && !validLimits(value.limits)) issues.push("Your limits contain a value outside 0-100%, an impossible date, or a field this version does not understand.");
+  // Each saved comparison is recomputed from its own data; a result that disagrees makes it invalid.
+  if (value.returnComparisons !== undefined && (!list(value.returnComparisons, MAX_SAVED_COMPARISONS) || !value.returnComparisons.every((item) => validSavedComparison(item) && uniqueId(item.id)))) {
+    issues.push(`Saved return comparisons must be at most ${MAX_SAVED_COMPARISONS}, each with data that reproduces its results.`);
+  }
   const original = value.migratedFrom;
   if (original !== null) {
     if (!object(original) || !keys(original, ["schemaVersion", "raw", "migratedAt"])
