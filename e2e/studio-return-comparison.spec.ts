@@ -447,3 +447,45 @@ test("records the Return history page's own chrome, the baseline the comparison 
   mkdirSync(".agent-shots", { recursive: true });
   writeFileSync(".agent-shots/return-history-baseline.md", report.join("\n"));
 });
+
+/*
+ * A month range is never a dead end. A narrowed range that the allocations
+ * no longer share, and two allocations of nothing but cash, both say what to
+ * choose and show the control to choose it with.
+ */
+test("a narrowed range the allocations no longer share can be cleared", async ({ page }) => {
+  // All VTI and mostly VTI share VTI's months; adding AGG (to Dec 2025) ends them earlier.
+  const base = fixture({ vti: [100, 80], agg: [0, 0] }, ["All VTI", "Mostly VTI"], [aggHistory()]);
+  const withBonds = { ...base.alternatives[0], id: "alt-bonds", name: "With bonds", positions: base.alternatives[0].positions.map((position) => ({ ...position, targetWeightPct: position.instrumentId === "vti" ? 60 : 40 })) };
+  await open(page, { ...base, alternatives: [...base.alternatives, withBonds] });
+  await tab(page, "Two allocations").click();
+  const vti = publicReturns.histories.find((h) => h.symbol === "VTI")!.observations;
+  const label = (month: string) => new Date(`${month}-15T00:00:00Z`).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+  const [last, beforeLast] = [vti.at(-1)!.month, vti.at(-2)!.month];
+  await expect(panel(page)).toContainText(`Months both share: ${label(vti[0].month)} to ${label(last)}`);
+
+  await page.getByText("Use fewer months", { exact: true }).click();
+  await page.getByRole("combobox", { name: /^From/ }).selectOption(beforeLast);
+  await page.getByRole("combobox", { name: /^To/ }).selectOption(last);
+  await expect(panel(page)).toContainText(`Months both share: ${label(beforeLast)} to ${label(last)}, 2 months.`);
+
+  // Now one of them holds AGG, whose history ends in December 2025: those two months are not shared.
+  await page.getByRole("combobox", { name: "Second allocation", exact: true }).selectOption("alt-bonds");
+  await expect(panel(page)).toContainText("The months you narrowed to are not all shared now: these allocations share Jan 2025 to Dec 2025.");
+  await expect(page.getByRole("button", { name: "Compare →", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Use every shared month", exact: true }).click();
+  await expect(panel(page)).toContainText("Months both share: Jan 2025 to Dec 2025, 12 months.");
+  await expect(page.getByRole("button", { name: "Compare →", exact: true })).toBeEnabled();
+});
+
+test("two allocations of nothing but cash ask for months, and take them", async ({ page }) => {
+  await open(page, fixture({ vti: [0, 0] }, ["Cash now", "Cash later"]));
+  await tab(page, "Two allocations").click();
+  await expect(panel(page)).toContainText("Both allocations are entirely cash. Choose the months to compare.");
+  await page.getByLabel("From month", { exact: true }).fill("2025-01");
+  await page.getByLabel("To month", { exact: true }).fill("2025-06");
+  await expect(panel(page)).toContainText("Months both share: Jan 2025 to Jun 2025, 6 months.");
+  await page.getByRole("button", { name: "Compare →", exact: true }).click();
+  // Cash earns 0% a month, so both end where they began.
+  await expect(page.getByRole("table", { name: "Results over the same months", exact: true }).getByRole("row").filter({ hasText: "Compounded return" }).getByRole("cell")).toHaveText(["0.00%", "0.00%"]);
+});

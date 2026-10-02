@@ -245,8 +245,19 @@ function Comparison({ project, catalogSymbol, bondIds, initialA, initialB, onImp
             {built.aligned.excluded.filter((item) => item.before || item.after).map((item) => `${symbol(item.instrumentId)}: ${[item.before && `${item.before} earlier`, item.after && `${item.after} later`].filter(Boolean).join(" and ")} ${item.before + item.after === 1 ? "month" : "months"} left out`).join("; ")}{built.aligned.excluded.some((item) => item.before || item.after) ? "." : ""}
             {built.aligned.months < MIN_COMPARISON_MONTHS && ` One month can be inspected, but a comparison needs at least ${MIN_COMPARISON_MONTHS}.`}
             {" "}<span className={styles.quiet}>Missing months are never filled or skipped, and no investment is dropped or swapped for another.</span></p>
-          {!built.rows.length && <RangePicker full={built.full} rows={built.rows.length} start={start} end={end} onChange={(from, to) => { setStart(from); setEnd(to); setMonthIndex(0); }} />}
-        </div> : <p role="status" className={styles.problem}>{built.aligned.error}</p>}
+        </div> : built.rows.length > 0 && built.aligned.kind === "range" && built.full.ok ? (
+          /*
+           * A narrowed range these allocations no longer share, say after one of
+           * them took on a shorter history. The pickers only open on a valid
+           * range, so the way out is here, beside what went wrong.
+           */
+          <p role="status" className={styles.problem}>
+            The months you narrowed to are not all shared now: these allocations share {monthLabel(built.full.start)} to {monthLabel(built.full.end)}.{" "}
+            <button className={styles.inlineButton} onClick={() => { setStart(""); setEnd(""); setMonthIndex(0); }}>Use every shared month</button>
+          </p>
+        ) : <p role="status" className={styles.problem}>{built.aligned.error}</p>}
+        {/* Both entirely cash: no market months to offer, so the months are typed in, and the boxes stay while they are not yet valid. */}
+        {!built.rows.length && <RangePicker full={built.full} rows={built.rows.length} start={start} end={end} onChange={(from, to) => { setStart(from); setEnd(to); setMonthIndex(0); }} />}
         {built.result && !built.result.ok && <p role="status" className={styles.problem}>{built.result.error}</p>}
         <div className={styles.actions}>
           <button className={`${common.button} ${common.primary}`} disabled={!built.result?.ok} onClick={() => show("compare")}>Compare →</button>
