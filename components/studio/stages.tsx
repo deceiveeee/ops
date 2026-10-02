@@ -646,24 +646,74 @@ export function RiskStage(props: StageProps) {
   const over = (change: number) => { const loss = lossIn(change); return loss.set && !loss.met; };
   const budget = lossIn(worst.result.changeDollars);
   const shownLoss = lossIn(shown.result.changeDollars);
-  const setBy = `the loss you could ${budget.from === "capacity" ? "afford" : "live with"}`;
   const exceeds = calculation.valid && over(worst.result.changeDollars);
+
+  /*
+   * On a phone, several scenarios show one thing at a time: the list, or the
+   * scenario opened from it. From 768px both are on screen and this is moot.
+   * Focus follows: into the opened scenario's name, back to its row.
+   */
+  const [editing, setEditing] = useState(false);
+  const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [focusRow, setFocusRow] = useState(false);
+  useEffect(() => { if (focusRow) { rowRefs.current[selected.id]?.focus(); setFocusRow(false); } }, [focusRow, editing, selected.id]);
+  const wide = () => window.matchMedia("(min-width: 768px)").matches;
 
   const add = async () => {
     if (!scenarios) return;
     setBusy(true);
     const id = await scenarios.add(selected.id);
     setBusy(false);
-    if (id) { setSelectedId(id); setFocusName(true); }
+    if (id) { setSelectedId(id); setEditing(true); setFocusName(true); }
   };
   const remove = async () => {
     if (!scenarios) return;
     setBusy(true);
     const result = await scenarios.remove(selected.id);
     setBusy(false);
-    if (result.ok) { setSelectedId(list.find((scenario) => scenario.id !== selected.id)!.id); setFocusName(true); }
+    if (!result.ok) return;
+    setSelectedId(list.find((scenario) => scenario.id !== selected.id)!.id);
+    if (wide()) setFocusName(true);
+    else { setEditing(false); setFocusRow(true); }
   };
-  const open = (id: string) => { setSelectedId(id); setFocusName(true); };
+  const open = (id: string) => { setSelectedId(id); setEditing(true); setFocusName(true); };
+  const back = () => { setEditing(false); setFocusRow(true); };
+
+  /*
+    One field per asset class the catalog can actually hold. International
+    was missing while every reviewed fund tracked a US index; adding VXUS
+    made its shock apply to a real holding with no way to set it, so the
+    scenario silently used a stored default. Global has no instrument yet
+    and stays out for the same reason in reverse — a control with nothing
+    to act on.
+
+    Two to a row even on a phone: one to a row, four short numbers took
+    a third of the screen.
+  */
+  const stressFields = (className: string) => (
+    <div key={selected.id} className={className}>
+      <Field
+        label="US stocks" type="number" min={-100} max={100} suffix="%"
+        value={selected.stress.usStocksPct}
+        onChange={(value) => setStress({ usStocksPct: num(value) })}
+      />
+      <Field
+        label="International stocks" type="number" min={-100} max={100} suffix="%"
+        value={selected.stress.internationalStocksPct}
+        onChange={(value) => setStress({ internationalStocksPct: num(value) })}
+      />
+      <Field
+        label="Bonds" type="number" min={-100} max={100} suffix="%"
+        value={selected.stress.bondsPct}
+        onChange={(value) => setStress({ bondsPct: num(value) })}
+      />
+      <Field
+        label="Cash" type="number" min={-100} max={100} suffix="%"
+        value={selected.stress.cashPct}
+        onChange={(value) => setStress({ cashPct: num(value) })}
+      />
+    </div>
+  );
 
   return (
     <div className="space-y-5">
@@ -678,7 +728,8 @@ export function RiskStage(props: StageProps) {
         */}
       <ViewTabs
         label="Risk and cost" idPrefix="risk" className={STAGE_TABS} selected={view} onSelect={setView}
-        tabs={RISK_VIEWS.map((tab) => (tab.id === "scenario" && several ? { ...tab, label: `Loss scenarios (${list.length})` } : tab))}
+        // Plural once there are several; the count is in the list and the editor, and on a phone it took the tab to two lines.
+        tabs={RISK_VIEWS.map((tab) => (tab.id === "scenario" && several ? { ...tab, label: "Loss scenarios" } : tab))}
       />
       <div role="tabpanel" id="risk-panel" aria-labelledby={`risk-tab-${view}`} className="space-y-5">
         {view === "scenario" ? (
@@ -688,160 +739,154 @@ export function RiskStage(props: StageProps) {
                 {calculation.issues[0] ?? "The portfolio's amounts need fixing."} Until then there is no allocation to test.
               </Notice>
             ) : null}
-            <Panel>
-              {scenarios && several ? (
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-                  <label className="flex min-w-0 max-w-md flex-1 items-center gap-3">
-                    <span className="shrink-0 text-[13px] font-semibold text-st-ink">Scenario name</span>
-                    <input
-                      key={selected.id}
-                      ref={nameRef}
-                      defaultValue={selected.name}
-                      maxLength={60}
-                      onBlur={(event) => { if (event.target.value !== selected.name) void scenarios.rename(selected.id, event.target.value); }}
-                      className="min-h-11 w-full min-w-0 rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge [@media(pointer:coarse)]:text-base"
-                    />
-                  </label>
-                  <div className="text-[12px] text-st-faint">{list.findIndex((scenario) => scenario.id === selected.id) + 1} of {list.length}</div>
+            {scenarios && several ? (
+              /*
+               * Several scenarios: the list and the open scenario side by side
+               * from 768px. Stacked, the two made a phone 1.75-1.85 screens and
+               * 1024px 1.55-1.63. On a phone the list comes first and a scenario
+               * opens to be edited, with its own result beside its numbers, so
+               * an edit's consequence stays on the screen it is made on.
+               */
+              <div className="grid gap-5 md:grid-cols-2 md:items-start">
+                <div className={cn(editing && "hidden md:block")}>
+                  <Panel>
+                    <table className="w-full table-fixed text-[13px]">
+                      <caption className="ops-caption pb-2 text-left text-[12px] text-st-faint">Your scenarios, largest loss first</caption>
+                      <thead>
+                        <tr className="border-b border-st-hair text-left text-[12px] text-st-faint">
+                          <th scope="col" className="w-[46%] py-2 pr-2 font-normal">Scenario</th>
+                          <th scope="col" className="py-2 pr-2 text-right font-normal">Change</th>
+                          <th scope="col" className="py-2 text-right font-normal">Loss budget</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {byLoss.map((scenario) => (
+                          <tr key={scenario.id} className="border-b border-st-hair last:border-0">
+                            <th scope="row" className="py-0.5 pr-2 text-left font-normal">
+                              <button
+                                ref={(element) => { rowRefs.current[scenario.id] = element; }}
+                                type="button"
+                                aria-pressed={scenario.id === selected.id}
+                                onClick={() => open(scenario.id)}
+                                className="min-h-8 max-w-full truncate text-left text-st-ink underline decoration-st-bound underline-offset-4 hover:decoration-st-ink aria-pressed:font-semibold aria-pressed:no-underline [@media(pointer:coarse)]:min-h-11"
+                              >
+                                {scenario.name}
+                              </button>
+                            </th>
+                            <td className="py-1.5 pr-2 text-right tabular-nums text-st-ink">{calculation.valid ? usdWhole(scenario.result.changeDollars) : "—"}</td>
+                            <td className={cn("py-1.5 text-right", calculation.valid && over(scenario.result.changeDollars) ? "font-semibold text-st-warn" : "text-st-muted")}>
+                              {!calculation.valid ? "—" : !budget.set ? "Not set" : over(scenario.result.changeDollars) ? "Over" : "Within"}
+                              {calculation.valid && scenario.id === worst.id ? <span className="font-normal text-st-muted"> · worst</span> : null}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {/* One sentence: which scenario is worst, against the budget, and what "worst" does not mean. */}
+                    {calculation.valid ? (
+                      <p className={cn("mt-3 text-[13px] leading-6", exceeds ? "text-st-warn" : "text-st-muted")}>
+                        “{worst.name}” is the worst you set, not the worst that could happen.{" "}
+                        {!budget.set
+                          ? "Set the loss you could live with on Goals to check it."
+                          : exceeds
+                            ? `It costs ${usdWhole(budget.loses)}, more than your ${usdWhole(budget.allowed)} loss budget. Either the weights or the limit needs to change — Studio will not choose which.`
+                            : `It costs ${usdWhole(budget.loses)}, within your ${usdWhole(budget.allowed)} loss budget.`}
+                      </p>
+                    ) : null}
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-st-hair pt-3">
+                      {list.length < MAX_SCENARIOS ? (
+                        <button type="button" disabled={busy} onClick={() => void add()} className={SECONDARY}>
+                          Add a scenario
+                        </button>
+                      ) : null}
+                      <p className="min-w-0 flex-1 basis-40 text-[12px] leading-5 text-st-muted">
+                        {list.length >= MAX_SCENARIOS
+                          ? `Up to ${MAX_SCENARIOS}: remove one to add another.`
+                          : `A new one starts as a copy of “${selected.name}”. Up to ${MAX_SCENARIOS}.`}
+                      </p>
+                    </div>
+                  </Panel>
                 </div>
-              ) : null}
-              {/*
-                * With one scenario, adding another is a link on the caption's line: the tab
-                * has to fit a phone, and a row of its own took a sixth of that screen. What
-                * the worst of several means is said once there are several.
-                */}
-              <div className="flex flex-wrap items-center justify-between gap-x-4">
-                <div className="ops-caption text-[12px] text-st-faint">Assume prices change by</div>
-                {scenarios && !several ? (
-                  <button type="button" disabled={busy} onClick={() => void add()} className={INLINE_BUTTON}>
-                    Add a second scenario
-                  </button>
-                ) : null}
+                <div className={cn(!editing && "hidden md:block")}>
+                  <Panel>
+                    <button type="button" onClick={back} className={cn(INLINE_BUTTON, "mb-2 md:hidden")}>
+                      ← All scenarios
+                    </button>
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+                      <label className="flex min-w-0 max-w-md flex-1 items-center gap-3">
+                        <span className="shrink-0 text-[13px] font-semibold text-st-ink">Scenario name</span>
+                        <input
+                          key={selected.id}
+                          ref={nameRef}
+                          defaultValue={selected.name}
+                          maxLength={60}
+                          onBlur={(event) => { if (event.target.value !== selected.name) void scenarios.rename(selected.id, event.target.value); }}
+                          className="min-h-11 w-full min-w-0 rounded-lg border border-st-bound bg-st-paper px-3 py-2 text-[15px] text-st-ink focus:border-st-blue-edge focus:outline-none focus-visible:ring-2 focus-visible:ring-st-blue-edge [@media(pointer:coarse)]:text-base"
+                        />
+                      </label>
+                      <div className="text-[12px] text-st-faint">{list.findIndex((scenario) => scenario.id === selected.id) + 1} of {list.length}</div>
+                    </div>
+                    <div className="ops-caption text-[12px] text-st-faint">Assume prices change by</div>
+                    {/* Two to a row at every width: beside the list, the column is half the page. */}
+                    {stressFields("mt-3 grid grid-cols-2 gap-4")}
+                    {/* On a phone the list is out of sight while a scenario is open, so its result is said here. */}
+                    {calculation.valid ? (
+                      <p className={cn("mt-4 text-[14px] leading-6 md:hidden", over(shown.result.changeDollars) ? "text-accent-amber" : "text-slate-300")}>
+                        This scenario: {usdWhole(shown.result.changeDollars)}, {pct(shown.result.changePct)} of the portfolio,{" "}
+                        {!budget.set ? "with no loss budget set." : over(shown.result.changeDollars) ? "more than your loss budget." : "within your loss budget."}
+                      </p>
+                    ) : null}
+                    <div className="mt-4 border-t border-st-hair pt-3">
+                      <button type="button" disabled={busy} onClick={() => void remove()} className={TEXT_BUTTON}>
+                        Remove this scenario
+                      </button>
+                    </div>
+                  </Panel>
+                </div>
               </div>
-              {/*
-                One field per asset class the catalog can actually hold. International
-                was missing while every reviewed fund tracked a US index; adding VXUS
-                made its shock apply to a real holding with no way to set it, so the
-                scenario silently used a stored default. Global has no instrument yet
-                and stays out for the same reason in reverse — a control with nothing
-                to act on.
-
-                Two to a row even on a phone: one to a row, four short numbers took
-                a third of the screen.
-              */}
-              <div key={selected.id} className="mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
-                <Field
-                  label="US stocks" type="number" min={-100} max={100} suffix="%"
-                  value={selected.stress.usStocksPct}
-                  onChange={(value) => setStress({ usStocksPct: num(value) })}
-                />
-                <Field
-                  label="International stocks" type="number" min={-100} max={100} suffix="%"
-                  value={selected.stress.internationalStocksPct}
-                  onChange={(value) => setStress({ internationalStocksPct: num(value) })}
-                />
-                <Field
-                  label="Bonds" type="number" min={-100} max={100} suffix="%"
-                  value={selected.stress.bondsPct}
-                  onChange={(value) => setStress({ bondsPct: num(value) })}
-                />
-                <Field
-                  label="Cash" type="number" min={-100} max={100} suffix="%"
-                  value={selected.stress.cashPct}
-                  onChange={(value) => setStress({ cashPct: num(value) })}
-                />
-              </div>
-              {/*
-                * The budget beside the result, whether or not it is passed: comparing
-                * the two is the point of the scenario. It was a box that appeared only
-                * once the loss went over, a sixth of a phone screen on its own. With
-                * several scenarios the table below does this for all of them.
-                */}
-              {calculation.valid && !several ? (
-                <>
-                  <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                    <Stat label="Change in this scenario" value={usd(shown.result.changeDollars)} />
-                    <Stat label="As a share of the portfolio" value={pct(shown.result.changePct)} />
-                    <Stat label="Value afterwards" value={usd(shown.result.endingValue)} />
-                    <Stat
-                      label="Your loss budget"
-                      value={shownLoss.set ? usd(shownLoss.allowed) : "Not set"}
-                      detail={shownLoss.set ? `The loss you could ${shownLoss.from === "capacity" ? "afford" : "live with"}` : "Set it on Goals"}
-                    />
-                  </div>
-                  {shownLoss.set && !shownLoss.met ? (
-                    <p className="mt-4 text-[14px] leading-6 text-accent-amber">
-                      That loss is {usd(shownLoss.loses - shownLoss.allowed)} more than your loss budget. Either the weights or the limit needs to
-                      change — Studio will not choose which.
-                    </p>
-                  ) : null}
-                </>
-              ) : null}
-              {scenarios && several ? (
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-st-hair pt-3">
-                  {list.length < MAX_SCENARIOS ? (
-                    <button type="button" disabled={busy} onClick={() => void add()} className={SECONDARY}>
-                      Add a scenario
+            ) : (
+              <Panel>
+                {/*
+                  * With one scenario, adding another is a link on the caption's line: the tab
+                  * has to fit a phone, and a row of its own took a sixth of that screen. What
+                  * the worst of several means is said once there are several.
+                  */}
+                <div className="flex flex-wrap items-center justify-between gap-x-4">
+                  <div className="ops-caption text-[12px] text-st-faint">Assume prices change by</div>
+                  {scenarios ? (
+                    <button type="button" disabled={busy} onClick={() => void add()} className={INLINE_BUTTON}>
+                      Add a second scenario
                     </button>
                   ) : null}
-                  <button type="button" disabled={busy} onClick={() => void remove()} className={TEXT_BUTTON}>
-                    Remove this scenario
-                  </button>
-                  <p className="min-w-0 flex-1 basis-60 text-[12px] leading-5 text-st-muted">
-                    {list.length >= MAX_SCENARIOS
-                      ? `${MAX_SCENARIOS} is the most you can compare. Remove one to add another.`
-                      : `A new scenario starts as a copy of this one. Up to ${MAX_SCENARIOS}.`}
-                  </p>
                 </div>
-              ) : null}
-            </Panel>
-
-            {several && calculation.valid ? (
-              <Panel>
-                <table className="w-full table-fixed text-[13px]">
-                  <caption className="ops-caption pb-2 text-left text-[12px] text-st-faint">Your scenarios, largest loss first</caption>
-                  <thead>
-                    <tr className="border-b border-st-hair text-left text-[12px] text-st-faint">
-                      <th scope="col" className="w-[42%] py-2 pr-2 font-normal">Scenario</th>
-                      <th scope="col" className="py-2 pr-2 text-right font-normal">Change</th>
-                      <th scope="col" className="hidden py-2 pr-2 text-right font-normal sm:table-cell">Of the portfolio</th>
-                      <th scope="col" className="py-2 text-right font-normal">Loss budget</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {byLoss.map((scenario) => (
-                      <tr key={scenario.id} className="border-b border-st-hair last:border-0">
-                        <th scope="row" className="py-0.5 pr-2 text-left font-normal">
-                          <button
-                            type="button"
-                            aria-pressed={scenario.id === selected.id}
-                            onClick={() => open(scenario.id)}
-                            className="min-h-8 max-w-full truncate text-left text-st-ink underline decoration-st-bound underline-offset-4 hover:decoration-st-ink aria-pressed:font-semibold aria-pressed:no-underline [@media(pointer:coarse)]:min-h-11"
-                          >
-                            {scenario.name}
-                          </button>
-                        </th>
-                        <td className="py-1.5 pr-2 text-right tabular-nums text-st-ink">{usdWhole(scenario.result.changeDollars)}</td>
-                        <td className="hidden py-1.5 pr-2 text-right tabular-nums text-st-ink sm:table-cell">{pct(scenario.result.changePct)}</td>
-                        <td className={cn("py-1.5 text-right", over(scenario.result.changeDollars) ? "font-semibold text-st-warn" : "text-st-muted")}>
-                          {!budget.set ? "Not set" : over(scenario.result.changeDollars) ? "Over" : "Within"}
-                          {scenario.id === worst.id ? <span className="font-normal text-st-muted"> · worst</span> : null}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {/* One sentence: which scenario is worst, against the budget, and what "worst" does not mean. */}
-                <p className={cn("mt-3 text-[13px] leading-6", exceeds ? "text-st-warn" : "text-st-muted")}>
-                  “{worst.name}” is the worst you set, not the worst that could happen.{" "}
-                  {!budget.set
-                    ? "Set the loss you could live with on Goals to check it."
-                    : exceeds
-                      ? `It costs ${usdWhole(budget.loses)}, more than your loss budget of ${usdWhole(budget.allowed)}, ${setBy}. Either the weights or the limit needs to change — Studio will not choose which.`
-                      : `It costs ${usdWhole(budget.loses)}, within your loss budget of ${usdWhole(budget.allowed)}.`}
-                </p>
+                {stressFields("mt-3 grid grid-cols-2 gap-4 lg:grid-cols-4")}
+                {/*
+                  * The budget beside the result, whether or not it is passed: comparing
+                  * the two is the point of the scenario. It was a box that appeared only
+                  * once the loss went over, a sixth of a phone screen on its own.
+                  */}
+                {calculation.valid ? (
+                  <>
+                    <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                      <Stat label="Change in this scenario" value={usd(shown.result.changeDollars)} />
+                      <Stat label="As a share of the portfolio" value={pct(shown.result.changePct)} />
+                      <Stat label="Value afterwards" value={usd(shown.result.endingValue)} />
+                      <Stat
+                        label="Your loss budget"
+                        value={shownLoss.set ? usd(shownLoss.allowed) : "Not set"}
+                        detail={shownLoss.set ? `The loss you could ${shownLoss.from === "capacity" ? "afford" : "live with"}` : "Set it on Goals"}
+                      />
+                    </div>
+                    {shownLoss.set && !shownLoss.met ? (
+                      <p className="mt-4 text-[14px] leading-6 text-accent-amber">
+                        That loss is {usd(shownLoss.loses - shownLoss.allowed)} more than your loss budget. Either the weights or the limit needs to
+                        change — Studio will not choose which.
+                      </p>
+                    ) : null}
+                  </>
+                ) : null}
               </Panel>
-            ) : null}
+            )}
           </>
         ) : view === "costs" ? (
           <Panel>

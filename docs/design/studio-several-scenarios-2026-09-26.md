@@ -138,3 +138,28 @@ page. The merge keeps all of that and this work's several scenarios:
 - Renaming a scenario marked the chosen allocation and every proposal as
   needing review, though a name changes no figure. A scenario now counts by
   its price changes only, the first's and every other's, in order.
+
+## Several scenarios on a phone, 30 September 2026
+
+The "Open" item above is closed. With several scenarios the list and the open
+scenario sit side by side from 768px; on a phone the list comes first, and a
+scenario opens from it to be edited, with "← All scenarios" to return. The
+opened scenario says its own result ("This scenario: -$9,600, -9.6% of the
+portfolio, within your loss budget."), so an edit's consequence stays on the
+screen it is made on. The editor's four changes stay two to a row at every
+width, and the table drops its percentage column, which that sentence
+carries. The first tab reads "Loss scenarios" without the count, which took it
+to two lines on a phone and is in the list and the editor anyway.
+
+Screens at a 900px viewport, without and then with a touch screen's 44px rows:
+
+| Scenarios | 390 list | 390 open | 768 | 1024 | 1280 | 1440 | 1920 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| One | 1.45 | — | 1.39 | 1.23 | 1.16 | 1.16 | 1.16 |
+| Three | 1.35 | 1.43 | 1.45 | 1.38 | 1.22 | 1.16 | 1.16 |
+| Five | 1.41 | 1.43 | 1.47 | 1.41 | 1.22 | 1.18 | 1.18 |
+| Five, touch | 1.48 | 1.44 | | | | | |
+
+The height test now holds every width to 1.5 screens, open and listed, and a
+touch-phone test holds five scenarios; both failed on the stacked layout
+(1.75 at 390px with three; 1.92 on a touch phone with five).

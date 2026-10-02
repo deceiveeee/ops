@@ -89,7 +89,7 @@ test("scenarios can be added, named, edited and removed, and the worst is held a
 
   // A second scenario starts as a copy of the first and takes focus for its name.
   await page.getByRole("button", { name: "Add a second scenario", exact: true }).click();
-  await expect(page.getByRole("tab", { name: "Loss scenarios (2)", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Loss scenarios", exact: true })).toBeVisible();
   const name = page.getByLabel("Scenario name", { exact: true });
   await expect(name).toBeFocused();
   await expect(name).toHaveValue("Scenario 2");
@@ -100,8 +100,8 @@ test("scenarios can be added, named, edited and removed, and the worst is held a
   await enter(page, "International stocks", "-15");
   await enter(page, "Bonds", "-12");
   await expect(table(page).locator("tbody tr")).toHaveText([
-    /^Scenario 1\s*-\$16,400\s*-16\.4%\s*Over · worst$/,
-    /^Rates rise\s*-\$9,600\s*-9\.6%\s*Within$/,
+    /^Scenario 1\s*-\$16,400\s*Over · worst$/,
+    /^Rates rise\s*-\$9,600\s*Within$/,
   ]);
   await expect(page.getByText("“Scenario 1” is the worst you set, not the worst that could happen.", { exact: false })).toBeVisible();
 
@@ -116,8 +116,8 @@ test("scenarios can be added, named, edited and removed, and the worst is held a
   // Rates rise with US stocks -40%: -$3,200 - $16,000 - $2,400 = -$21,600, now the worst.
   await table(page).getByRole("button", { name: "Rates rise", exact: true }).click();
   await enter(page, "US stocks", "-40");
-  await expect(table(page).locator("tbody tr").first()).toHaveText(/^Rates rise\s*-\$21,600\s*-21\.6%\s*Over · worst$/);
-  await expect(page.getByText("It costs $21,600, more than your loss budget of $15,000, the loss you could afford.", { exact: false })).toBeVisible();
+  await expect(table(page).locator("tbody tr").first()).toHaveText(/^Rates rise\s*-\$21,600\s*Over · worst$/);
+  await expect(page.getByText("It costs $21,600, more than your $15,000 loss budget.", { exact: false })).toBeVisible();
   await saved(page);
   const two = await stored(page);
   expect(two.scenarioName).toBe("Stocks fall");
@@ -203,8 +203,15 @@ test("the scenario page with one, three and five scenarios, at six widths", asyn
       }));
       line.push(`${width}px ${size.screens.toFixed(2)}`);
       expect.soft(size.overflow, `overflow with ${count} at ${width}px`).toBe(0);
-      // The page's own content fits where Studio puts its guidance beside the work.
-      if (width >= 1280) expect.soft(size.screens, `${count} scenario(s) at ${width}px`).toBeLessThanOrEqual(1.5);
+      // Every width: with several, the list and the open scenario sit side by side from 768px, one at a time on a phone.
+      expect.soft(size.screens, `${count} scenario(s) at ${width}px`).toBeLessThanOrEqual(1.5);
+      if (count > 1 && width < 768) {
+        await page.getByRole("button", { name: "Rates rise", exact: true }).click();
+        const opened = await page.evaluate(() => document.documentElement.scrollHeight / innerHeight);
+        line.push(`(open ${opened.toFixed(2)})`);
+        expect.soft(opened, `${count} scenario(s) at ${width}px, one open`).toBeLessThanOrEqual(1.5);
+        await page.getByRole("button", { name: "← All scenarios", exact: true }).click();
+      }
     }
     report.push(`- ${count} scenario${count === 1 ? "" : "s"}: ${line.join(" · ")}`);
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -212,4 +219,52 @@ test("the scenario page with one, three and five scenarios, at six widths", asyn
   report.push("", `Page errors: ${errors.length}`);
   writeFileSync(".agent-shots/risk-scenarios-report.md", report.join("\n"));
   expect(errors).toEqual([]);
+});
+
+const five: StudioScenario[] = [
+  { id: "rates", name: "Rates rise", stress: { usStocksPct: -15, internationalStocksPct: -15, globalStocksPct: -15, bondsPct: -12, cashPct: 0 } },
+  { id: "inflation", name: "Inflation", stress: { usStocksPct: -10, internationalStocksPct: -10, globalStocksPct: -10, bondsPct: -15, cashPct: -3 } },
+  { id: "abroad", name: "Trouble abroad", stress: { usStocksPct: -5, internationalStocksPct: -35, globalStocksPct: -20, bondsPct: 2, cashPct: 0 } },
+  { id: "mild", name: "A mild fall", stress: { usStocksPct: -10, internationalStocksPct: -10, globalStocksPct: -10, bondsPct: 0, cashPct: 0 } },
+];
+
+test("on a phone, the list comes first and a scenario opens to be edited, with its own result", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page, fixture(undefined, five.slice(0, 2)));
+  const name = page.getByLabel("Scenario name", { exact: true });
+  await expect(table(page)).toBeVisible();
+  await expect(name).toBeHidden();
+
+  // Rates rise: $8,000 x -15% + $40,000 x -15% + $20,000 x -12% = -$9,600, inside the $15,000 budget.
+  const row = table(page).getByRole("button", { name: "Rates rise", exact: true });
+  await row.click();
+  await expect(table(page)).toBeHidden();
+  await expect(name).toBeFocused();
+  await expect(page.getByText("This scenario: -$9,600, -9.6% of the portfolio, within your loss budget.", { exact: true })).toBeVisible();
+  // An edit's consequence is on the same screen: bonds -40% makes it -$15,200, over the budget.
+  await enter(page, "Bonds", "-40");
+  await expect(page.getByText("This scenario: -$15,200, -15.2% of the portfolio, more than your loss budget.", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "← All scenarios", exact: true }).click();
+  await expect(name).toBeHidden();
+  await expect(row).toBeFocused();
+  await expect(table(page).locator("tbody tr").first()).toHaveText(/^Stocks fall\s*-\$16,400\s*Over · worst$/);
+
+  // Wider, both are on screen at once.
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(table(page)).toBeVisible();
+  await expect(name).toBeVisible();
+});
+
+test.describe("on a touch phone", () => {
+  // A coarse pointer makes every row and field 44px: the tallest the page gets.
+  test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 900 } });
+  test("five scenarios fit a screen and a half, listed and with one open", async ({ page }) => {
+    await open(page, fixture(undefined, five));
+    expect(await page.evaluate(() => matchMedia("(pointer: coarse)").matches)).toBe(true);
+    const screens = () => page.evaluate(() => document.documentElement.scrollHeight / innerHeight);
+    expect.soft(await screens(), "listed").toBeLessThanOrEqual(1.5);
+    await table(page).getByRole("button", { name: "Rates rise", exact: true }).tap();
+    expect.soft(await screens(), "one open").toBeLessThanOrEqual(1.5);
+  });
 });

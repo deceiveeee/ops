@@ -197,3 +197,13 @@ a "Source" link, so a doctored backup could carry a `javascript:` or `data:`
 link. It must now be a web address (http or https), the rule an imported
 history already follows, or the backup is refused; the page also shows a
 link only for a web address.
+
+## Month ranges that could not be changed, 30 September 2026
+
+Two states asked for months without a control to give them. A narrowed range
+the allocations no longer shared, after one took on a shorter history, said
+"Choose months between …" while the pickers only open on a valid range; it now
+says which months they do share and offers "Use every shared month" beside
+it. Two allocations of nothing but cash asked for months but showed the month
+boxes only once a valid period existed; the boxes now stay until it does.
+Browser tests cover both, and failed before the change.
