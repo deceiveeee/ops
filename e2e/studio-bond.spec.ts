@@ -95,7 +95,11 @@ test("carries the interest figure to What to buy, which then counts it", async (
   await expect(page.getByRole("status").filter({ hasText: /^Saved in this browser$/ })).toBeVisible();
 
   await page.goto("/studio/portfolio/buying");
-  const unknown = page.getByText("Accrued interest is unknown and excluded.", { exact: false });
+  // At this width the note's worksheet opens from its line of the list, which says its total is incomplete.
+  const line = page.getByRole("table", { name: "What to buy, investment by investment" });
+  await expect(line).toContainText("Incomplete");
+  await line.getByRole("button", { name: "91282CRF0", exact: true }).click();
+  const unknown = page.getByText("The interest built up since the last payment is not in this total yet.", { exact: false });
   await expect(unknown).toBeVisible();
   await page.getByRole("link", { name: "Work out the interest built up by the day you settle" }).click();
   await expect(page).toHaveURL(BOND);

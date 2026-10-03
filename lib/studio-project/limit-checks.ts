@@ -230,3 +230,17 @@ export function describeRoom(room: HoldingRoom): string | null {
     ? `At the most ${tightest.label} allows (${limit}).`
     : `Can rise to ${limit} before it reaches ${tightest.label}.`;
 }
+
+/**
+ * The same, in one line of a phone: the row above it already says each weight
+ * is a share of all money, so the limit is given as a bare percentage of it.
+ */
+export function describeRoomShort(room: HoldingRoom): string | null {
+  const tightest = room.tightest;
+  if (!tightest) return null;
+  const limit = `${tightest.pct.toFixed(1)}%`;
+  if (room.over) return `${(room.weightPct - tightest.pct).toFixed(1)} points over: ${tightest.label} allows ${limit}`;
+  return Math.abs(room.weightPct - tightest.pct) < 0.05
+    ? `At the most ${tightest.label} allows, ${limit}`
+    : `Can rise to ${limit} before ${tightest.label}`;
+}

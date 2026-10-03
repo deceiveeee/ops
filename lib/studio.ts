@@ -289,6 +289,11 @@ export interface StudioCalculation {
   exposureCoveragePct: number;
 }
 
+/** An order worked out from a price on record rather than the learner's own: said with it, so What to buy can say it once. */
+export const PRICE_ON_RECORD_WARNING = "This is the last price on record, not today's. Prices move, so check your broker's price before you buy.";
+/** A bond whose interest built up since its last payment is not known yet: What to buy says it beside the way to work it out. */
+export const ACCRUED_UNKNOWN_WARNING = "Accrued interest is unknown and excluded. The quantity and total cost are incomplete estimates.";
+
 function orderFor(row: StudioCalculatedRow): StudioOrder {
   const { holding, instrument, targetValue } = row;
   const bond = instrument?.bond;
@@ -306,9 +311,9 @@ function orderFor(row: StudioCalculatedRow): StudioOrder {
   if (price === null || !Number.isFinite(price) || price <= 0) return { ...blank, complete: false, warnings: ["Enter a dated broker quote to estimate a quantity. Your dollar target is saved."] };
   if (!priceAsOf) warnings.push("Add the date of this quote.");
   // A price on record is months old by the time anyone reads it. Say so in the same breath as using it.
-  if (holding.quotePrice === null) warnings.push("This is the last price on record, not today's. Prices move, so check your broker's price before you buy.");
+  if (holding.quotePrice === null) warnings.push(PRICE_ON_RECORD_WARNING);
   if (isBond && !bond) return { ...blank, complete: false, warnings: ["Bond terms are missing. Verify the bond before estimating face value."] };
-  if (accruedRate === null) warnings.push("Accrued interest is unknown and excluded. The quantity and total cost are incomplete estimates.");
+  if (accruedRate === null) warnings.push(ACCRUED_UNKNOWN_WARNING);
   if (isBond) warnings.push("Confirm the broker's minimum face value, increments, accrued interest, and fees before buying.");
   if (!isBond && holding.quantityMode === "fractional") warnings.push("Fractional estimates use 0.001-share increments. Confirm your broker supports this investment and increment.");
 

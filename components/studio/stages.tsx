@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CATALOG_GAPS, STUDIO_CATALOG, findStudioInstrument } from "@/lib/studio-catalog";
 import {
@@ -9,6 +9,8 @@ import {
   exportStudioCsv,
   exportStudioJson,
   exportStudioText,
+  ACCRUED_UNKNOWN_WARNING,
+  PRICE_ON_RECORD_WARNING,
   removeStudioHolding,
   scenarioResult,
   updateStudioHolding,
@@ -24,7 +26,7 @@ import ViewTabs from "./workspace/ViewTabs";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
 import { emptyLimits, type StudioLimits } from "@/lib/studio-project/limits";
-import { checkPortfolio, describeRoom, scenarioLoss, type HoldingRoom } from "@/lib/studio-project/limit-checks";
+import { checkPortfolio, describeRoomShort, scenarioLoss, type HoldingRoom } from "@/lib/studio-project/limit-checks";
 import LimitChecks from "./LimitChecks";
 
 /**
@@ -482,6 +484,13 @@ export function ResearchStage(props: StageProps) {
 
 export function BuildStage(props: StageProps) {
   const { plan, calculation, update } = props;
+  const wide = useWideLayout(1280);
+  const pageSize = wide ? 5 : 3;
+  const [page, setPage] = useState(0);
+  const [namedInvestment, setNamedInvestment] = useState<{ symbol: string; name: string } | null>(null);
+  const pages = Math.max(1, Math.ceil(calculation.rows.length / pageSize));
+  // A holding removed elsewhere can leave the page past the end.
+  const shownPage = Math.min(page, pages - 1);
   if (plan.holdings.length === 0) {
     return (
       <div className="space-y-5">
@@ -516,27 +525,70 @@ export function BuildStage(props: StageProps) {
           put the box being typed in half out of sight.
         */}
         <TableScroll>
-          <table className="block w-full text-left text-[14px] md:table md:min-w-[34rem]">
+          <table className="block w-full text-left text-[14px] md:table md:table-fixed">
             <caption className="sr-only">Target weight and dollar amount for each investment</caption>
+            <colgroup className="hidden md:table-column-group">
+              <col className="w-[45%]" />
+              <col className="w-[22%]" />
+              <col className="w-[18%]" />
+              <col className="w-[15%]" />
+            </colgroup>
             <thead className="sr-only text-slate-400 md:not-sr-only">
               <tr>
+                {/* One line each: "Share of the investable money" took two, and the money it means is named. */}
                 <th scope="col" className="py-2 pr-3 font-normal">Investment</th>
-                <th scope="col" className="py-2 pr-3 text-right font-normal">Share of the investable money</th>
-                <th scope="col" className="py-2 pr-3 text-right font-normal">Of the whole portfolio</th>
+                <th scope="col" className="whitespace-nowrap py-2 pr-3 text-right font-normal">Of the {usdWhole(calculation.investableBudget)}</th>
+                <th scope="col" className="whitespace-nowrap py-2 pr-3 text-right font-normal">Of all money</th>
                 <th scope="col" className="py-2 text-right font-normal">Dollars</th>
               </tr>
             </thead>
             <tbody className="block md:table-row-group">
-              {calculation.rows.map((row) => (
+              {calculation.rows.map((row, index) => {
+                // Three at a time on smaller screens, five on larger screens.
+                const onPage = Math.floor(index / pageSize) === shownPage;
+                const symbol = row.instrument?.symbol ?? row.holding.instrumentId;
+                const name = row.instrument?.name ?? "Not in the research library";
+                const room = roomFor(row.holding.instrumentId);
+                // On a phone, with a limit line under it, the row leaves that line its bottom padding.
+                const hasRoom = Boolean(room && describeRoomShort(room));
+                const cellY = "md:py-3";
+                return (
                 <Fragment key={row.holding.instrumentId}>
                 <tr
-                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-t border-white/8 py-3 first:border-t-0 first:pt-0 md:table-row md:py-0 md:first:border-t"
+                  className={cn(
+                    "items-center gap-x-3 border-t border-white/8 pt-2.5 first:border-t-0 first:pt-0 md:py-0 md:first:border-t",
+                    !hasRoom && "pb-2.5",
+                    onPage ? "grid grid-cols-[minmax(0,1fr)_auto] md:table-row" : "hidden",
+                  )}
                 >
-                  <td className="block md:table-cell md:py-3 md:pr-3">
-                    <div className="font-semibold text-white">{row.instrument?.symbol ?? row.holding.instrumentId}</div>
-                    <div className="text-[13px] text-slate-500">{row.instrument?.name ?? "Not in the research library"}</div>
+                  {/*
+                    * On a phone, the symbol and name share one line and what the weight comes
+                    * to sits under them, beside the box; what limits it is the line below,
+                    * across the row. Wider, the name keeps to one line under the symbol and
+                    * the limit is the line under that, in the same cell.
+                    */}
+                  <td className={cn("block min-w-0 md:table-cell md:pr-3", cellY)}>
+                    <button
+                      type="button"
+                      aria-label={`Full name for ${symbol}`}
+                      aria-haspopup="dialog"
+                      onClick={() => setNamedInvestment({ symbol, name })}
+                      className="block min-h-11 w-full min-w-0 text-left md:min-h-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)] [@media(pointer:coarse)]:min-h-11"
+                    >
+                      <span className="block truncate md:whitespace-normal">
+                        <span className="font-semibold text-white underline decoration-st-bound underline-offset-4">{symbol}</span>
+                        <span className="text-[13px] text-slate-500 md:block md:truncate">
+                          <span className="md:hidden"> · </span>
+                          {name}
+                        </span>
+                      </span>
+                      <span className="block text-[13px] tabular-nums text-slate-400 md:hidden">
+                        {pct(row.targetPortfolioWeightPct)} of all money · {usd(row.targetValue)}
+                      </span>
+                    </button>
+                    <RoomText symbol={row.instrument?.symbol ?? row.holding.instrumentId} room={room} className="hidden md:block" />
                   </td>
-                  <td className="block whitespace-nowrap text-right md:table-cell md:py-3 md:pr-3">
+                  <td className={cn("block whitespace-nowrap text-right md:table-cell md:pr-3", cellY)}>
                     <label className="sr-only" htmlFor={`weight-${row.holding.instrumentId}`}>
                       {row.instrument?.symbol ?? row.holding.instrumentId} target percentage
                     </label>
@@ -550,65 +602,149 @@ export function BuildStage(props: StageProps) {
                           updateStudioHolding(current, row.holding.instrumentId, { targetWeightPct: num(raw) }),
                         )
                       }
-                      className="min-h-11 w-24 rounded-lg border border-white/12 bg-white/[0.03] px-3 text-right text-[15px] tabular-nums text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 [@media(pointer:coarse)]:text-base"
+                      className="min-h-11 w-20 rounded-lg border border-white/12 bg-white/[0.03] px-3 text-right text-[15px] md:w-24 tabular-nums text-white focus:border-accent-cyan/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/40 [@media(pointer:coarse)]:text-base"
                     />
                     {/* The column heading says what the number is; below 768px there is no column heading. */}
                     <span aria-hidden="true" className="ml-1.5 text-slate-400 md:hidden">%</span>
                   </td>
-                  <td className="block text-[13px] tabular-nums text-slate-400 md:table-cell md:py-3 md:pr-3 md:text-right md:text-[14px] md:text-slate-300">
+                  <td className={cn("hidden tabular-nums md:table-cell md:pr-3 md:text-right md:text-[14px] text-slate-300", cellY)}>
                     {pct(row.targetPortfolioWeightPct)}
-                    <span className="md:hidden"> of the whole portfolio</span>
                   </td>
-                  <td className="block text-right tabular-nums text-white md:table-cell md:py-3">{usd(row.targetValue)}</td>
+                  <td className={cn("hidden text-right tabular-nums text-white md:table-cell", cellY)}>{usd(row.targetValue)}</td>
                 </tr>
-                <WeightRoom symbol={row.instrument?.symbol ?? row.holding.instrumentId} room={roomFor(row.holding.instrumentId)} />
+                <RoomLine symbol={row.instrument?.symbol ?? row.holding.instrumentId} room={room} onPage={onPage} />
                 </Fragment>
-              ))}
-              <tr className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-t border-white/15 pt-3 md:table-row md:pt-0">
-                <td className="col-span-2 block text-slate-300 md:table-cell md:py-3 md:pr-3">Cash reserve and anything unassigned</td>
-                <td className="hidden md:table-cell md:py-3 md:pr-3" />
-                <td className="block text-[13px] tabular-nums text-slate-400 md:table-cell md:py-3 md:pr-3 md:text-right md:text-[14px] md:text-slate-300">
-                  {pct(calculation.targetCashWeightPct)}
-                  <span className="md:hidden"> of the whole portfolio</span>
+                );
+              })}
+              <tr className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 border-t border-white/15 py-2.5 md:table-row md:py-0">
+                <td className="block text-slate-300 md:table-cell md:py-3 md:pr-3">
+                  Cash reserve and unassigned
+                  <div className="text-[13px] tabular-nums text-slate-400 md:hidden">
+                    {pct(calculation.targetCashWeightPct)} of all money · {usd(calculation.targetCash)}
+                  </div>
                 </td>
-                <td className="block text-right tabular-nums text-white md:table-cell md:py-3">{usd(calculation.targetCash)}</td>
+                <td className="hidden md:table-cell md:py-3 md:pr-3" />
+                <td className="hidden tabular-nums md:table-cell md:py-3 md:pr-3 md:text-right md:text-[14px] text-slate-300">
+                  {pct(calculation.targetCashWeightPct)}
+                </td>
+                <td className="hidden text-right tabular-nums text-white md:table-cell md:py-3">{usd(calculation.targetCash)}</td>
               </tr>
             </tbody>
+            {/*
+              * The total, in the table it adds up, rather than in a box of its own under
+              * it: that box was a sixth of a phone screen.
+              */}
+            <tfoot className="block md:table-footer-group">
+              {/* The portfolio total stays visible while the investments are paged. */}
+              <tr className="flex items-center gap-x-3 border-t border-white/15 pt-1.5 md:table-row md:pt-0">
+                <th scope="row" className="block text-left font-semibold text-white md:table-cell md:py-2 md:pr-3">Total</th>
+                <td className={cn("block font-semibold tabular-nums md:table-cell md:py-2 md:pr-3 md:text-right", Math.abs(total - 100) > 0.01 ? "text-accent-amber" : "text-accent-green")}>
+                  {pct(total)}
+                </td>
+                <td colSpan={2} className="ml-auto block md:table-cell md:py-2 md:text-right">
+                  <HoldingPager count={calculation.rows.length} pageSize={pageSize} page={shownPage} onPage={setPage} />
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </TableScroll>
+        <p className={cn("mt-1 text-[13px] leading-6", Math.abs(total - 100) > 0.01 ? "text-accent-amber" : "text-slate-400")}>
+          {Math.abs(total - 100) <= 0.01
+            ? "The percentages total 100%: every dollar after your cash reserve has a job."
+            : total > 100
+              ? "Over 100% counts the same money more than once. Reduce one or more until they total 100%."
+              : `The remaining ${pct(100 - total)} stays in cash. If you meant that, set it aside as a cash reserve in your goal.`}
+        </p>
       </Panel>
-
-      {Math.abs(total - 100) > 0.01 ? (
-        <Notice tone="amber" title={`Your percentages total ${pct(total)}`}>
-          {total > 100
-            ? "That counts the same money more than once. Reduce one or more until they total 100%."
-            : `The remaining ${pct(100 - total)} stays in cash. That is a choice you can make on purpose — set it aside as a cash reserve in your goal if you meant it.`}
-        </Notice>
-      ) : (
-        <Notice tone="green" title="The percentages total 100%">
-          Every dollar after your cash reserve has a job.
-        </Notice>
-      )}
 
       {/* Beside the work from 1280px, in the frame's side column; here below it. */}
       {checked ? <div className="xl:hidden"><LimitChecks checks={checked.checks} /></div> : null}
+      {namedInvestment ? <InvestmentNameDialog {...namedInvestment} onClose={() => setNamedInvestment(null)} /> : null}
+    </div>
+  );
+}
+
+/** The initial client/server view agrees; the media query then tracks resizing. */
+function useWideLayout(minWidth: number) {
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia(`(min-width: ${minWidth}px)`);
+    const update = () => setWide(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, [minWidth]);
+  return wide;
+}
+
+function HoldingPager({ count, pageSize, page, onPage }: {
+  count: number; pageSize: number; page: number; onPage: (page: number) => void;
+}) {
+  const pages = Math.ceil(count / pageSize);
+  if (pages <= 1) return null;
+  return (
+    <span className="inline-flex items-center gap-1 text-[13px] text-st-muted">
+      <button type="button" aria-label="Previous investments" disabled={page === 0} onClick={() => onPage(page - 1)} className={PAGE_BUTTON}>‹</button>
+      <span className="tabular-nums" aria-live="polite">
+        {page * pageSize + 1}–{Math.min(count, (page + 1) * pageSize)} of {count}
+      </span>
+      <button type="button" aria-label="Next investments" disabled={page === pages - 1} onClick={() => onPage(page + 1)} className={PAGE_BUTTON}>›</button>
+    </span>
+  );
+}
+
+/** Native dialog supplies keyboard dismissal, focus containment and return. */
+function InvestmentNameDialog({ symbol, name, onClose }: {
+  symbol: string; name: string; onClose: () => void;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  useEffect(() => { dialog.current?.showModal(); }, []);
+  return (
+    <dialog
+      ref={dialog}
+      aria-labelledby={titleId}
+      onClose={onClose}
+      className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-st-bound bg-st-paper p-5 text-st-ink backdrop:bg-black/40"
+    >
+      <h2 id={titleId} className="text-[16px] font-semibold">Full investment name</h2>
+      <p className="mt-3 break-words text-[16px] leading-7">{symbol} · {name}</p>
+      <form method="dialog" className="mt-4">
+        <button className={SECONDARY}>Close</button>
+      </form>
+    </dialog>
+  );
+}
+/** "‹" and "›" beside the total: 44px to a finger, and plainly off at either end. */
+const PAGE_BUTTON =
+  "inline-flex min-h-8 min-w-8 items-center justify-center rounded-md text-[16px] text-st-ink hover:bg-st-canvas disabled:opacity-30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ops-accent-strong)] [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:min-w-11";
+
+/**
+ * What holds one weight back: the readable plan's sentence in its one-line
+ * form, which on a phone kept five holdings from taking two lines each for it.
+ */
+function RoomText({ symbol, room, className }: { symbol: string; room: HoldingRoom | null; className?: string }) {
+  const text = room ? describeRoomShort(room) : null;
+  if (!room || !text) return null;
+  return (
+    <div className={cn("text-[12px] leading-5", room.over ? "text-accent-amber" : "text-slate-500", className)}>
+      <span className="sr-only">{symbol}: </span>
+      {text}
     </div>
   );
 }
 
 /**
- * What holds one weight back, in a row of its own under the holding: a phone's
- * first column is too narrow for the sentence, and a table reads it the same.
+ * On a phone, the same in a row of its own under the holding, across the whole
+ * width: in the name's column beside the box it wrapped to two lines. From
+ * 768px it sits in the holding's own cell instead (RoomText above).
  */
-function WeightRoom({ symbol, room }: { symbol: string; room: HoldingRoom | null }) {
-  // The same sentence the readable plan prints.
-  const text = room ? describeRoom(room) : null;
-  if (!room || !text) return null;
+function RoomLine({ symbol, room, onPage }: { symbol: string; room: HoldingRoom | null; onPage: boolean }) {
+  if (!room || !describeRoomShort(room)) return null;
   return (
-    <tr className="block md:table-row">
-      <td colSpan={4} className={cn("block pb-3 text-[12px] leading-5 md:table-cell md:pb-3 md:pt-0", room.over ? "text-accent-amber" : "text-slate-500")}>
-        <span className="sr-only">{symbol}: </span>
-        {text}
+    <tr className={onPage ? "block md:hidden" : "hidden"}>
+      <td colSpan={4} className="block pb-2.5">
+        <RoomText symbol={symbol} room={room} />
       </td>
     </tr>
   );
@@ -960,7 +1096,32 @@ const RISK_VIEWS: { id: RiskView; label: string; className: string }[] = [
 // ---------------------------------------------------------------------------
 
 export function BuyStage(props: StageProps) {
-  const { plan, calculation, update } = props;
+  const { calculation, update } = props;
+  const wide = useWideLayout(1440);
+  const [page, setPage] = useState(0);
+  const pageSize = 5;
+  const pages = Math.max(1, Math.ceil(calculation.rows.length / pageSize));
+  const shownPage = Math.min(page, pages - 1);
+  /*
+   * A list of every investment and what it comes to, and one investment's
+   * worksheet at a time. Every worksheet open at once made this page 3.2
+   * screens on a phone with three holdings and 1.8 on a desktop. The list and
+   * the open worksheet sit side by side from 1440px, where each has a phone's
+   * width or more; narrower, the list comes first and a worksheet opens from
+   * it, as on Risk with several scenarios. Side by side from 768px, half a
+   * tablet's width wrapped a bond's worksheet to 1.76 screens.
+   */
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  // The investment whose broker's inputs the learner opened or typed in: they stay open for it until another is chosen.
+  const [inputsFor, setInputsFor] = useState<string | null>(null);
+  const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const sheetHeading = useRef<HTMLHeadingElement>(null);
+  const [focusSheet, setFocusSheet] = useState(false);
+  const [focusRow, setFocusRow] = useState(false);
+  useEffect(() => { if (focusSheet) { sheetHeading.current?.focus(); setFocusSheet(false); } }, [focusSheet, selectedId, editing]);
+  useEffect(() => { if (focusRow && selectedId) { rowRefs.current[selectedId]?.focus(); setFocusRow(false); } }, [focusRow, selectedId, editing]);
+
   if (calculation.orders.length === 0) {
     return (
       <div className="space-y-5">
@@ -976,43 +1137,185 @@ export function BuyStage(props: StageProps) {
     );
   }
 
+  const rows = calculation.rows;
+  const row = rows.find((item) => item.holding.instrumentId === selectedId) ?? rows[0];
+  const orderOf = (instrumentId: string) => calculation.orders.find((item) => item.instrumentId === instrumentId);
+  const symbolOfRow = (item: (typeof rows)[number]) => item.instrument?.symbol ?? item.holding.instrumentId;
+  const toBuy = (item: (typeof rows)[number]) => {
+    const order = orderOf(item.holding.instrumentId);
+    if (!order || order.price === null) return "—";
+    if (order.unit === "face value") return `${usdWhole(order.quantity)} face value`;
+    return `${order.quantity} ${order.quantity === 1 ? "share" : "shares"}`;
+  };
+  // Every order's total and leftover add back to the target, and the reserve and unassigned money sit beside them.
+  const spent = calculation.orders.reduce((sum, item) => sum + item.estimatedCost, 0);
+  const staysInCash = calculation.targetCash + calculation.orders.reduce((sum, item) => sum + item.leftover, 0);
+  const anyIncomplete = calculation.orders.some((item) => !item.complete);
+  const anyOnRecord = rows.some((item) => item.holding.quotePrice === null && item.instrument?.referencePrice != null);
+
+  const order = orderOf(row.holding.instrumentId);
+  const isBond = row.instrument?.kind === "bond";
+  const onRecord = row.holding.quotePrice === null;
+  const ownInputs = row.holding.quotePrice !== null || row.holding.quoteAsOf !== "" || row.holding.tradeFee > 0;
+  // Each said once where it belongs: a price on record in the line about the price, a bond's unknown interest beside the way to work it out.
+  const warnings = (order?.warnings ?? []).filter((warning) => warning !== PRICE_ON_RECORD_WARNING && warning !== ACCRUED_UNKNOWN_WARNING);
+  const interestUnknown = Boolean(order?.warnings.includes(ACCRUED_UNKNOWN_WARNING));
+
+  const open = (instrumentId: string) => {
+    if (instrumentId !== row.holding.instrumentId) setInputsFor(null);
+    setSelectedId(instrumentId); setEditing(true); if (!wide) setFocusSheet(true);
+  };
+  const back = () => {
+    // A desktop pager may have moved away from the open worksheet before a resize.
+    setPage(Math.floor(rows.findIndex((item) => item.holding.instrumentId === row.holding.instrumentId) / pageSize));
+    setSelectedId(row.holding.instrumentId); setEditing(false); setFocusRow(true);
+  };
+
   return (
     <div className="space-y-5">
-      <StageHeading {...headingFor(props)} title="Work out what to buy">
-        Each investment starts from its last price on record, with the date it was true. If your broker shows a
-        different price, enter it, and the quantity is worked out from yours instead.
+      <StageHeading {...headingFor(props)} title="Work out what to buy" narrowTitleOnly={editing}>
+        Each investment starts from its last price on record. Nothing here places an order: it is a worksheet to carry to
+        wherever you buy.
       </StageHeading>
 
-      <Notice tone="slate">
-        Nothing here places an order or connects to a broker. It is a worksheet you carry to wherever you actually buy.
-      </Notice>
-
-      <div className="space-y-3">
-        {calculation.rows.map((row) => {
-          const order = calculation.orders.find((item) => item.instrumentId === row.holding.instrumentId);
-          const isBond = row.instrument?.kind === "bond";
-          return (
-            <Panel key={row.holding.instrumentId}>
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <div className="text-[16px] font-semibold text-white">
-                  {row.instrument?.symbol ?? row.holding.instrumentId}
-                </div>
-                <div className="text-[14px] tabular-nums text-slate-300">Target {usd(row.targetValue)}</div>
-              </div>
-              {/*
-                * Which price the amounts below come from. A price on record is months old by
-                * the time anyone reads it, so its date and what it is sit right beside it; a
-                * broker's price, once entered, replaces it.
-                */}
-              <p className="mt-1 text-[13px] leading-6 text-slate-400">
-                {row.holding.quotePrice !== null
-                  ? `Worked out from your broker's price${isBond ? " per $100 of face value" : ""}, ${usd(row.holding.quotePrice)}${row.holding.quoteAsOf ? `, from ${row.holding.quoteAsOf}` : ""}.`
-                  : row.instrument && row.instrument.referencePrice !== null
-                    ? `Worked out from ${usd(row.instrument.referencePrice)}${isBond ? " per $100 of face value" : " a share"}, the price on ${longDate(row.instrument.priceAsOf)}: ${row.instrument.priceSource}.`
-                    : "There is no price on record for this one. Enter your broker's price to work out a quantity."}
+      <div className="grid gap-5 [@media(min-width:1440px)]:grid-cols-2 [@media(min-width:1440px)]:items-start">
+        <div className={cn(editing && "hidden [@media(min-width:1440px)]:block")}>
+          <Panel>
+            <table className="w-full table-fixed text-[13px]">
+              <caption className="sr-only">What to buy, investment by investment</caption>
+              <thead>
+                <tr className="border-b border-st-hair text-left text-[12px] text-st-faint">
+                  <th scope="col" className="w-[40%] py-2 pr-2 font-normal">Investment</th>
+                  <th scope="col" className="py-2 pr-2 text-right font-normal">To buy</th>
+                  <th scope="col" className="py-2 text-right font-normal">Estimated total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.slice(shownPage * pageSize, (shownPage + 1) * pageSize).map((item) => {
+                  const itemOrder = orderOf(item.holding.instrumentId);
+                  return (
+                    <tr key={item.holding.instrumentId} className="border-b border-st-hair">
+                      <th scope="row" className="py-1 pr-2 text-left font-normal">
+                        <button
+                          ref={(element) => { rowRefs.current[item.holding.instrumentId] = element; }}
+                          type="button"
+                          aria-pressed={(editing || wide) && item.holding.instrumentId === row.holding.instrumentId}
+                          onClick={() => open(item.holding.instrumentId)}
+                          className="min-h-8 max-w-full truncate text-left text-st-ink underline decoration-st-bound underline-offset-4 hover:decoration-st-ink aria-pressed:font-semibold aria-pressed:no-underline [@media(pointer:coarse)]:min-h-11"
+                        >
+                          {symbolOfRow(item)}
+                        </button>
+                      </th>
+                      <td className="py-1.5 pr-2 text-right tabular-nums text-st-ink">{toBuy(item)}</td>
+                      <td className="py-1.5 text-right tabular-nums text-st-ink">
+                        {usd(itemOrder?.estimatedCost ?? 0)}
+                        {itemOrder && !itemOrder.complete ? <span className="block text-[12px] text-st-warn">Incomplete</span> : null}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot className="text-st-ink">
+                <tr>
+                  <th scope="row" colSpan={2} className="pt-2 text-left font-semibold">{anyIncomplete ? "Total, incomplete" : "Total"}</th>
+                  <td className="pt-2 text-right font-semibold tabular-nums">{usd(spent)}</td>
+                </tr>
+                <tr className="text-st-muted">
+                  <th scope="row" colSpan={2} className="py-1 text-left font-normal">Stays in cash</th>
+                  <td className="py-1 text-right tabular-nums">{usd(staysInCash)}</td>
+                </tr>
+                {pages > 1 ? (
+                  <tr>
+                    <td colSpan={3} className="pt-1 text-right">
+                      <HoldingPager count={rows.length} pageSize={pageSize} page={shownPage} onPage={setPage} />
+                    </td>
+                  </tr>
+                ) : null}
+              </tfoot>
+            </table>
+            {anyOnRecord ? (
+              <p className="mt-3 text-[13px] leading-6 text-st-muted">
+                A price on record is not today&rsquo;s. Check your broker&rsquo;s before you buy, and enter it to work from yours.
               </p>
+            ) : null}
+          </Panel>
+        </div>
 
-              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className={cn(!editing && "hidden [@media(min-width:1440px)]:block")}>
+          <Panel>
+            <button type="button" onClick={back} className={cn(INLINE_BUTTON, "mb-2 [@media(min-width:1440px)]:hidden")}>
+              ← All investments
+            </button>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 ref={sheetHeading} tabIndex={-1} className="text-[16px] font-semibold text-white focus:outline-none">
+                {symbolOfRow(row)}
+              </h2>
+              <div className="text-[14px] tabular-nums text-slate-300">Target {usd(row.targetValue)}</div>
+            </div>
+            {/*
+              * Which price the amounts below come from. A price on record is months old by
+              * the time anyone reads it, so its date, what it is and that it is not today's
+              * sit right beside it; a broker's price, once entered, replaces it.
+              */}
+            <p className="mt-1 text-[13px] leading-6 text-slate-400">
+              {!onRecord
+                ? `Worked out from your broker's price${isBond ? " per $100 of face value" : ""}, ${usd(row.holding.quotePrice!)}${row.holding.quoteAsOf ? `, from ${row.holding.quoteAsOf}` : ""}.`
+                : row.instrument && row.instrument.referencePrice !== null
+                  ? `Worked out from ${usd(row.instrument.referencePrice)}${isBond ? " per $100 of face value" : " a share"}, the price on ${longDate(row.instrument.priceAsOf)}: ${row.instrument.priceSource}. Not today’s price: check your broker’s before you buy.`
+                  : "There is no price on record for this one. Enter your broker's price to work out a quantity."}
+            </p>
+
+            {/* In a row where the worksheet has the page's width; two by two on a phone and beside the list. */}
+            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4 [@media(min-width:1440px)]:grid-cols-2">
+              <Stat label={order?.unit === "face value" ? "Face value" : "Shares"} value={String(order?.quantity ?? 0)} />
+              <Stat label="Cost of those" value={usd(order?.principalCost ?? 0)} />
+              <Stat label="Estimated total" value={usd(order?.estimatedCost ?? 0)} />
+              <Stat label="Left in cash" value={usd(order?.leftover ?? row.targetValue)} />
+            </div>
+
+            {warnings.length > 0 ? (
+              <ul className="mt-3 space-y-1">
+                {warnings.map((warning) => (
+                  <li key={warning} className="text-[13px] leading-6 text-accent-amber">
+                    {warning}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {/*
+              * A bond's interest built up since its last payment, and the way to work it
+              * out, in one sentence: apart, a warning and then a link took a phone past a
+              * screen and a half.
+              */}
+            {isBond ? (
+              <p className={cn("mt-3 text-[13px] leading-6", interestUnknown ? "text-accent-amber" : "text-slate-400")}>
+                {interestUnknown ? "The interest built up since the last payment is not in this total yet. " : null}
+                <Link href="/studio/portfolio/bond" className="text-accent-cyan underline underline-offset-2 hover:text-white">
+                  Work out the interest built up by the day you settle
+                </Link>{" "}
+                {interestUnknown ? "and bring the figure back here." : "and bring the figure back here, so this total is not short by it."}
+              </p>
+            ) : null}
+
+            {/*
+              * Optional, so out of the way until wanted; open from the start once any of
+              * them is set, so a price that changes the figures above is never hidden.
+              * Once opened or typed in, it stays open for this investment: a price deleted
+              * to be typed again leaves nothing set, and closing then took the box from
+              * under the cursor.
+              */}
+            <details
+              key={row.holding.instrumentId}
+              open={ownInputs || inputsFor === row.holding.instrumentId}
+              onToggle={(event) => setInputsFor(event.currentTarget.open ? row.holding.instrumentId : null)}
+              onInput={() => setInputsFor(row.holding.instrumentId)}
+              className="mt-4 border-t border-st-hair pt-3"
+            >
+              <summary className="cursor-pointer text-[14px] text-st-ink [@media(pointer:coarse)]:py-[10px]">
+                Use your broker&rsquo;s price, date and fee
+              </summary>
+              <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 [@media(min-width:1440px)]:grid-cols-2">
                 <Field
                   label={isBond ? "Your broker's price per $100 of face value (optional)" : "Your broker's price per share (optional)"}
                   type="number" min={0} prefix="$"
@@ -1043,35 +1346,9 @@ export function BuyStage(props: StageProps) {
                   }
                 />
               </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <Stat label={order?.unit === "face value" ? "Face value" : "Shares"} value={String(order?.quantity ?? 0)} />
-                <Stat label="Cost of those" value={usd(order?.principalCost ?? 0)} />
-                <Stat label="Estimated total" value={usd(order?.estimatedCost ?? 0)} />
-                <Stat label="Left in cash" value={usd(order?.leftover ?? row.targetValue)} />
-              </div>
-
-              {order && order.warnings.length > 0 ? (
-                <ul className="mt-3 space-y-1">
-                  {order.warnings.map((warning) => (
-                    <li key={warning} className="text-[13px] leading-6 text-accent-amber">
-                      {warning}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-
-              {isBond ? (
-                <p className="mt-3 text-[13px] leading-6 text-slate-400">
-                  <Link href="/studio/portfolio/bond" className="text-accent-cyan underline underline-offset-2 hover:text-white">
-                    Work out the interest built up by the day you settle
-                  </Link>{" "}
-                  and bring the figure back here, so this total is not short by it.
-                </p>
-              ) : null}
-            </Panel>
-          );
-        })}
+            </details>
+          </Panel>
+        </div>
       </div>
     </div>
   );
