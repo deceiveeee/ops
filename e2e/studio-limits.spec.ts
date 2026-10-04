@@ -35,8 +35,8 @@ test("says beside each weight which limit holds it back, and lists every check",
   await page.getByLabel("AAPL target percentage").fill("10");
 
   const table = page.getByRole("table", { name: "Target weight and dollar amount for each investment" });
-  await expect(table).toContainText("VTI: 3.3 points over what your loss budget allows (56.7% of the whole portfolio).");
-  await expect(table).toContainText("AAPL: 5.0 points over what your cap for one company allows (5.0% of the whole portfolio).");
+  await expect(table).toContainText("VTI: 3.3 points over: your loss budget allows 56.7%");
+  await expect(table).toContainText("AAPL: 5.0 points over: your cap for one company allows 5.0%");
 
   // Beside the work at this width, closed to one line until opened.
   const limits = page.getByRole("complementary", { name: "About this page" }).locator("details").filter({ hasText: "Your limits" });
@@ -49,8 +49,8 @@ test("says beside each weight which limit holds it back, and lists every check",
   await expect(limits).toContainText("This allocation loses $2,100 in the scenario. Your loss budget is $2,000, the loss you could live with. Most of the loss: VTI $1,800, AAPL $300.");
 
   await page.getByLabel("AAPL target percentage").fill("5");
-  await expect(table).toContainText("AAPL: At the most your cap for one company allows (5.0% of the whole portfolio).");
-  await expect(table).toContainText("VTI: Can rise to 61.7% of the whole portfolio before it reaches your loss budget.");
+  await expect(table).toContainText("AAPL: At the most your cap for one company allows, 5.0%");
+  await expect(table).toContainText("VTI: Can rise to 61.7% before your loss budget");
   await expect(limits.locator("summary")).toContainText("2 met · 2 not checked");
   await expect(limits).toContainText("This allocation loses $1,950 in the scenario. Your loss budget is $2,000, the loss you could live with.");
 });

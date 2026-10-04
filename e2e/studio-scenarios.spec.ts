@@ -128,7 +128,8 @@ test("scenarios can be added, named, edited and removed, and the worst is held a
   // Portfolio: VTI's room is set by the worst scenario for it.
   // Rates rise: 40% + (15% - 21.6%) / 0.40 = 23.5%; Stocks fall: 40% + (15% - 16.4%) / 0.30 = 35.3%.
   await page.goto("/studio/portfolio");
-  await expect(page.getByText("VTI: 16.5 points over what your loss budget in “Rates rise” allows (23.5% of the whole portfolio).", { exact: true })).toBeVisible();
+  // In the holding's cell at this width; a phone has the same line as a row of its own, hidden here.
+  await expect(page.getByText("VTI: 16.5 points over: your loss budget in “Rates rise” allows 23.5%", { exact: true }).filter({ visible: true })).toHaveCount(1);
 
   // Compare allocations opens its loss view on the scenario worst for the proposal.
   await page.goto("/studio/portfolio/weights");

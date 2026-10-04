@@ -38,19 +38,28 @@ export function Panel({ children, className }: { children: ReactNode; className?
 export const PageIntro = createContext<ReactNode>(null);
 
 export function StageHeading({
-  eyebrow, title, children, as: Heading = "h2",
-}: { eyebrow?: string; title: string; children?: ReactNode; as?: "h1" | "h2" }) {
+  eyebrow, title, children, as: Heading = "h2", narrowTitleOnly = false,
+}: {
+  eyebrow?: string; title: string; children?: ReactNode; as?: "h1" | "h2";
+  /**
+   * Below 1440px, the title alone: for a part of a page opened in place of the
+   * list it came from, where the explanation was just read above that list.
+   * From 1440px What to buy shows the two side by side, and the explanation stays.
+   */
+  narrowTitleOnly?: boolean;
+}) {
   const intro = useContext(PageIntro);
+  const wideOnly = narrowTitleOnly ? "hidden [@media(min-width:1440px)]:block" : undefined;
   return (
     <>
       <div>
         {/* A label, not a warning, so it takes no accent colour. */}
         {eyebrow ? <div className="ops-caption text-[12px] text-slate-500">{eyebrow}</div> : null}
         <Heading className={cn("ops-display text-2xl leading-tight text-white sm:text-3xl", eyebrow && "mt-2")}>{title}</Heading>
-        {children ? <p className="ops-body mt-3 max-w-2xl text-[15px] leading-7 text-slate-300">{children}</p> : null}
+        {children ? <p className={cn("ops-body mt-3 max-w-2xl text-[15px] leading-7 text-slate-300", wideOnly)}>{children}</p> : null}
       </div>
       {/* Only under the page's own title, never a section's. */}
-      {Heading === "h1" ? intro : null}
+      {Heading === "h1" && intro ? (wideOnly ? <div className={wideOnly}>{intro}</div> : intro) : null}
     </>
   );
 }
@@ -336,7 +345,7 @@ export function Notice({
 export function Stat({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div>
-      <div className="ops-caption text-[11px] text-st-faint">{label}</div>
+      <div className="ops-caption text-[12px] text-st-faint">{label}</div>
       <div className="mt-1 text-[18px] font-semibold tabular-nums text-st-ink">{value}</div>
       {detail ? <div className="mt-0.5 text-[12px] leading-5 text-st-faint">{detail}</div> : null}
     </div>

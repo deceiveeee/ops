@@ -121,16 +121,15 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
   /*
    * Narrow screens keep the definition above the work, where a first-time
    * learner meets it before the questions that use it. The page's title places
-   * it, below the page's tabs and title rather than above them. The weights'
-   * totals come with it where weights are the work; Review's work is rules and
-   * copies, and Risk's a scenario with its own totals, and on both the strip
-   * took a phone past a screen and a half.
+   * it, below the page's tabs and title rather than above them. A strip of the
+   * weights' totals used to come with it; each page now carries its own totals
+   * (the weights table its total, What to buy its list), and on every page the
+   * strip took a phone past a screen and a half.
    */
   const intro =
     stagePage && guidance && !integratedGuide ? (
-      <div className="space-y-4 xl:hidden">
+      <div className="xl:hidden">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
-        {within(pathname, "/studio/review") || within(pathname, "/studio/portfolio/risk") ? null : <Strip />}
       </div>
     ) : null;
 
@@ -504,7 +503,7 @@ function Summary() {
   const fullyAssigned = Math.abs(calculation.totalWeightPct - 100) <= 0.01;
   return (
     <Panel>
-      <div className="ops-caption text-[11px] text-slate-500">Your portfolio</div>
+      <div className="ops-caption text-[12px] text-slate-500">Your portfolio</div>
       <div className="mt-3 space-y-3">
         <Stat label="To invest" value={usdWhole(calculation.investableBudget)} />
         <Stat
@@ -535,28 +534,6 @@ function AsideLimits() {
   return <LimitChecks checks={checkPortfolio(plan, calculation, readLimits(project), readScenarios(project)).checks} />;
 }
 
-/** The same three numbers as one line, for screens without room beside the work. */
-function Strip() {
-  const { plan, calculation } = useWorkspace();
-  if (!plan || !calculation) return null;
-  const fullyAssigned = Math.abs(calculation.totalWeightPct - 100) <= 0.01;
-  return (
-    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-[13px] sm:gap-x-5 sm:px-4 sm:py-3">
-      <span className="text-slate-500">
-        To invest <span className="tabular-nums text-white">{usdWhole(calculation.investableBudget)}</span>
-      </span>
-      <span className="text-slate-500">
-        Assigned{" "}
-        <span className={cn("tabular-nums", fullyAssigned ? "text-accent-green" : "text-accent-amber")}>
-          {pct(calculation.totalWeightPct)}
-        </span>
-      </span>
-      <span className="text-slate-500">
-        Investments <span className="tabular-nums text-white">{plan.holdings.length}</span>
-      </span>
-    </div>
-  );
-}
 
 /** Placeholder shapes while the project opens. Nothing here is interactive. */
 export function WorkWaiting() {

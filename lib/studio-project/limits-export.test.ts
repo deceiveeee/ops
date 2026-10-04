@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { addStudioHolding, updateStudioHolding } from "@/lib/studio";
 import { createStudioProject } from "./create";
-import { describeRoom, type HoldingRoom } from "./limit-checks";
+import { describeRoom, describeRoomShort, type HoldingRoom } from "./limit-checks";
 import { emptyLimits, limitsText, setLimits } from "./limits";
 import { applyPlanChange, exportProjectText } from "./workspace";
 
@@ -15,6 +15,13 @@ describe("limits in words, on Portfolio and in the readable plan", () => {
     expect(describeRoom(room(40, "your cap for one fund", 40, false))).toBe("At the most your cap for one fund allows (40.0% of the whole portfolio).");
     expect(describeRoom(room(20, "Steady's highest", 25, false))).toBe("Can rise to 25.0% of the whole portfolio before it reaches Steady's highest.");
     expect(describeRoom({ ...room(20, "", 0, false), ceilings: [], tightest: null })).toBeNull();
+  });
+
+  it("says the same in one line beside the weight, the three ways and none", () => {
+    expect(describeRoomShort(room(8, "your cap for one company", 5, true))).toBe("3.0 points over: your cap for one company allows 5.0%");
+    expect(describeRoomShort(room(40, "your cap for one fund", 40, false))).toBe("At the most your cap for one fund allows, 40.0%");
+    expect(describeRoomShort(room(20, "Steady's highest", 25, false))).toBe("Can rise to 25.0% before Steady's highest");
+    expect(describeRoomShort({ ...room(20, "", 0, false), ceilings: [], tightest: null })).toBeNull();
   });
 
   it("writes every limit out, unset ones included, so a reader sees what was never decided", () => {

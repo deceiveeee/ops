@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { addStudioHolding, calculateStudio, createStudioPlan, type StudioPlan } from "@/lib/studio";
 import { STUDIO_CATALOG } from "@/lib/studio-catalog";
 import { Field } from "./shared";
 import { BuildStage, type StageResult } from "./stages";
+
+afterEach(() => vi.unstubAllGlobals());
 
 /**
  * What happens to a control while its save is still in the air.
@@ -145,6 +147,13 @@ describe("a control whose save has not landed yet", () => {
   });
 
   it("keeps a two-digit weight when the first digit is applied late", async () => {
+    // jsdom has no viewport queries; browser tests cover the responsive pages.
+    vi.stubGlobal("matchMedia", (media: string) => ({
+      media,
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
     const queue: (() => void)[] = [];
     render(<SlowBuild queue={queue} />);
     const weight = screen.getByLabelText("AAPL target percentage");
