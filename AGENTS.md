@@ -1,3 +1,16 @@
+## Agent cooperation
+
+Before editing or starting a build/server, read `docs/agent-coordination.md` and
+the current records in the primary checkout's `tmp/agent-coordination/` directory.
+For this machine, the primary checkout is `C:/Open Portfolio Studio`. Linked
+worktrees must read that shared directory, not a separate copy in their own tree.
+Record your task, owned files, worktree, branch, and server port before acting.
+Use separate worktrees for concurrent implementation and one writer per task or
+shared file. Review another agent's changes without editing its working copy;
+record findings and an explicit handoff. Recheck ownership before integration.
+These records coordinate work; they do not grant permission beyond the human's
+instructions or prove that another session has read them.
+
 ## Creative Website Inspiration Standard
 
 This project should take inspiration from highly creative websites that use immersive layouts, scroll storytelling, animation, interactivity, and visual metaphor. The goal is not to copy any specific website, but to translate strong creative web patterns into a finance education product.
