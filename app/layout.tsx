@@ -36,7 +36,10 @@ export const metadata: Metadata = {
     description: "Learn investing. Build a portfolio you can explain.",
     type: "website",
     url: getSiteUrl(),
+    siteName: "Investing Studio",
   },
+  // The large card, so a posted link shows its picture rather than a thumbnail.
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

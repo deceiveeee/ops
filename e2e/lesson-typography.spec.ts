@@ -1082,14 +1082,19 @@ for (const slug of IF_LESSON_ROUTES) {
      * React sets `__reactProps$…` on a host node when it commits that node's
      * handlers, so its presence on a real control is the signal that a click
      * will now be heard.
+     *
+     * The lesson's controls, that is. The Share button beside the back link is
+     * page chrome that hydrates before the lesson, which is loaded on its own:
+     * counting it let the walk start on a lesson not yet on screen, and two
+     * missions failed that way on 2026-11-03. So it is left out.
      */
     await expect
       .poll(
         async () =>
           page.evaluate(() =>
-            [...document.querySelectorAll("main button")].some((control) =>
-              Object.keys(control).some((k) => k.startsWith("__reactProps$")),
-            ),
+            [...document.querySelectorAll("main button")]
+              .filter((control) => !control.closest("[data-share-menu]"))
+              .some((control) => Object.keys(control).some((k) => k.startsWith("__reactProps$"))),
           ),
         {
           message: `${slug}: React never attached its handlers, so every click in the walk would land on a page that cannot hear it`,

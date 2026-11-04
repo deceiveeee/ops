@@ -21,6 +21,7 @@ const nav = [
   { href: "/studio", label: "Studio" },
   { href: "/plan", label: "Your plan" },
   { href: "/studio/filings", label: "Company reports" },
+  { href: "/daily", label: "Daily puzzle" },
 ];
 
 export default function SiteHeader() {

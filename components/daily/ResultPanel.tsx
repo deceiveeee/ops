@@ -1,0 +1,164 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { forwardRef, useEffect, useState } from "react";
+import { filingIndexUrl } from "@/lib/filings/edgar";
+import { CLUE_COUNT, type GameState } from "@/lib/daily-puzzle/game";
+import { longDate } from "@/lib/daily-puzzle/schedule";
+import { shareText } from "@/lib/daily-puzzle/share";
+import type { DailyPuzzle } from "@/lib/daily-puzzle/types";
+import { Squares } from "./GuessPanel";
+import styles from "./daily.module.css";
+
+type Props = {
+  puzzle: DailyPuzzle;
+  state: GameState;
+  shareUrl: string;
+  solvedThisMonth: number;
+  isToday: boolean;
+};
+
+/** The lesson that teaches where these three figures are reported. */
+const STATEMENTS_LESSON = "/lessons/if-4-1-the-three-financial-statements";
+
+/**
+ * The answer, and where to go from it: post the result, open the very
+ * passage the last clue quoted, or read the whole report in Studio.
+ */
+const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({ puzzle, state, shareUrl, solvedThisMonth, isToday }, heading) {
+  const router = useRouter();
+  const [note, setNote] = useState<{ message: string; search?: string } | null>(null);
+  const [opening, setOpening] = useState(false);
+  const [shareNote, setShareNote] = useState<string | null>(null);
+  const [canShareNatively, setCanShareNatively] = useState(false);
+  const { answer, report, description } = puzzle;
+  const reader = `/studio/filings/${answer.cik}/${report.accession}?doc=${encodeURIComponent(report.document)}&ticker=${encodeURIComponent(answer.ticker)}`;
+  const text = shareText(puzzle.number, state, shareUrl);
+
+  useEffect(() => {
+    setCanShareNatively(typeof navigator !== "undefined" && typeof navigator.share === "function");
+  }, []);
+
+  const share = async () => {
+    if (canShareNatively) {
+      try {
+        await navigator.share({ text });
+        return;
+      } catch (error) {
+        // Closing the share sheet is a choice, not a failure. Any other refusal falls back to copying.
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setShareNote("Result copied. Paste it anywhere: it shows how you did, not the answer.");
+    } catch {
+      setShareNote("Copying was blocked by this browser.");
+    }
+  };
+
+  /** Finds the quoted words in a fresh copy of the report, the way Investigate opens a kept passage. */
+  const openPassage = async () => {
+    setNote(null);
+    setOpening(true);
+    const opening5 = description.anchor.quote.split(/\s+/).slice(0, 5).join(" ");
+    try {
+      const response = await fetch("/api/studio/locate-passage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cik: answer.cik,
+          accession: report.accession,
+          document: report.document,
+          sectionId: description.anchor.sectionId,
+          quote: description.anchor.quote,
+          prefix: description.anchor.prefix,
+          suffix: description.anchor.suffix,
+          offset: description.anchor.offset,
+        }),
+      });
+      const found = (await response.json()) as { found?: boolean; strategy?: string; sectionId?: string; start?: number; end?: number; message?: string; error?: string };
+      if (found.found && found.start !== undefined && found.end !== undefined) {
+        const moved = found.strategy && found.strategy !== "position" ? `&moved=${found.strategy}` : "";
+        router.push(`${reader}&section=${found.sectionId}&at=${found.start}&len=${found.end - found.start}${moved}#passage`);
+        return;
+      }
+      setNote({ message: found.message ?? found.error ?? "The passage could not be found in the report.", search: `${reader}&q=${encodeURIComponent(opening5)}` });
+    } catch {
+      setNote({ message: "The report could not be reached just now.", search: `${reader}&q=${encodeURIComponent(opening5)}` });
+    } finally {
+      setOpening(false);
+    }
+  };
+
+  return (
+    <section className={styles.panel} aria-labelledby="daily-result">
+      <h2 id="daily-result" ref={heading} tabIndex={-1} className={styles.result}>
+        It was {answer.name}.
+      </h2>
+      <p className={styles.resultLine}>
+        {state.status === "solved"
+          ? `Solved with ${state.shown} of ${CLUE_COUNT} clues.`
+          : `Not solved this time. All ${CLUE_COUNT} clues are showing now.`}
+      </p>
+      <div className={styles.progressLine}>
+        <Squares state={state} />
+        <span>
+          {solvedThisMonth} solved this month
+        </span>
+      </div>
+
+      <div className={styles.row}>
+        <button type="button" className={styles.button} onClick={share}>
+          Share result
+        </button>
+        <button type="button" className={styles.ghost} onClick={openPassage} disabled={opening}>
+          {opening ? "Finding it…" : "Open the quote"}
+        </button>
+      </div>
+      <p role="status" aria-live="polite" className={shareNote ? styles.note : "sr-only"}>
+        {shareNote ?? ""}
+      </p>
+      {note ? (
+        <p className={styles.note} role="alert">
+          {note.message}{" "}
+          {note.search ? (
+            <Link className="underline underline-offset-4" href={note.search}>
+              Search the report for it
+            </Link>
+          ) : null}
+        </p>
+      ) : null}
+
+      {/*
+        * Where the clues came from, and where to read more, one tap away: drawn
+        * open it took a phone past a screen and a half once the answer showed.
+        */}
+      <details className={styles.more}>
+        <summary>Where these clues came from</summary>
+        <p>
+          The figures and words are from its annual report (Form 10-K) for the year ending {longDate(report.periodEnd)}, filed{" "}
+          {longDate(report.filed)}. The industry is the code the SEC files it under.
+        </p>
+        <ul>
+          <li>
+            <Link href={reader}>Read its whole annual report</Link>
+          </li>
+          <li>
+            <a href={filingIndexUrl(answer.cik, report.accession)} target="_blank" rel="noreferrer">
+              See the filing at the SEC
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <Link href={STATEMENTS_LESSON}>Learn where revenue, profit and assets are reported</Link>
+          </li>
+        </ul>
+      </details>
+      {isToday ? <p className={styles.note}>A new puzzle starts at midnight, New York time.</p> : null}
+    </section>
+  );
+});
+
+export default ResultPanel;

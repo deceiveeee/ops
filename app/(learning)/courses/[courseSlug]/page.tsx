@@ -16,7 +16,13 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { courseSlug: string } }) {
   const c = getCourse(params.courseSlug);
-  return { title: c ? `${c.title} — Investing Studio` : "Course — Investing Studio" };
+  if (!c) return { title: "Course — Investing Studio" };
+  return {
+    title: `${c.title} — Investing Studio`,
+    description: c.subtitle,
+    openGraph: { title: c.title, description: c.subtitle, type: "website", url: `/courses/${c.slug}`, siteName: "Investing Studio" },
+    twitter: { card: "summary_large_image", title: c.title, description: c.subtitle },
+  };
 }
 
 /** Course-specific accent color. Decorative: fills, bars, SVG. */

@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/studio/industry",
     "/studio/investigate",
     "/studio/filings",
+    "/daily",
+    "/daily/past",
     "/start",
     "/privacy",
     "/terms",
