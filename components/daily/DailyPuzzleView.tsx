@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { countOnce } from "@/lib/counts/count";
 import { cluesFor } from "@/lib/daily-puzzle/clues";
 import { CLUE_COUNT, play, type Move } from "@/lib/daily-puzzle/game";
 import { dateIn, PUZZLE_TIME_ZONE } from "@/lib/daily-puzzle/schedule";
@@ -64,6 +65,9 @@ export default function DailyPuzzleView({ puzzle, isToday, shareUrl }: Props) {
     setMoves(next.moves);
     setFresh(next.shown > state.shown ? next.shown - 1 : null);
     setAnnouncement(said(next));
+    // Only the number of clues showing leaves the browser, never the guesses. Once per puzzle,
+    // so the same puzzle solved again in a second tab that had not caught up is not a second solve.
+    if (next.status === "solved") countOnce(`puzzle:${key}`, { name: "Puzzle solved", puzzle: puzzle.number, clues: next.shown });
   };
 
   const guess = (company: GuessableCompany) =>

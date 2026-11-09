@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { forwardRef, useEffect, useState } from "react";
+import { count } from "@/lib/counts/count";
 import { filingIndexUrl } from "@/lib/filings/edgar";
 import { CLUE_COUNT, type GameState } from "@/lib/daily-puzzle/game";
 import { longDate } from "@/lib/daily-puzzle/schedule";
 import { shareText } from "@/lib/daily-puzzle/share";
 import type { DailyPuzzle } from "@/lib/daily-puzzle/types";
+import { markShared } from "@/lib/share";
 import { Squares } from "./GuessPanel";
 import styles from "./daily.module.css";
 
@@ -34,7 +36,8 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
   const [canShareNatively, setCanShareNatively] = useState(false);
   const { answer, report, description } = puzzle;
   const reader = `/studio/filings/${answer.cik}/${report.accession}?doc=${encodeURIComponent(report.document)}&ticker=${encodeURIComponent(answer.ticker)}`;
-  const text = shareText(puzzle.number, state, shareUrl);
+  // The link in the post says how it was shared (see `markShared`), so an arrival from it can be counted.
+  const textVia = (how: "app" | "link") => shareText(puzzle.number, state, markShared(shareUrl, how));
 
   useEffect(() => {
     setCanShareNatively(typeof navigator !== "undefined" && typeof navigator.share === "function");
@@ -43,7 +46,8 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
   const share = async () => {
     if (canShareNatively) {
       try {
-        await navigator.share({ text });
+        await navigator.share({ text: textVia("app") });
+        count({ name: "Shared", page: "puzzle", how: "app" });
         return;
       } catch (error) {
         // Closing the share sheet is a choice, not a failure. Any other refusal falls back to copying.
@@ -51,7 +55,8 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
       }
     }
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(textVia("link"));
+      count({ name: "Shared", page: "puzzle", how: "link" });
       setShareNote("Result copied. Paste it anywhere: it shows how you did, not the answer.");
     } catch {
       setShareNote("Copying was blocked by this browser.");

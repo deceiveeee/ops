@@ -1060,6 +1060,13 @@ for (const slug of IF_LESSON_ROUTES) {
     // dev server compiling routes on demand. The 30s default is a limit on the
     // work, not on the page.
     test.setTimeout(180_000);
+    // The walk answers every stage the way a learner would, so it is also the one
+    // place every staged lesson's counts are seen end to end (lib/counts).
+    await page.addInitScript(() => {
+      const w = window as unknown as { __opsCounts: unknown[] };
+      w.__opsCounts = [];
+      window.addEventListener("ops-count", (event) => w.__opsCounts.push((event as CustomEvent).detail));
+    });
     await page.goto(`/lessons/${slug}`);
     await page.waitForLoadState("domcontentloaded");
     // A cold dev server compiles a route on first request, which regularly
@@ -1192,6 +1199,13 @@ for (const slug of IF_LESSON_ROUTES) {
     console.log(
       `  ${slug}: ${total} stage(s) walked${warnings.size ? `, ${warnings.size} note(s): ${[...warnings].slice(0, 3).join(", ")}` : ""}`,
     );
+    // Soft, so a counting fault is reported beside the typography findings rather than hiding them.
+    const counts = (await page.evaluate(() => (window as unknown as { __opsCounts: { name: string }[] }).__opsCounts)) ?? [];
+    for (const name of ["First stage finished", "Lesson finished"]) {
+      expect
+        .soft(counts.filter((c) => c.name === name), `${slug}: answering every stage should count "${name}" exactly once`)
+        .toEqual([{ name, props: { lesson: slug } }]);
+    }
     expect(findings, format(findings)).toEqual([]);
 
     // The same lesson, at its last stage, must not scroll sideways on a phone.

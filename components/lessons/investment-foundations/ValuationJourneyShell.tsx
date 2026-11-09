@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { countFirstStage } from "@/lib/counts/count";
 import { useIFProgress } from "@/lib/if-progress";
 import { cn } from "@/lib/utils";
 
@@ -61,7 +62,8 @@ export default function ValuationJourneyShell({
         ? current
         : current.map((done, itemIndex) => (itemIndex === index ? true : done)),
     );
-  }, []);
+    if (index === 0) countFirstStage(lessonSlug);
+  }, [lessonSlug]);
 
   // Record lesson completion as an effect rather than inside the state updater.
   // Updaters must be pure, and React may run them during the render phase.

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { classroomShareUrl } from "@/lib/share";
+import { count } from "@/lib/counts/count";
+import { pageKind, type ShareHow } from "@/lib/counts/events";
+import { classroomShareUrl, markShared } from "@/lib/share";
 
 type Props = {
   /** The canonical address to share. */
@@ -60,9 +62,14 @@ export default function ShareMenu({ url, title, text, label }: Props) {
     if (refocus) trigger.current?.focus();
   };
 
+  // Each way out carries its own mark, so an arrival from it can be counted (see `markShared`).
+  const page = pageKind(new URL(url).pathname);
+  const counted = (how: ShareHow) => count({ name: "Shared", page, how });
+
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(markShared(url, "link"));
+      counted("link");
       setNote({ tone: "ok", message: "Link copied" });
     } catch {
       setNote({ tone: "error", message: "Copying was blocked. Copy the address from your browser's address bar." });
@@ -73,7 +80,8 @@ export default function ShareMenu({ url, title, text, label }: Props) {
   const shareNatively = async () => {
     close(true);
     try {
-      await navigator.share({ title, text, url });
+      await navigator.share({ title, text, url: markShared(url, "app") });
+      counted("app");
     } catch {
       // Closing the share sheet without choosing an app is not an error worth reporting.
     }
@@ -135,11 +143,15 @@ export default function ShareMenu({ url, title, text, label }: Props) {
           </li>
           <li>
             <a
-              href={classroomShareUrl(url)}
+              href={classroomShareUrl(markShared(url, "classroom"))}
               target="_blank"
               rel="noopener noreferrer"
               className={item}
-              onClick={() => close(false)}
+              onClick={() => {
+                // Counted when Classroom's own dialog opens; whether the teacher then posts is Classroom's to know.
+                counted("classroom");
+                close(false);
+              }}
             >
               Share to Google Classroom
               <span className="sr-only"> (opens in a new tab)</span>
