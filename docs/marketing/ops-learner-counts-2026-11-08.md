@@ -1,23 +1,25 @@
 # Counting whether OPS is working
 
-Date: **8 November 2026**. Status: **built locally, uncommitted. Counts are sent to Vercel Web
-Analytics, which needs the Pro plan. Upgrading is a step for you (below).**
+Date: **8 November 2026**. Status: **built and committed on branch
+`claude/affectionate-neumann-e5e8bc`, not yet deployed. Counts are sent to Vercel Web Analytics;
+the team is on the Pro plan as of 8 November 2026, so Vercel will record them once this is live.**
 
 Today OPS only counts page views. That tells you how many people opened a page, not whether
 anyone finished a lesson, solved the puzzle, shared it, or came back. Without those, money spent
 on ads or time spent on teacher outreach cannot be judged. This adds six counts and nothing else.
 
-## Your step: upgrade Vercel to Pro
+## Where to read the counts
 
-You chose option A, Vercel Pro, on 8 November 2026. The code sends each count with Vercel's own
-`track()`, through the analytics script already on every page. Until the project's team is on Pro,
-Vercel ignores these counts; page views carry on as before.
+You chose option A, Vercel Pro, on 8 November 2026, and upgraded the `deceiveeees-projects` team
+to Pro the same day. The code sends each count with Vercel's own `track()`, through the analytics
+script already on every page. The Pro upgrade also lifts the Hobby cap that would have paused page
+views after 50,000 a month.
 
-1. In the Vercel dashboard, open the `deceiveeees-projects` team, then **Settings → Billing**, and
-   upgrade the plan to Pro.
-2. After the next deploy, open **Analytics** for the `ops` project and scroll to **Events**. The six
-   names below appear there as learners act.
-3. Optional: set a spend alert under **Settings → Billing → Spend Management**.
+1. Merge and deploy this branch. Nothing is counted until it is live.
+2. Open **Analytics** for the `ops` project and scroll to **Events**. Each of the six names below
+   appears there once the first learner does that thing, so the list starts empty.
+3. Optional: set a spend alert under **Settings → Billing → Spend Management**. Counts and page views
+   cost $0.03 per 1,000 each, so 100,000 of them is about $3 of Pro's $20 monthly usage credit.
 
 ## How the options compared (decided: A)
 
