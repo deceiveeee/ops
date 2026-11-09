@@ -59,7 +59,7 @@ test("a solved puzzle counts once with its clues; a share counts and its link co
   await expect(page.getByRole("heading", { name: `It was ${FIRST.answer.name}.` })).toBeVisible();
   expect(await named(page, "Puzzle solved"), "reopening a solved puzzle is not a second solve").toHaveLength(1);
 
-  await page.getByRole("button", { name: "Share result" }).click();
+  await page.getByRole("button", { name: "Challenge a friend" }).click();
   await expect(page.getByText("Result copied.")).toBeVisible();
   expect(await named(page, "Shared")).toEqual([{ name: "Shared", props: { page: "puzzle", how: "link" } }]);
   const link = (await page.evaluate(() => navigator.clipboard.readText())).split("\n").at(-1)!;

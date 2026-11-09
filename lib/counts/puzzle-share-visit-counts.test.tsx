@@ -101,7 +101,7 @@ describe("Puzzle solved", () => {
     await openPuzzle();
     for (let i = 0; i < 6; i += 1) fireEvent.click(screen.getByRole("button", { name: /Show the next clue|Give up and see the answer/ }));
     await settle();
-    expect(screen.getByText(/Not solved this time/)).toBeInTheDocument();
+    expect(screen.getByText(/I missed it after 6 clues/)).toBeInTheDocument();
     expect(seen).toEqual([]);
   });
 });
@@ -111,13 +111,13 @@ describe("Shared, from the puzzle", () => {
     await openPuzzle();
     await guess(PUZZLE.answer.name);
     seen = [];
-    fireEvent.click(screen.getByRole("button", { name: "Share result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Challenge a friend" }));
     await settle();
     expect(writeText).toHaveBeenCalledTimes(1);
     const text = writeText.mock.calls[0][0] as string;
     expect(text.endsWith(`${SHARE_URL}?via=link`)).toBe(true);
     expect(text.toLowerCase()).not.toContain(PUZZLE.answer.name.toLowerCase());
-    fireEvent.click(screen.getByRole("button", { name: "Share result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Challenge a friend" }));
     await settle();
     expect(seen).toEqual([
       { name: "Shared", props: { page: "puzzle", how: "link" } },
@@ -130,7 +130,7 @@ describe("Shared, from the puzzle", () => {
     await openPuzzle();
     await guess(PUZZLE.answer.name);
     seen = [];
-    fireEvent.click(screen.getByRole("button", { name: "Share result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Challenge a friend" }));
     await settle();
     expect(screen.getByText("Copying was blocked by this browser.")).toBeInTheDocument();
     expect(seen).toEqual([]);
@@ -141,14 +141,14 @@ describe("Shared, from the puzzle", () => {
     await openPuzzle();
     await guess(PUZZLE.answer.name);
     seen = [];
-    fireEvent.click(screen.getByRole("button", { name: "Share result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Challenge a friend" }));
     await settle();
     expect((share!.mock.calls[0] as unknown as [{ text: string }])[0].text.endsWith(`${SHARE_URL}?via=app`)).toBe(true);
     expect(seen).toEqual([{ name: "Shared", props: { page: "puzzle", how: "app" } }]);
 
     phoneShare("closed");
     seen = [];
-    fireEvent.click(screen.getByRole("button", { name: "Share result" }));
+    fireEvent.click(screen.getByRole("button", { name: "Challenge a friend" }));
     await settle();
     expect(seen).toEqual([]);
     expect(writeText).not.toHaveBeenCalled();
