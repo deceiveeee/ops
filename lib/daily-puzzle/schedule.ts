@@ -6,11 +6,13 @@
  * California therefore gets the next puzzle at 9 p.m. their time; that is the
  * price of one shared answer per day, and the page says so.
  *
- * FIRST_PUZZLE_DATE is the day puzzle #1 runs. Set it to the launch date when
- * this ships: puzzles dated before launch would otherwise start life as
- * already-past puzzles in the archive.
+ * FIRST_PUZZLE_DATE is the day puzzle #1 runs: the launch day, set on
+ * 8 November 2026. Puzzles dated before launch would otherwise start life as
+ * already-past puzzles in the archive. With 35 published puzzles the last one
+ * runs on 12 December 2026; after that /daily says there is no new puzzle, so
+ * more need publishing before then.
  */
-export const FIRST_PUZZLE_DATE = "2026-11-03";
+export const FIRST_PUZZLE_DATE = "2026-11-08";
 export const PUZZLE_TIME_ZONE = "America/New_York";
 
 const DAY_MS = 86_400_000;
