@@ -3,15 +3,40 @@ import { notFound } from "next/navigation";
 import { courses, findLesson, getAllLessons } from "@/data/courses";
 import { hasLessonComponent } from "@/lib/lessonSlugs";
 import LessonMount from "@/components/lessons/LessonMount";
+import ShareMenu from "@/components/share/ShareMenu";
 import SectionLabel from "@/components/ui/SectionLabel";
+import { canonicalUrl } from "@/lib/share";
+import { getSiteUrl } from "@/lib/site-url";
 
 export function generateStaticParams() {
   return getAllLessons().map((l) => ({ lessonSlug: l.lesson.slug }));
 }
 
+/**
+ * What a link to this lesson says when it is posted somewhere: the lesson's
+ * own title and the question it answers, with the picture drawn beside it by
+ * `opengraph-image.tsx`.
+ */
 export function generateMetadata({ params }: { params: { lessonSlug: string } }) {
   const l = findLesson(params.lessonSlug);
-  return { title: l ? `${l.lesson.title} — Investing Studio` : "Lesson — Investing Studio" };
+  if (!l) return { title: "Lesson — Investing Studio" };
+  const { lesson } = l;
+  return {
+    title: `${lesson.title} — Investing Studio`,
+    description: lesson.subtitle,
+    openGraph: {
+      title: lesson.title,
+      description: lesson.subtitle,
+      type: "article",
+      url: `/lessons/${lesson.slug}`,
+      siteName: "Investing Studio",
+    },
+    twitter: { card: "summary_large_image", title: lesson.title, description: lesson.subtitle },
+  };
+}
+
+function LessonShare({ slug, title, subtitle }: { slug: string; title: string; subtitle: string }) {
+  return <ShareMenu url={canonicalUrl(`/lessons/${slug}`, getSiteUrl())} title={title} text={subtitle} label="Share this lesson" />;
 }
 
 export default function LessonPage({ params }: { params: { lessonSlug: string } }) {
@@ -27,13 +52,14 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
     return (
       <div className="relative w-full">
         <div className="pointer-events-none absolute inset-0 terminal-grid opacity-20" />
-        <div className="relative mx-auto max-w-7xl px-5 pt-6 sm:px-8">
+        <div className="relative z-30 mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 pt-6 sm:px-8">
           <Link
             href={courseReturnHref}
             className="inline-flex min-h-11 items-center font-sans text-[12px] font-medium tracking-[0.02em] text-slate-400 hover:text-accent-cyan"
           >
             ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
           </Link>
+          <LessonShare slug={lesson.slug} title={lesson.title} subtitle={lesson.subtitle} />
         </div>
         <LessonMount slug={lesson.slug} />
       </div>
@@ -55,9 +81,12 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
     <div className="relative w-full">
       <div className="pointer-events-none absolute inset-0 terminal-grid opacity-30" />
       <div className="relative mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-28">
-        <Link href={courseReturnHref} className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan">
-          ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
-        </Link>
+        <div className="relative z-30 flex items-center justify-between gap-3">
+          <Link href={courseReturnHref} className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan">
+            ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
+          </Link>
+          <LessonShare slug={lesson.slug} title={lesson.title} subtitle={lesson.subtitle} />
+        </div>
 
         <SectionLabel index={`Lesson · ${lesson.type}`} eyebrow={module.title} className="mt-6" tone="cyan" />
         <h1 className="mt-6 text-balance text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">

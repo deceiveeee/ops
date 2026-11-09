@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import "./refresh.css";
 import SiteShell from "@/components/layout/SiteShell";
+import VisitCounts from "@/components/counts/VisitCounts";
 import { SessionProvider } from "@/lib/supabase/session";
 import { GUEST_ONLY_BETA } from "@/lib/beta";
 import { ProgressProvider } from "@/lib/progress/store";
@@ -36,7 +37,10 @@ export const metadata: Metadata = {
     description: "Learn investing. Build a portfolio you can explain.",
     type: "website",
     url: getSiteUrl(),
+    siteName: "Investing Studio",
   },
+  // The large card, so a posted link shows its picture rather than a thumbnail.
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -50,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ProgressProvider>
           </OnboardingProvider>
         </SessionProvider>
+        <VisitCounts />
         <Analytics />
         <SpeedInsights />
       </body>

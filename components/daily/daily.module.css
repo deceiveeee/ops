@@ -1,0 +1,118 @@
+/*
+ * The daily company puzzle: a redacted page of an annual report beside the
+ * guess. Each clue is a blacked-out line that clears when it is revealed, so
+ * the page reads as a report being read, not a quiz with cards.
+ */
+.page { width: min(1180px, 100% - 64px); margin-inline: auto; padding-block: 28px 48px; color: var(--ops-text-primary); }
+.eyebrow { font-size: 13px; line-height: 1.5; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.title { margin-top: 6px; font-family: var(--font-display), Georgia, serif; font-size: clamp(30px, 3.2vw, 42px); font-weight: 500; line-height: 1.08; letter-spacing: -0.02em; }
+.lead { margin-top: 8px; max-width: 640px; font-size: 16px; line-height: 1.6; color: var(--ops-text-secondary); }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 24px; align-items: start; margin-top: 20px; }
+
+/* The report page. */
+.sheet { border: 1px solid var(--ops-divider); border-radius: 16px; background: var(--ops-surface); padding: 6px 20px 8px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); }
+.sheetHead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; font-size: 13px; color: var(--ops-text-secondary); }
+.sheetName { display: inline-flex; align-items: center; gap: 8px; }
+.nameBar { display: inline-block; width: 112px; height: 14px; border-radius: 4px; background: var(--ops-text-primary); }
+.answerName { font-size: 14px; font-weight: 600; color: var(--ops-text-primary); }
+
+.clues { list-style: none; margin: 0; padding: 0; }
+.clue { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 4px 10px; padding-block: 12px; border-top: 1px solid var(--ops-divider); }
+.clueNumber { font-size: 13px; line-height: 20px; font-weight: 600; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.clueTitle { font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ops-text-secondary); }
+.clueBody { grid-column: 2; min-width: 0; }
+.clueText { font-size: 17px; line-height: 1.45; font-weight: 500; font-variant-numeric: tabular-nums; }
+.quote { font-size: 16px; line-height: 1.6; font-weight: 400; }
+.definition { margin-top: 4px; font-size: 13px; line-height: 1.55; color: var(--ops-text-secondary); }
+.defineToggle { margin-top: 2px; font-size: 13px; line-height: 1.55; color: var(--ops-text-secondary); }
+.defineToggle summary { display: inline-flex; align-items: center; min-height: 32px; cursor: pointer; color: var(--ops-accent-strong); }
+.defineToggle summary:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; border-radius: 4px; }
+.hidden { grid-column: 2; height: 12px; margin-top: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--ops-surface-2) 0 14px, #e4e4e9 14px 15px); }
+.revealed .clueBody { animation: clear 380ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+@keyframes clear { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* A blacked-out name inside a clue. */
+.blank { display: inline-block; width: 3.4em; height: 0.92em; margin-inline: 0.08em; vertical-align: -0.08em; border-radius: 3px; background: var(--ops-text-primary); }
+
+.mix { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
+.mixRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; font-size: 14px; line-height: 1.4; }
+.mixShare { font-weight: 600; font-variant-numeric: tabular-nums; }
+.mixTrack { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--ops-surface-2); overflow: hidden; }
+.mixFill { height: 100%; background: var(--ops-accent-strong); transform-origin: left; }
+
+/* The guess, and later the result. */
+.panel { position: sticky; top: 88px; border: 1px solid var(--ops-divider); border-radius: 16px; background: var(--ops-surface); padding: 18px 20px 20px; }
+.panelTitle { font-size: 15px; font-weight: 600; }
+.panelHead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.count { font-size: 13px; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.spread { justify-content: space-between; }
+.input { width: 100%; min-height: 48px; margin-top: 8px; padding: 0 14px; border: 1px solid var(--ops-control-border); border-radius: 10px; font-size: 16px; background: var(--ops-surface); color: var(--ops-text-primary); }
+.matches { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 2px; }
+.match { display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: space-between; gap: 8px; padding: 0 12px; border-radius: 8px; font-size: 15px; text-align: left; color: var(--ops-text-primary); }
+.match:hover { background: var(--ops-surface-2); }
+.match:focus-visible, .button:focus-visible, .link:focus-visible, .ghost:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; }
+.matchHint { font-size: 13px; color: var(--ops-text-secondary); }
+.noMatch { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ops-text-secondary); }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; border-radius: 10px; font-size: 15px; font-weight: 600; background: var(--ops-accent-strong); color: #fff; }
+.button:hover { background: #0058b0; }
+.ghost { display: inline-flex; min-height: 44px; align-items: center; padding: 0 16px; border: 1px solid var(--ops-control-border); border-radius: 10px; font-size: 15px; font-weight: 500; color: var(--ops-text-primary); background: var(--ops-surface); }
+.ghost:hover { background: var(--ops-surface-2); }
+.ghost:disabled { opacity: 0.55; cursor: not-allowed; }
+.link { display: inline-flex; min-height: 44px; align-items: center; font-size: 15px; color: var(--ops-accent-strong); }
+.link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.squares { display: flex; gap: 6px; }
+.square { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--ops-control-border); background: var(--ops-surface); }
+.square[data-square="miss"] { border-color: #b42318; background: #b42318; }
+.square[data-square="solve"] { border-color: var(--ops-success-strong); background: var(--ops-success-strong); }
+.progressLine { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; font-size: 13px; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.guessed { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.guessedItem { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; background: var(--ops-surface-2); font-size: 13px; color: var(--ops-text-secondary); text-decoration: line-through; }
+
+.result { font-family: var(--font-display), Georgia, serif; font-size: 28px; font-weight: 500; line-height: 1.15; letter-spacing: -0.015em; }
+/* Focus is moved here so the answer is what a screen reader reads next; it is not a control, so it draws no ring. */
+.result:focus { outline: none; }
+.resultLine { margin-top: 6px; font-size: 15px; line-height: 1.55; color: var(--ops-text-secondary); }
+.note { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--ops-text-secondary); }
+.more { margin-top: 12px; padding-top: 4px; border-top: 1px solid var(--ops-divider); font-size: 14px; line-height: 1.6; color: var(--ops-text-secondary); }
+.more summary { display: flex; min-height: 44px; align-items: center; cursor: pointer; font-weight: 500; color: var(--ops-accent-strong); }
+.more summary:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; border-radius: 4px; }
+.more ul { list-style: none; margin: 4px 0 0; padding: 0; }
+.more li a { display: inline-flex; min-height: 44px; align-items: center; color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Past puzzles. */
+.grid { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+.tile { display: flex; min-height: 64px; flex-direction: column; justify-content: center; gap: 2px; padding: 8px 12px; border: 1px solid var(--ops-divider); border-radius: 12px; background: var(--ops-surface); font-size: 13px; color: var(--ops-text-secondary); }
+.tile:hover { border-color: var(--ops-control-border); }
+.tile:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; }
+.tileNumber { font-size: 16px; font-weight: 600; color: var(--ops-text-primary); font-variant-numeric: tabular-nums; }
+
+/* One clue at a time, below 1024px: see ClueSheet. */
+.clueTabs { display: none; }
+.narrowOnly { display: none; }
+
+@media (max-width: 1023px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .panel { position: static; }
+  .clueTabs { display: flex; gap: 6px; padding-bottom: 12px; }
+  .clueTab { flex: 1 1 0; min-height: 44px; border: 1px solid var(--ops-control-border); border-radius: 10px; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ops-text-primary); background: var(--ops-surface); }
+  .clueTab[aria-pressed="true"] { border-color: var(--ops-accent-strong); background: var(--ops-accent-soft); color: var(--ops-accent-strong); box-shadow: inset 0 0 0 1px var(--ops-accent-strong); }
+  .clueTab:disabled { border-color: var(--ops-divider); background: var(--ops-surface-2); color: var(--ops-text-tertiary); cursor: not-allowed; }
+  .clueTab:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; }
+  .clue[data-selected="false"] { display: none; }
+  .narrowOnly { display: block; }
+  .wideOnly { display: none; }
+}
+@media (max-width: 767px) {
+  .page { width: calc(100% - 32px); padding-block: 18px 32px; }
+  .sheet { padding: 2px 14px 6px; }
+  .clue { padding-block: 10px; }
+  .clueText { font-size: 16px; }
+  .quote { font-size: 15px; }
+  .panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .revealed .clueBody { animation: none; }
+}

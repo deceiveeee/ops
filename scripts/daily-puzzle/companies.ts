@@ -1,0 +1,56 @@
+/**
+ * Companies the puzzle drafts from: US filers of a 10-K, outside banking and
+ * insurance (whose revenue and borrowing mean different things), and names a
+ * high-school student is likely to know.
+ *
+ * `brands` are the words blanked out of the clues, because any of them gives
+ * the answer away. The company's own short name is always blanked too.
+ */
+export const COMPANIES: ReadonlyArray<{ ticker: string; name: string; brands: readonly string[] }> = [
+  { ticker: "AAPL", name: "Apple", brands: ["iPhone", "iPad", "Mac", "AirPods", "Apple Watch", "Apple Vision Pro", "iOS", "macOS", "App Store", "iCloud"] },
+  { ticker: "NKE", name: "Nike", brands: ["NIKE", "Jordan", "Converse", "Air Jordan"] },
+  { ticker: "COST", name: "Costco", brands: ["Costco Wholesale", "Kirkland Signature", "Kirkland"] },
+  { ticker: "NFLX", name: "Netflix", brands: [] },
+  { ticker: "SBUX", name: "Starbucks", brands: ["Starbucks Coffee", "Teavana", "Seattle's Best Coffee"] },
+  { ticker: "CMG", name: "Chipotle", brands: ["Chipotle Mexican Grill"] },
+  { ticker: "DIS", name: "Disney", brands: ["Walt Disney", "ESPN", "Pixar", "Marvel", "Lucasfilm", "Hulu", "ABC", "Disney+"] },
+  { ticker: "TSLA", name: "Tesla", brands: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck", "Powerwall", "Megapack", "Supercharger"] },
+  { ticker: "KO", name: "Coca-Cola", brands: ["Coke", "Sprite", "Fanta", "Coca-Cola Company"] },
+  { ticker: "MCD", name: "McDonald's", brands: ["McDonald's Corporation", "Big Mac"] },
+  { ticker: "TGT", name: "Target", brands: ["Target Corporation", "Target Circle"] },
+  { ticker: "WMT", name: "Walmart", brands: ["Sam's Club", "Walmart U.S.", "Walmart International"] },
+  { ticker: "MSFT", name: "Microsoft", brands: ["Windows", "Azure", "Xbox", "LinkedIn", "Bing", "Microsoft 365", "Copilot", "Activision"] },
+  { ticker: "RBLX", name: "Roblox", brands: ["Robux"] },
+  { ticker: "EA", name: "Electronic Arts", brands: ["EA SPORTS", "EA", "Apex Legends", "The Sims", "Battlefield"] },
+  { ticker: "LULU", name: "lululemon", brands: ["lululemon athletica"] },
+  { ticker: "CROX", name: "Crocs", brands: ["HEYDUDE", "Jibbitz"] },
+  { ticker: "MAT", name: "Mattel", brands: ["Barbie", "Hot Wheels", "Fisher-Price", "American Girl", "UNO", "Polly Pocket"] },
+  { ticker: "HAS", name: "Hasbro", brands: ["Wizards of the Coast", "Magic: The Gathering", "MONOPOLY", "NERF", "PLAY-DOH", "Transformers", "Dungeons & Dragons"] },
+  { ticker: "HSY", name: "Hershey", brands: ["The Hershey Company", "Reese's", "Kit Kat", "Ice Breakers"] },
+  { ticker: "PEP", name: "PepsiCo", brands: ["Pepsi", "Frito-Lay", "Quaker", "Gatorade", "Doritos", "Lay's"] },
+  { ticker: "CHWY", name: "Chewy", brands: ["Chewy.com"] },
+  { ticker: "AMZN", name: "Amazon", brands: ["Amazon.com", "AWS", "Amazon Web Services", "Prime", "Alexa", "Kindle"] },
+  { ticker: "GOOGL", name: "Alphabet", brands: ["Google", "YouTube", "Android", "Waymo", "Gemini", "Chrome", "Google Cloud"] },
+  { ticker: "META", name: "Meta", brands: ["Meta Platforms", "Facebook", "Instagram", "WhatsApp", "Messenger", "Threads", "Quest", "Reality Labs"] },
+  { ticker: "SNAP", name: "Snap", brands: ["Snapchat", "Spectacles", "Snap Inc"] },
+  { ticker: "UBER", name: "Uber", brands: ["Uber Eats", "Postmates"] },
+  { ticker: "ABNB", name: "Airbnb", brands: [] },
+  { ticker: "DASH", name: "DoorDash", brands: ["Wolt", "Dasher", "DashPass"] },
+  { ticker: "DAL", name: "Delta", brands: ["Delta Air Lines", "SkyMiles"] },
+  { ticker: "F", name: "Ford", brands: ["Ford Motor", "Ford Pro", "Ford Blue", "Ford Model e", "Lincoln", "Ford Credit", "F-150", "Mustang"] },
+  { ticker: "GME", name: "GameStop", brands: ["EB Games", "Game Informer"] },
+  { ticker: "BBY", name: "Best Buy", brands: ["Geek Squad", "Best Buy Co"] },
+  { ticker: "HD", name: "Home Depot", brands: ["The Home Depot"] },
+  { ticker: "NVDA", name: "NVIDIA", brands: ["GeForce", "CUDA", "Blackwell", "Hopper"] },
+  { ticker: "ULTA", name: "Ulta", brands: ["Ulta Beauty"] },
+  { ticker: "ELF", name: "e.l.f.", brands: ["e.l.f. Beauty", "e.l.f. Cosmetics", "Naturium", "Keys Soulcare", "Well People", "rhode"] },
+  { ticker: "DPZ", name: "Domino's", brands: ["Domino's Pizza"] },
+  { ticker: "YETI", name: "YETI", brands: ["Rambler", "Tundra", "Hopper"] },
+  { ticker: "DUOL", name: "Duolingo", brands: ["Duolingo Max", "Super Duolingo", "Duo"] },
+  { ticker: "MNST", name: "Monster", brands: ["Monster Energy", "Monster Beverage", "Reign", "Bang"] },
+  { ticker: "PINS", name: "Pinterest", brands: [] },
+  { ticker: "ETSY", name: "Etsy", brands: ["Depop", "Reverb"] },
+  { ticker: "TTWO", name: "Take-Two", brands: ["Rockstar Games", "2K", "Grand Theft Auto", "GTA", "NBA 2K", "Zynga"] },
+  { ticker: "ANF", name: "Abercrombie & Fitch", brands: ["Abercrombie", "Hollister", "Gilly Hicks"] },
+  { ticker: "DECK", name: "Deckers", brands: ["Deckers Outdoor", "UGG", "HOKA", "Teva"] },
+];

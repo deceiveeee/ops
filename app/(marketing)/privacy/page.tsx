@@ -20,6 +20,15 @@ export const metadata: Metadata = {
  * verifiable in `lib/progress/store.tsx`: `completion` is the only column
  * written.
  *
+ * Revised on 8 November 2026 for six anonymous counts of learner actions, sent
+ * through the Vercel Analytics script already on every page. What each count
+ * may carry is fixed in `lib/counts/events.ts` (`toPayload`), and what it
+ * means is in docs/marketing/ops-learner-counts-2026-11-08.md. Two notes are
+ * kept in the browser and never sent: the last visit's date
+ * (`lib/counts/visit.ts`) and the keys already counted (`lib/counts/count.ts`).
+ * Share links carry `?via=` (`lib/share.ts`). A count that carries anything
+ * more than those details makes "What we do measure" false.
+ *
  * If a second record starts syncing, or any browser-side third-party script is
  * added, this page stops being true and must be rewritten before that ships.
  */
@@ -27,7 +36,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy"
-      updated="7 September 2026"
+      updated="8 November 2026"
       summary="An account is optional. Everything works without one, your plan and your research never leave your browser either way, and signing in syncs only which lessons you have finished."
     >
       <Section heading="An account is optional">
@@ -71,7 +80,7 @@ export default function PrivacyPage() {
 
       <Section heading="Cookies, only if you sign in">
         <p>
-          Reading the site sets no cookies at all. Nothing is stored until you choose to sign in,
+          Reading the site sets no cookies at all. No cookie is set until you choose to sign in,
           and nothing here follows you between sites.
         </p>
         <p>
@@ -86,6 +95,27 @@ export default function PrivacyPage() {
           how quickly pages load. These report in aggregate — which pages are visited, roughly
           where in the world from, what kind of device and browser — and are not used to identify
           you or to build a profile of you. They do not use cookies.
+        </p>
+        <p>
+          Through the same Vercel Analytics, the site also counts six things, so we can tell whether
+          it is working: finishing the first stage of a lesson, finishing a lesson, solving the daily
+          puzzle, sharing a page with a Share button, opening a page someone shared that way, and
+          coming back within a week. Each count carries at most two details: which lesson, which
+          puzzle and how many clues it took, or how a page was shared (a copied link, another app,
+          or Google Classroom). None carries your answers, your plan, the companies you look at or
+          guess, anything you wrote, or anything that identifies you, and none is tied to your
+          account, even when you are signed in.
+        </p>
+        <p>
+          To keep those counts honest, your browser keeps two small notes that are never sent: the
+          date you last opened the site, so a return within a week can be counted as a plain yes,
+          and which lessons and puzzles have already been counted, so doing one again does not
+          count twice. Links made by the Share buttons end in{" "}
+          <span className="whitespace-nowrap">&ldquo;?via=link&rdquo;</span>,{" "}
+          <span className="whitespace-nowrap">&ldquo;?via=app&rdquo;</span> or{" "}
+          <span className="whitespace-nowrap">&ldquo;?via=classroom&rdquo;</span>. That says how the link was shared
+          and nothing about who shared it, and it is removed from the address bar once the page
+          opens.
         </p>
         <p>
           That is the whole of it. There is no advertising network, no tracking pixel, no session
@@ -116,7 +146,7 @@ export default function PrivacyPage() {
       <Section heading="Children">
         <p>
           The site is intended for a general audience learning about investing. Reading it collects
-          nothing from anyone. An account holds an email address, so it is not meant for children
+          nothing that identifies anyone. An account holds an email address, so it is not meant for children
           under 13, and we do not knowingly keep an account for one. If you believe a child has
           made an account here, write to the address on the terms page and it will be deleted.
         </p>

@@ -1060,6 +1060,13 @@ for (const slug of IF_LESSON_ROUTES) {
     // dev server compiling routes on demand. The 30s default is a limit on the
     // work, not on the page.
     test.setTimeout(180_000);
+    // The walk answers every stage the way a learner would, so it is also the one
+    // place every staged lesson's counts are seen end to end (lib/counts).
+    await page.addInitScript(() => {
+      const w = window as unknown as { __opsCounts: unknown[] };
+      w.__opsCounts = [];
+      window.addEventListener("ops-count", (event) => w.__opsCounts.push((event as CustomEvent).detail));
+    });
     await page.goto(`/lessons/${slug}`);
     await page.waitForLoadState("domcontentloaded");
     // A cold dev server compiles a route on first request, which regularly
@@ -1082,14 +1089,19 @@ for (const slug of IF_LESSON_ROUTES) {
      * React sets `__reactProps$…` on a host node when it commits that node's
      * handlers, so its presence on a real control is the signal that a click
      * will now be heard.
+     *
+     * The lesson's controls, that is. The Share button beside the back link is
+     * page chrome that hydrates before the lesson, which is loaded on its own:
+     * counting it let the walk start on a lesson not yet on screen, and two
+     * missions failed that way on 2026-11-03. So it is left out.
      */
     await expect
       .poll(
         async () =>
           page.evaluate(() =>
-            [...document.querySelectorAll("main button")].some((control) =>
-              Object.keys(control).some((k) => k.startsWith("__reactProps$")),
-            ),
+            [...document.querySelectorAll("main button")]
+              .filter((control) => !control.closest("[data-share-menu]"))
+              .some((control) => Object.keys(control).some((k) => k.startsWith("__reactProps$"))),
           ),
         {
           message: `${slug}: React never attached its handlers, so every click in the walk would land on a page that cannot hear it`,
@@ -1187,6 +1199,13 @@ for (const slug of IF_LESSON_ROUTES) {
     console.log(
       `  ${slug}: ${total} stage(s) walked${warnings.size ? `, ${warnings.size} note(s): ${[...warnings].slice(0, 3).join(", ")}` : ""}`,
     );
+    // Soft, so a counting fault is reported beside the typography findings rather than hiding them.
+    const counts = (await page.evaluate(() => (window as unknown as { __opsCounts: { name: string }[] }).__opsCounts)) ?? [];
+    for (const name of ["First stage finished", "Lesson finished"]) {
+      expect
+        .soft(counts.filter((c) => c.name === name), `${slug}: answering every stage should count "${name}" exactly once`)
+        .toEqual([{ name, props: { lesson: slug } }]);
+    }
     expect(findings, format(findings)).toEqual([]);
 
     // The same lesson, at its last stage, must not scroll sideways on a phone.
