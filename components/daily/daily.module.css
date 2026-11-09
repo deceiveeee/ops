@@ -67,16 +67,19 @@
 .square { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--ops-control-border); background: var(--ops-surface); }
 .square[data-square="miss"] { border-color: #b42318; background: #b42318; }
 .square[data-square="solve"] { border-color: var(--ops-success-strong); background: var(--ops-success-strong); }
-.progressLine { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; font-size: 13px; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+/* The result as it will be sent, set as a quoted note: the invitation, the squares, the link. */
+.sharePreview { margin: 8px 0 0; padding-left: 12px; border-left: 3px solid var(--ops-divider); }
+.shareHeadline { font-size: 16px; line-height: 1.45; font-weight: 600; color: var(--ops-text-primary); }
+.shareMeta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; font-size: 13px; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.shareLink { margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--ops-text-secondary); overflow-wrap: anywhere; }
 .guessed { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .guessedItem { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 999px; background: var(--ops-surface-2); font-size: 13px; color: var(--ops-text-secondary); text-decoration: line-through; }
 
 .result { font-family: var(--font-display), Georgia, serif; font-size: 28px; font-weight: 500; line-height: 1.15; letter-spacing: -0.015em; }
 /* Focus is moved here so the answer is what a screen reader reads next; it is not a control, so it draws no ring. */
 .result:focus { outline: none; }
-.resultLine { margin-top: 6px; font-size: 15px; line-height: 1.55; color: var(--ops-text-secondary); }
 .note { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--ops-text-secondary); }
-.more { margin-top: 12px; padding-top: 4px; border-top: 1px solid var(--ops-divider); font-size: 14px; line-height: 1.6; color: var(--ops-text-secondary); }
+.more { margin-top: 8px; border-top: 1px solid var(--ops-divider); font-size: 14px; line-height: 1.6; color: var(--ops-text-secondary); }
 .more summary { display: flex; min-height: 44px; align-items: center; cursor: pointer; font-weight: 500; color: var(--ops-accent-strong); }
 .more summary:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; border-radius: 4px; }
 .more ul { list-style: none; margin: 4px 0 0; padding: 0; }

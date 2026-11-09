@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { forwardRef, useEffect, useState } from "react";
 import { count } from "@/lib/counts/count";
 import { filingIndexUrl } from "@/lib/filings/edgar";
-import { CLUE_COUNT, type GameState } from "@/lib/daily-puzzle/game";
+import type { GameState } from "@/lib/daily-puzzle/game";
 import { longDate } from "@/lib/daily-puzzle/schedule";
-import { shareText } from "@/lib/daily-puzzle/share";
+import { shareHeadline, shareText } from "@/lib/daily-puzzle/share";
 import type { DailyPuzzle } from "@/lib/daily-puzzle/types";
 import { markShared } from "@/lib/share";
 import { Squares } from "./GuessPanel";
@@ -25,8 +25,10 @@ type Props = {
 const STATEMENTS_LESSON = "/lessons/if-4-1-the-three-financial-statements";
 
 /**
- * The answer, and where to go from it: post the result, open the very
- * passage the last clue quoted, or read the whole report in Studio.
+ * The answer, and where to go from it: challenge a friend with the result,
+ * open the very passage the last clue quoted, or read the whole report in
+ * Studio. The message to send is shown first, link and all, so sharing is the
+ * obvious next step and nobody has to guess what will be posted.
  */
 const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({ puzzle, state, shareUrl, solvedThisMonth, isToday }, heading) {
   const router = useRouter();
@@ -38,6 +40,8 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
   const reader = `/studio/filings/${answer.cik}/${report.accession}?doc=${encodeURIComponent(report.document)}&ticker=${encodeURIComponent(answer.ticker)}`;
   // The link in the post says how it was shared (see `markShared`), so an arrival from it can be counted.
   const textVia = (how: "app" | "link") => shareText(puzzle.number, state, markShared(shareUrl, how));
+  // The preview shows the plain address; the mark is added only to what is actually sent.
+  const shownLink = shareUrl.replace(/^https?:\/\/(www\.)?/, "");
 
   useEffect(() => {
     setCanShareNatively(typeof navigator !== "undefined" && typeof navigator.share === "function");
@@ -102,21 +106,23 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
       <h2 id="daily-result" ref={heading} tabIndex={-1} className={styles.result}>
         It was {answer.name}.
       </h2>
-      <p className={styles.resultLine}>
-        {state.status === "solved"
-          ? `Solved with ${state.shown} of ${CLUE_COUNT} clues.`
-          : `Not solved this time. All ${CLUE_COUNT} clues are showing now.`}
-      </p>
-      <div className={styles.progressLine}>
-        <Squares state={state} />
-        <span>
-          {solvedThisMonth} solved this month
-        </span>
-      </div>
+      {/*
+        * The result is said once, as the message a friend would receive. It is
+        * set as a quoted note rather than a boxed card: on a phone the box's
+        * padding alone pushed the finished puzzle past a screen and a half.
+        */}
+      <figure className={styles.sharePreview} aria-label="Your result, ready to send">
+        <p className={styles.shareHeadline}>{shareHeadline(state)}</p>
+        <div className={styles.shareMeta}>
+          <Squares state={state} />
+          <span>{solvedThisMonth} solved this month</span>
+        </div>
+        <p className={styles.shareLink}>{shownLink}</p>
+      </figure>
 
       <div className={styles.row}>
         <button type="button" className={styles.button} onClick={share}>
-          Share result
+          Challenge a friend
         </button>
         <button type="button" className={styles.ghost} onClick={openPassage} disabled={opening}>
           {opening ? "Finding it…" : "Open the quote"}

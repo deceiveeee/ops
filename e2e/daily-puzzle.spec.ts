@@ -36,6 +36,11 @@ async function guess(page: Page, name: string) {
 
 const clue = (page: Page, id: string) => page.locator(`[data-clue="${id}"]`);
 
+/** The result line a learner sees, which is also the first line of what they send. */
+function solvedHeadline(clues: number): string {
+  return `I guessed it in ${clues === 1 ? "1 clue" : `${clues} clues`}. Your turn.`;
+}
+
 test("a wrong guess or a skip shows the next clue, and the right guess names the company", async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto(`/daily/${FIRST.number}`);
@@ -66,7 +71,7 @@ test("a wrong guess or a skip shows the next clue, and the right guess names the
   const answer = page.getByRole("heading", { name: `It was ${FIRST.answer.name}.` });
   await expect(answer).toBeVisible();
   await expect(answer).toBeFocused();
-  await expect(page.getByText("Solved with 3 of 6 clues.")).toBeVisible();
+  await expect(page.getByText(solvedHeadline(3))).toBeVisible();
   // Every clue is open once the puzzle is over, for the learner to read.
   for (const id of ["revenue", "margin", "assets", "industry", "mix", "description"]) {
     await expect(clue(page, id)).toHaveAttribute("data-state", "shown");
@@ -75,7 +80,7 @@ test("a wrong guess or a skip shows the next clue, and the right guess names the
   // Progress is kept in this browser.
   await page.reload();
   await expect(page.getByRole("heading", { name: `It was ${FIRST.answer.name}.` })).toBeVisible();
-  await expect(page.getByText("Solved with 3 of 6 clues.")).toBeVisible();
+  await expect(page.getByText(solvedHeadline(3))).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -86,11 +91,18 @@ test("a shared result says how it went and never which company it was", async ({
   await page.getByRole("button", { name: "Show the next clue" }).click();
   await page.getByRole("textbox", { name: "Your guess" }).fill(FIRST.answer.name);
   await page.getByRole("textbox", { name: "Your guess" }).press("Enter");
-  await page.getByRole("button", { name: "Share result" }).click();
+  // The message is on screen before anything is sent: the invitation, the squares and the link.
+  const headline = solvedHeadline(2);
+  const preview = page.getByRole("figure", { name: "Your result, ready to send" });
+  await expect(preview).toContainText(headline);
+  await expect(preview).toContainText(`/daily/${FIRST.number}`);
+  await expect(preview.getByRole("img", { name: /clue 2 solved/ })).toBeVisible();
+  await page.getByRole("button", { name: "Challenge a friend" }).click();
   await expect(page.getByText("Result copied.")).toBeVisible();
   const shared = await page.evaluate(() => navigator.clipboard.readText());
-  expect(shared).toContain(`Investing Studio daily company puzzle #${FIRST.number}`);
-  expect(shared).toContain("Solved with 2 of 6 clues");
+  // The Windows clipboard stores line breaks as \r\n.
+  expect(shared.split(/\r?\n/)[0]).toBe(headline);
+  expect(shared).toContain(`Investing Studio daily puzzle #${FIRST.number}: guess a real company from its annual report.`);
   expect(shared).toContain("🟥🟩⬜⬜⬜⬜");
   // The link says only how it was shared, so an arrival from it can be counted (lib/share.ts).
   expect(shared).toMatch(new RegExp(`/daily/${FIRST.number}\\?via=link$`));
@@ -101,7 +113,9 @@ test("a shared result says how it went and never which company it was", async ({
 test("the answer opens the quoted words in the company's report", async ({ page }) => {
   await page.goto(`/daily/${FIRST.number}`);
   for (let index = 0; index < 6; index += 1) await page.getByRole("button", { name: /Show the next clue|Give up and see the answer/ }).click();
-  await expect(page.getByText("Not solved this time.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: `It was ${FIRST.answer.name}.` })).toBeVisible();
+  // An unsolved puzzle is said plainly too, and still invites a friend to try.
+  await expect(page.getByRole("figure", { name: "Your result, ready to send" })).toContainText("I missed it after 6 clues. Your turn.");
 
   // The real route fetches the report from the SEC; here it answers with a place, as it does when the words are found.
   let sent: Record<string, unknown> | null = null;
