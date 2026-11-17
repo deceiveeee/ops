@@ -22,12 +22,17 @@ export const metadata: Metadata = {
  *
  * If a second record starts syncing, or any browser-side third-party script is
  * added, this page stops being true and must be rewritten before that ships.
+ *
+ * 16 November 2026: "Report a problem" added a second thing that reaches the
+ * server, and only when the visitor presses Send. The four fields stored are
+ * listed in `lib/problem-report.ts` and `supabase/migrations/0003_problem_reports.sql`;
+ * the "If you report a problem" section below names the same four.
  */
 export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy"
-      updated="7 September 2026"
+      updated="16 November 2026"
       summary="An account is optional. Everything works without one, your plan and your research never leave your browser either way, and signing in syncs only which lessons you have finished."
     >
       <Section heading="An account is optional">
@@ -93,6 +98,20 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
+      <Section heading="If you report a problem">
+        <p>
+          The Report a problem button at the bottom of every page opens a short form. Nothing is sent
+          unless you press Send. When you do, we receive four things: what you typed, the address of
+          the page you were on, your screen size, and your browser&rsquo;s name and version. They are
+          stored with Supabase, the same service that handles accounts.
+        </p>
+        <p>
+          A report is not linked to your account, your device or your IP address. Only we can read
+          reports, and we read them to find and fix problems on the site. Please leave your name and
+          contact details out of what you type.
+        </p>
+      </Section>
+
       <Section heading="Where the financial data comes from">
         <p>
           Company filings come from the U.S. Securities and Exchange Commission, and industry cost
@@ -116,7 +135,8 @@ export default function PrivacyPage() {
       <Section heading="Children">
         <p>
           The site is intended for a general audience learning about investing. Reading it collects
-          nothing from anyone. An account holds an email address, so it is not meant for children
+          nothing from anyone, and a problem report holds only what you type into it. An account
+          holds an email address, so it is not meant for children
           under 13, and we do not knowingly keep an account for one. If you believe a child has
           made an account here, write to the address on the terms page and it will be deleted.
         </p>
@@ -130,12 +150,17 @@ export default function PrivacyPage() {
         </p>
         <p>
           If you have an account, the email address and the list of finished lessons are the only
-          things we hold. Write to the address on the{" "}
+          things we hold that are tied to you. Write to the address on the{" "}
           <Link href="/terms" className="text-accent-cyan hover:underline">
             terms page
           </Link>{" "}
           and we will delete both. There is no self-service delete button yet, which is a gap we
           would rather name than hide.
+        </p>
+        <p>
+          A problem report is not tied to you, so we cannot find yours by name. If you sent one with
+          something personal in it, write to us with roughly when you sent it and what it said, and we
+          will delete it.
         </p>
       </Section>
 
