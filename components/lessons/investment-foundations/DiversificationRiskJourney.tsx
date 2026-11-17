@@ -228,10 +228,31 @@ function PortfolioBuildScene({ onComplete }: EquityRiskSceneProps) {
   );
 }
 
-function ShockLabScene({ onComplete }: EquityRiskSceneProps) {
-  const [active, setActive] = useState<"company" | "market" | "">("");
+type CompanyId = (typeof COMPANIES)[number][0];
+type Shock = "company" | "market";
+
+/** One-year move of each holding, in percent, under each shock (OPS teaching example). */
+const SHOCK_MOVES: Record<Shock, Record<CompanyId, number>> = {
+  company: { northstar: -20, harbor: 1, orbit: 1, clearwater: 1 },
+  market: { northstar: -9, harbor: -9, orbit: -9, clearwater: -9 },
+};
+
+/** The portfolio is equal-weight, so its move is the plain average of the holdings' moves. */
+function portfolioMove(shock: Shock): number {
+  const moves = Object.values(SHOCK_MOVES[shock]);
+  return moves.reduce((sum, move) => sum + move, 0) / moves.length;
+}
+
+/** −20 → "−20%", 1 → "+1%", −4.25 → "−4.3%". Uses a true minus sign. */
+function formatMove(move: number): string {
+  const rounded = Math.round(Math.abs(move) * 10) / 10;
+  return `${move < 0 ? "−" : "+"}${rounded}%`;
+}
+
+export function ShockLabScene({ onComplete }: EquityRiskSceneProps) {
+  const [active, setActive] = useState<Shock | "">("");
   const [tested, setTested] = useState<string[]>([]);
-  const test = (shock: "company" | "market") => {
+  const test = (shock: Shock) => {
     setActive(shock);
     if (tested.includes(shock)) return;
     const next = [...tested, shock];
@@ -272,7 +293,8 @@ function ShockLabScene({ onComplete }: EquityRiskSceneProps) {
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-4">
         {COMPANIES.map(([id, name]) => {
-          const hit = active === "market" || (active === "company" && id === "northstar");
+          const move = active ? SHOCK_MOVES[active][id] : null;
+          const hit = move !== null && move < 0;
           return (
             <div
               key={id}
@@ -286,7 +308,7 @@ function ShockLabScene({ onComplete }: EquityRiskSceneProps) {
               <div className={cn("mx-auto h-5 w-5 rounded-full", hit ? "bg-accent-red" : "bg-accent-green")} />
               <div className="mt-3 text-xs text-slate-300">{name}</div>
               <div className={cn("mt-1 text-xl font-semibold tabular-nums", hit ? "text-accent-red" : "text-accent-green")}>
-                {active ? (hit ? (active === "market" ? "−9%" : "−20%") : "+1%") : "—"}
+                {move === null ? "—" : formatMove(move)}
               </div>
             </div>
           );
@@ -294,15 +316,15 @@ function ShockLabScene({ onComplete }: EquityRiskSceneProps) {
       </div>
       {active && (
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <RiskMetric label="Northstar move" value={active === "company" ? "−20%" : "−9%"} tone="red" />
-          <RiskMetric label="Portfolio move" value={active === "company" ? "−4.3%" : "−8.5%"} tone={active === "company" ? "amber" : "red"} />
+          <RiskMetric label="Northstar move" value={formatMove(SHOCK_MOVES[active].northstar)} tone="red" />
+          <RiskMetric label="Portfolio move" value={formatMove(portfolioMove(active))} tone={active === "company" ? "amber" : "red"} />
         </div>
       )}
       {active && (
         <RiskFeedback correct>
           {active === "company"
             ? "One holding absorbs the disruption while the other businesses remain stable. Diversification dilutes this company-specific shock."
-            : "All four holdings react to the shared economic event. Diversification provides much less protection from market risk."}
+            : "All four holdings fall together in the shared recession, so the portfolio falls as far as Northstar does. Diversification cannot dilute a shock that every holding shares."}
         </RiskFeedback>
       )}
     </div>

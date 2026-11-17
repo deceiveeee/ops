@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { count } from "@/lib/counts/count";
 import { useSession } from "@/lib/supabase/session";
 import { unionDocs, type ModuleCompletion, type ProgressDoc } from "./merge";
 
@@ -43,6 +44,16 @@ function readLocal(): ProgressDoc {
     }
   }
   return doc;
+}
+
+/** Whether this browser already holds `slug` as finished, read from storage rather than from the copy in memory. */
+function isCompleteLocal(moduleKey: string, slug: string): boolean {
+  try {
+    const raw = window.localStorage.getItem(moduleKey);
+    return Boolean(raw && (JSON.parse(raw) as ModuleCompletion)[slug]);
+  } catch {
+    return false;
+  }
 }
 
 function writeModuleLocal(moduleKey: string, mod: ModuleCompletion) {
@@ -140,11 +151,15 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     (moduleKey: string, slug: string) => {
       const prevMod = docRef.current[moduleKey] ?? {};
       if (prevMod[slug]) return;
+      // A finished lesson reopened before this store has read storage would look new
+      // in memory; storage is the record, so it decides whether this is the first finish.
+      const firstFinish = !isCompleteLocal(moduleKey, slug);
       const nextMod: ModuleCompletion = { ...prevMod, [slug]: true };
       const nextDoc: ProgressDoc = { ...docRef.current, [moduleKey]: nextMod };
       docRef.current = nextDoc;
       setDoc(nextDoc);
       writeModuleLocal(moduleKey, nextMod);
+      if (firstFinish) count({ name: "Lesson finished", lesson: slug });
 
       const uid = userIdRef.current;
       if (!uid) return;

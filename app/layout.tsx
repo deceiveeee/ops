@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import "./refresh.css";
 import SiteShell from "@/components/layout/SiteShell";
+import VisitCounts from "@/components/counts/VisitCounts";
 import { SessionProvider } from "@/lib/supabase/session";
 import { GUEST_ONLY_BETA } from "@/lib/beta";
 import { ProgressProvider } from "@/lib/progress/store";
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ProgressProvider>
           </OnboardingProvider>
         </SessionProvider>
+        <VisitCounts />
         <Analytics />
         <SpeedInsights />
       </body>
