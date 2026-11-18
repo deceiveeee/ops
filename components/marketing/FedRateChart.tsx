@@ -74,7 +74,7 @@ export default function FedRateChart({ compact = false, embeddedInLink = false, 
       )}
       <div className="teaching-visual-source">
         <p>Source: {embeddedInLink ? <span>Federal Reserve Board, H.15.</span> : <a href={federalFundsSource} target="_blank" rel="noreferrer">Federal Reserve Board, H.15 ↗</a>} Historical data.</p>
-        {overview && <a className="rate-history-learn-more" href="https://www.federalreserve.gov/monetarypolicy/monetary-policy-what-are-its-goals-how-does-it-work.htm" target="_blank" rel="noreferrer">Explore why <span aria-hidden="true">↗</span></a>}
+        {overview && <a className="rate-history-learn-more" href="https://www.federalreserve.gov/monetarypolicy/monetary-policy-what-are-its-goals-how-does-it-work.htm" target="_blank" rel="noreferrer">How the Fed sets this rate <span aria-hidden="true">↗</span></a>}
       </div>
     </figure>
   );

@@ -38,7 +38,7 @@ describe("source-backed teaching visuals", () => {
     expect([...container.querySelectorAll("dd")].map(item => item.textContent)).toEqual(["0.08%", "5.33%", "4.48%"]);
     expect(container.querySelectorAll("button, table, details")).toHaveLength(0);
     expect(screen.getByText("Higher interest rates generally make borrowing more expensive, which can slow spending and investment.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Explore why" })).toHaveAttribute("href", expect.stringContaining("federalreserve.gov/monetarypolicy/"));
+    expect(screen.getByRole("link", { name: "How the Fed sets this rate" })).toHaveAttribute("href", expect.stringContaining("federalreserve.gov/monetarypolicy/"));
   });
 
   it("matches the filing's 11.0% sales and 96.3% operating-income declines", () => {

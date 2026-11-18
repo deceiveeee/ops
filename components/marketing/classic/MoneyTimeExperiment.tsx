@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import styles from "./homepage.module.css";
+import styles from "./classic-homepage.module.css";
 
 const START = 100;
 const RATE = 0.05;
