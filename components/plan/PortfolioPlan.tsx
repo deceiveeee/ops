@@ -17,6 +17,7 @@ import {
   type TimingPolicy,
 } from "@/lib/if-progress";
 import { ALL_FLIGHT_SCENARIOS } from "@/lib/operating-plan";
+import { portfolioBuilderPath } from "@/data/courses/portfolioBuilder";
 import {
   type AllocationRecord,
   type AssumptionOwner,
@@ -1331,8 +1332,10 @@ export default function PortfolioPlan() {
             Your plan fills in as you finish missions. Each one ends with a decision
             that is saved here, so the work accumulates instead of disappearing.
           </p>
+          {/* Read from the mission list, so the link cannot drift to another
+              mission's lesson again (it pointed at Mission 2's until 2026-11-13). */}
           <Link
-            href="/lessons/if-1-1-how-an-investor-builds-a-philosophy"
+            href={`/lessons/${portfolioBuilderPath.missions[0].startLessonSlug}`}
             className="mt-5 inline-flex items-center justify-center rounded-full border border-accent-amber/40 bg-accent-amber/10 px-5 py-2.5 text-sm font-semibold text-accent-amber transition-colors hover:bg-accent-amber/20"
           >
             Start with mission 1 →
