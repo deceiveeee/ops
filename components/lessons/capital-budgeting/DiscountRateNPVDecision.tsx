@@ -26,7 +26,7 @@ function LabeledSlider({
     <div>
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400"
+        className="flex items-baseline justify-between font-sans text-[12px] tracking-[0.01em] text-slate-400"
       >
         <span>{label}</span>
         <span className="text-[15px] tabular-nums text-accent-amber">
@@ -101,7 +101,7 @@ export default function DiscountRateNPVDecision() {
 
       {/* Formula */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
           Present value, then net present value
         </div>
         <div className="mt-4 space-y-3">
@@ -145,7 +145,7 @@ export default function DiscountRateNPVDecision() {
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-white/10 bg-ink-950/40 p-5">
-            <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
+            <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
               Expected undiscounted payoff
             </div>
             <div className="mt-2 font-sans text-[20px] tabular-nums text-white">
@@ -169,7 +169,7 @@ export default function DiscountRateNPVDecision() {
           >
             <div
               className={cn(
-                "font-sans text-[11px] uppercase tracking-[0.16em]",
+                "font-sans text-[12px] tracking-[0.01em]",
                 accept ? "text-accent-green" : "text-accent-red",
               )}
             >
@@ -189,7 +189,7 @@ export default function DiscountRateNPVDecision() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
           <span
             className={cn(
-              "inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-sans text-[13px] uppercase tracking-[0.14em]",
+              "inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-sans text-[13px] tracking-[0.01em]",
               accept
                 ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
                 : "border-accent-red/50 bg-accent-red/10 text-accent-red",
@@ -268,7 +268,7 @@ function Readout({
           : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">
+      <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
         {label}
       </div>
       <div className={cn("mt-2 font-sans text-[17px] tabular-nums", text)}>{value}</div>

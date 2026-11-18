@@ -23,6 +23,18 @@
       ],
       "port": 3100,
       "autoPort": true
+    },
+    {
+      "name": "ops-dev-3200",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "-p",
+        "3200"
+      ],
+      "port": 3200
     }
   ]
 }

@@ -1,42 +1,41 @@
 import { readFileSync } from "node:fs";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { createStudioProject } from "../lib/studio-project/create";
+import { emptyLimits } from "../lib/studio-project/limits";
+import { addPosition } from "../lib/studio-project/operations";
+import type { StudioProject } from "../lib/studio-project/schema";
+import { saved, seedProject } from "./studio-seed";
 
 /**
- * A portfolio checked against the learner's own limits, on Portfolio.
+ * A portfolio checked against the learner's own limits.
  *
- * Worked by hand. A new practice portfolio holds $10,000 with nothing set
- * aside, so each weight is also its share of the whole. VTI 60% and AAPL 10%
- * leave 30% as cash. The default scenario drops stocks 30%:
+ * Worked by hand. A practice portfolio holds $10,000 with nothing set aside, so
+ * each weight is also its share of the whole. VTI 60% and AAPL 10% leave 30% as
+ * cash. The default scenario drops stocks 30%:
  *   loss = $6,000 x 30% + $1,000 x 30% = $1,800 + $300 = $2,100
- * The loss you could live with starts at 20%, a $2,000 loss budget.
- *   AAPL: cap 5%, 5.0 points over.
- *   VTI: 60 + (20 - 21) / 0.30 = 56.67%, 3.3 points over the loss budget.
- * With AAPL at 5%: loss $1,950, within budget; VTI can rise to 60 + 0.5 / 0.30 = 61.67%.
+ * The loss you could live with starts at 20%, a $2,000 loss budget. AAPL is
+ * 5.0 points over a 5% cap for one company.
+ *
+ * Weights typed by hand are older work: the limits are checked in step 7 and
+ * on Review whether or not a portfolio was built in the nine steps.
  */
+const NOW = "2026-11-17T12:00:00.000Z";
 
-async function addToPortfolio(page: Page, symbol: string) {
-  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
-  const card = page.getByRole("button", { expanded: false }).filter({ hasText: new RegExp(`^${symbol}`) }).first().locator("xpath=..");
-  await card.getByRole("button", { name: "Add to portfolio" }).click();
-  await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
+function typed(weights: [string, number][], companyCapPct: number | null): StudioProject {
+  let project = createStudioProject("practice", NOW);
+  for (const [id] of weights) project = addPosition(project, id, undefined, NOW);
+  return {
+    ...project,
+    limits: { ...emptyLimits(), companyCapPct },
+    alternatives: project.alternatives.map((alternative) => ({
+      ...alternative, positions: alternative.positions.map((position) => ({ ...position, targetWeightPct: weights.find(([id]) => id === position.instrumentId)![1] })),
+    })),
+  };
 }
 
-test("says beside each weight which limit holds it back, and lists every check", async ({ page }) => {
+test("step 7 lists every check beside the work, and says what is not met", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/studio/goals");
-  await page.getByRole("tab", { name: /Your mix/ }).click();
-  await page.getByLabel("Cap for one company").fill("5");
-  await expect(page.getByRole("status").filter({ hasText: "Saved in this browser" })).toBeVisible();
-  await page.goto("/studio/research");
-  await addToPortfolio(page, "VTI");
-  await addToPortfolio(page, "AAPL");
-  await page.goto("/studio/portfolio");
-  await page.getByLabel("VTI target percentage").fill("60");
-  await page.getByLabel("AAPL target percentage").fill("10");
-
-  const table = page.getByRole("table", { name: "Target weight and dollar amount for each investment" });
-  await expect(table).toContainText("VTI: 3.3 points over: your loss budget allows 56.7%");
-  await expect(table).toContainText("AAPL: 5.0 points over: your cap for one company allows 5.0%");
+  await seedProject(page, typed([["vti", 60], ["aapl", 10]], 5), "/studio/portfolio/check");
 
   // Beside the work at this width, closed to one line until opened.
   const limits = page.getByRole("complementary", { name: "About this page" }).locator("details").filter({ hasText: "Your limits" });
@@ -48,19 +47,14 @@ test("says beside each weight which limit holds it back, and lists every check",
   await expect(limits).toContainText("AAPL is 10.0%, 5.0 points over your cap for one company (5%).");
   await expect(limits).toContainText("This allocation loses $2,100 in the scenario. Your loss budget is $2,000, the loss you could live with. Most of the loss: VTI $1,800, AAPL $300.");
 
-  await page.getByLabel("AAPL target percentage").fill("5");
-  await expect(table).toContainText("AAPL: At the most your cap for one company allows, 5.0%");
-  await expect(table).toContainText("VTI: Can rise to 61.7% before your loss budget");
-  await expect(limits.locator("summary")).toContainText("2 met · 2 not checked");
-  await expect(limits).toContainText("This allocation loses $1,950 in the scenario. Your loss budget is $2,000, the loss you could live with.");
+  // The step's own summary counts the same checks.
+  await expect(page.getByRole("region", { name: "Ready to buy?" })).toContainText("2 not met");
 });
 
-test("a phone keeps the list under the table, closed to one line", async ({ page }) => {
+test("a phone keeps the list in step 7's limits tab, closed to one line", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
-  await page.goto("/studio/research");
-  await addToPortfolio(page, "VTI");
-  await page.goto("/studio/portfolio");
-  await page.getByLabel("VTI target percentage").fill("100");
+  await seedProject(page, typed([["vti", 100]], null), "/studio/portfolio/check");
+  await page.getByRole("tab", { name: "Limits", exact: true }).click();
   const limits = page.getByRole("main").locator("details").filter({ hasText: "Your limits" }).filter({ visible: true });
   await expect(limits).toHaveCount(1);
   await expect(limits).not.toHaveAttribute("open", "");
@@ -70,22 +64,30 @@ test("a phone keeps the list under the table, closed to one line", async ({ page
   expect(size).toBe(0);
 });
 
+test("a pick over the cap for one company is refused in step 6, and nothing is rewritten", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const project = typed([], 5);
+  const limits = project.limits!;
+  await seedProject(page, {
+    ...project,
+    limits: { ...limits, slices: { ready: { ...limits.slices.ready, targetPct: 10 }, steady: { ...limits.slices.steady, targetPct: 20 }, grow: { ...limits.slices.grow, targetPct: 70 } } },
+    alternatives: [{ ...project.alternatives[0], build: {
+      growInternationalPct: 0, steadyShortPct: 0, picksBudgetPct: 10, picks: [],
+      fills: { "us-stocks": "vti", "international-stocks": null, "short-bonds": null, "longer-bonds": "agg" },
+    } }],
+  }, "/studio/portfolio/picks");
+  await page.getByLabel("AAPL, % of the whole portfolio").fill("8");
+  const canvas = page.getByRole("region", { name: "Each pick against its index fund." });
+  await expect(canvas).toContainText("AAPL is 8%, over your 5% cap for one company.");
+  await page.getByLabel("AAPL, % of the whole portfolio").fill("5");
+  await expect(canvas).toContainText("replaces $500 of VTI");
+  await saved(page);
+});
+
 test("Review carries the limits, and the readable plan writes them out with each portfolio's checks", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
-  const saved = page.getByRole("status").filter({ hasText: /^Saved in this browser$/ });
-  await page.goto("/studio/goals");
-  await page.getByRole("tab", { name: /Your mix/ }).click();
-  await page.getByLabel("Cap for one company").fill("5");
-  await expect(saved).toBeVisible();
-  await page.goto("/studio/research");
-  await addToPortfolio(page, "VTI");
-  await addToPortfolio(page, "AAPL");
-  await page.goto("/studio/portfolio");
-  await page.getByLabel("VTI target percentage").fill("60");
-  await page.getByLabel("AAPL target percentage").fill("10");
-  await expect(saved).toBeVisible();
+  await seedProject(page, typed([["vti", 60], ["aapl", 10]], 5), "/studio/review");
 
-  await page.goto("/studio/review");
   // AAPL is over its cap and the scenario loses $2,100 against $2,000; bills and slices are not set.
   const limits = page.getByRole("main").locator("details").filter({ hasText: "Your limits" }).filter({ visible: true });
   await expect(limits.locator("summary")).toContainText("2 not met · 2 not checked");

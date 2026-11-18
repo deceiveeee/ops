@@ -188,7 +188,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           Central question
         </div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
@@ -386,7 +386,7 @@ export default function Lesson9_3() {
       >
         <Reveal>
           <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+            <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
               When the price looks too good to be true
             </div>
             <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -501,7 +501,7 @@ export default function Lesson9_3() {
         </Reveal>
         <Reveal>
           <Panel>
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
               Toward Lesson 9.4
             </div>
             <p className="ops-body mt-3 text-[18px] leading-[1.6] text-white">

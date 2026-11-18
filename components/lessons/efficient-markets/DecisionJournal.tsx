@@ -99,7 +99,7 @@ export default function DecisionJournal() {
       {/* Before section */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
             Before the decision
           </div>
           <div className="font-sans text-[11px] text-slate-400">Write before you act</div>
@@ -118,7 +118,7 @@ export default function DecisionJournal() {
       {/* After section */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
             After the decision
           </div>
           <div className="font-sans text-[11px] text-slate-400">Complete when outcome is known</div>
@@ -138,18 +138,18 @@ export default function DecisionJournal() {
       <div className="flex flex-wrap gap-2 ops-no-print">
         <button type="button"
           onClick={() => { if (typeof window !== "undefined") window.print(); }}
-          className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+          className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] tracking-[0.01em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
           Print / save as PDF
         </button>
         <button type="button" onClick={reset}
-          className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400 transition-colors hover:border-accent-red/40 hover:text-accent-red focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+          className="rounded-full border border-white/15 px-5 py-2 font-sans text-[13px] tracking-[0.01em] text-slate-400 transition-colors hover:border-accent-red/40 hover:text-accent-red focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
           Clear entry
         </button>
       </div>
 
       <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] px-4 py-3 ops-no-print">
         <p className="text-[12px] leading-[1.55] text-slate-300">
-          <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Educational template · </span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Educational template · </span>
           Entries are stored only in your browser. Clearing browser data erases them. This is a
           learning tool, not a substitute for professional record-keeping or tax documentation.
         </p>
@@ -188,7 +188,7 @@ function FieldInput({ field, value, onChange }: {
 }) {
   return (
     <div>
-      <label className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
         {field.label}
       </label>
       <textarea

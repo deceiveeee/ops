@@ -60,7 +60,7 @@ export default function WhyActiveStillExists() {
                     <p className="ops-body text-[15px] leading-[1.6] text-slate-100">{f.detail}</p>
                     {"paradox" in f && f.paradox && (
                       <div className="rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
-                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">The paradox</span>
+                        <span className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">The paradox</span>
                         <p className="mt-1 text-[14px] leading-[1.55] text-slate-100">{f.paradox}</p>
                       </div>
                     )}

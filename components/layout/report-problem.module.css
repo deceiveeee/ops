@@ -1,0 +1,80 @@
+/* The footer control. It inherits the copyright line's 12px type. The 4px of
+   padding makes it about 27px tall to a finger (past the 24px minimum), and the
+   matching negative margin keeps the line exactly as tall as it was. */
+.trigger {
+  margin-left: 12px;
+  padding: 4px 0;
+  margin-block: -4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--ops-accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.trigger:hover { text-decoration-thickness: 2px; }
+.trigger:focus-visible,
+.panel :is(a, button, textarea):focus-visible {
+  outline: 2px solid var(--ops-accent-strong);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.dialog {
+  width: min(calc(100% - 32px), 480px);
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--ops-control-border);
+  border-radius: 12px;
+  background: var(--ops-surface);
+  color: var(--ops-text-primary);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.18);
+}
+.dialog::backdrop { background: rgb(0 0 0 / 0.4); }
+
+.panel { padding: 20px; font-size: 15px; line-height: 1.55; }
+.title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.lead { margin-top: 6px; color: var(--ops-text-secondary); }
+
+.label { display: block; margin-top: 16px; font-weight: 500; }
+.field {
+  display: block;
+  width: 100%;
+  min-height: 112px;
+  margin-top: 6px;
+  padding: 10px 12px;
+  resize: vertical;
+  border: 1px solid var(--ops-control-border);
+  border-radius: 8px;
+  background: var(--ops-surface);
+  color: var(--ops-text-primary);
+  /* 16px so iPhones do not zoom the page when the field is tapped. */
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.field::placeholder { color: var(--ops-text-tertiary); opacity: 1; }
+.field[aria-invalid="true"] { border-color: var(--ops-error-strong); }
+
+.note { margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--ops-text-tertiary); overflow-wrap: anywhere; }
+.error { margin-top: 10px; font-size: 14px; color: var(--ops-error-strong); }
+.link { color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 2px; }
+
+.actions { margin-top: 16px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.primary,
+.secondary {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.primary { border: 1px solid var(--ops-accent-strong); background: var(--ops-accent-strong); color: #fff; }
+.primary:hover { background: #0058b0; }
+.primary:disabled { cursor: progress; opacity: 0.7; }
+.secondary { border: 1px solid var(--ops-control-border); background: var(--ops-surface); color: var(--ops-text-primary); }
+.secondary:hover { background: var(--ops-surface-2); }

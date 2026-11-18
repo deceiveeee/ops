@@ -134,17 +134,17 @@ export default function SlopeScatterLab() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-4 text-center">
-              <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">Estimated β</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Estimated β</div>
               <div className="mt-1 font-sans text-[22px] text-slate-100">{estBeta.toFixed(2)}</div>
             </div>
             <div className="rounded-xl border border-accent-purple/25 bg-accent-purple/[0.05] p-4 text-center">
-              <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">R²</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-purple">R²</div>
               <div className="mt-1 font-sans text-[22px] text-slate-100">{(r2 * 100).toFixed(0)}%</div>
             </div>
           </div>
 
           <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-            <label className="block font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor="ssl-beta">
+            <label className="block font-sans text-[12px] tracking-[0.01em] text-slate-400" htmlFor="ssl-beta">
               Market sensitivity
             </label>
             <input
@@ -160,7 +160,7 @@ export default function SlopeScatterLab() {
             />
             <p className="mt-1 font-sans text-[13px] text-slate-300">True β = {beta.toFixed(1)}</p>
 
-            <label className="mt-4 block font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor="ssl-noise">
+            <label className="mt-4 block font-sans text-[12px] tracking-[0.01em] text-slate-400" htmlFor="ssl-noise">
               Company-specific noise
             </label>
             <input
@@ -178,7 +178,7 @@ export default function SlopeScatterLab() {
           </div>
 
           <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-            <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Try these targets</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Try these targets</div>
             <div className="mt-2 space-y-2">
               {PRESETS.map((p) => (
                 <button
@@ -198,7 +198,7 @@ export default function SlopeScatterLab() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Raising market sensitivity</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Raising market sensitivity</div>
           <ul className="mt-3 space-y-2">
             {[
               "steepens the fitted line;",
@@ -213,7 +213,7 @@ export default function SlopeScatterLab() {
           </ul>
         </div>
         <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Raising company-specific noise</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Raising company-specific noise</div>
           <ul className="mt-3 space-y-2">
             {[
               "spreads points farther from the line;",

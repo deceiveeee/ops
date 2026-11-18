@@ -115,7 +115,7 @@ export default function LimitsToArbitrage() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
-        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           Terminology
         </div>
         <p className="ops-body mt-2 text-[15px] leading-[1.65] text-slate-100">
@@ -165,7 +165,7 @@ export default function LimitsToArbitrage() {
                       </ul>
                       {l.example && (
                         <div className="mt-3 rounded-lg border border-accent-amber/25 bg-accent-amber/[0.05] px-3 py-2.5">
-                          <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Example</span>
+                          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Example</span>
                           <p className="mt-1 text-[13px] leading-[1.55] text-slate-100">{l.example.setup}</p>
                           {l.example.math && (
                             <div className="mt-2 rounded-md border border-white/10 bg-ink-950/40 px-2.5 py-1.5">

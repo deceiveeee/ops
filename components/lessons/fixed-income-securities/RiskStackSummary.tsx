@@ -173,7 +173,7 @@ export default function RiskStackSummary() {
                       <div className="px-5 pb-5">
                         <div
                           className={cn(
-                            "ops-caption text-[11px] uppercase tracking-[0.14em]",
+                            "ops-caption text-[12px] tracking-[0.01em]",
                             TONE_TEXT[layer.tone],
                           )}
                         >
@@ -196,7 +196,7 @@ export default function RiskStackSummary() {
 
         {/* Final takeaway */}
         <div className="mt-6 rounded-2xl border border-accent-cyan/30 bg-accent-cyan/[0.06] p-6 text-center">
-          <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+          <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-cyan">
             The stack, summarized
           </div>
           <p className="ops-body-strong mt-2 text-[20px] leading-8 text-slate-50">

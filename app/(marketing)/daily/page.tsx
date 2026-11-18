@@ -48,7 +48,7 @@ export default function DailyPage() {
 
   return (
     <div className={styles.page}>
-      <PuzzleHeader eyebrow={`Daily company puzzle #${puzzle.number} · ${longDate(dateOfPuzzle(puzzle.number))}`} />
+      <PuzzleHeader eyebrow={`Daily puzzle #${puzzle.number} · ${longDate(dateOfPuzzle(puzzle.number))}`} />
       <DailyPuzzleView puzzle={puzzle} isToday shareUrl={canonicalUrl(`/daily/${puzzle.number}`, getSiteUrl())} />
     </div>
   );

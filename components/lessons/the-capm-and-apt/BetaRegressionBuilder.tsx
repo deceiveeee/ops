@@ -223,7 +223,7 @@ export default function BetaRegressionBuilder() {
         <div className="space-y-4">
           {stage === 0 && (
             <div className="space-y-3">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 1 · Classify the cloud</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Step 1 · Classify the cloud</div>
               {classQuestions.map((q) => (
                 <div key={q.key} className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
                   <div className="text-[15px] leading-[1.55] text-slate-200">{q.prompt}</div>
@@ -254,7 +254,7 @@ export default function BetaRegressionBuilder() {
 
           {stage >= 1 && (
             <div className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-purple">Step 2 · Choose a slope</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-purple">Step 2 · Choose a slope</div>
               <p className="mt-2 text-[14px] leading-[1.55] text-slate-300">
                 Which slope best fits the cloud? The slope becomes your beta estimate.
               </p>
@@ -299,7 +299,7 @@ export default function BetaRegressionBuilder() {
 
           {stage >= 2 && (
             <div className="rounded-xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-4">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Fitted result</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Fitted result</div>
               <div className="mt-2">
                 <InlineMath>{String.raw`\hat{\beta} \approx ${TRUE_BETA.toFixed(2)}`}</InlineMath>
               </div>

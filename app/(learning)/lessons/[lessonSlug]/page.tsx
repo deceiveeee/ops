@@ -82,7 +82,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
       <div className="pointer-events-none absolute inset-0 terminal-grid opacity-30" />
       <div className="relative mx-auto max-w-4xl px-5 py-20 sm:px-8 sm:py-28">
         <div className="relative z-30 flex items-center justify-between gap-3">
-          <Link href={courseReturnHref} className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan">
+          <Link href={courseReturnHref} className="font-sans text-xs tracking-[0.01em] text-slate-400 hover:text-accent-cyan">
             ← {course.title} · {module.unitLabel ?? `Module ${String(module.order).padStart(2, "0")}`}
           </Link>
           <LessonShare slug={lesson.slug} title={lesson.title} subtitle={lesson.subtitle} />
@@ -94,7 +94,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
         </h1>
         <p className="mt-4 text-balance text-slate-300">{lesson.subtitle}</p>
 
-        <div className="mt-6 flex flex-wrap gap-2 font-sans text-[12px] uppercase tracking-[0.18em] text-slate-500">
+        <div className="mt-6 flex flex-wrap gap-2 font-sans text-[12px] tracking-[0.01em] text-slate-500">
           <span className="rounded-full border border-white/10 px-2.5 py-0.5">{lesson.type}</span>
           <span className="rounded-full border border-white/10 px-2.5 py-0.5">{lesson.estimatedMinutes} min</span>
           <span className="rounded-full border border-accent-cyan/30 bg-accent-cyan/10 px-2.5 py-0.5 text-accent-cyan">{statusLabel}</span>
@@ -107,7 +107,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
           </p>
 
           <div className="mt-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-500">Learning objectives</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-slate-500">Learning objectives</div>
             <ul className="mt-3 space-y-2">
               {lesson.learningObjectives.map((o) => (
                 <li key={o} className="flex gap-2 text-sm text-slate-300">
@@ -122,7 +122,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
         <div className="mt-10 flex items-center justify-between gap-4 border-t border-white/10 pt-6">
           {prev ? (
             <Link href={`/lessons/${prev.lesson.slug}`} className="group">
-              <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-500">Previous</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-500">Previous</div>
               <div className="text-sm text-slate-200 group-hover:text-accent-cyan">{prev.lesson.title}</div>
             </Link>
           ) : (
@@ -130,7 +130,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
           )}
           {next ? (
             <Link href={`/lessons/${next.lesson.slug}`} className="group text-right">
-              <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-500">Next</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-500">Next</div>
               <div className="text-sm text-slate-200 group-hover:text-accent-cyan">{next.lesson.title}</div>
             </Link>
           ) : (
@@ -141,7 +141,7 @@ export default function LessonPage({ params }: { params: { lessonSlug: string } 
         <div className="mt-10">
           <Link
             href={courseReturnHref}
-            className="font-sans text-xs uppercase tracking-[0.18em] text-slate-400 hover:text-accent-cyan"
+            className="font-sans text-xs tracking-[0.01em] text-slate-400 hover:text-accent-cyan"
           >
             ← Back to {course.title}
           </Link>

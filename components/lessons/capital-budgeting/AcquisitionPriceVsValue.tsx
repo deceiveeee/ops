@@ -51,7 +51,7 @@ export default function AcquisitionPriceVsValue() {
       {/* Visual */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
             Value acquired
           </div>
           <div className="mt-2 font-sans text-[24px] tabular-nums text-white">${fmt(totalValue)}M</div>
@@ -62,7 +62,7 @@ export default function AcquisitionPriceVsValue() {
           </div>
         </div>
         <div className="rounded-xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">
             Price paid
           </div>
           <div className="mt-2 font-sans text-[24px] tabular-nums text-white">${fmt(price)}M</div>
@@ -105,7 +105,7 @@ export default function AcquisitionPriceVsValue() {
             { q: "Are these the same question?", a: "No. A target can be profitable while the acquisition destroys value, because value creation depends on the price paid relative to the value acquired." },
           ].map((x) => (
             <div key={x.q} className="rounded-xl border border-white/10 bg-ink-950/40 p-4">
-              <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-amber">{x.q}</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">{x.q}</div>
               <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-200">{x.a}</p>
             </div>
           ))}
@@ -123,7 +123,7 @@ function Slider({
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[12px] tracking-[0.01em] text-slate-400">
         <span>{label}</span>
         <span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>

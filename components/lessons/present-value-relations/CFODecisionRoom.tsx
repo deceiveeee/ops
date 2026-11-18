@@ -448,7 +448,7 @@ export default function CFODecisionRoom({
                     >
                       <div
                         className={cn(
-                          "font-sans text-[13px] uppercase tracking-[0.14em]",
+                          "font-sans text-[13px] tracking-[0.01em]",
                           opt.w === "nominal"
                             ? "text-accent-cyan"
                             : "text-accent-amber",
@@ -737,7 +737,7 @@ export default function CFODecisionRoom({
                         : "border-white/10 bg-white/[0.02] text-slate-200 hover:border-white/25",
                     )}
                   >
-                    <div className="font-sans text-[14px] uppercase tracking-[0.14em]">
+                    <div className="font-sans text-[14px] tracking-[0.01em]">
                       Accept
                     </div>
                     <div className="ops-body mt-1 text-[12px] text-slate-400">
@@ -755,7 +755,7 @@ export default function CFODecisionRoom({
                         : "border-white/10 bg-white/[0.02] text-slate-200 hover:border-white/25",
                     )}
                   >
-                    <div className="font-sans text-[14px] uppercase tracking-[0.14em]">
+                    <div className="font-sans text-[14px] tracking-[0.01em]">
                       Reject
                     </div>
                     <div className="ops-body mt-1 text-[12px] text-slate-400">
@@ -862,7 +862,7 @@ export default function CFODecisionRoom({
             role="status"
           >
             <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center rounded-full border border-accent-green/50 bg-accent-green/15 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">
+              <span className="inline-flex items-center rounded-full border border-accent-green/50 bg-accent-green/15 px-2.5 py-1 font-sans text-[12px] tracking-[0.01em] text-accent-green">
                 ✓ Recommendation accepted
               </span>
             </div>

@@ -14,8 +14,8 @@ export default function FIProgressRail() {
   return (
     <nav aria-label="Module 3 progress" className="glass-panel p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="ops-eyebrow text-[11px] text-slate-400">Module 3</span>
-        <span className="ops-caption text-[10px] text-accent-purple">
+        <span className="ops-eyebrow text-[12px] text-slate-400">Module 3</span>
+        <span className="ops-caption text-[12px] text-accent-purple">
           4 lessons
         </span>
       </div>
@@ -39,7 +39,7 @@ export default function FIProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px] tabular-nums",
                     active
                       ? "border-accent-purple bg-accent-purple/20 text-accent-purple"
                       : done
@@ -62,7 +62,7 @@ export default function FIProgressRail() {
                   </span>
                 </span>
                 {done && (
-                  <span className="ops-caption text-[10px] text-accent-green">
+                  <span className="ops-caption text-[12px] text-accent-green">
                     ✓
                   </span>
                 )}

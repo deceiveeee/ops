@@ -117,7 +117,7 @@ export default function DurationTableBuilder() {
               onClick={() => setStep(Math.max(step, i + 1))}
               aria-pressed={step >= i + 1}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.1em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                 step >= i + 1
                   ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
                   : "border-white/10 text-slate-500",

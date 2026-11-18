@@ -55,7 +55,7 @@ export default function ProfessorNote({
     >
       <div
         className={cn(
-          "ops-caption flex items-center gap-2 text-[11px] uppercase tracking-[0.14em]",
+          "ops-caption flex items-center gap-2 text-[12px] tracking-[0.01em]",
           t.label,
         )}
       >

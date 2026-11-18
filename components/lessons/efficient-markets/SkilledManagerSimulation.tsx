@@ -127,8 +127,8 @@ export default function SkilledManagerSimulation() {
                   m.avgNetReturn >= 8 ? "text-accent-green" : m.avgNetReturn >= 4 ? "text-accent-amber" : "text-accent-red")}>
                   {fmt(m.avgNetReturn)}%
                 </span>
-                {showSkill && <span className="flex-shrink-0 rounded-full bg-accent-green/15 px-2 py-0.5 font-sans text-[9px] uppercase tracking-[0.14em] text-accent-green">Skilled</span>}
-                {showLucky && <span className="flex-shrink-0 rounded-full bg-accent-red/15 px-2 py-0.5 font-sans text-[9px] uppercase tracking-[0.14em] text-accent-red">Lucky</span>}
+                {showSkill && <span className="flex-shrink-0 rounded-full bg-accent-green/15 px-2 py-0.5 font-sans text-[12px] tracking-[0.01em] text-accent-green">Skilled</span>}
+                {showLucky && <span className="flex-shrink-0 rounded-full bg-accent-red/15 px-2 py-0.5 font-sans text-[12px] tracking-[0.01em] text-accent-red">Lucky</span>}
               </button>
             );
           })}
@@ -140,7 +140,7 @@ export default function SkilledManagerSimulation() {
         <div className="flex flex-wrap items-center gap-3">
           <button type="button" onClick={() => setRevealed(true)}
             disabled={selected.size === 0}
-            className={cn("rounded-full border px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+            className={cn("rounded-full border px-5 py-2 font-sans text-[13px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               selected.size > 0 ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20" : "border-white/15 text-slate-500")}>
             {selected.size > 0 ? `Reveal the truth (${selected.size} selected)` : "Select managers first"}
           </button>
@@ -188,7 +188,7 @@ function Stat({ label, value, tone }: { label: string; value: string; tone: "gre
   const text = tone === "green" ? "text-accent-green" : tone === "red" ? "text-accent-red" : "text-accent-amber";
   return (
     <div className="rounded-lg border border-white/10 bg-ink-950/40 p-3 text-center">
-      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{label}</div>
       <div className={cn("mt-1 font-sans text-[20px]", text)}>{value}</div>
     </div>
   );

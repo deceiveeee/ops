@@ -158,7 +158,7 @@ export default function RiskReallocationPanel() {
         >
           <div
             className={cn(
-              "ops-caption text-[11px] uppercase tracking-[0.14em]",
+              "ops-caption text-[12px] tracking-[0.01em]",
               seniorProtected ? "text-accent-green" : "text-accent-red",
             )}
           >

@@ -244,7 +244,7 @@ export default function DefaultCorrelationDemonstrator() {
           >
             <div
               className={cn(
-                "ops-caption text-[11px] uppercase tracking-[0.14em]",
+                "ops-caption text-[12px] tracking-[0.01em]",
                 seniorHit ? "text-accent-red" : "text-accent-green",
               )}
             >

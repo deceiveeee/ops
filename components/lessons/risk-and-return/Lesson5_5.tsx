@@ -220,13 +220,13 @@ export default function Lesson5_5() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Asset
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Mean monthly return
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Monthly SD
                   </th>
                 </tr>
@@ -697,13 +697,13 @@ export default function Lesson5_5() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Feature
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-cyan">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-cyan">
                     CAPM
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-purple">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-purple">
                     APT
                   </th>
                 </tr>

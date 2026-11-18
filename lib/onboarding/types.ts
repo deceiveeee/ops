@@ -1,85 +1,61 @@
-export type GoalOption =
-  | "understand-how-investing-works"
-  | "learn-to-analyze-companies"
-  | "build-a-diversified-portfolio"
-  | "make-better-investment-decisions"
-  | "prepare-for-a-class-or-competition"
-  | "explore-finance-as-a-career"
-  | "still-figuring-that-out";
+/**
+ * The start guide at /start: two questions, then the learner's first step.
+ *
+ * It replaced a six-question placement quiz on 2026-11-13. Four of those six
+ * questions changed nothing, the answer named a course rather than a lesson,
+ * and nothing else on the site read it.
+ */
 
-export type ExperienceOption =
-  | "completely-new"
-  | "know-some-basic-terms"
-  | "follow-markets-no-investments"
-  | "used-paper-trading"
-  | "made-real-investments"
-  | "analyze-independently";
+/** What brought the visitor here. Each answer names the part of the site it belongs to. */
+export type GuideGoal = "learn" | "company" | "build" | "unsure";
 
-export type AccessOption =
-  | "no-account"
-  | "paper-or-simulation"
-  | "custodial-or-family"
-  | "own-account"
-  | "prefer-not-to-say";
+/** Where they are starting from. */
+export type GuideStart = "new" | "some";
 
-export type OutcomeOption =
-  | "explain-how-investments-work"
-  | "evaluate-company-attractiveness"
-  | "build-defend-portfolio"
-  | "make-first-responsible-decision"
-  | "improve-existing-decisions"
-  | "use-financial-models";
-
-export type ConfidenceOption =
-  | "not-confident-yet"
-  | "slightly-confident"
-  | "somewhat-confident"
-  | "confident"
-  | "very-confident";
-
-export type SegmentOption =
-  | "middle-school"
-  | "high-school"
-  | "college-student"
-  | "adult-learner"
-  | "educator-or-parent"
-  | "prefer-not-to-say";
-
-export type OnboardingAnswers = {
-  goal?: GoalOption;
-  experience?: ExperienceOption;
-  access?: AccessOption;
-  outcome?: OutcomeOption;
-  confidence?: ConfidenceOption;
+export type GuideAnswers = {
+  goal?: GuideGoal;
+  start?: GuideStart;
 };
 
-export type QuestionId = keyof OnboardingAnswers | "segment";
+export type QuestionId = keyof GuideAnswers;
 
-export type QuestionOption = {
-  id: string;
+export type GuideOption<T extends string = string> = {
+  id: T;
   label: string;
+  /** One sentence shown once the option is picked: what this answer means on this site. */
+  explains: string;
 };
 
-export type Question = {
+export type GuideQuestion = {
   id: QuestionId;
   prompt: string;
-  helper?: string;
-  optional?: boolean;
-  options: QuestionOption[];
+  options: GuideOption[];
 };
 
-export type OnboardingSnapshot = {
-  answers: OnboardingAnswers;
-  completed_at: string | null;
-  updated_at: string;
-  recommended_course_slug: string | null;
-  recommended_next_step: string | null;
-  confidence_tier: ConfidenceOption | null;
-  segment: SegmentOption | null;
-  prompt_dismissed: boolean;
+/**
+ * Where the guide sends someone first. A course id means that course's first
+ * lesson or mission; "daily" means today's company puzzle.
+ */
+export type FirstStepId = "finance-foundations" | "investment-foundations" | "daily";
+
+/** The step as the page shows it. Built on the server from the course data. */
+export type FirstStep = {
+  /** "Lesson 1: What Is Finance? Value, Time, and Risk · 25 min". */
+  title: string;
+  href: string;
+  /** The button: "Start lesson 1". */
+  action: string;
 };
 
-export type Recommendation = {
-  primaryCourseSlug: string;
-  nextStepCopy: string;
+export type FirstSteps = Record<FirstStepId, FirstStep>;
+
+/**
+ * What is kept, in this browser only. Nothing here is sent anywhere: the
+ * privacy page promises that signing in syncs which lessons are finished and
+ * nothing else.
+ */
+export type GuideSnapshot = {
+  answers: GuideAnswers;
+  completedAt: string | null;
+  updatedAt: string;
 };

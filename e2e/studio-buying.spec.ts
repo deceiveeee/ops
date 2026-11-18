@@ -3,6 +3,7 @@ import { exportProjectBackup } from "../lib/studio-project/backup";
 import { createStudioProject } from "../lib/studio-project/create";
 import { addPosition } from "../lib/studio-project/operations";
 import type { StudioProject } from "../lib/studio-project/schema";
+import { seedProject, typedProject } from "./studio-seed";
 
 /**
  * Working out what to buy without leaving Studio.
@@ -25,22 +26,9 @@ import type { StudioProject } from "../lib/studio-project/schema";
 // Wide enough for the list and a worksheet side by side, unless a test says otherwise.
 test.use({ viewport: { width: 1440, height: 900 } });
 
-async function addToPortfolio(page: Page, symbol: string) {
-  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
-  const card = page.getByRole("button", { expanded: false }).filter({ hasText: new RegExp(`^${symbol}`) }).first().locator("xpath=..");
-  await card.getByRole("button", { name: "Add to portfolio" }).click();
-  await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
-}
-
 async function portfolioOfVtiAndAgg(page: Page) {
-  await page.goto("/studio/research");
-  await addToPortfolio(page, "VTI");
-  await addToPortfolio(page, "AGG");
-  await page.goto("/studio/portfolio");
-  await page.getByLabel("VTI target percentage").fill("60");
-  await page.getByLabel("AGG target percentage").fill("40");
-  // Moving by the page's own link keeps the workspace open, so the weights just typed come too.
-  await page.getByRole("link", { name: "What to buy" }).click();
+  // VTI 60%, AGG 40%: the worksheet reads weights, however they were reached.
+  await seedProject(page, typedProject([["vti", 60], ["agg", 40]]), "/studio/portfolio/buying");
   await expect(page.getByRole("heading", { level: 1, name: "Work out what to buy" })).toBeVisible();
 }
 

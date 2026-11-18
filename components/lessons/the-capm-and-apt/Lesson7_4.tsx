@@ -126,7 +126,7 @@ function CentralQuestion() {
     <Reveal className="mt-10">
       <div className="relative overflow-hidden rounded-2xl border border-accent-cyan/25 bg-gradient-to-br from-accent-cyan/[0.08] via-white/[0.03] to-transparent p-7 sm:p-9">
         <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent-cyan/10 blur-3xl" />
-        <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">Central question</div>
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Central question</div>
         <p className="ops-body mt-4 max-w-3xl text-[20px] leading-[1.5] text-white sm:text-[22px]">
           CAPM needs beta, but where does a company&apos;s beta actually come from?
         </p>
@@ -237,7 +237,7 @@ function FinalCheckRow({
       {answered && (
         <div className="mt-3">
           <Feedback status={isCorrect ? "correct" : "incorrect"}>
-            <span className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Expected: {answerLabel}</span>
+            <span className="block font-sans text-[13px] tracking-[0.01em] text-slate-400">Expected: {answerLabel}</span>
             <span className="mt-1 block">{feedback}</span>
           </Feedback>
         </div>
@@ -282,7 +282,7 @@ export default function Lesson7_4() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">The question</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">The question</div>
             <p className="mt-3 text-[20px] leading-[1.45] text-white sm:text-[22px]">
               We can observe market prices and historical returns, but where do we obtain beta?
             </p>
@@ -318,9 +318,9 @@ export default function Lesson7_4() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Month</th>
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan">Market excess return</th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-purple">Stock excess return</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">Month</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-accent-cyan">Market excess return</th>
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-accent-purple">Stock excess return</th>
                 </tr>
               </thead>
               <tbody className="font-sans tabular-nums text-slate-100">
@@ -407,7 +407,7 @@ export default function Lesson7_4() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Three words that matter</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Three words that matter</div>
             <div className="mt-3 flex flex-wrap gap-3">
               {["tended to", "approximately", "on average"].map((w) => (
                 <span key={w} className="rounded-full border border-accent-amber/40 bg-accent-amber/10 px-4 py-1.5 font-sans text-[14px] text-accent-amber">
@@ -447,11 +447,11 @@ export default function Lesson7_4() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Beta asks</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Beta asks</div>
               <p className="mt-3 text-[17px] leading-[1.55] text-white">How strongly does the asset tend to respond to the market?</p>
             </div>
             <div className="rounded-2xl border border-accent-purple/25 bg-accent-purple/[0.05] p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-purple">R² asks</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-purple">R² asks</div>
               <p className="mt-3 text-[17px] leading-[1.55] text-white">How much of the asset&apos;s historical variation did the market regression explain?</p>
             </div>
           </div>
@@ -474,14 +474,14 @@ export default function Lesson7_4() {
         <Reveal>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Same beta, different R²</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Same beta, different R²</div>
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full min-w-[200px] border-collapse text-[15px]">
                   <thead>
                     <tr className="border-b border-white/20 text-left">
-                      <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400">Asset</th>
-                      <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400">Beta</th>
-                      <th className="py-2 font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400">R²</th>
+                      <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em] text-slate-400">Asset</th>
+                      <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em] text-slate-400">Beta</th>
+                      <th className="py-2 font-sans text-[12px] tracking-[0.01em] text-slate-400">R²</th>
                     </tr>
                   </thead>
                   <tbody className="font-sans tabular-nums text-slate-100">
@@ -493,14 +493,14 @@ export default function Lesson7_4() {
               <p className="mt-3 text-[14px] leading-[1.55] text-slate-400">Same estimated sensitivity; different tightness around the line.</p>
             </div>
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Different beta, same R²</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Different beta, same R²</div>
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full min-w-[200px] border-collapse text-[15px]">
                   <thead>
                     <tr className="border-b border-white/20 text-left">
-                      <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400">Asset</th>
-                      <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400">Beta</th>
-                      <th className="py-2 font-sans text-[12px] uppercase tracking-[0.12em] text-slate-400">R²</th>
+                      <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em] text-slate-400">Asset</th>
+                      <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em] text-slate-400">Beta</th>
+                      <th className="py-2 font-sans text-[12px] tracking-[0.01em] text-slate-400">R²</th>
                     </tr>
                   </thead>
                   <tbody className="font-sans tabular-nums text-slate-100">
@@ -595,11 +595,11 @@ export default function Lesson7_4() {
           <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Estimate</div>
+                <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Estimate</div>
                 <div className="mt-2"><BlockMath>{String.raw`\hat{\beta} = 1.25`}</BlockMath></div>
               </div>
               <div>
-                <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Standard error</div>
+                <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Standard error</div>
                 <div className="mt-2"><BlockMath>{String.raw`SE(\hat{\beta}) = 0.18`}</BlockMath></div>
               </div>
             </div>
@@ -612,7 +612,7 @@ export default function Lesson7_4() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">A rough uncertainty range</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">A rough uncertainty range</div>
             <div className="mt-3 max-w-xl">
               <BlockMath>{String.raw`\hat{\beta} \pm 2\,SE = 1.25 \pm 0.36`}</BlockMath>
             </div>
@@ -667,7 +667,7 @@ export default function Lesson7_4() {
               <div key={s.n} className="rounded-2xl border border-white/12 bg-white/[0.03] p-5">
                 <div className="flex items-center gap-3">
                   <span className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-accent-cyan/50 font-sans text-[13px] text-accent-cyan">{s.n}</span>
-                  <span className="font-sans text-[13px] uppercase tracking-[0.14em] text-slate-200">{s.t}</span>
+                  <span className="font-sans text-[13px] tracking-[0.01em] text-slate-200">{s.t}</span>
                 </div>
                 <p className="mt-3 text-[15px] leading-[1.6] text-slate-300">{s.d}</p>
               </div>
@@ -700,7 +700,7 @@ export default function Lesson7_4() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Business example</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Business example</div>
             <p className="mt-3 text-[17px] leading-[1.6] text-slate-200">
               A historically defensive company sells its stable division and enters a highly cyclical
               industry.
@@ -747,7 +747,7 @@ export default function Lesson7_4() {
       >
         <Reveal>
           <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Nova — fitted regression</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Nova — fitted regression</div>
             <div className="mt-3 max-w-xl">
               <BlockMath>{String.raw`R_{\text{Nova},t} - R_{f,t} = 0.12\% + 1.30\,\bigl(R_{M,t} - R_{f,t}\bigr) + \varepsilon_t`}</BlockMath>
             </div>
@@ -758,8 +758,8 @@ export default function Lesson7_4() {
             <table className="w-full min-w-[440px] border-collapse text-[15px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Statistic</th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan">Estimate</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">Statistic</th>
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-accent-cyan">Estimate</th>
                 </tr>
               </thead>
               <tbody className="font-sans tabular-nums text-slate-100">
@@ -799,7 +799,7 @@ export default function Lesson7_4() {
               >
                 <div
                   className={cn(
-                    "font-sans text-[12px] uppercase tracking-[0.14em]",
+                    "font-sans text-[12px] tracking-[0.01em]",
                     c.tone === "cyan" && "text-accent-cyan",
                     c.tone === "purple" && "text-accent-purple",
                     c.tone === "amber" && "text-accent-amber",

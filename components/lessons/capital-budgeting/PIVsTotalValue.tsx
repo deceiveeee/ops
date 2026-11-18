@@ -36,7 +36,7 @@ export default function PIVsTotalValue() {
             "rounded-2xl border p-5",
             p.tone === "cyan" ? "border-accent-cyan/25 bg-accent-cyan/[0.04]" : "border-accent-amber/25 bg-accent-amber/[0.04]",
           )}>
-            <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]",
+            <div className={cn("font-sans text-[12px] tracking-[0.01em]",
               p.tone === "cyan" ? "text-accent-cyan" : "text-accent-amber")}>{p.name}</div>
             <div className="mt-3 space-y-1 text-[14px]">
               <div className="flex justify-between"><span className="text-slate-400">Investment</span><span className="font-sans text-white">{p.investment}</span></div>

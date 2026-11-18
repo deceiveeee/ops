@@ -197,6 +197,30 @@ async function measure(page: Page) {
   });
 }
 
+/** Below 1024px one clue shows at a time, so each is selected in turn and the tallest counts. */
+async function tallestClue(page: Page) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    window.scrollTo(0, 0);
+  });
+  const tabs = page.getByRole("group", { name: "Choose a clue to read" }).getByRole("button");
+  let size = await measure(page);
+  let tallest = "";
+  if (await tabs.first().isVisible()) {
+    for (const tab of await tabs.all()) {
+      if (!(await tab.isEnabled())) continue;
+      await tab.click();
+      const next = await measure(page);
+      if (next.screens > size.screens) {
+        size = next;
+        tallest = ((await tab.textContent()) ?? "").replace(/\D/g, "");
+      }
+    }
+    if (tallest) await tabs.nth(Number(tallest) - 1).click();
+  }
+  return { size, tallest };
+}
+
 test("every state of the puzzle fits a screen and a half at six widths", async ({ page }) => {
   test.setTimeout(600_000);
   mkdirSync(SHOTS, { recursive: true });
@@ -228,30 +252,11 @@ test("every state of the puzzle fits a screen and a half at six widths", async (
       await page.reload();
       await expect(page.getByRole("textbox", { name: "Your guess" })).toBeEnabled();
       await state.reach(page);
-      await page.evaluate(async () => {
-        await document.fonts.ready;
-        window.scrollTo(0, 0);
-      });
-      // Below 1024px one clue shows at a time, so each is selected in turn and the tallest counts.
-      const tabs = page.getByRole("group", { name: "Choose a clue to read" }).getByRole("button");
-      let size = await measure(page);
-      let tallest = "";
-      if (await tabs.first().isVisible()) {
-        for (const tab of await tabs.all()) {
-          if (!(await tab.isEnabled())) continue;
-          await tab.click();
-          const next = await measure(page);
-          if (next.screens > size.screens) {
-            size = next;
-            tallest = ((await tab.textContent()) ?? "").replace(/\D/g, "");
-          }
-        }
-        if (tallest) await tabs.nth(Number(tallest) - 1).click();
-      }
+      const { size, tallest } = await tallestClue(page);
       await page.screenshot({ path: `${SHOTS}/${state.name}-${width}.png`, fullPage: true });
       // Recorded, not gated: with every "What this means" and the sources opened by hand. Opening one
       // removes it from the list, so the first closed one is clicked each time.
-      const closed = page.locator("details:not([open]) > summary").filter({ visible: true });
+      const closed = page.locator("main button[aria-expanded='false'], main details:not([open]) > summary").filter({ visible: true });
       for (let guard = 0; guard < 12 && (await closed.count()) > 0; guard += 1) await closed.first().click();
       const opened = (await measure(page)).screens;
       report.push({ state: state.name, width, tallest, ...size, opened });
@@ -269,4 +274,42 @@ test("every state of the puzzle fits a screen and a half at six widths", async (
     expect.soft(past.overflow, `past at ${width}`).toBeLessThanOrEqual(0);
   }
   writeFileSync(`${SHOTS}/report.json`, JSON.stringify(report, null, 2));
+});
+
+/*
+ * Puzzle #1 above is one sample; a puzzle with a long quote or many business
+ * lines is taller. On 2026-11-15, 14 of the 35 ran past a screen and a half
+ * once over, though #1 fitted. So every puzzle open on the test date is played
+ * to all six clues and then solved, and measured at the six widths. The width
+ * changes without a reload, since a game is kept across a resize.
+ */
+test("every open puzzle fits a screen and a half at six widths with all clues showing and once solved", async ({ page }) => {
+  const open = PUZZLES.filter((puzzle) => puzzle.number <= todaysNumber(new Date()));
+  test.setTimeout(60_000 + open.length * 20_000);
+  const over: string[] = [];
+  const atEveryWidth = async (label: string) => {
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: HEIGHT[width] ?? 900 });
+      const { size, tallest } = await tallestClue(page);
+      if (size.screens > 1.5) over.push(`${label} at ${width}: ${size.screens.toFixed(3)} screens${tallest ? ` (clue ${tallest})` : ""}`);
+      if (size.overflow > 0) over.push(`${label} at ${width}: ${size.overflow}px sideways`);
+    }
+  };
+  for (const puzzle of open) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`/daily/${puzzle.number}`);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await expect(page.getByRole("textbox", { name: "Your guess" })).toBeEnabled();
+    for (let index = 0; index < 5; index += 1) await page.getByRole("button", { name: "Show the next clue" }).click();
+    await expect(page.getByText("6 of 6 clues showing")).toBeVisible();
+    await atEveryWidth(`#${puzzle.number} with all clues`);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.getByRole("textbox", { name: "Your guess" }).fill(puzzle.answer.name);
+    await page.getByRole("textbox", { name: "Your guess" }).press("Enter");
+    await expect(page.getByRole("heading", { name: `It was ${puzzle.answer.name}.` })).toBeVisible();
+    await atEveryWidth(`#${puzzle.number} solved`);
+  }
+  expect(open.length).toBeGreaterThan(0);
+  expect(over).toEqual([]);
 });

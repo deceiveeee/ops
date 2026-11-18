@@ -11,6 +11,7 @@ import { shareHeadline, shareText } from "@/lib/daily-puzzle/share";
 import type { DailyPuzzle } from "@/lib/daily-puzzle/types";
 import { markShared } from "@/lib/share";
 import { Squares } from "./GuessPanel";
+import ReportExcerpt from "./ReportExcerpt";
 import styles from "./daily.module.css";
 
 type Props = {
@@ -146,8 +147,24 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
         * Where the clues came from, and where to read more, one tap away: drawn
         * open it took a phone past a screen and a half once the answer showed.
         */}
+      {/*
+        * The report's own lines, open beside the clues on a wide /daily page,
+        * where the panel has room under it; folded into "Where these clues came
+        * from" on a phone and on the homepage, which are near their height limits.
+        * CSS shows one copy or the other, never both.
+        */}
+      {puzzle.excerpt ? (
+        <div className={styles.excerptWide}>
+          <ReportExcerpt puzzle={puzzle} excerpt={puzzle.excerpt} />
+        </div>
+      ) : null}
       <details className={styles.more}>
         <summary>Where these clues came from</summary>
+        {puzzle.excerpt ? (
+          <div className={styles.excerptNarrow}>
+            <ReportExcerpt puzzle={puzzle} excerpt={puzzle.excerpt} />
+          </div>
+        ) : null}
         <p>
           The figures and words are from its annual report (Form 10-K) for the year ending {longDate(report.periodEnd)}, filed{" "}
           {longDate(report.filed)}. The industry is the code the SEC files it under.

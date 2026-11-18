@@ -9,6 +9,7 @@ import { hasAnyLimit } from "@/lib/studio-project/limits";
 import type { StudioMode, StudioProject } from "@/lib/studio-project/schema";
 import type { SessionResult } from "@/lib/studio-project/session";
 import { createIndexedDbProjectStorage } from "@/lib/studio-project/storage";
+import { applyBuilds } from "@/lib/studio-project/construction";
 import { applyPlanChange, projectCatalog, projectToPlan } from "@/lib/studio-project/workspace";
 import { useStudioProject } from "@/lib/use-studio-project";
 import type { StageResult } from "../stages";
@@ -41,6 +42,12 @@ export interface Workspace {
    */
   catalog: readonly StudioInstrument[];
   updatePlan: (change: (plan: StudioPlan) => StudioPlan) => Promise<StageResult>;
+  /**
+   * A change to the project itself, after which every portfolio with a build
+   * follows it. Goals, limits and the top-down steps all save through here, so
+   * a holding's weight can never lag behind the choices it is worked out from.
+   */
+  updateProject: (change: (project: StudioProject) => StudioProject) => Promise<StageResult>;
   /** A change that did not save, stated until the next one succeeds. */
   error: string | null;
   report: (result: SessionResult) => StageResult;
@@ -188,7 +195,8 @@ function OpenProject({
     catalog,
     error,
     report,
-    updatePlan: async (change) => report(await session.update((current) => applyPlanChange(current, change))),
+    updatePlan: async (change) => report(await session.update((current) => applyBuilds(applyPlanChange(current, change), projectCatalog(current)))),
+    updateProject: async (change) => report(await session.update((current) => applyBuilds(change(current), projectCatalog(current)))),
     draft,
     setDraft,
     asideSlot,

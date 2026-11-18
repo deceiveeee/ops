@@ -18,6 +18,11 @@ type Props = {
   isToday: boolean;
   /** The canonical address of this puzzle, for the shared result. */
   shareUrl: string;
+  /**
+   * "page" sets the report beside the guess, as on /daily. "stacked" puts the
+   * guess under the report, for a column half a page wide (the homepage).
+   */
+  layout?: "page" | "stacked";
 };
 
 /**
@@ -26,7 +31,7 @@ type Props = {
  * restored after the page loads; until then the guess box waits, so a guess
  * can never be laid over a game that is about to be restored.
  */
-export default function DailyPuzzleView({ puzzle, isToday, shareUrl }: Props) {
+export default function DailyPuzzleView({ puzzle, isToday, shareUrl, layout = "page" }: Props) {
   const key = String(puzzle.number);
   const [saved, setSaved] = useState<Saved>({ version: 1, puzzles: {} });
   const [moves, setMoves] = useState<Move[]>([]);
@@ -90,7 +95,7 @@ export default function DailyPuzzleView({ puzzle, isToday, shareUrl }: Props) {
   }, [finished, announcement]);
 
   return (
-    <div className={styles.layout}>
+    <div className={`${styles.layout} ${layout === "stacked" ? styles.stacked : ""}`}>
       <ClueSheet
         clues={clues}
         shown={finished ? CLUE_COUNT : state.shown}

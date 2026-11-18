@@ -22,7 +22,7 @@ function savedWork(weight = 70): StudioProject {
 /** Seed only this test's fresh browser context, through the same database envelope the app reads. */
 async function openSavedWork(page: Page, project: StudioProject) {
   await page.goto("/studio");
-  await expect(page.getByRole("heading", { name: "Your next move." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /What should we work on\?$/ })).toBeVisible();
   await page.evaluate(async (raw) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open("ops-studio-projects");
@@ -49,8 +49,10 @@ test("overview shows the saved allocation after the cash reserve and keeps rejec
   await expect(portfolio).toContainText("30.0% left to assign");
   await expect(page.getByRole("region", { name: "Investments you have read about" })).toContainText("Decided against · not in your portfolio; your notes are kept");
   await expect(page.getByRole("link", { name: /Ampere Instruments/ })).toHaveAttribute("href", "/studio/investigate?company=company-ampere");
-  await page.getByRole("link", { name: "Open Portfolio", exact: true }).click();
-  await expect(page).toHaveURL(/\/studio\/portfolio$/);
+  // Weights typed by hand: the next step is to build from them in the nine steps.
+  await expect(page.getByRole("heading", { name: "Build from the weights you typed" })).toBeVisible();
+  await page.getByRole("link", { name: "Open step 4", exact: true }).click();
+  await expect(page).toHaveURL(/\/studio\/portfolio\/split$/);
 });
 
 test("an over-assigned portfolio states the excess instead of looking complete", async ({ page }) => {
@@ -58,7 +60,7 @@ test("an over-assigned portfolio states the excess instead of looking complete",
   const portfolio = page.getByRole("region", { name: "Your portfolio, taking shape" });
   await expect(portfolio).toContainText("25.0% over the available amount");
   await expect(portfolio).toContainText("125.0% of the amount after your cash reserve");
-  await expect(page.getByRole("link", { name: "Open Portfolio", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open step 4", exact: true })).toBeVisible();
 });
 
 test("older research stays discoverable with a keyboard and survives a mode switch", async ({ page }) => {
@@ -83,7 +85,7 @@ test("older research stays discoverable with a keyboard and survives a mode swit
 test("mobile menus stay inside the viewport and close with Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto("/studio");
-  await expect(page.getByRole("heading", { name: "Your next move." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /What should we work on\?$/ })).toBeVisible();
   await page.getByRole("button", { name: "Backup and restore", exact: true }).click();
   const menu = page.getByRole("group", { name: "Backup and restore", exact: true });
   const bounds = await menu.boundingBox();

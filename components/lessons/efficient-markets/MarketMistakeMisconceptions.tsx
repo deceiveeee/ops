@@ -88,7 +88,7 @@ export default function MarketMistakeMisconceptions() {
                 >
                   <div className="ops-body px-5 pb-5">
                     <div className="rounded-lg border border-accent-green/20 bg-accent-green/[0.05] p-3">
-                      <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Reality</span>
+                      <span className="font-sans text-[12px] tracking-[0.01em] text-accent-green">Reality</span>
                       <p className="mt-1 text-[15px] leading-[1.65] text-slate-100">{m.reality}</p>
                     </div>
                     <p className="mt-3 text-[14px] leading-[1.65] text-slate-300">{m.explanation}</p>

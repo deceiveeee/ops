@@ -24,7 +24,7 @@ function StageTag({ n, title, locked }: { n: number; title: string; locked: bool
       >
         {n}
       </span>
-      <span className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", locked ? "text-slate-500" : "text-accent-cyan")}>
+      <span className={cn("font-sans text-[12px] tracking-[0.01em]", locked ? "text-slate-500" : "text-accent-cyan")}>
         Stage {n} · {title}
       </span>
     </div>
@@ -98,7 +98,7 @@ function MemoField({
 }) {
   return (
     <div>
-      <label className="block font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor={id}>
+      <label className="block font-sans text-[12px] tracking-[0.01em] text-slate-400" htmlFor={id}>
         {label}
       </label>
       <textarea
@@ -134,7 +134,7 @@ export default function OrionFundCase() {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-accent-purple/25 bg-accent-purple/[0.05] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-purple">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-purple">
           Integrated case · The Orion Fund
         </div>
         <p className="mt-1 text-[15px] leading-[1.55] text-slate-200">
@@ -143,7 +143,7 @@ export default function OrionFundCase() {
       </div>
 
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5">
-        <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Initial information</div>
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Initial information</div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[
             ["Average annual return", "13.5%"],
@@ -153,7 +153,7 @@ export default function OrionFundCase() {
             ["CAPM regression R²", "42%"],
           ].map(([k, v]) => (
             <div key={k} className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
-              <div className="font-sans text-[11px] uppercase tracking-[0.1em] text-slate-400">{k}</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{k}</div>
               <div className="mt-1 font-sans text-[16px] text-slate-100">{v}</div>
             </div>
           ))}
@@ -266,7 +266,7 @@ export default function OrionFundCase() {
 
       <StageCard n={5} title="Reveal additional factors" locked={stage < 5}>
         <div className="rounded-xl border border-accent-purple/25 bg-accent-purple/[0.05] p-4">
-          <div className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">New evidence</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-purple">New evidence</div>
           <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-white/12 bg-white/[0.02] p-3 text-center">
               <div className="font-sans text-[11px] text-slate-400">Size beta β_S</div>

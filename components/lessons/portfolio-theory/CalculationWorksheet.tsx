@@ -166,7 +166,7 @@ export default function CalculationWorksheet({
       {groups.map((group, gi) => (
         <div key={gi} className="border-l border-white/10 pl-5 sm:pl-6">
           {group.heading !== undefined && (
-            <div className="mb-1 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+            <div className="mb-1 font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
               {group.heading}
             </div>
           )}

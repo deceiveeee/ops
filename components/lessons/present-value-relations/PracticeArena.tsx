@@ -533,7 +533,7 @@ function InflationFixItMode({ onMastered }: { onMastered: () => void }) {
               setChecked(false);
             }}
             className={cn(
-              "rounded-xl border px-4 py-3 font-sans text-[13px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+              "rounded-xl border px-4 py-3 font-sans text-[13px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
               pick === w
                 ? w === "nominal"
                   ? "border-accent-cyan/60 bg-accent-cyan/10 text-accent-cyan"
@@ -639,7 +639,7 @@ export default function PracticeArena() {
               <div className="flex items-center justify-between">
                 <span
                   className={cn(
-                    "inline-flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-[0.14em]",
+                    "inline-flex items-center gap-1.5 font-sans text-[12px] tracking-[0.01em]",
                     isDone ? "text-accent-green" : t.text,
                   )}
                 >

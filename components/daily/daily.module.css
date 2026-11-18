@@ -20,14 +20,18 @@
 .clues { list-style: none; margin: 0; padding: 0; }
 .clue { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 4px 10px; padding-block: 12px; border-top: 1px solid var(--ops-divider); }
 .clueNumber { font-size: 13px; line-height: 20px; font-weight: 600; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
-.clueTitle { font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ops-text-secondary); }
+/* The clue's title, with "What this means" at the end of the same line. */
+.clueHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; min-width: 0; }
+.clueTitle { flex: 1 1 auto; min-width: 0; font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ops-text-secondary); }
+/* Its target reaches above and below the 20px line (negative margins), so it adds no height to the row. */
+.meaningButton { flex: none; display: inline-flex; align-items: center; min-height: 32px; margin-block: -6px; padding-inline: 4px; margin-inline-end: -4px; border-radius: 4px; font-size: 13px; line-height: 20px; color: var(--ops-accent-strong); }
+.meaningButton:hover { text-decoration: underline; text-underline-offset: 3px; }
+.meaningButton:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; }
 .clueBody { grid-column: 2; min-width: 0; }
 .clueText { font-size: 17px; line-height: 1.45; font-weight: 500; font-variant-numeric: tabular-nums; }
 .quote { font-size: 16px; line-height: 1.6; font-weight: 400; }
 .definition { margin-top: 4px; font-size: 13px; line-height: 1.55; color: var(--ops-text-secondary); }
-.defineToggle { margin-top: 2px; font-size: 13px; line-height: 1.55; color: var(--ops-text-secondary); }
-.defineToggle summary { display: inline-flex; align-items: center; min-height: 32px; cursor: pointer; color: var(--ops-accent-strong); }
-.defineToggle summary:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; border-radius: 4px; }
+.definition[hidden] { display: none; }
 .hidden { grid-column: 2; height: 12px; margin-top: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--ops-surface-2) 0 14px, #e4e4e9 14px 15px); }
 .revealed .clueBody { animation: clear 380ms cubic-bezier(0.2, 0.7, 0.2, 1); }
 @keyframes clear { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
@@ -85,6 +89,19 @@
 .more ul { list-style: none; margin: 4px 0 0; padding: 0; }
 .more li a { display: inline-flex; min-height: 44px; align-items: center; color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
 
+/* The report's own lines behind the number clues, once the puzzle is over (ReportExcerpt). */
+.excerpt { margin: 14px 0 6px; }
+.excerptTitle { font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--ops-text-primary); }
+.excerptParts { margin-top: 8px; padding: 6px; border: 1px solid var(--ops-divider); border-radius: 8px; background: var(--ops-surface); }
+.excerptImage { display: block; width: 100%; height: auto; }
+/* Said in the page's own type, so it cannot be mistaken for the filing. */
+.excerptGap { margin: 6px 4px; padding-block: 6px; border-block: 1px dashed var(--ops-divider); font-size: 13px; line-height: 1.5; color: var(--ops-text-secondary); }
+.excerptCaption { display: grid; gap: 6px; margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--ops-text-secondary); }
+.excerptSource { font-size: 13px; color: var(--ops-text-tertiary); }
+.excerptSource a { color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+/* One copy shows: open in the panel on a wide /daily page, inside "Where these clues came from" elsewhere. */
+.excerptWide { display: none; }
+
 /* Past puzzles. */
 .grid { list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
 .tile { display: flex; min-height: 64px; flex-direction: column; justify-content: center; gap: 2px; padding: 8px 12px; border: 1px solid var(--ops-divider); border-radius: 12px; background: var(--ops-surface); font-size: 13px; color: var(--ops-text-secondary); }
@@ -92,9 +109,21 @@
 .tile:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; }
 .tileNumber { font-size: 16px; font-weight: 600; color: var(--ops-text-primary); font-variant-numeric: tabular-nums; }
 
+/* The homepage: the guess sits under the report in one column half a page wide. */
+.layout.stacked { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 0; }
+.stacked .panel { position: static; }
+
+/* A wide /daily page has room beside the clues: the report excerpt shows open there.
+   The finished panel stops following the scroll, since with the excerpt it can be
+   taller than a short laptop screen and its bottom would be out of reach. */
+@media (min-width: 1024px) {
+  .layout:not(.stacked) .excerptWide { display: block; }
+  .layout:not(.stacked) .excerptNarrow { display: none; }
+  .layout:not(.stacked) .panel:has(.excerptWide) { position: static; }
+}
+
 /* One clue at a time, below 1024px: see ClueSheet. */
 .clueTabs { display: none; }
-.narrowOnly { display: none; }
 
 @media (max-width: 1023px) {
   .layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
@@ -105,16 +134,25 @@
   .clueTab:disabled { border-color: var(--ops-divider); background: var(--ops-surface-2); color: var(--ops-text-tertiary); cursor: not-allowed; }
   .clueTab:focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 2px; }
   .clue[data-selected="false"] { display: none; }
-  .narrowOnly { display: block; }
-  .wideOnly { display: none; }
 }
+/* Phone spacing is set so the tallest puzzle (seven business lines, on its own day with the
+   midnight note) stays within a screen and a half once solved: measured 2026-11-15. */
 @media (max-width: 767px) {
   .page { width: calc(100% - 32px); padding-block: 18px 32px; }
+  .layout { margin-top: 16px; }
   .sheet { padding: 2px 14px 6px; }
+  .sheetHead { padding-block: 8px; }
+  .clueTabs { padding-bottom: 10px; }
   .clue { padding-block: 10px; }
+  .mix { gap: 5px; }
+  .note { margin-top: 6px; }
   .clueText { font-size: 16px; }
   .quote { font-size: 15px; }
   .panel { padding: 16px; }
+  /* At 28px the longest answer, "It was Abercrombie & Fitch.", took two lines on a 390px phone. */
+  .result { font-size: 24px; }
+  /* A full-size touch target on a phone, where one clue shows at a time so only one of these is on screen. */
+  .meaningButton { min-height: 44px; margin-block: -12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .revealed .clueBody { animation: none; }

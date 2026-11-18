@@ -191,14 +191,14 @@ function CategoryCard({ cat }: { cat: Category }) {
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="ops-caption font-sans text-[11px] text-accent-purple">
-          {cat.id.toUpperCase()}
+        <span className="ops-caption font-sans text-[12px] text-accent-purple">
+          {cat.id === "mbs" ? "MBS" : cat.id.charAt(0).toUpperCase() + cat.id.slice(1)}
         </span>
-        <div className="flex gap-3 font-sans text-[10px] uppercase tracking-[0.14em]">
-          <Micro label="liq" value={cat.liquidity} />
-          <Micro label="cx" value={cat.complexity} />
-          <Micro label="def" value={cat.defaultSensitivity} />
-        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-sans text-[12px] tracking-[0.01em]">
+        <Micro label="Liquidity" value={cat.liquidity} />
+        <Micro label="Complexity" value={cat.complexity} />
+        <Micro label="Default risk" value={cat.defaultSensitivity} />
       </div>
 
       <h4 className="ops-interactive-title mt-3 text-lg text-white">{cat.name}</h4>
@@ -242,7 +242,7 @@ function Micro({ label, value }: { label: string; value: Level }) {
   return (
     <span className="flex items-center gap-1">
       <span className="text-slate-500">{label}</span>
-      <span className={LEVEL_TONE[value]}>{value[0]}</span>
+      <span className={LEVEL_TONE[value]}>{value}</span>
     </span>
   );
 }
@@ -280,7 +280,7 @@ function BuildTheMarket() {
   return (
     <div className="rounded-2xl border border-accent-purple/30 bg-accent-purple/[0.04] p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-purple">
+        <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-purple">
           Build the market
         </div>
         <span className="ops-caption text-[11px] text-slate-400">

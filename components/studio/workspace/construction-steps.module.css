@@ -1,0 +1,94 @@
+/* Steps 3 to 7 reuse the Goals layout (working-pages.module.css); only what is new lives here. */
+.numberBox { display: inline-flex; align-items: center; gap: 4px; }
+.phoneOnly { display: none; }
+.numberBox input { width: 72px; min-height: 44px; padding: 8px; border: 1px solid #cbc5d6; border-radius: 10px; background: #fff; text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; }
+.numberBox input:focus { outline: none; border-color: #725ca1; box-shadow: 0 0 0 3px #b5a2da40; }
+.numberBox span { font-size: 13px; color: #6b6573; }
+
+.sourceLinks { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; }
+.sourceLinks a { color: #5c4590; text-decoration: underline; text-underline-offset: 3px; }
+
+.inlineAction { justify-self: start; min-height: 44px; padding: 0 14px; border: 1px solid #b9b0c7; border-radius: 10px; font-size: 13px; font-weight: 500; color: #5c4590; background: #fff; }
+.inlineAction:hover { border-color: #725ca1; }
+.quietAction { min-height: 44px; padding: 0 4px; font-size: 13px; color: #6b6573; text-decoration: underline; text-underline-offset: 3px; }
+
+.splitRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px; align-items: center; padding-top: 12px; border-top: 1px solid #e4e0e9; }
+.splitRow:first-of-type { border-top: 0; padding-top: 0; }
+.splitRow h2 { font-size: 14px; font-weight: 600; color: #3f344d; }
+.splitRow p { grid-column: 1 / -1; font-size: 12px; line-height: 1.6; color: #6b6573; }
+.splitRow strong { font-weight: 600; color: #3f344d; }
+
+.options { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.options legend { font-size: 13px; font-weight: 600; color: #3f344d; margin-bottom: 6px; }
+.option { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: start; padding: 10px 12px; border: 1px solid #dcd7e4; border-radius: 12px; background: #fff; cursor: pointer; }
+.option:has(input:checked) { border-color: #725ca1; box-shadow: 0 0 0 2px #b5a2da55; }
+.option input { width: 18px; height: 18px; margin-top: 2px; accent-color: #5c4590; }
+.option strong { font-size: 14px; font-weight: 600; color: #3f344d; }
+.option small { grid-column: 2; display: block; font-size: 12px; line-height: 1.55; color: #6b6573; }
+
+.pickList { display: grid; gap: 0; }
+.pickRow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; padding: 10px 0; border-top: 1px solid #e4e0e9; }
+.pickRow strong { font-size: 14px; font-weight: 600; color: #3f344d; }
+.pickRow small { grid-column: 1; font-size: 12px; line-height: 1.5; color: #6b6573; }
+.pickRow small a { color: #5c4590; text-decoration: underline; text-underline-offset: 3px; }
+
+.legendList { display: grid; gap: 6px; margin-top: 14px; }
+.legendList > div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.legendList dt { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #c7cebf; min-width: 0; }
+.legendList dt i { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.legendList dd { font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.legendList dd small { font-size: 12px; color: #c7cebf; margin-left: 6px; }
+
+.verdict { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: #343a33; font-size: 13px; line-height: 1.6; color: #e9eedf; }
+.verdict[data-tone=warn] { background: #43391f; color: #f6e3bb; }
+.verdict[data-tone=good] { background: #2f3f2a; color: #e0f3c2; }
+
+.compareTable { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.compareTable :is(th, td) { padding: 7px 4px; text-align: right; vertical-align: top; }
+.compareTable th:first-child, .compareTable td:first-child { text-align: left; }
+.compareTable thead th { font-weight: 500; color: #c7cebf; }
+.compareTable tbody th { font-weight: 400; color: #c7cebf; text-align: left; }
+.compareTable tbody tr { border-top: 1px solid #4a5244; }
+.compareTable td { color: #f9faef; }
+
+.mixCard { display: grid; gap: 10px; padding: 12px; border: 1px solid #dcd7e4; border-radius: 14px; background: #fff; }
+.mixCard > div { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.mixCard label { font-size: 12px; color: #6b6573; display: grid; gap: 4px; }
+.nameBox { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid #cbc5d6; border-radius: 10px; background: #fff; font-size: 15px; color: #29272f; }
+.nameBox:focus { outline: none; border-color: #725ca1; box-shadow: 0 0 0 3px #b5a2da40; }
+@media (pointer: coarse) { .nameBox { font-size: 16px; } }
+
+.stepLinks { display: flex; flex-wrap: wrap; gap: 0 18px; padding: 0 24px; border-top: 1px solid #e4e0e9; font-size: 13px; }
+.stepLinks a { color: #5c4590; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; display: inline-flex; align-items: center; }
+
+.startPanel { display: grid; gap: 12px; padding: 18px; border: 1px solid #e3cf9f; border-radius: 16px; background: #fbf5e6; color: #58461f; font-size: 13px; line-height: 1.6; margin-bottom: 18px; }
+.startPanel h2 { font-size: 15px; font-weight: 600; }
+.startPanel ul { display: grid; gap: 2px; padding-left: 18px; list-style: disc; }
+.startPanel button { justify-self: start; min-height: 44px; padding: 0 16px; border-radius: 10px; background: #393142; color: #fff; font-size: 13px; font-weight: 500; }
+
+.issueList { display: grid; gap: 6px; margin-top: 12px; }
+.issueList li { font-size: 12px; line-height: 1.6; color: #f2ce92; }
+.noteList li { color: #c7cebf; }
+
+.checkList { display: grid; gap: 0; }
+.checkList > div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid #e4e0e9; font-size: 13px; color: #3f344d; }
+.checkList > div:first-child { border-top: 0; }
+.checkList dt { min-width: 0; }
+.checkList dd { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.checkList dt small { display: block; font-size: 12px; color: #6b6573; }
+.checkList dd small { margin-left: 6px; font-size: 12px; color: #6b6573; }
+
+@media (max-width: 767px) {
+  .wideOnly { display: none !important; }
+  .phoneOnly { display: inline; }
+  .topThreeOnPhone > div:nth-child(n+4) { display: none; }
+  .numberBox input { width: 60px; }
+  .compactTable :is(th, td) { padding-block: 3px; }
+  .checkList > div { padding: 6px 0; }
+  .verdict { margin-top: 12px; padding: 10px 12px; font-size: 12px; line-height: 1.55; }
+  .stepLinks { padding: 0 16px; }
+  .compareTable { font-size: 12px; }
+  .legendList dd { font-size: 15px; }
+  .mixCard { padding: 10px; }
+  .startPanel { padding: 14px; }
+}

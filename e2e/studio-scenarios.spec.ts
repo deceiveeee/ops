@@ -125,11 +125,11 @@ test("scenarios can be added, named, edited and removed, and the worst is held a
   expect(two.scenarios).toHaveLength(1);
   expect(two.scenarios![0]).toMatchObject({ name: "Rates rise", stress: { usStocksPct: -40, internationalStocksPct: -15, bondsPct: -12, cashPct: 0 } });
 
-  // Portfolio: VTI's room is set by the worst scenario for it.
-  // Rates rise: 40% + (15% - 21.6%) / 0.40 = 23.5%; Stocks fall: 40% + (15% - 16.4%) / 0.30 = 35.3%.
-  await page.goto("/studio/portfolio");
-  // In the holding's cell at this width; a phone has the same line as a row of its own, hidden here.
-  await expect(page.getByText("VTI: 16.5 points over: your loss budget in “Rates rise” allows 23.5%", { exact: true }).filter({ visible: true })).toHaveCount(1);
+  // Portfolio, step 7: the whole portfolio is held against the worst scenario you set, "Rates rise".
+  // (The per-holding "what limits this weight" line went with the old weights table; the
+  // downloadable plan still writes each holding's room.)
+  await page.goto("/studio/portfolio/check");
+  await expect(page.getByRole("region", { name: "Ready to buy?" })).toContainText("In “Rates rise” the portfolio would change by -$21,600; your loss budget is $15,000.");
 
   // Compare allocations opens its loss view on the scenario worst for the proposal.
   await page.goto("/studio/portfolio/weights");

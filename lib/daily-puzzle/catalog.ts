@@ -1,4 +1,5 @@
 import { PUZZLES } from "@/data/daily-puzzle/puzzles";
+import { excerptFor } from "./excerpts";
 import type { DailyPuzzle } from "./types";
 
 /**
@@ -9,7 +10,11 @@ import type { DailyPuzzle } from "./types";
 export const LAST_PUZZLE = PUZZLES.length;
 
 export function puzzleNumbered(number: number): DailyPuzzle | null {
-  return PUZZLES.find((puzzle) => puzzle.number === number) ?? null;
+  const puzzle = PUZZLES.find((entry) => entry.number === number);
+  if (!puzzle) return null;
+  // The report excerpt, where one has been captured, travels with the one puzzle shown.
+  const excerpt = excerptFor(number);
+  return excerpt ? { ...puzzle, excerpt } : puzzle;
 }
 
 /** "12" -> 12; anything that is not a plain positive whole number -> null. */

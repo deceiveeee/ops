@@ -1,64 +1,46 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import {
-  ONBOARDING_LS_KEY,
-  readLocalSnapshot,
-  writeLocalSnapshot,
-  clearLocalSnapshot,
-} from "./localStorage";
-import type { OnboardingSnapshot } from "./types";
+import { beforeEach, describe, expect, it } from "vitest";
+import { GUIDE_LS_KEY, readGuideSnapshot, writeGuideSnapshot } from "./localStorage";
+import { firstStepFor } from "./questions";
 
-const snap: OnboardingSnapshot = {
-  answers: { goal: "learn-to-analyze-companies" },
-  completed_at: "2026-08-05T12:00:00.000Z",
-  updated_at: "2026-08-05T12:00:00.000Z",
-  recommended_course_slug: "finance-foundations",
-  recommended_next_step: "Work through equities and valuation, then try a company case.",
-  confidence_tier: "somewhat-confident",
-  segment: "adult-learner",
-  prompt_dismissed: false,
-};
-
-describe("localStorage helpers", () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  it("ONBOARDING_LS_KEY is ops-onboarding-v1", () => {
-    expect(ONBOARDING_LS_KEY).toBe("ops-onboarding-v1");
-  });
-
-  it("returns null when no key present", () => {
-    expect(readLocalSnapshot()).toBeNull();
-  });
+describe("start guide storage", () => {
+  beforeEach(() => localStorage.clear());
 
   it("round-trips a snapshot", () => {
-    writeLocalSnapshot(snap);
-    expect(readLocalSnapshot()).toEqual(snap);
+    const snapshot = { answers: { goal: "learn" as const, start: "new" as const }, completedAt: "2026-11-13T10:00:00.000Z", updatedAt: "2026-11-13T10:00:00.000Z" };
+    writeGuideSnapshot(snapshot);
+    expect(readGuideSnapshot()).toEqual(snapshot);
   });
 
-  it("returns null for malformed JSON", () => {
-    localStorage.setItem(ONBOARDING_LS_KEY, "{not json");
-    expect(readLocalSnapshot()).toBeNull();
+  it("drops answers this version does not know, such as the old quiz's", () => {
+    localStorage.setItem(GUIDE_LS_KEY, JSON.stringify({ answers: { goal: "learn-to-analyze-companies", start: "new", segment: "high-school" }, completedAt: null, updatedAt: "x" }));
+    expect(readGuideSnapshot()?.answers).toEqual({ start: "new" });
   });
 
-  it("returns null when stored value is not an object", () => {
-    localStorage.setItem(ONBOARDING_LS_KEY, JSON.stringify("string"));
-    expect(readLocalSnapshot()).toBeNull();
+  it("treats a completed guide with a missing answer as still in progress", () => {
+    localStorage.setItem(GUIDE_LS_KEY, JSON.stringify({ answers: { goal: "build" }, completedAt: "2026-11-13T10:00:00.000Z", updatedAt: "x" }));
+    expect(readGuideSnapshot()?.completedAt).toBeNull();
   });
 
-  it("clearLocalSnapshot removes the key", () => {
-    writeLocalSnapshot(snap);
-    clearLocalSnapshot();
-    expect(readLocalSnapshot()).toBeNull();
-    expect(localStorage.getItem(ONBOARDING_LS_KEY)).toBeNull();
+  it("returns null for unreadable storage", () => {
+    localStorage.setItem(GUIDE_LS_KEY, "{not json");
+    expect(readGuideSnapshot()).toBeNull();
   });
+});
 
-  it("writeLocalSnapshot dispatches an ops-onboarding-change event", () => {
-    let fired = 0;
-    const handler = () => { fired++; };
-    window.addEventListener("ops-onboarding-change", handler);
-    writeLocalSnapshot(snap);
-    expect(fired).toBe(1);
-    window.removeEventListener("ops-onboarding-change", handler);
+describe("first step", () => {
+  it("sends every answer combination somewhere", () => {
+    const table = (["learn", "company", "build", "unsure"] as const).flatMap((goal) =>
+      (["new", "some"] as const).map((start) => `${goal}/${start} -> ${firstStepFor({ goal, start })}`),
+    );
+    expect(table).toEqual([
+      "learn/new -> finance-foundations",
+      "learn/some -> finance-foundations",
+      "company/new -> daily",
+      "company/some -> daily",
+      "build/new -> finance-foundations",
+      "build/some -> investment-foundations",
+      "unsure/new -> finance-foundations",
+      "unsure/some -> finance-foundations",
+    ]);
   });
 });

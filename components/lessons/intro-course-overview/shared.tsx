@@ -42,7 +42,12 @@ export function SectionHeading({
     <div>
       <div className="ops-eyebrow flex items-center gap-3" style={{ fontSize: "var(--type-eyebrow-size)", fontWeight: 600, letterSpacing: "var(--type-eyebrow-track)" }}>
         <span className="tabular-nums" style={{ color: emphasis ? "var(--ops-accent-strong)" : "var(--ops-text-tertiary)" }}>{index}</span>
-        <span className="h-px w-8" style={{ background: "var(--ops-surface-border)" }} />
+        {/* With emphasis the number and the rule take the accent, which inside a
+            toned section is that section's hue. */}
+        <span
+          className={emphasis ? "h-0.5 w-8 rounded-full" : "h-px w-8"}
+          style={{ background: emphasis ? "var(--ops-accent-strong)" : "var(--ops-surface-border)" }}
+        />
         <span style={{ color: "var(--ops-text-tertiary)" }}>{eyebrow}</span>
       </div>
       <h2

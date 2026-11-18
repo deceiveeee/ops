@@ -175,7 +175,7 @@ export default function CorporatePersonalCashFlowToggle({
                         isVisited ? "text-accent-green" : "text-slate-500",
                       )}
                     >
-                      {isVisited ? "✓ viewed" : "tap to view"}
+                      {isVisited ? "✓ Viewed" : "Tap to view"}
                     </span>
                   </button>
                   {i < steps.length - 1 && (

@@ -157,7 +157,7 @@ export default function CorporateYieldWaterfall() {
 
         {/* Misconception */}
         <div className="mt-6 rounded-2xl border border-accent-red/30 bg-accent-red/[0.06] p-5">
-          <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-red">
+          <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-red">
             Common misconception
           </div>
           <p className="ops-body mt-2 text-[15px] leading-7 text-slate-100">
@@ -165,7 +165,7 @@ export default function CorporateYieldWaterfall() {
             earn {pct(yPromised)}.&rdquo;
           </p>
           <div className="mt-3 rounded-lg border border-accent-green/30 bg-accent-green/10 px-4 py-3">
-            <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-green">
+            <span className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
               Correction
             </span>
             <p className="ops-body mt-1 text-[15px] leading-7 text-slate-100">

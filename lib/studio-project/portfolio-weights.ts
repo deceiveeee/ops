@@ -176,8 +176,10 @@ export function saveWeightProposal(
     if (!record) throw new Error("A selected valuation no longer matches this holding or needs its inputs completed. Review it before saving.");
     links.set(instrumentId, { instrumentId, snapshot: structuredClone(record) });
   }
+  // Weights typed by hand: the proposal does not carry the source's top-down build, which would rewrite them.
+  const { build: _build, ...typed } = source;
   const proposal: PortfolioAlternative = {
-    ...source, id: makeId("alt"), name: edits.name.trim(), reasoning: edits.reasoning,
+    ...typed, id: makeId("alt"), name: edits.name.trim(), reasoning: edits.reasoning,
     createdAt: now, updatedAt: now, positions, valuationLinks: [...links.values()], comparisonBasis: comparisonBasis(project),
   };
   const { calculation } = allocationView(project, proposal);

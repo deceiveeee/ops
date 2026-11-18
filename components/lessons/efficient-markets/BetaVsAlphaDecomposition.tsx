@@ -33,7 +33,7 @@ export default function BetaVsAlphaDecomposition() {
     <div className="space-y-6">
       {/* Formula */}
       <div className="rounded-2xl border border-accent-cyan/25 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           Return decomposition
         </div>
         <div className="mt-3 space-y-3">
@@ -64,7 +64,7 @@ export default function BetaVsAlphaDecomposition() {
           const alpha = calcAlpha(m);
           return (
             <div key={m.name} className={cn("rounded-2xl border p-5 bg-white/[0.02]", toneBorder[m.tone])}>
-              <div className={cn("font-sans text-[11px] uppercase tracking-[0.16em]", toneText[m.tone])}>{m.name}</div>
+              <div className={cn("font-sans text-[12px] tracking-[0.01em]", toneText[m.tone])}>{m.name}</div>
               <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-lg border border-white/10 bg-ink-950/40 p-2">
                   <div className="font-sans text-[10px] text-slate-400">Return</div>

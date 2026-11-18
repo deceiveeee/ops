@@ -3,6 +3,8 @@ import { test, expect, type Page } from "@playwright/test";
 async function markFirstComplete(page: Page) {
   await page.goto("/courses");
   await page.getByRole("link", { name: /finance foundations/i }).first().click();
+  // The course page folds each module to one row; a learner opens module 3 to reach its lessons.
+  await page.locator("#module-3 > summary").click();
   await page.getByRole("link", { name: /Bond Markets.*Discount Bonds/i }).click();
   await page.evaluate(() => {
     const key = "ops-m3-completion-v1";

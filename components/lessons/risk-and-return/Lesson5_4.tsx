@@ -347,13 +347,13 @@ export default function Lesson5_4() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Property
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-cyan">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-cyan">
                     Idiosyncratic
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-red">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-red">
                     Systematic
                   </th>
                 </tr>
@@ -595,10 +595,10 @@ export default function Lesson5_4() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Beta
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Interpretation
                   </th>
                 </tr>
@@ -780,16 +780,16 @@ export default function Lesson5_4() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Stock
                   </th>
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     σ_i
                   </th>
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     ρ
                   </th>
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Beta
                   </th>
                 </tr>
@@ -842,13 +842,13 @@ export default function Lesson5_4() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     State
                   </th>
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     R_M
                   </th>
-                  <th className="px-3 py-2 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-3 py-2 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     R_i
                   </th>
                 </tr>

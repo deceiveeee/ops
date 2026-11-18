@@ -9,7 +9,7 @@ export default function ValueCreatedVsLossAvoided() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">Value created (positive NPV)</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">Value created (positive NPV)</div>
           <div className="mt-3 space-y-2">
             {[{ l: "Best 100 stores", v: 21 }, { l: "Debt repayment", v: 12 }, { l: "Buyback", v: 7 }].map((x) => (
               <div key={x.l} className="flex justify-between border-b border-white/5 pb-1 text-[14px]">
@@ -22,7 +22,7 @@ export default function ValueCreatedVsLossAvoided() {
           </div>
         </div>
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">Value destruction avoided</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">Value destruction avoided</div>
           <div className="mt-3 space-y-2">
             {[{ l: "Acquisition (avoided)", v: 35 }, { l: "Final 50 stores (avoided)", v: 4 }].map((x) => (
               <div key={x.l} className="flex justify-between border-b border-white/5 pb-1 text-[14px]">

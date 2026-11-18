@@ -84,6 +84,13 @@ async function openBusinessHit(page: Page) {
  * own column and the room its frame leaves, which rewrites the address. A click
  * that lands in between is undone by that second paging, so these tests act
  * after it, as a reader who spent a moment looking at the page would.
+ *
+ * The cookie is written before that second paging, not after it: ReaderFit
+ * measures, writes the cookie, then asks the router for the page again. A test
+ * that selected words as soon as the cookie appeared could have the redraw drop
+ * its selection, so Keep took the whole paragraph (about one run in four of
+ * "keeps just the words selected"). Waiting for the network to go quiet waits
+ * for that request, and for the redraw it brings.
  */
 async function measured(page: Page) {
   await expect
@@ -92,6 +99,7 @@ async function measured(page: Page) {
       message: "the reader never measured its own screen",
     })
     .toBe(true);
+  await page.waitForLoadState("networkidle");
 }
 
 const keepButton = (page: Page) => page.locator("#passage").getByRole("button", { name: /^Keep paragraph [0-9]+, which begins/ });

@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 
 type MetricKey = "npv" | "irr" | "payback" | "eps" | "roic";
 
+/** Acronyms stay in capitals; a word is written as a word. */
+const LABEL: Record<MetricKey, string> = { npv: "NPV", irr: "IRR", payback: "Payback", eps: "EPS", roic: "ROIC" };
+
 const METRICS: Record<MetricKey, { result: string; question: string; reveals: string; omits: string; tone: string }> = {
   npv: { result: "−$35M", question: "How many dollars of value are created?", reveals: "Estimated value destruction. The acquisition is economically unattractive.", omits: "Nothing fundamental — NPV is the primary measure. It depends on uncertain estimates.", tone: "amber" },
   irr: { result: "8.5%", question: "What percentage return is implied?", reveals: "Below the 10.5% required return. Confirms the NPV conclusion.", omits: "Does not measure total value destroyed.", tone: "cyan" },
@@ -28,7 +31,7 @@ export default function CoastalMetricsLens() {
             onClick={() => setActive(key)}
             className={cn("rounded-xl border p-3 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-amber/50",
               active === key ? cn(toneBorder[METRICS[key].tone], "bg-white/[0.06]") : "border-white/10 bg-white/[0.02] hover:border-white/25")}>
-            <div className={cn("font-sans text-[10px] uppercase tracking-[0.14em]", active === key ? toneText[METRICS[key].tone] : "text-slate-400")}>{key.toUpperCase()}</div>
+            <div className={cn("font-sans text-[12px] tracking-[0.01em]", active === key ? toneText[METRICS[key].tone] : "text-slate-400")}>{LABEL[key]}</div>
             <div className="mt-1 font-sans text-[15px] tabular-nums text-white">{METRICS[key].result}</div>
           </button>
         ))}
@@ -36,20 +39,20 @@ export default function CoastalMetricsLens() {
 
       <div className={cn("rounded-2xl border p-5 sm:p-6", toneBorder[m.tone], "bg-white/[0.03]")}>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", toneText[m.tone])}>{active.toUpperCase()}</span>
+          <span className={cn("font-sans text-[12px] tracking-[0.01em]", toneText[m.tone])}>{LABEL[active]}</span>
           <span className="font-sans text-[18px] tabular-nums text-white">{m.result}</span>
         </div>
         <div className="mt-4 rounded-xl border border-white/10 bg-ink-950/40 p-4">
-          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Question answered</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Question answered</div>
           <p className="ops-body mt-1.5 text-[15px] leading-[1.6] text-white">{m.question}</p>
         </div>
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="rounded-xl border border-accent-green/20 bg-accent-green/[0.04] p-4">
-            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Reveals</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">Reveals</div>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-100">{m.reveals}</p>
           </div>
           <div className="rounded-xl border border-accent-red/20 bg-accent-red/[0.04] p-4">
-            <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">Omits</div>
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">Omits</div>
             <p className="ops-body mt-1.5 text-[14px] leading-[1.6] text-slate-100">{m.omits}</p>
           </div>
         </div>

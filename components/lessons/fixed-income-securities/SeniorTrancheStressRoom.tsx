@@ -223,7 +223,7 @@ export default function SeniorTrancheStressRoom() {
 
         {/* Takeaway */}
         <div className="mt-6 rounded-xl border border-accent-purple/30 bg-accent-purple/[0.06] p-5">
-          <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-purple">
+          <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-purple">
             The label did not change the underlying exposure
           </div>
           <p className="ops-body mt-2 text-[15px] leading-7 text-slate-100">

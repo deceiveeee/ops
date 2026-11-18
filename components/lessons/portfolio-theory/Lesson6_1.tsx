@@ -117,16 +117,16 @@ function AllocationTable() {
       <table className="w-full min-w-[440px] border-collapse text-[16px]">
         <thead>
           <tr className="border-b border-white/20 text-left">
-            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Asset
             </th>
-            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Market value
             </th>
-            <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Weight
             </th>
-            <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Share of $100K
             </th>
           </tr>
@@ -163,7 +163,7 @@ function ContributionDiagram() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
       <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Asset A
         </div>
         <div className="mt-2 text-[17px] text-slate-100">
@@ -177,7 +177,7 @@ function ContributionDiagram() {
         <span className="font-sans text-[14px] text-slate-500">×</span>
       </div>
       <div className="rounded-xl border border-accent-cyan/30 bg-accent-cyan/[0.06] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           Contribution to R_P
         </div>
         <div className="mt-2 text-[17px] text-slate-100">
@@ -201,7 +201,7 @@ function TransitionCheck() {
     <div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-accent-green/30 bg-accent-green/[0.05] p-5">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
             Expected return
           </div>
           <p className="mt-2 text-[16px] leading-[1.65] text-slate-200">
@@ -213,7 +213,7 @@ function TransitionCheck() {
           </div>
         </div>
         <div className="rounded-xl border border-accent-red/30 bg-accent-red/[0.05] p-5">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">
             Risk — what people assume
           </div>
           <p className="mt-2 text-[16px] leading-[1.65] text-slate-200">
@@ -361,10 +361,10 @@ export default function Lesson6_1() {
             <table className="w-full min-w-[360px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">
                     Position
                   </th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">
                     Weight
                   </th>
                 </tr>

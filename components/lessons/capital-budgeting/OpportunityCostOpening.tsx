@@ -76,7 +76,7 @@ export default function OpportunityCostOpening() {
     <div className="space-y-6">
       {/* The deal */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
           The opportunity
         </div>
         <p className="ops-body mt-3 text-[17px] leading-[1.65] text-slate-100">
@@ -142,7 +142,7 @@ export default function OpportunityCostOpening() {
       {/* Environment comparison — only after initial guess */}
       {revealed && (
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
             What else could your capital earn?
           </div>
 
@@ -168,7 +168,7 @@ export default function OpportunityCostOpening() {
 
           <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-ink-950/40 p-5">
-              <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
                 This project
               </div>
               <div className="mt-2 font-sans text-[15px] text-slate-100">
@@ -185,7 +185,7 @@ export default function OpportunityCostOpening() {
             >
               <div
                 className={cn(
-                  "font-sans text-[11px] uppercase tracking-[0.16em]",
+                  "font-sans text-[12px] tracking-[0.01em]",
                   current.tone === "green" ? "text-accent-green" : "text-accent-red",
                 )}
               >
@@ -211,7 +211,7 @@ export default function OpportunityCostOpening() {
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <span
                 className={cn(
-                  "font-sans text-[12px] uppercase tracking-[0.16em]",
+                  "font-sans text-[12px] tracking-[0.01em]",
                   beats ? "text-accent-green" : "text-accent-red",
                 )}
               >

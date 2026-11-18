@@ -142,7 +142,7 @@ function portfolioPoint(wMot: number, rho: number) {
 function NotationGuide() {
   return (
     <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-      <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
+      <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
         Notation guide
       </div>
       <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
@@ -209,7 +209,7 @@ function ReturnPathVisual() {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
       <div className="rounded-xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">
           Case A — move together
         </div>
         <p className="mt-2 text-[16px] leading-[1.6] text-slate-200">
@@ -223,7 +223,7 @@ function ReturnPathVisual() {
         </svg>
       </div>
       <div className="rounded-xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
           Case B — offset
         </div>
         <p className="mt-2 text-[16px] leading-[1.6] text-slate-200">
@@ -334,13 +334,13 @@ function GMMotorolaLedger() {
       <table className="w-full min-w-[460px] border-collapse text-[16px]">
         <thead>
           <tr className="border-b border-white/20 text-left">
-            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-6 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Weighted cell
             </th>
-            <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 pr-6 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Calculation
             </th>
-            <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               Value
             </th>
           </tr>
@@ -496,7 +496,7 @@ function OpportunityCurveExplorer() {
 
       <div className="space-y-5">
         <div>
-          <label className="block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <label className="block font-sans text-[13px] tracking-[0.01em] text-slate-400">
             Motorola weight: <span className="text-accent-cyan">{(wMot * 100).toFixed(0)}%</span>
           </label>
           <input
@@ -508,7 +508,7 @@ function OpportunityCurveExplorer() {
             className="mt-2 w-full accent-accent-cyan"
             aria-label="Motorola weight"
           />
-          <label className="mt-4 block font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <label className="mt-4 block font-sans text-[13px] tracking-[0.01em] text-slate-400">
             Correlation ρ: <span className="text-accent-cyan">{rho.toFixed(2)}</span>
           </label>
           <input
@@ -571,7 +571,7 @@ function Readout({
 }) {
   return (
     <div className="rounded-xl border border-white/12 bg-white/[0.03] px-4 py-3">
-      <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{label}</div>
       <div className={cn("mt-1 font-sans text-[18px]", tone === "cyan" ? "text-accent-cyan" : "text-slate-100")}>
         {value}
       </div>
@@ -601,7 +601,7 @@ export default function Lesson6_2() {
 
       <Reveal className="mt-8">
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 sm:p-7">
-          <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
             Learning objectives
           </div>
           <p className="mt-3 text-[16px] text-slate-300">By the end of this lesson, you should be able to:</p>
@@ -748,13 +748,13 @@ export default function Lesson6_2() {
             <table className="w-full min-w-[400px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">
                     Asset
                   </th>
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">
                     Mean return
                   </th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">
                     Std dev σ
                   </th>
                 </tr>
@@ -804,7 +804,7 @@ export default function Lesson6_2() {
         <Reveal>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
                 Final outputs
               </div>
               <div className="mt-4">
@@ -816,7 +816,7 @@ export default function Lesson6_2() {
               </p>
             </div>
             <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+              <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
                 Interpretation
               </div>
               <p className="mt-3 text-[16px] leading-[1.65] text-slate-200">
@@ -944,9 +944,9 @@ export default function Lesson6_2() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Regime</th>
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">ρ</th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Curve position</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">Regime</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">ρ</th>
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">Curve position</th>
                 </tr>
               </thead>
               <tbody className="font-sans tabular-nums text-slate-100">

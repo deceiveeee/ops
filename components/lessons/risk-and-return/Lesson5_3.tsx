@@ -271,16 +271,16 @@ export default function Lesson5_3() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     State
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Stock A
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Asset B
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     50/50 portfolio
                   </th>
                 </tr>
@@ -1066,13 +1066,13 @@ function CorrelationComparison() {
           <table className="w-full border-collapse text-[14px]">
             <thead>
               <tr className="border-b border-white/15 text-left">
-                <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                   Correlation
                 </th>
-                <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                   σ_P
                 </th>
-                <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                   Diversification benefit
                 </th>
               </tr>
@@ -1234,16 +1234,16 @@ function TwoAssetPortfolioWorksheet() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Asset
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Weight
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     E[R]
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     σ
                   </th>
                 </tr>

@@ -93,7 +93,7 @@ export default function ValuationManagementDecisionEngine({
                   aria-pressed={picked === "valuation"}
                   onClick={() => choose(c.id, "valuation")}
                   className={cn(
-                    "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                    "rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                     picked === "valuation"
                       ? correct
                         ? "border-accent-green bg-accent-green/15 text-accent-green"
@@ -108,7 +108,7 @@ export default function ValuationManagementDecisionEngine({
                   aria-pressed={picked === "management"}
                   onClick={() => choose(c.id, "management")}
                   className={cn(
-                    "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                    "rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                     picked === "management"
                       ? correct
                         ? "border-accent-green bg-accent-green/15 text-accent-green"
@@ -121,7 +121,7 @@ export default function ValuationManagementDecisionEngine({
                 {picked && (
                   <span
                     className={cn(
-                      "self-center font-sans text-[11px] uppercase tracking-[0.14em]",
+                      "self-center font-sans text-[12px] tracking-[0.01em]",
                       correct ? "text-accent-green" : "text-accent-red",
                     )}
                   >

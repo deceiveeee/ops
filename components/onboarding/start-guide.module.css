@@ -1,0 +1,115 @@
+/*
+ * The start guide. It continues the homepage it is reached from: warm paper,
+ * a lavender sheet, indigo for the accent and an ink pill for the main action.
+ * Named colours only (app/globals.css), no gradients, no capitals, left-aligned
+ * at every width. Each step fits on one screen.
+ */
+.page {
+  --ops-accent-strong: var(--ops-indigo);
+  --ops-accent-soft: var(--ops-lavender);
+  min-height: calc(100vh - 68px);
+  padding: 56px 32px 64px;
+  background: var(--ops-paper-warm);
+  color: var(--ops-text-primary);
+}
+.page :where(h1, h2, p, ol) { margin: 0; }
+.page :is(a, button, input):focus-visible { outline: 2px solid var(--ops-accent-strong); outline-offset: 3px; }
+
+.sheet {
+  width: min(680px, 100%);
+  margin-inline: auto;
+  padding: 36px 40px 40px;
+  border: 1px solid var(--ops-lavender-line);
+  border-radius: 28px;
+  background: var(--ops-lavender);
+}
+
+.count { font-size: 14px; font-weight: 500; line-height: 1.6; color: var(--ops-text-secondary); font-variant-numeric: tabular-nums; }
+.title {
+  margin-top: 8px;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(32px, 4vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  outline: none;
+}
+
+.options { display: grid; gap: 10px; margin-top: 28px; }
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 12px 18px;
+  border: 1px solid var(--ops-lavender-line);
+  border-radius: 16px;
+  background: var(--ops-surface);
+  font-size: 17px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.option:hover { border-color: var(--ops-control-border); }
+.option:has(input:checked) { border-color: var(--ops-indigo); box-shadow: inset 0 0 0 1px var(--ops-indigo); }
+.option input { width: 20px; height: 20px; margin: 0; flex-shrink: 0; accent-color: var(--ops-indigo); }
+
+.explains { min-height: 3.2em; margin-top: 16px; font-size: 16px; line-height: 1.6; color: var(--ops-text-secondary); }
+.error { margin-top: 4px; font-size: 15px; font-weight: 500; color: var(--ops-error-strong); }
+
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 20px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 50px;
+  padding: 13px 26px;
+  border: 1px solid var(--ops-text-primary);
+  border-radius: 100px;
+  background: var(--ops-text-primary);
+  color: var(--ops-surface);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.pill:hover { background: var(--ops-indigo-ink); border-color: var(--ops-indigo-ink); }
+.textButton, .textLink {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ops-accent-strong);
+  cursor: pointer;
+}
+.textLink { display: inline-flex; align-items: center; }
+.textButton:hover, .textLink:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Step 3. */
+.first { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 24px; padding: 20px 22px; border-radius: 18px; background: var(--ops-surface); }
+.firstTitle { flex: 1 1 260px; font-size: 18px; font-weight: 500; line-height: 1.45; }
+.subTitle { margin-top: 28px; font-size: 16px; font-weight: 600; line-height: 1.4; }
+/* Numbered on purpose: the site's reset removes list numbers, and the order of the two courses is the point. */
+.path { display: grid; gap: 10px; margin-top: 12px; padding-left: 22px; list-style: decimal; }
+.path li { padding-left: 4px; font-size: 16px; line-height: 1.55; }
+.path li::marker { font-weight: 600; color: var(--ops-accent-strong); }
+.path a { font-weight: 600; color: var(--ops-text-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.path a:hover { color: var(--ops-accent-strong); }
+.path span { display: block; color: var(--ops-text-secondary); }
+.small { margin-top: 18px; font-size: 15px; line-height: 1.6; color: var(--ops-text-secondary); }
+.small a { color: var(--ops-accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 767px) {
+  .page { padding: 20px 16px 40px; }
+  .sheet { padding: 24px 18px 26px; border-radius: 22px; }
+  .options { margin-top: 20px; }
+  .option { font-size: 16px; }
+  .first { padding: 16px; }
+  .firstTitle { font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .option, .pill { transition: border-color 160ms ease, background-color 160ms ease; }
+}

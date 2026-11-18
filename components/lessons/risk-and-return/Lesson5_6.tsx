@@ -133,19 +133,19 @@ function ReturnTable() {
       <table className="min-w-full border-collapse text-left">
         <thead>
           <tr className="border-b border-white/10 bg-white/[0.03]">
-            <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+            <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
               Month
             </th>
-            <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-300">
+            <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-300">
               Market
             </th>
-            <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-cyan">
+            <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-cyan">
               Atlas
             </th>
-            <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-purple">
+            <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-purple">
               Nova
             </th>
-            <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-green">
+            <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-green">
               Meridian
             </th>
           </tr>
@@ -576,16 +576,16 @@ function Round3Correlation({ onComplete }: { onComplete: () => void }) {
             <table className="min-w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-white/10 bg-white/[0.03]">
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-slate-400">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-slate-400">
                     Correlation
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-cyan">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-cyan">
                     Atlas
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-purple">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-purple">
                     Nova
                   </th>
-                  <th className="px-4 py-3 text-[12px] font-medium uppercase tracking-wide text-accent-green">
+                  <th className="px-4 py-3 text-[12px] font-medium tracking-[0.01em] text-accent-green">
                     Meridian
                   </th>
                 </tr>

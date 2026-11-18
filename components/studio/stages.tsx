@@ -23,10 +23,11 @@ import FundReportFacts from "./FundReportFacts";
 import type { CandidateInvestigation, CandidateStatus, StudioScenario, StudioStress } from "@/lib/studio-project/schema";
 import { MAX_SCENARIOS } from "@/lib/studio-project/scenarios";
 import ViewTabs from "./workspace/ViewTabs";
+import WrappingSelect from "./workspace/WrappingSelect";
 import type { EvidenceEdit } from "@/lib/studio-project/operations";
 import { longDate } from "@/lib/studio-project/cost-of-capital";
-import { emptyLimits, type StudioLimits } from "@/lib/studio-project/limits";
-import { checkPortfolio, describeRoomShort, scenarioLoss, type HoldingRoom } from "@/lib/studio-project/limit-checks";
+import { emptyLimits, SLICE_NAMES, SLICES, type SliceId, type StudioLimits } from "@/lib/studio-project/limits";
+import { checkPortfolio, describeRoomShort, scenarioLoss, sliceOf, type HoldingRoom } from "@/lib/studio-project/limit-checks";
 import LimitChecks from "./LimitChecks";
 
 /**
@@ -1092,11 +1093,19 @@ const RISK_VIEWS: { id: RiskView; label: string; className: string }[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// 5. Buying worksheet
+// 5. Buying worksheet: step 8 of the nine, carrying the portfolio out
 // ---------------------------------------------------------------------------
 
+/** The account named on Goals, short, as a phrase that follows "your". Goals spells out IRA. */
+const ACCOUNT_WORDS: Record<StudioPlan["goal"]["accountType"], string> = {
+  taxable: "taxable account",
+  ira: "traditional IRA",
+  "roth-ira": "Roth IRA",
+  other: "account",
+};
+
 export function BuyStage(props: StageProps) {
-  const { calculation, update } = props;
+  const { calculation, update, plan } = props;
   const wide = useWideLayout(1440);
   const [page, setPage] = useState(0);
   const pageSize = 5;
@@ -1126,10 +1135,10 @@ export function BuyStage(props: StageProps) {
     return (
       <div className="space-y-5">
         <StageHeading {...headingFor(props)} title="Work out what to buy" />
-        <Notice tone="slate" title="Set your weights first">
-          Studio needs your percentages before it can work out amounts. Set them under{" "}
+        <Notice tone="slate" title="Build the portfolio first">
+          Studio works out amounts from your mix and funds. Start with{" "}
           <Link href="/studio/portfolio" className="font-semibold text-accent-cyan underline underline-offset-2">
-            How much goes where
+            step 3, your mix
           </Link>
           .
         </Notice>
@@ -1175,7 +1184,7 @@ export function BuyStage(props: StageProps) {
     <div className="space-y-5">
       <StageHeading {...headingFor(props)} title="Work out what to buy" narrowTitleOnly={editing}>
         Each investment starts from its last price on record. Nothing here places an order: it is a worksheet to carry to
-        wherever you buy.
+        your {ACCOUNT_WORDS[plan.goal.accountType]}.
       </StageHeading>
 
       <div className="grid gap-5 [@media(min-width:1440px)]:grid-cols-2 [@media(min-width:1440px)]:items-start">
@@ -1363,24 +1372,27 @@ export function ReviewStage(props: StageProps) {
   const setRules = (patch: Partial<StudioPlan["rules"]>) =>
     update((current) => ({ ...current, rules: { ...current.rules, ...patch }, updatedAt: new Date().toISOString() }));
   const [view, setView] = useState<ReviewView>("rules");
+  const focusHoldingTab = useRef(false);
+  useEffect(() => {
+    if (view === "holdings" && focusHoldingTab.current) {
+      focusHoldingTab.current = false;
+      document.getElementById("review-tab-holdings")?.focus();
+    }
+  }, [view]);
 
   return (
     <div className="space-y-5">
-      <StageHeading {...headingFor(props)} title="Write the rules and keep a copy">
-        Decide now what you will do later, while nothing is happening and you can think clearly.
+      <StageHeading {...headingFor(props)} title="Review your portfolio" narrowTitleOnly={view === "holdings"}>
+        {view === "holdings" ? null : "Set your rules for future decisions and keep a copy of your work."}
       </StageHeading>
 
       {/* The rules sit on top of these limits. From 1280px the line is beside the work, in the side column. */}
-      {props.limits && plan.holdings.length > 0 ? (
+      {view !== "holdings" && props.limits && plan.holdings.length > 0 ? (
         <div className="xl:hidden">
           <LimitChecks checks={checkPortfolio(plan, calculation, props.limits, props.scenarios?.list).checks} />
         </div>
       ) : null}
 
-      {/*
-        * Three jobs, one at a time. Stacked, they made Review 2.4 screens on a
-        * phone; the written rules alone are most of a screen there.
-        */}
       <ViewTabs label="Review" idPrefix="review" className={STAGE_TABS} tabs={REVIEW_VIEWS} selected={view} onSelect={setView} />
       <div role="tabpanel" id="review-panel" aria-labelledby={`review-tab-${view}`}>
       {view === "rules" ? (
@@ -1431,21 +1443,31 @@ export function ReviewStage(props: StageProps) {
             onChange={(value) => setRules({ driftThresholdPct: num(value) })}
           />
           <Field
-            label="What the investments are worth now"
-            hint="Leave at zero until you have actually bought something."
-            type="number" min={0} prefix="$"
-            value={plan.currentCash}
-            onChange={(value) => update((current) => ({ ...current, currentCash: num(value) }))}
-          />
-          <Field
             label="New money to put in now"
+            hint="Use your current holding and cash values to check where the new money would go."
             type="number" min={0} prefix="$"
             value={plan.contributionAmount}
             onChange={(value) => update((current) => ({ ...current, contributionAmount: num(value) }))}
           />
         </div>
-        {calculation.contributions.amount > 0 ? (
-          <ul className="mt-4 space-y-1">
+        <button
+          type="button"
+          className="mt-2 min-h-11 text-left text-[14px] font-semibold text-st-blue underline-offset-4 hover:underline"
+          onClick={() => {
+            focusHoldingTab.current = true;
+            setView("holdings");
+          }}
+        >
+          Enter current values
+        </button>
+        {calculation.contributions.amount > 0 && !calculation.valid ? (
+          <ReviewTargetsNeeded plan={plan} calculation={calculation} />
+        ) : calculation.contributions.amount > 0 ? (
+          <div className="mt-2 border-t border-st-hair pt-2">
+          <p className="text-[13px] leading-5 text-st-muted">
+            {calculation.currentTotal > 0 ? "Estimated split using the balances you’ve entered." : "Estimated split if you’re starting from $0."}
+          </p>
+          <ul className="mt-1 space-y-1">
             {calculation.contributions.rows
               .filter((row) => row.amount > 0)
               .map((row) => (
@@ -1458,8 +1480,11 @@ export function ReviewStage(props: StageProps) {
               <span className="tabular-nums">{usd(calculation.contributions.cash)}</span> stays in cash
             </li>
           </ul>
+          </div>
         ) : null}
       </Panel>
+      ) : view === "holdings" ? (
+        <CurrentHoldings plan={plan} calculation={calculation} update={update} />
       ) : (
       <Panel>
         <p className="text-[14px] leading-6 text-slate-400">
@@ -1530,9 +1555,181 @@ export function ReviewStage(props: StageProps) {
   );
 }
 
-type ReviewView = "rules" | "check" | "copy";
+type ReviewView = "rules" | "check" | "holdings" | "copy";
 const REVIEW_VIEWS: { id: ReviewView; label: string; className: string }[] = [
   { id: "rules", label: "Your rules", className: STAGE_TAB },
   { id: "check", label: "When you check", className: STAGE_TAB },
+  { id: "holdings", label: "Holdings today", className: STAGE_TAB },
   { id: "copy", label: "Keep a copy", className: STAGE_TAB },
 ];
+
+const reviewPercent = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+
+function saveReviewAmount(raw: string, save: (amount: number) => Reported) {
+  // Keep the saved balance while the input is being cleared or replaced.
+  if (!/^(?:\d+(?:\.\d{1,2})?|\.\d{1,2})$/.test(raw)) return;
+  const amount = Number(raw);
+  if (Number.isFinite(amount)) return save(amount);
+}
+
+function ReviewTargetsNeeded({ plan, calculation }: Pick<StageProps, "plan" | "calculation">) {
+  const needsGoal = calculation.budget <= 0 || plan.goal.cashReserve > calculation.budget;
+  return (
+    <p className="text-[14px] leading-5 text-st-muted">
+      {calculation.issues[0]}{" "}
+      <Link href={needsGoal ? "/studio/goals" : "/studio/portfolio"} className="font-semibold text-st-blue underline underline-offset-4">
+        {needsGoal ? "Open Goals" : "Open Portfolio"}
+      </Link>
+    </p>
+  );
+}
+
+function CurrentHoldings({ plan, calculation, update }: Pick<StageProps, "plan" | "calculation" | "update">) {
+  const [selected, setSelected] = useState("");
+  const [confirmedValues, setConfirmedValues] = useState<string | null>(null);
+  const valuesKey = JSON.stringify([plan.id, plan.currentCash, plan.holdings.map(({ instrumentId, currentValue }) => [instrumentId, currentValue])]);
+  const row = calculation.rows.find(({ holding }) => holding.instrumentId === selected) ?? calculation.rows[0];
+  const labelFor = ({ holding, instrument }: StudioCalculation["rows"][number]) =>
+    instrument?.symbol ?? holding.instrumentId;
+  const cashField = (
+    <Field
+      label="Cash in this portfolio today"
+      type="number" min={0} step={0.01} prefix="$"
+      value={plan.currentCash}
+      onChange={(value) => saveReviewAmount(value, (amount) => update((current) => ({ ...current, currentCash: amount })))}
+    />
+  );
+
+  return (
+    <Panel className="space-y-3">
+      <p className="text-[14px] leading-5 text-st-muted">
+        Enter each holding’s value and your cash from the same date. Use $0 for a holding you don’t own yet.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {cashField}
+        {row ? (
+          <>
+            <WrappingSelect
+              label="Holding to check"
+              valueLabel={labelFor(row)}
+              className="flex min-w-0 flex-col gap-1.5 text-[13px] font-semibold text-st-ink"
+              value={row.holding.instrumentId}
+              onChange={(event) => setSelected(event.target.value)}
+            >
+              {calculation.rows.map((item) => (
+                <option key={item.holding.instrumentId} value={item.holding.instrumentId}>{labelFor(item)}</option>
+              ))}
+            </WrappingSelect>
+            <Field
+              key={row.holding.instrumentId}
+              label={`${labelFor(row)} value today`}
+              type="number" min={0} step={0.01} prefix="$"
+              value={row.holding.currentValue}
+              onChange={(value) => saveReviewAmount(value, (amount) =>
+                update((current) => updateStudioHolding(current, row.holding.instrumentId, { currentValue: amount })))}
+            />
+          </>
+        ) : null}
+      </div>
+      {!row ? (
+        <p className="text-[14px] leading-5 text-st-muted">
+          <Link href="/studio/portfolio" className="font-semibold text-st-blue underline underline-offset-4">Open Portfolio</Link>{" "}
+          to set the targets you want to check.
+        </p>
+      ) : !calculation.valid ? (
+        <ReviewTargetsNeeded plan={plan} calculation={calculation} />
+      ) : calculation.currentTotal > 0 ? (
+        <>
+        <SliceDrift calculation={calculation} currentCash={plan.currentCash} />
+        <HoldingTargetComparison
+          row={row}
+          total={calculation.currentTotal}
+          threshold={plan.rules.driftThresholdPct}
+          confirmed={confirmedValues === valuesKey}
+          confirm={(checked) => setConfirmedValues(checked ? valuesKey : null)}
+        />
+        </>
+      ) : (
+        <p className="text-[14px] leading-5 text-st-muted">Enter values to compare your current share of each holding with its target.</p>
+      )}
+    </Panel>
+  );
+}
+
+const slicePercent = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+
+/**
+ * Step 9 looks at the mix before the holdings: each slice's share today against
+ * its target, from the same entered values. Cash is Ready. A holding Studio
+ * cannot sort into a slice is left out of all three, as on the limit checks.
+ */
+function SliceDrift({ calculation, currentCash }: { calculation: StudioCalculation; currentCash: number }) {
+  const today: Record<SliceId, number> = { ready: currentCash, steady: 0, grow: 0 };
+  const target: Record<SliceId, number> = { ready: calculation.targetCashWeightPct, steady: 0, grow: 0 };
+  for (const row of calculation.rows) {
+    const slice = sliceOf(row.instrument);
+    if (!slice) continue;
+    today[slice] += row.holding.currentValue;
+    target[slice] += row.targetPortfolioWeightPct;
+  }
+  return (
+    <dl className="grid grid-cols-3 gap-2 border-t border-st-hair pt-3 text-[13px]" aria-label="Each slice today against its target">
+      {SLICES.map((slice) => {
+        const share = today[slice] / calculation.currentTotal * 100;
+        const gap = share - target[slice];
+        return (
+          <div key={slice} className="min-w-0">
+            <dt className="font-semibold text-st-ink">{SLICE_NAMES[slice].name}</dt>
+            <dd className="tabular-nums text-st-muted">
+              {slicePercent.format(share)}% today, target {slicePercent.format(target[slice])}%
+              <span className="sr-only">: </span>
+              <span className={cn("block", Math.abs(gap) >= 0.005 ? "text-st-ink" : undefined)}>
+                {Math.abs(gap) < 0.005 ? "At target" : `${slicePercent.format(Math.abs(gap))} ${Math.abs(gap) === 1 ? "point" : "points"} ${gap > 0 ? "above" : "below"}`}
+              </span>
+            </dd>
+          </div>
+        );
+      })}
+    </dl>
+  );
+}
+
+function HoldingTargetComparison({ row, total, threshold, confirmed, confirm }: {
+  row: StudioCalculation["rows"][number];
+  total: number;
+  threshold: number;
+  confirmed: boolean;
+  confirm: (checked: boolean) => void;
+}) {
+  const difference = Math.abs(row.driftPct);
+  const reachedThreshold = difference > 0 && difference >= threshold;
+  return (
+    <div className="space-y-2 border-t border-st-hair pt-3">
+      <p className="text-[13px] leading-5 text-st-muted">Today’s share uses {usd(total)} in entered balances, including cash.</p>
+      <dl className="space-y-1.5">
+        {[
+          { label: "Target", weight: row.targetPortfolioWeightPct, color: "var(--st-bound)" },
+          { label: "Today", weight: row.currentWeightPct, color: "var(--st-blue)" },
+        ].map(({ label, weight, color }) => (
+          <div key={label} className="grid items-center gap-2 text-[14px] text-st-ink" style={{ gridTemplateColumns: "3rem minmax(0, 1fr)" }}>
+            <dt>{label}</dt>
+            <dd className="grid items-center gap-2 text-right tabular-nums" style={{ gridTemplateColumns: "minmax(0, 1fr) 5.75rem" }}>
+              <span aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-st-side">
+                <span className="block h-full rounded-full" style={{ backgroundColor: color, width: `${weight}%` }} />
+              </span>
+              {reviewPercent.format(weight)}%
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className={cn("text-[14px] font-medium leading-5", confirmed && reachedThreshold ? "text-st-warn" : "text-st-muted")}>
+        {difference === 0 ? "At target." : `${reviewPercent.format(difference)} percentage ${difference === 1 ? "point" : "points"} ${row.driftPct > 0 ? "above" : "below"} target.`}
+        {confirmed && reachedThreshold ? ` Meets your ${reviewPercent.format(threshold)}-point threshold for action.` : null}
+      </p>
+      <label className="flex min-h-11 items-center gap-2 text-[14px] leading-5 text-st-ink">
+        <input type="checkbox" checked={confirmed} onChange={(event) => confirm(event.target.checked)} />
+        I’ve entered all holdings and cash
+      </label>
+    </div>
+  );
+}

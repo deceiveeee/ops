@@ -136,7 +136,7 @@ export default function GordonGrowthLab() {
       {invalid && (
         <div className="mt-5 rounded-xl border border-accent-red/40 bg-accent-red/10 p-5">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full border border-accent-red/60 px-2 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">
+            <span className="inline-flex items-center rounded-full border border-accent-red/60 px-2 py-0.5 font-sans text-[12px] tracking-[0.01em] text-accent-red">
               <span className="mr-1" aria-hidden>
                 !
               </span>

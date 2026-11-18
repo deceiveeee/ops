@@ -35,7 +35,7 @@ export default function TradeAwayOpportunity() {
     <div className="space-y-6">
       {/* Setup */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           The opportunity
         </div>
         <p className="ops-body mt-2 text-[16px] leading-[1.6] text-slate-100">
@@ -48,7 +48,7 @@ export default function TradeAwayOpportunity() {
 
       {/* Price scale visualization */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Price and remaining opportunity · Round {current.round} of {ROUNDS.length}
         </div>
 
@@ -100,7 +100,7 @@ export default function TradeAwayOpportunity() {
 
         {/* Buyers entering */}
         <div className="mt-4 flex items-center gap-2">
-          <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">Competing investors:</span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Competing investors:</span>
           <div className="flex flex-wrap gap-1">
             {Array.from({ length: current.buyers }, (_, i) => (
               <motion.span
@@ -131,12 +131,12 @@ export default function TradeAwayOpportunity() {
       <div className="flex items-center gap-3">
         {round < ROUNDS.length - 1 ? (
           <button type="button" onClick={advance}
-            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+            className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] tracking-[0.01em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
             Advance to round {current.round + 1} →
           </button>
         ) : (
           <button type="button" onClick={reset}
-            className="rounded-full border border-white/20 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+            className="rounded-full border border-white/20 px-5 py-2 font-sans text-[13px] tracking-[0.01em] text-slate-200 transition-colors hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
             ↻ Reset
           </button>
         )}

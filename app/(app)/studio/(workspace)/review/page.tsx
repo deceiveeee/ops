@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ReviewPage() {
-  return <WorkspaceStage stage="review" eyebrow="Review" />;
+  return <WorkspaceStage stage="review" eyebrow="Review · Step 9 of 9" />;
 }

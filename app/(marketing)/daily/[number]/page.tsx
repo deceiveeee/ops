@@ -32,7 +32,7 @@ export default function NumberedPuzzlePage({ params }: { params: { number: strin
   const number = parsePuzzleNumber(params.number);
   if (number === null || number > LAST_PUZZLE) notFound();
   const today = todaysNumber(new Date());
-  const eyebrow = `Daily company puzzle #${number} · ${longDate(dateOfPuzzle(number))}`;
+  const eyebrow = `Daily puzzle #${number} · ${number === today ? "today" : longDate(dateOfPuzzle(number))}`;
 
   if (number > today) {
     return (
@@ -51,7 +51,7 @@ export default function NumberedPuzzlePage({ params }: { params: { number: strin
   if (!puzzle) notFound();
   return (
     <div className={styles.page}>
-      <PuzzleHeader eyebrow={number === today ? `${eyebrow} · today's puzzle` : eyebrow} />
+      <PuzzleHeader eyebrow={eyebrow} />
       <DailyPuzzleView puzzle={puzzle} isToday={number === today} shareUrl={canonicalUrl(`/daily/${number}`, getSiteUrl())} />
     </div>
   );

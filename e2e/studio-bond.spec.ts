@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { seedProject, typedProject } from "./studio-seed";
 
 /**
  * A bond on the day you settle.
@@ -85,16 +86,7 @@ test("names the rule it follows", async ({ page }) => {
 });
 
 test("carries the interest figure to What to buy, which then counts it", async ({ page }) => {
-  await page.goto("/studio/research");
-  await page.getByRole("searchbox", { name: "Find an investment" }).fill("91282CRF0");
-  const card = page.getByRole("button", { expanded: false }).filter({ hasText: /^91282CRF0/ }).first().locator("xpath=..");
-  await card.getByRole("button", { name: "Add to portfolio" }).click();
-  await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
-  await page.goto("/studio/portfolio");
-  await page.getByLabel("91282CRF0 target percentage").fill("50");
-  await expect(page.getByRole("status").filter({ hasText: /^Saved in this browser$/ })).toBeVisible();
-
-  await page.goto("/studio/portfolio/buying");
+  await seedProject(page, typedProject([["ust-91282crf0", 50]]), "/studio/portfolio/buying");
   // At this width the note's worksheet opens from its line of the list, which says its total is incomplete.
   const line = page.getByRole("table", { name: "What to buy, investment by investment" });
   await expect(line).toContainText("Incomplete");

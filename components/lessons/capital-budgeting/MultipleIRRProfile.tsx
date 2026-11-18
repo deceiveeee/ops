@@ -69,7 +69,7 @@ export default function MultipleIRRProfile() {
       {/* Cash flow display */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">
             Nonconventional cash flows
           </div>
           <div className="mt-3 flex gap-2">
@@ -90,7 +90,7 @@ export default function MultipleIRRProfile() {
           </div>
         </div>
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
             Conventional cash flows
           </div>
           <div className="mt-3 flex gap-2">
@@ -114,7 +114,7 @@ export default function MultipleIRRProfile() {
 
       {/* NPV Profile Chart */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400 mb-3">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400 mb-3">
           NPV profile: NPV vs. discount rate
         </div>
         <div className="overflow-x-auto">

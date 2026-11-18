@@ -247,9 +247,9 @@ export default function TimelineBuilder() {
                           key="empty"
                           initial={false}
                           animate={{ opacity: 1 }}
-                          className="ops-caption text-[11px] text-slate-500"
+                          className="ops-caption text-[12px] text-slate-500"
                         >
-                          empty
+                          Empty
                         </motion.span>
                       )}
                     </AnimatePresence>
@@ -325,7 +325,7 @@ export default function TimelineBuilder() {
           >
             <div
               className={cn(
-                "flex items-center gap-2 font-sans text-[11px] uppercase tracking-[0.14em]",
+                "flex items-center gap-2 font-sans text-[12px] tracking-[0.01em]",
                 status === "correct"
                   ? "text-accent-green"
                   : "text-accent-amber",

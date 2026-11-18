@@ -4,25 +4,26 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { STUDIO_GUIDANCE } from "@/lib/studio-guidance";
 import type { StudioPlan } from "@/lib/studio";
-import {
-  checkTargets, lossBudget, readLimits, setLimits, SLICE_NAMES, SLICES,
-  type CashNeed, type SliceId, type SliceTarget, type StudioLimits,
-} from "@/lib/studio-project/limits";
+import { lossBudget, readLimits, setLimits, type CashNeed, type StudioLimits } from "@/lib/studio-project/limits";
+import { neededReturn, readConstruction, type NeededReturn } from "@/lib/studio-project/construction";
 import { chosenBeforeChange, type BasisPart } from "@/lib/studio-project/portfolio-weights";
 import { readScenarios } from "@/lib/studio-project/scenarios";
 import type { StageProps } from "../stages";
-import { Choice, Field, usdWhole, useBufferedInput } from "../shared";
+import { Choice, Field, usdWhole } from "../shared";
 import StudioIcon from "./StudioIcon";
 import WorkspaceNotes from "./WorkspaceNotes";
 import { useWorkspace } from "./WorkspaceProvider";
 import styles from "./working-pages.module.css";
 
+/** Steps 1 and 2 of the nine: the rules come first, then the return they need. */
 const PANELS = [
-  { id: "purpose", label: "Your goal" },
-  { id: "money", label: "Your money" },
-  { id: "mix", label: "Your mix" },
-  { id: "limits", label: "Your limits" },
+  { id: "purpose", label: "Your goal", step: 1 },
+  { id: "money", label: "Your money", step: 1 },
+  { id: "limits", label: "Your limits", step: 1 },
+  { id: "rules", label: "Checking", step: 1 },
+  { id: "needed", label: "Return needed", step: 2 },
 ] as const;
+const STEP_TITLES = { 1: "Step 1 of 9: write the rules first", 2: "Step 2 of 9: the return your goal needs" } as const;
 type PanelId = (typeof PANELS)[number]["id"];
 const number = (raw: string) => Number.isFinite(Number(raw)) ? Number(raw) : 0;
 /** A limit's box: empty is "not set", and a number is held to 0-100 rather than refused at save. */
@@ -31,7 +32,6 @@ const percentOrNull = (raw: string) => {
   if (trimmed === "" || !Number.isFinite(Number(trimmed))) return null;
   return Math.min(100, Math.max(0, Number(trimmed)));
 };
-const SLICE_COLOURS: Record<SliceId, string> = { ready: "#8f9985", steady: "#bfb1e5", grow: "#d5f39e" };
 // Spelled out here: a browser's own short month is "Sep" in one and "Sept" in another.
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const chosenOn = (at: string) => { const date = new Date(at); return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`; };
@@ -45,19 +45,21 @@ const changedWords = (parts: BasisPart[], severalScenarios: boolean) => {
 };
 
 export default function GoalsWorkspace({ plan, calculation, update }: StageProps) {
-  const { project, session, report } = useWorkspace();
+  const { project, updateProject } = useWorkspace();
   const [panel, setPanel] = useState<PanelId>("purpose");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const setGoal = (patch: Partial<StudioPlan["goal"]>) => update(current => ({
     ...current, goal: { ...current.goal, ...patch }, updatedAt: new Date().toISOString(),
   }));
   const limits = readLimits(project ?? {});
-  const changeLimits = (change: (current: StudioLimits) => StudioLimits) =>
-    session.update(current => setLimits(current, change)).then(report);
+  const changeLimits = (change: (current: StudioLimits) => StudioLimits) => updateProject(current => setLimits(current, change));
+  const setRules = (patch: Partial<StudioPlan["rules"]>) => update(current => ({ ...current, rules: { ...current.rules, ...patch }, updatedAt: new Date().toISOString() }));
+  const construction = readConstruction(project ?? {});
+  const setTarget = (targetAmount: number | null) =>
+    updateProject(current => ({ ...current, updatedAt: new Date().toISOString(), construction: { ...readConstruction(current), targetAmount } }));
+  const needed = neededReturn({ start: plan.goal.budget, monthly: plan.goal.monthlyContribution, years: plan.goal.horizonYears, target: construction.targetAmount });
   const changeNeed = (id: string, patch: Partial<CashNeed>) =>
     changeLimits(current => ({ ...current, cashNeeds: current.cashNeeds.map(need => need.id === id ? { ...need, ...patch } : need) }));
-  const changeSlice = (slice: SliceId, patch: Partial<SliceTarget>) =>
-    changeLimits(current => ({ ...current, slices: { ...current.slices, [slice]: { ...current.slices[slice], ...patch } } }));
 
   const { budget, cashReserve, monthlyContribution, horizonYears, lossTolerancePct } = plan.goal;
   const available = calculation.investableBudget;
@@ -68,7 +70,7 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
   return (
     <div className={styles.page}>
       <header className={styles.pageHeading}>
-        <p className={styles.eyebrow}>Goals</p>
+        <p className={styles.eyebrow}>Goals · {STEP_TITLES[PANELS[selectedIndex].step]}</p>
         <h1>Give the money a <em>job.</em></h1>
         <p>{STUDIO_GUIDANCE.goal.definition}</p>
       </header>
@@ -115,40 +117,16 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
                 onAdd={() => changeLimits(current => ({ ...current, cashNeeds: [...current.cashNeeds, { id: `need-${crypto.randomUUID()}`, label: "", amount: 0, dueDate: "" }] }))}
                 onRemove={id => changeLimits(current => ({ ...current, cashNeeds: current.cashNeeds.filter(need => need.id !== id) }))} />
             </>}
-            {panel === "mix" && <>
-              <p className={styles.fieldNote}>
-                Mission 5 splits a portfolio by the job each part does; none is safe, as bonds can fall too. Give each a target
-                share of the whole portfolio and a range to stay in before you review it, such as Grow at 55%, between 50% and 65%.
-              </p>
-              <table className={styles.sliceTable}>
-                <caption className="sr-only">Target and range for each slice, as a share of the whole portfolio</caption>
-                <thead><tr><th scope="col">Slice</th><th scope="col">Target</th><th scope="col">Lowest</th><th scope="col">Highest</th></tr></thead>
-                <tbody>
-                  {SLICES.map(slice => {
-                    const { name, job } = SLICE_NAMES[slice];
-                    const values = limits.slices[slice];
-                    return (
-                      <tr key={slice}>
-                        <th scope="row"><i aria-hidden="true" style={{ background: SLICE_COLOURS[slice] }} />{name}<small>{job}</small></th>
-                        <td><PercentBox label={`${name} target`} value={values.targetPct} onChange={value => changeSlice(slice, { targetPct: value })} /></td>
-                        <td><PercentBox label={`${name} lowest`} value={values.minPct} onChange={value => changeSlice(slice, { minPct: value })} /></td>
-                        <td><PercentBox label={`${name} highest`} value={values.maxPct} onChange={value => changeSlice(slice, { maxPct: value })} /></td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {panel === "limits" && <>
+              <Field label="Loss you could live with" hint="A drop this size should not force you to sell." type="number" min={0} max={100} suffix="%" value={lossTolerancePct} onChange={value => setGoal({ lossTolerancePct: number(value) })} />
+              <Field label="Loss you could afford" hint="How far the whole portfolio could fall before a bill goes unpaid." type="number" min={0} max={100} suffix="%"
+                value={limits.lossCapacityPct ?? ""} onChange={value => changeLimits(current => ({ ...current, lossCapacityPct: percentOrNull(value) }))} />
               <div className={styles.capFields}>
                 <Field label="Cap for one company" type="number" min={0} max={100} suffix="%" value={limits.companyCapPct ?? ""}
                   onChange={value => changeLimits(current => ({ ...current, companyCapPct: percentOrNull(value) }))} />
                 <Field label="Cap for one fund" type="number" min={0} max={100} suffix="%" value={limits.fundCapPct ?? ""}
                   onChange={value => changeLimits(current => ({ ...current, fundCapPct: percentOrNull(value) }))} />
               </div>
-            </>}
-            {panel === "limits" && <>
-              <Field label="Loss you could live with" hint="A drop this size should not force you to sell." type="number" min={0} max={100} suffix="%" value={lossTolerancePct} onChange={value => setGoal({ lossTolerancePct: number(value) })} />
-              <Field label="Loss you could afford" hint="How far the whole portfolio could fall before a bill goes unpaid." type="number" min={0} max={100} suffix="%"
-                value={limits.lossCapacityPct ?? ""} onChange={value => changeLimits(current => ({ ...current, lossCapacityPct: percentOrNull(value) }))} />
               <Field label="Anything that limits your choices" value={plan.goal.constraints} onChange={value => setGoal({ constraints: value })}
                 placeholder="Debt, emergency cash, account restrictions…" multiline />
               <Choice label="Account it sits in" value={plan.goal.accountType} onChange={value => setGoal({ accountType: value })} options={[
@@ -156,17 +134,37 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
                 { value: "roth-ira", label: "Roth individual retirement account (IRA)" }, { value: "other", label: "Something else" },
               ]} />
             </>}
+            {panel === "rules" && <>
+              <p className={styles.fieldNote}>
+                Decide now how you will look after the portfolio, before a fall or a rally can decide it for you. Checking means
+                comparing what you hold with your targets; drift is how far a holding has moved from its target.
+              </p>
+              <Choice label="How often you will check" value={plan.rules.reviewFrequency} onChange={value => setRules({ reviewFrequency: value })} options={[
+                { value: "monthly", label: "Every month" }, { value: "quarterly", label: "Every three months" }, { value: "yearly", label: "Once a year" },
+              ]} />
+              <Field label="Act when a holding drifts this far from target" hint="In percentage points of the whole portfolio." type="number" min={0} max={100} suffix="points"
+                value={plan.rules.driftThresholdPct} onChange={value => setRules({ driftThresholdPct: Math.min(100, Math.max(0, number(value))) })} />
+            </>}
+            {panel === "needed" && <>
+              <p className={styles.fieldNote}>
+                A return above inflation is growth beyond the rise in prices: 5% growth while prices rise 2% leaves about 2.9% more
+                buying power. Enter the amount in today&apos;s dollars, what it would buy now; Studio takes what you add each month to rise with prices too.
+              </p>
+              <Field label="Amount you want by then" hint="In today's dollars. Leave it empty to build wealth without a target." type="number" min={0} prefix="$"
+                value={construction.targetAmount ?? ""} onChange={value => setTarget(value.trim() === "" || !Number.isFinite(Number(value)) ? null : Math.min(1e12, Math.max(0, Number(value))))} />
+            </>}
           </div>
           <div className={styles.editorFooter}>
             <span>Changes save as you go.</span>
             {selectedIndex < PANELS.length - 1 ? <button type="button" onClick={() => { setPanel(PANELS[selectedIndex + 1].id); tabRefs.current[selectedIndex + 1]?.focus(); }}>Next: {PANELS[selectedIndex + 1].label.toLowerCase()} <StudioIcon name="arrow" /></button>
-              : <Link href="/studio/research">Open Research <StudioIcon name="arrow" /></Link>}
+              : <Link href="/studio/portfolio">Step 3: your mix <StudioIcon name="arrow" /></Link>}
           </div>
         </section>
         {/* data-panel lets a phone drop a line that repeats a box already on screen. */}
         <section className={styles.moneyCanvas} aria-labelledby="money-canvas-heading" data-panel={panel}>
           <div className={styles.canvasTop}><h2 id="money-canvas-heading">A plan with room to breathe.</h2><StudioIcon name="goals" /></div>
-          {panel === "mix" ? <MixPicture limits={limits} />
+          {panel === "needed" ? <NeededPicture needed={needed} target={construction.targetAmount} start={budget} monthly={monthlyContribution} years={horizonYears} />
+            : panel === "rules" ? <RulesPicture frequency={plan.rules.reviewFrequency} band={plan.rules.driftThresholdPct} />
             : panel === "limits" ? <LossPicture budget={budget} willingnessPct={lossTolerancePct} capacityPct={limits.lossCapacityPct} />
               : <>
                 <div className={styles.amountHeadline}><span>After setting cash aside</span><strong>{usdWhole(available)}</strong><p>Available to plan your investments</p></div>
@@ -195,16 +193,6 @@ export default function GoalsWorkspace({ plan, calculation, update }: StageProps
       </div>
       <WorkspaceNotes kind="goal" />
     </div>
-  );
-}
-
-function PercentBox({ label, value, onChange }: { label: string; value: number | null; onChange: (value: number | null) => unknown }) {
-  const buffered = useBufferedInput(value ?? "", raw => onChange(percentOrNull(raw)));
-  return (
-    <span className={styles.percentBox}>
-      <input type="number" inputMode="decimal" min={0} max={100} aria-label={`${label}, % of the whole portfolio`} {...buffered} />
-      <span aria-hidden="true">%</span>
-    </span>
   );
 }
 
@@ -237,51 +225,6 @@ function Bills({ needs, onChange, onAdd, onRemove }: {
   );
 }
 
-/** The three targets as one bar, with what does not add up said in words. */
-function MixPicture({ limits }: { limits: StudioLimits }) {
-  const { total, totalOff, problems } = checkTargets(limits);
-  const set = SLICES.filter(slice => limits.slices[slice].targetPct !== null);
-  const width = (slice: SliceId) => (limits.slices[slice].targetPct ?? 0) / Math.max(100, total ?? 0) * 400;
-  let x = 0;
-  return (
-    <>
-      <div className={styles.amountHeadline}>
-        <span>Your targets add up to</span>
-        <strong>{total === null ? "—" : `${Number(total.toFixed(2))}%`}</strong>
-        <p>{total === null ? "Set a target for each slice to see the whole." : "Of the whole portfolio, cash included."}</p>
-      </div>
-      <svg className={styles.moneyDiagram} viewBox="0 0 400 56" preserveAspectRatio="none" role="img"
-        aria-label={set.length ? SLICES.map(slice => `${SLICE_NAMES[slice].name} ${limits.slices[slice].targetPct ?? "not set"}${limits.slices[slice].targetPct === null ? "" : "%"}`).join(", ") : "No targets set yet"}>
-        <rect x="0" y="0" width="400" height="46" rx="8" fill="#424a3d" />
-        {SLICES.map(slice => {
-          const w = width(slice);
-          const rect = <rect key={slice} x={x} y="0" width={w} height="46" fill={SLICE_COLOURS[slice]} />;
-          x += w;
-          return rect;
-        })}
-      </svg>
-      <dl className={styles.mixLegend}>
-        {SLICES.map(slice => {
-          const { minPct, targetPct, maxPct } = limits.slices[slice];
-          return (
-            <div key={slice}>
-              <dt><i style={{ background: SLICE_COLOURS[slice] }} />{SLICE_NAMES[slice].name}</dt>
-              <dd>{targetPct === null ? "Not set" : `${targetPct}%`}{minPct !== null || maxPct !== null ? <small> {minPct ?? "?"}–{maxPct ?? "?"}%</small> : null}</dd>
-            </div>
-          );
-        })}
-      </dl>
-      {totalOff ? <p className={styles.canvasWarning}>They need to add up to 100%.</p> : null}
-      {problems.map(problem => <p key={problem} className={styles.canvasWarning}>{problem}</p>)}
-      <div className={styles.canvasFoot}>
-        <span>Caps for a single holding</span>
-        <strong>{limits.companyCapPct === null && limits.fundCapPct === null ? "Not set"
-          : [limits.companyCapPct !== null ? `Company ${limits.companyCapPct}%` : null, limits.fundCapPct !== null ? `Fund ${limits.fundCapPct}%` : null].filter(Boolean).join(" · ")}</strong>
-      </div>
-    </>
-  );
-}
-
 /** The loss budget: the smaller of the two limits, in dollars of the whole portfolio. */
 function LossPicture({ budget, willingnessPct, capacityPct }: { budget: number; willingnessPct: number; capacityPct: number | null }) {
   const loss = lossBudget(willingnessPct, capacityPct);
@@ -297,6 +240,55 @@ function LossPicture({ budget, willingnessPct, capacityPct }: { budget: number; 
         <span>If the whole portfolio fell {loss.pct}%</span>
         <strong>{usdWhole(budget * loss.pct / 100)} loss</strong>
       </div>
+    </>
+  );
+}
+
+const FREQUENCY_WORDS = { monthly: "Every month", quarterly: "Every three months", yearly: "Once a year" } as const;
+
+/** The review rules, said back as one sentence the learner can keep. */
+function RulesPicture({ frequency, band }: { frequency: StudioPlan["rules"]["reviewFrequency"]; band: number }) {
+  return (
+    <>
+      <div className={styles.amountHeadline}>
+        <span>You will check</span>
+        <strong>{FREQUENCY_WORDS[frequency]}</strong>
+        <p>and act when a holding drifts {band} percentage points from its target.</p>
+      </div>
+      <p className={styles.canvasExplanation}>
+        You act when a holding drifts {band} points from its target. A target of 20% that grows to 26% has drifted 6 points,
+        which {6 >= band ? "calls for" : "does not yet call for"} action.
+      </p>
+      <div className={styles.canvasFoot}><span>Where you act on it</span><strong>Step 9, Review</strong></div>
+    </>
+  );
+}
+
+/** Step 2: the yearly return above inflation that the goal needs. */
+function NeededPicture({ needed, target, start, monthly, years }: { needed: NeededReturn; target: number | null; start: number; monthly: number; years: number }) {
+  const figure = needed.status === "ok" ? `${Number(needed.annualPct.toFixed(1))}% a year` : needed.status === "reached" ? "0%" : needed.status === "too-high" ? "Over 100%" : "—";
+  const line = needed.status === "unset" ? "Enter the amount you want to see it."
+    : needed.status === "no-time" ? "Set when you expect to use the money first."
+      : needed.status === "no-money" ? "Enter money available now or an amount added each month first."
+        : needed.status === "too-high" ? "Investing cannot be planned to do this. Change the amount, the date or what you add."
+          : needed.status === "reached" ? "Saving alone gets there, before any growth."
+            : "above inflation";
+  return (
+    <>
+      <div className={styles.amountHeadline}>
+        <span>The return your goal needs</span>
+        <strong>{figure}</strong>
+        <p>{line}</p>
+      </div>
+      {needed.status === "ok" || needed.status === "reached" || needed.status === "too-high" ? (
+        <p className={styles.canvasExplanation}>
+          {usdWhole(start)} now + {usdWhole(monthly)} a month for {years} {years === 1 ? "year" : "years"} is {usdWhole(needed.withoutGrowth)} before any growth.
+          {" "}{needed.status === "ok"
+            ? `Reaching ${usdWhole(target ?? 0)} needs about ${needed.annualPct.toFixed(2)}% a year more than prices rise.`
+            : `You want ${usdWhole(target ?? 0)}.`}
+        </p>
+      ) : null}
+      <div className={styles.canvasFoot}><span>Where you test it</span><strong>Step 3, your mix</strong></div>
     </>
   );
 }

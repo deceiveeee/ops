@@ -65,7 +65,7 @@ export function Matrix2x2({
         {isLit && (
           <span
             className={cn(
-              "absolute right-2 top-2 font-sans text-[11px] uppercase tracking-[0.16em]",
+              "absolute right-2 top-2 font-sans text-[12px] tracking-[0.01em]",
               toneText[highlightTone],
             )}
             aria-hidden
@@ -81,7 +81,7 @@ export function Matrix2x2({
   return (
     <figure className="w-full">
       {title && (
-        <figcaption className="mb-3 font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
+        <figcaption className="mb-3 font-sans text-[12px] tracking-[0.01em] text-slate-400">
           {title}
         </figcaption>
       )}
@@ -93,7 +93,7 @@ export function Matrix2x2({
             {colLabels.map((c) => (
               <div
                 key={c}
-                className="pb-2 text-center font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400"
+                className="pb-2 text-center font-sans text-[13px] tracking-[0.01em] text-slate-400"
               >
                 {c}
               </div>
@@ -101,14 +101,14 @@ export function Matrix2x2({
           </div>
           {/* rows */}
           <div className="grid grid-cols-[auto_1fr_1fr] items-stretch gap-2">
-            <div className="flex items-center pr-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="flex items-center pr-2 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               {rowLabels[0]}
             </div>
             {renderCell("tl", topLeft, "diag")}
             {renderCell("tr", topRight, "off")}
           </div>
           <div className="mt-2 grid grid-cols-[auto_1fr_1fr] items-stretch gap-2">
-            <div className="flex items-center pr-2 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+            <div className="flex items-center pr-2 font-sans text-[13px] tracking-[0.01em] text-slate-400">
               {rowLabels[1]}
             </div>
             {renderCell("bl", bottomLeft, "off")}
@@ -159,7 +159,7 @@ export default function PortfolioMatrixVisual({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
       <div>
-        <div className="mb-3 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-purple">
+        <div className="mb-3 font-sans text-[12px] tracking-[0.01em] text-accent-purple">
           Raw matrix
         </div>
         <p className="mb-4 max-w-sm text-[15px] leading-[1.6] text-slate-400">
@@ -185,7 +185,7 @@ export default function PortfolioMatrixVisual({
       </div>
 
       <div>
-        <div className="mb-3 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="mb-3 font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           Weighted matrix
         </div>
         <p className="mb-4 max-w-sm text-[15px] leading-[1.6] text-slate-400">

@@ -174,7 +174,7 @@ export default function SpreadDecompositionMixer() {
               exit={{ opacity: 0 }}
               className="mt-5 rounded-xl border border-accent-red/40 bg-accent-red/[0.08] p-5"
             >
-              <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-red">
+              <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-red">
                 Over-allocated
               </div>
               <p className="ops-body mt-2 text-[15px] leading-7 text-slate-100">
@@ -190,7 +190,7 @@ export default function SpreadDecompositionMixer() {
               exit={{ opacity: 0 }}
               className="mt-5 rounded-xl border border-accent-amber/40 bg-accent-amber/[0.08] p-5"
             >
-              <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-amber">
+              <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-amber">
                 Careful
               </div>
               <p className="ops-body mt-2 text-[15px] leading-7 text-slate-100">
@@ -210,7 +210,7 @@ export default function SpreadDecompositionMixer() {
             aria-expanded={showResearch}
             className="flex w-full items-center justify-between rounded-lg px-2 py-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
           >
-            <span className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+            <span className="ops-caption text-[12px] tracking-[0.01em] text-accent-cyan">
               Research Lens
             </span>
             <span className="font-sans text-[12px] text-slate-400">

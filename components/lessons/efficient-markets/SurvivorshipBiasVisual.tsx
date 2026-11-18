@@ -13,7 +13,7 @@ export default function SurvivorshipBiasVisual() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Fund survival over 5 years
         </div>
         <div className="mt-4 space-y-2">
@@ -43,21 +43,21 @@ export default function SurvivorshipBiasVisual() {
 
       <div className="flex items-center gap-3">
         <button type="button" onClick={() => setRevealed(!revealed)}
-          className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
+          className="rounded-full border border-accent-cyan/50 bg-accent-cyan/10 px-5 py-2 font-sans text-[13px] tracking-[0.01em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50">
           {revealed ? "Hide closed funds" : "Reveal closed funds"}
         </button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className={cn("rounded-xl border p-4", revealed ? "border-accent-red/25 bg-accent-red/[0.04]" : "border-white/10 bg-ink-950/30")}>
-          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">What databases show</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">What databases show</div>
           <p className="ops-body mt-1.5 text-[14px] leading-[1.55] text-slate-100">
             Only the 60 surviving funds appear in performance databases. Their average return looks
             healthy because the 40 worst performers have disappeared.
           </p>
         </div>
         <div className={cn("rounded-xl border p-4", revealed ? "border-accent-amber/25 bg-accent-amber/[0.04]" : "border-white/10 bg-ink-950/30")}>
-          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">What actually happened</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">What actually happened</div>
           <p className="ops-body mt-1.5 text-[14px] leading-[1.55] text-slate-100">
             The original investor could have bought any of 100 funds. Examining only survivors makes
             historical performance look better than the real experience.

@@ -72,13 +72,13 @@ export default function InvestmentOrFinancingIRR() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Investment pattern</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Investment pattern</div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Cash outflow today, inflows later. <span className="text-white">Higher IRR is generally preferred.</span>
           </p>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Financing pattern</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Financing pattern</div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
             Cash inflow today, outflows later. <span className="text-white">A lower rate is generally preferred</span> — the borrower wants to pay less.
           </p>

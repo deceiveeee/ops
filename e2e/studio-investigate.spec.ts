@@ -356,12 +356,22 @@ test("a company you investigated can be held in the portfolio", async ({ page })
   await page.getByText("Why you own it").click();
   await expect(page.getByLabel("Why it belongs")).toHaveValue("It earns more than its capital costs.", { timeout: 15_000 });
 
-  // It arrives owning nothing: how much to hold is a decision of its own.
+  // It arrives owning nothing: how much to hold is a decision of its own, made
+  // as a pick in step 6 once the mix (step 3) and its split (step 4) say where
+  // a US company's money comes from. Grow 100%, all of it US stocks.
   await page.goto("/studio/portfolio");
-  const weight = page.getByLabel("Nordic Pulp target percentage");
+  await page.getByLabel("Ready target, % of the whole portfolio").fill("0");
+  await page.getByLabel("Steady target, % of the whole portfolio").fill("0");
+  await page.getByLabel("Grow target, % of the whole portfolio").fill("100");
+  await page.goto("/studio/portfolio/split");
+  await page.getByLabel("Grow: share in international stocks, % of Grow").fill("0");
+  await page.getByLabel("Steady: share in short-term bonds, % of Steady").fill("0");
+  await page.goto("/studio/portfolio/picks");
+  const weight = page.getByLabel("Nordic Pulp, % of the whole portfolio");
   await expect(weight).toBeVisible({ timeout: 15_000 });
-  await expect(weight).toHaveValue("0");
+  await expect(weight).toHaveValue("");
 
+  await page.getByLabel("Picks budget, % of the whole portfolio").fill("100");
   await weight.fill("100");
   // The figures that prove the calculation resolved it. An unresolved holding
   // does not error, it silently zeroes every target in the portfolio.

@@ -30,7 +30,7 @@ export default function RateChainCompressor() {
           type="button"
           onClick={() => setCompressed((c) => !c)}
           aria-pressed={compressed}
-          className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+          className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
         >
           <MathText>{compressed ? "Expand back into chain" : "Compress into r_{0,T}"}</MathText>
         </button>
@@ -53,7 +53,7 @@ export default function RateChainCompressor() {
                 transition={{ duration: 0.3 }}
               >
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">
+                  <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-sans text-[12px] tracking-[0.01em] text-accent-purple">
                     Chain of one-year rates
                   </span>
                 </div>

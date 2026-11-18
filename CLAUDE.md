@@ -4,6 +4,13 @@ Read `AGENTS.md` completely before taking action. It contains the repository's c
 source-integrity, learner-sequence, design, accessibility, typography, animation, and
 performance rules.
 
+Before editing or starting a build/server, also read `docs/agent-coordination.md`
+and the primary checkout's shared `tmp/agent-coordination/` records. On this
+machine that checkout is `C:/Open Portfolio Studio`, including when this session
+runs in a linked worktree. Record ownership and the server port, preserve other
+agents' work, and hand off shared-file changes explicitly. A session history or
+old handoff is context; verify the current records before acting.
+
 For Portfolio Builder work, also read:
 
 1. `docs/agent-prompts/portfolio-builder/00-master-operating-prompt.md`

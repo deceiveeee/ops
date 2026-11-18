@@ -161,7 +161,7 @@ export default function MultiStageValuationBuilder() {
       {/* Invalid warning */}
       {invalid && (
         <div className="mt-5 rounded-xl border border-accent-red/40 bg-accent-red/10 p-5">
-          <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-red">
+          <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-red">
             <span className="mr-1" aria-hidden>
               !
             </span>

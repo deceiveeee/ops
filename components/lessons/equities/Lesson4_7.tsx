@@ -174,7 +174,7 @@ export default function Lesson4_7() {
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[420px] border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-white/10 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-500">
+                <tr className="border-b border-white/10 font-sans text-[12px] tracking-[0.01em] text-slate-500">
                   <th className="px-3 py-2">Assumption</th>
                   <th className="px-3 py-2">Years 1–3</th>
                   <th className="px-3 py-2">Year 4+</th>

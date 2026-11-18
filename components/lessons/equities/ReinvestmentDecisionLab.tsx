@@ -171,7 +171,7 @@ export default function ReinvestmentDecisionLab() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span
             className={cn(
-              "font-sans text-[13px] uppercase tracking-[0.14em]",
+              "font-sans text-[13px] tracking-[0.01em]",
               verdictTone === "green" && "text-accent-green",
               verdictTone === "cyan" && "text-accent-cyan",
               verdictTone === "red" && "text-accent-red",

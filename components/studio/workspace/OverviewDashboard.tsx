@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import type { StudioCalculation } from "@/lib/studio";
+import { useGreeting } from "@/lib/greeting";
 import { findStudioInstrument } from "@/lib/studio-catalog";
-import { instrumentLabel } from "@/lib/studio-project/workspace";
+import { instrumentLabel, projectCatalog } from "@/lib/studio-project/workspace";
+import { buildPortfolio, emptyBuild, mixComplete, mixFromLimits } from "@/lib/studio-project/construction";
+import { readLimits } from "@/lib/studio-project/limits";
 import { FIGURES } from "@/lib/studio-project/investigate";
 import { workingAlternative, type CandidateStatus, type StudioProject } from "@/lib/studio-project/schema";
 import { pct, usdWhole } from "../shared";
@@ -13,15 +16,27 @@ import styles from "./studio-design.module.css";
 
 type NextStep = { title: string; why: string; href: string; action: string };
 
-/** One suggestion from saved work. Every section remains available. */
-function suggest(project: StudioProject, calculation: StudioCalculation): NextStep {
-  const positions = workingAlternative(project)?.positions ?? [];
-  if (!project.goal.purpose.trim()) return { title: "Say what this money is for", why: "Give your choices a direction: what you’re working toward, and when you’ll need the money.", href: "/studio/goals", action: "Open Goals" };
-  if (!positions.length) return { title: "Choose what you might buy", why: "Read what each investment is and what it holds. Keep the evidence behind your choices.", href: "/studio/research", action: "Open Research" };
-  if (Math.abs(calculation.totalWeightPct - 100) > 0.01) return { title: "Decide how much goes where", why: `Your percentages total ${pct(calculation.totalWeightPct)}. Review the amounts and decide what should stay in cash.`, href: "/studio/portfolio", action: "Open Portfolio" };
+/**
+ * One suggestion from saved work, in the order of the nine steps: goal and rules,
+ * the mix, the split, a fund for each part, then the check and the rules to
+ * follow. Every section remains available.
+ */
+function suggest(project: StudioProject): NextStep {
+  const alternative = workingAlternative(project);
+  const positions = alternative?.positions ?? [];
+  if (!project.goal.purpose.trim()) return { title: "Say what this money is for", why: "Step 1. Give your choices a direction: what you’re working toward, and when you’ll need the money.", href: "/studio/goals", action: "Open Goals" };
+  if (!alternative?.build && positions.some((position) => position.targetWeightPct > 0)) {
+    return { title: "Build from the weights you typed", why: "Start the nine steps from the holdings you already have.", href: "/studio/portfolio/split", action: "Open step 4" };
+  }
+  const mix = mixFromLimits(readLimits(project));
+  if (!mixComplete(mix).complete) return { title: "Choose your mix", why: "Step 3. Decide how much goes to Ready, Steady and Grow before choosing a single investment.", href: "/studio/portfolio", action: "Open step 3" };
+  const result = buildPortfolio({ whole: project.goal.budget, cashKept: project.goal.cashReserve, mix, build: alternative?.build ?? emptyBuild(), catalog: projectCatalog(project) });
+  if (result.problems.length) return { title: "Make your mix add up", why: result.problems[0], href: "/studio/portfolio", action: "Open step 3" };
+  if (!alternative?.build || result.notes.some((note) => note.includes("not split"))) return { title: "Split each slice", why: "Step 4. Split Grow between US and international stocks, and Steady between short-term and longer-term bonds.", href: "/studio/portfolio/split", action: "Open step 4" };
+  if (result.notes.some((note) => note.startsWith("No fund"))) return { title: "Fill each part", why: "Step 5. Choose one broad fund for each part; each takes its part’s money.", href: "/studio/portfolio/fill", action: "Open step 5" };
   const { contributionRule, sellRule, guardrails } = project.rules;
   if (!contributionRule.trim() && !sellRule.trim() && !guardrails.trim()) return { title: "Write the rules you will follow", why: "Put your reasons into words while you have time to think. Make your future decisions easier to explain.", href: "/studio/review", action: "Open Review" };
-  return { title: "Check the risk and the cost", why: "Try a fall you choose and see what it would cost, before any money moves.", href: "/studio/portfolio/risk", action: "Open Risk and cost" };
+  return { title: "Check the whole portfolio", why: "Step 7. Look inside your funds, add up the costs, and hold the portfolio against a benchmark and your limits.", href: "/studio/portfolio/check", action: "Open step 7" };
 }
 
 const STANDING: Record<CandidateStatus, string> = { researching: "Still reading", shortlisted: "Worth a closer look", selected: "Decided to buy", rejected: "Decided against" };
@@ -51,7 +66,7 @@ function PortfolioPicture({ project, calculation }: { project: StudioProject; ca
       </div>
       <div className={styles.pictureAmount}><span>{project.mode === "practice" ? "Practice amount" : "Planning amount"}</span><strong>{usdWhole(calculation.investableBudget)}</strong><p>{over ? `${pct(total - 100)} over the available amount` : hasPositions ? `${pct(Math.max(0, 100 - total))} left to assign` : "Ready for your first choice"}</p></div>
     </div>
-    <p className={styles.allocationDescription}>{hasPositions ? `${pct(total)} of the amount after your cash reserve is assigned to investments.` : "Add investments in Research, then choose their amounts in Portfolio."}</p>
+    <p className={styles.allocationDescription}>{hasPositions ? `${pct(total)} of the amount after your cash reserve is assigned to investments.` : "Choose your mix and a fund for each part in Portfolio."}</p>
     <Link href="/studio/portfolio" className={styles.pictureLink}>See your portfolio <StudioIcon name="arrow" /></Link>
   </section>;
 }
@@ -59,7 +74,8 @@ function PortfolioPicture({ project, calculation }: { project: StudioProject; ca
 export default function OverviewDashboard({ project, calculation, children }: { project: StudioProject; calculation: StudioCalculation; children?: ReactNode }) {
   const [allCompanies, setAllCompanies] = useState(false);
   const [allInvestments, setAllInvestments] = useState(false);
-  const step = suggest(project, calculation);
+  const step = suggest(project);
+  const hello = useGreeting();
   const companies = newestFirst(project.investigations);
   const investments = newestFirst(project.candidates);
   const held = new Set((workingAlternative(project)?.positions ?? []).map(position => position.instrumentId));
@@ -79,13 +95,14 @@ export default function OverviewDashboard({ project, calculation, children }: { 
     </div>
   );
   return <div className={styles.overview}>
-    <header className={styles.overviewHeading}><div><p className={styles.eyebrow}>Your investing workspace</p><h1>Your next <em>move.</em></h1></div><p>A question. Some evidence.<br />A decision you can explain.</p></header>
+    {/* The greeting comes from the visitor's own clock, so it appears after the first render; the question is there from the start. */}
+    <header className={styles.overviewHeading}><div><p className={styles.eyebrow}>Your investing workspace</p><h1>{hello ? `${hello}. ` : null}What should we work on?</h1></div></header>
     {children}
     <div className={styles.startGrid}>
       <section className={styles.nextStep} aria-labelledby="overview-next">
-        <div className={styles.nextCopy}><p className={styles.eyebrow}><span className={styles.smallDot} /> A suggested next step</p><h2 id="overview-next">{step.title}</h2><p>{step.why}</p><Link href={step.href} className={styles.primaryLink}>{step.action}<StudioIcon name="arrow" /></Link></div>
+        <div className={styles.nextCopy}><p className={styles.eyebrow}>A suggested next step</p><h2 id="overview-next">{step.title}</h2><p>{step.why}</p><Link href={step.href} className={styles.primaryLink}>{step.action}<StudioIcon name="arrow" /></Link></div>
         <ResearchArtwork />
-        <nav className={styles.workFlow} aria-label="Ways to work"><Link href="/studio/goals">Your goal</Link><StudioIcon name="arrow" /><Link href="/studio/research">Your research</Link><StudioIcon name="arrow" /><Link href="/studio/portfolio">Your portfolio</Link></nav>
+        <nav className={styles.workFlow} aria-label="The nine steps"><Link href="/studio/goals">Goal and rules</Link><StudioIcon name="arrow" /><Link href="/studio/portfolio">Mix and funds</Link><StudioIcon name="arrow" /><Link href="/studio/review">Review</Link></nav>
       </section>
       <PortfolioPicture project={project} calculation={calculation} />
     </div>
