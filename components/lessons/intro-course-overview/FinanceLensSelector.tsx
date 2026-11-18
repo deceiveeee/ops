@@ -23,7 +23,6 @@ const LENSES: {
   copy: string;
   highlight: string[];
   /** The hue of this lens: a dot beside its name, and its tint once picked. */
-  tone: string;
   /** Phone order: each choice, then a free slot after it for the opened description. */
   choiceOrder: string;
   detailOrder: string;
@@ -36,7 +35,6 @@ const LENSES: {
     object: "Annual report · company filing · valuation notes",
     copy: "Represents business analysis, accounting, and valuation. This side of finance relies on reading financial statements, understanding businesses, and estimating value.",
     highlight: ["filing", "value", "statements", "valuation"],
-    tone: "ops-tone-teal",
     choiceOrder: "order-1",
     detailOrder: "order-2",
   },
@@ -48,7 +46,6 @@ const LENSES: {
     object: "Data grid · algorithmic signal · statistical pattern",
     copy: "Represents quantitative finance and mathematical investing. This side of finance uses data, statistics, algorithms, and models.",
     highlight: ["data", "model", "statistics", "algorithm"],
-    tone: "ops-tone-plum",
     choiceOrder: "order-3",
     detailOrder: "order-4",
   },
@@ -61,7 +58,6 @@ const LENSES: {
       "Capital allocation board · factory investment map · operating dashboard",
     copy: "Represents financial decision-making inside a corporation. This side of finance focuses on capital allocation, cost decisions, investment, and operations.",
     highlight: ["capital allocation", "investment", "operations", "cost"],
-    tone: "ops-tone-ochre",
     choiceOrder: "order-5",
     detailOrder: "order-6",
   },
@@ -111,7 +107,6 @@ export default function FinanceLensSelector({
               className={cn(
                 "flex min-h-11 flex-col justify-start rounded-xl border px-4 py-3 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50 md:order-none md:p-4",
                 l.choiceOrder,
-                l.tone,
                 isSel
                   ? "border-[color:var(--ops-accent-strong)] bg-[var(--ops-accent-soft)]"
                   : "border-[color:var(--ops-control-border)] bg-[var(--ops-surface)] hover:border-[color:var(--ops-accent-strong)]",
@@ -163,7 +158,6 @@ export default function FinanceLensSelector({
             className={cn(
               "rounded-xl border border-[color:color-mix(in_srgb,var(--ops-accent-strong)_35%,transparent)] px-4 py-3 md:order-last md:col-span-3 md:p-4",
               active.detailOrder,
-              active.tone,
             )}
           >
             <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
@@ -181,8 +175,7 @@ export default function FinanceLensSelector({
           initial={reduce ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          // The answer takes the hue of the lens that was picked.
-          className={cn("ops-interactive-frame mt-4 p-5 sm:p-6", active.tone)}
+          className="ops-interactive-frame mt-4 p-5 sm:p-6"
         >
           <h3 className="ops-interactive-title text-[18px] leading-snug">
             Three ways into the same subject

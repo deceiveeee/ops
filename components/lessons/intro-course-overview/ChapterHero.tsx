@@ -75,7 +75,6 @@ export default function ChapterHero({
           <span className="tabular-nums text-accent-cyan">{index}</span>
           <span className="h-px w-8 bg-white/30" />
           <span>{eyebrow}</span>
-          {allLessons}
         </div>
         <motion.h1
           initial={reduce ? false : { opacity: 0, y: 14 }}

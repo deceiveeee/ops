@@ -25,14 +25,14 @@ export default function Lesson1() {
     setCovered((prev) => prev.map((v, idx) => (idx === i ? true : v)));
 
   return (
-    <ModuleIntroLayout>
+    <ModuleIntroLayout activityFirst>
       {/*
         The lesson opens on something to do. The title is one block, and the
         lens question follows it on the first screen at every width; the
         subtitle, the objectives and the definition come after the learner has
         answered. e2e/lesson-first-tap.spec.ts holds that position.
       */}
-      <div className="ops-tone-teal">
+      <div>
         <ChapterHero
           compact
           index="01"
@@ -65,7 +65,7 @@ export default function Lesson1() {
       </Reveal>
 
       {/* Motivation */}
-      <div className="ops-tone-blue">
+      <div>
         <Reveal className="mt-10 sm:mt-12">
           <SectionHeading
             emphasis
@@ -109,7 +109,7 @@ export default function Lesson1() {
       </div>
 
       {/* Main actors */}
-      <div className="ops-tone-ochre">
+      <div>
         <Reveal className="mt-10 sm:mt-12">
           <SectionHeading
             emphasis
@@ -153,7 +153,7 @@ export default function Lesson1() {
       </div>
 
       {/* Valuation vs Management */}
-      <div className="ops-tone-plum">
+      <div>
         <Reveal className="mt-12">
           <SectionHeading
             emphasis
@@ -186,7 +186,7 @@ export default function Lesson1() {
         <Reveal delay={0.05} className="mt-6">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-accent-cyan/30 bg-accent-cyan/5 p-5">
-              <div className="ops-caption text-[11px] text-accent-cyan">
+              <div className="ops-caption text-[12px] text-accent-cyan">
                 Valuation
               </div>
               <div className="ops-interactive-title mt-1.5 text-lg text-white">
@@ -194,7 +194,7 @@ export default function Lesson1() {
               </div>
             </div>
             <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/5 p-5">
-              <div className="ops-caption text-[11px] text-accent-amber">
+              <div className="ops-caption text-[12px] text-accent-amber">
                 Management
               </div>
               <div className="ops-interactive-title mt-1.5 text-lg text-white">
@@ -210,7 +210,7 @@ export default function Lesson1() {
 
       <Reveal className="mt-12">
         <div className="glass-panel p-6">
-          <div className="ops-caption text-[11px] text-slate-400">Next</div>
+          <div className="ops-caption text-[12px] text-slate-400">Next</div>
           <p className="ops-body mt-2 text-[16px] text-slate-200">
             Next, you will see how markets discover prices even when information
             is incomplete, and why accounting becomes the language used to

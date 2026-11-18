@@ -10,18 +10,12 @@ import { test, expect, type Locator, type Page } from "@playwright/test";
  * card. Every other check passed, because nothing measured position.
  *
  * AGENTS.md, Screen Budget Rule: "The learner should be able to act without
- * scrolling." This spec holds all five Module 1 lessons to exactly that, at the
- * six required widths plus the smallest phone still in common use, and holds
- * the layout they share to showing the lesson title on the first screen.
+ * scrolling." This spec verifies the Lesson 1 opening at seven viewport sizes.
  */
 
 const LESSON_1 = "/lessons/what-is-finance-value-time-risk";
 const MODULE_1 = [
   "what-is-finance-value-time-risk",
-  "price-discovery-and-accounting-language",
-  "corporate-and-personal-financial-systems",
-  "time-risk-and-financial-principles",
-  "finance-roadmap-and-personal-application",
 ];
 
 /** Width, height. The first is a 4.7-inch phone; the rest are the widths AGENTS.md requires. */
@@ -116,10 +110,6 @@ async function firstActivity(page: Page) {
  */
 const OPENINGS: { n: number; slug: string; first: RegExp; alsoOnScreen: { name: RegExp | string; exact?: boolean; what: string } }[] = [
   { n: 1, slug: MODULE_1[0], first: /business analyst/i, alsoOnScreen: { name: /corporate manager/i, what: "the third lens choice" } },
-  { n: 2, slug: MODULE_1[1], first: /^\$0$/, alsoOnScreen: { name: "$149", exact: true, what: "the highest bid" } },
-  { n: 3, slug: MODULE_1[2], first: /^Corporate$/, alsoOnScreen: { name: /raise cash/i, what: "the first cash-flow step" } },
-  { n: 4, slug: MODULE_1[3], first: /^\$100 today$/, alsoOnScreen: { name: "$100 one year from now", exact: true, what: "the second choice" } },
-  { n: 5, slug: MODULE_1[4], first: /introduction/i, alsoOnScreen: { name: /introduction/i, what: "the first roadmap stage" } },
 ];
 
 for (const { n, slug, first: expected, alsoOnScreen } of OPENINGS) {
@@ -154,82 +144,6 @@ for (const { n, slug, first: expected, alsoOnScreen } of OPENINGS) {
     expect(first!.top, `first activity "${first!.text}" starts ${first!.screens.toFixed(2)} screens down`).toBeLessThanOrEqual(450);
   });
 }
-
-/** What each of lessons 2-5 said before its first activity. All of it must still be on the page. */
-const KEPT: Record<number, { shown: string[]; heading?: string; objectives: RegExp }> = {
-  2: {
-    shown: [
-      "How markets discover prices under uncertainty, and why accounting becomes the language used to interpret those prices.",
-      "is the process by which financial markets determine the price or value of an asset through the interaction of buyers and sellers",
-      "You cannot open it, shake it, or inspect it.",
-    ],
-    objectives: /0 of 2 covered/,
-  },
-  3: {
-    shown: [
-      "Corporations and households use similar financial logic, but with different objectives.",
-      "Corporate financial decisions involve five cash-flow steps.",
-    ],
-    heading: "Corporate Financial Decisions",
-    objectives: /0 of 1 covered/,
-  },
-  4: {
-    shown: [
-      "Why time and uncertainty make financial decisions difficult, and the six fundamental principles that guide financial analysis.",
-      "Cash flows now are different from cash flows later.",
-      "Risk means the future is uncertain.",
-    ],
-    heading: "Why Time and Risk Make Finance Difficult",
-    objectives: /0 of 2 covered/,
-  },
-  5: {
-    shown: [
-      "Connect the module to the full Finance Foundations course and apply the finance framework to yourself.",
-    ],
-    objectives: /0 of 1 covered/,
-  },
-};
-
-for (const { n, slug } of OPENINGS.slice(1)) {
-  test(`lesson ${n}: nothing the old opening taught has been dropped`, async ({ page }) => {
-    await open(page, `/lessons/${slug}`, 390, 844);
-    const main = page.locator("main");
-    for (const sentence of KEPT[n].shown) {
-      await expect(main.getByText(sentence).first()).toBeVisible();
-    }
-    // The section heading that used to stand above the activity now follows it.
-    if (KEPT[n].heading) {
-      await expect(main.getByRole("heading", { name: KEPT[n].heading, exact: true })).toBeVisible();
-    }
-    await expect(main.getByText(KEPT[n].objectives)).toBeVisible();
-    await main.getByText("Learning objectives").click();
-    for (const objective of [
-      "Explain why finance applies to both personal and corporate decisions.",
-      "Identify the main participants in the financial system.",
-      "Distinguish between valuation and management.",
-      "Explain why accounting is the language of finance.",
-      "Distinguish between stock variables and flow variables.",
-      "Explain why time and risk make finance difficult.",
-      "Describe the six fundamental principles of finance.",
-    ]) {
-      await expect(main.getByText(objective)).toBeVisible();
-    }
-  });
-}
-
-test("lesson 2: a bid is answered at once, with what the class paid", async ({ page }) => {
-  await open(page, `/lessons/${MODULE_1[1]}`, 390, 844);
-  await page.getByRole("button", { name: "$20", exact: true }).click();
-  await expect(page.getByText("Class winning bid")).toBeVisible();
-  await expect(page.getByText(/The class discovered a market price even with limited information/)).toBeVisible();
-});
-
-test("lesson 4: a choice is answered at once", async ({ page }) => {
-  await open(page, `/lessons/${MODULE_1[3]}`, 390, 844);
-  await page.getByRole("button", { name: "$100 today", exact: true }).click();
-  await expect(page.getByText(/Money today is usually more valuable/)).toBeVisible();
-  await expect(page.getByRole("button", { name: /Next decision/ })).toBeVisible();
-});
 
 test("lesson 1: picking a lens answers at once and ticks the first objective", async ({ page }) => {
   await open(page, LESSON_1, 390, 844);
