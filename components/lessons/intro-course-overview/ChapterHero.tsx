@@ -9,14 +9,51 @@ export default function ChapterHero({
   title,
   subtitle,
   artifacts,
+  compact = false,
 }: {
   index: string;
   eyebrow: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   artifacts?: { label: string; tone: "cyan" | "amber" | "red" }[];
+  /**
+   * A title block only, with no subtitle or artwork, for a lesson that opens
+   * on an activity: the title must leave room for it on the first screen.
+   */
+  compact?: boolean;
 }) {
   const reduce = useReducedMotion();
+
+  // Below 1024px the module's lesson list sits under the lesson, so the title
+  // row carries the way to it. The link is 44px tall to tap but takes only a
+  // line of height, which is what the negative margin is for.
+  const allLessons = (
+    <a
+      href="#module-lessons"
+      className="-my-3 ml-auto inline-flex min-h-11 items-center font-sans text-[12px] font-medium tracking-[0.01em] text-accent-cyan hover:underline lg:hidden"
+    >
+      All 5 lessons ↓
+    </a>
+  );
+
+  if (compact) {
+    return (
+      <header className="w-full">
+        <div className="ops-eyebrow flex items-center gap-3 text-xs">
+          <span className="tabular-nums text-accent-cyan">{index}</span>
+          <span className="h-px w-8 bg-white/30" />
+          <span>{eyebrow}</span>
+          {allLessons}
+        </div>
+        {/* 36px at most: the longest Module 1 title then takes one line beside
+            the lesson list, which keeps the first activity inside the top half
+            of a 1440x900 screen. */}
+        <h1 className="ops-display mt-2 text-[28px] leading-[1.1] sm:mt-3 sm:text-4xl">
+          {title}
+        </h1>
+      </header>
+    );
+  }
 
   const toneRing: Record<string, string> = {
     cyan: "border-accent-cyan/40 text-accent-cyan",
@@ -47,14 +84,16 @@ export default function ChapterHero({
         >
           {title}
         </motion.h1>
-        <motion.p
-          initial={reduce ? false : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
-          className="ops-body mt-6 max-w-2xl text-lg leading-8 text-slate-200 sm:text-xl"
-        >
-          {subtitle}
-        </motion.p>
+        {subtitle && (
+          <motion.p
+            initial={reduce ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
+            className="ops-body mt-6 max-w-2xl text-lg leading-8 text-slate-200 sm:text-xl"
+          >
+            {subtitle}
+          </motion.p>
+        )}
 
         {artifacts && artifacts.length > 0 && (
           <div className="mt-10 flex flex-wrap gap-3">
