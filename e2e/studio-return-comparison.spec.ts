@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { seedProject } from "./studio-seed";
 import { mkdirSync, writeFileSync } from "node:fs";
 import publicReturns from "../lib/studio-project/data/fund-total-returns.json";
 import { exportProjectBackup } from "../lib/studio-project/backup";
@@ -63,6 +64,21 @@ async function open(page: Page, project: StudioProject, route = ROUTE) {
   }, backup.raw);
   await page.reload();
   await saved(page);
+}
+
+/**
+ * "Steady mix" moves from VTI 60% to 50%, as a portfolio typed by hand does
+ * when older work changes it: no page types a holding's weight any more, so
+ * the saved record is edited and reopened. A saved comparison of it is then out
+ * of date, and "More bonds" is untouched.
+ */
+async function changeSteadyMix(page: Page, then: string) {
+  const project = await stored(page);
+  const steady = project.alternatives[0];
+  await seedProject(page, {
+    ...project,
+    alternatives: [{ ...steady, positions: steady.positions.map((position) => position.instrumentId === "vti" ? { ...position, targetWeightPct: 50 } : position) }, ...project.alternatives.slice(1)],
+  }, then);
 }
 
 async function stored(page: Page): Promise<StudioProject> {
@@ -181,14 +197,8 @@ test("a fresh learner compares two allocations, fixes a missing history, inspect
   await expect(panel(page)).toContainText("Reopened from its own saved data.");
   await expectPaths(page, steady, bonds);
 
-  // Change an input on its own page; the old result stays, a new run reflects the change.
-  await page.goto("/studio/portfolio");
-  const vti = page.getByLabel("VTI target percentage", { exact: true });
-  await vti.fill("50");
-  await vti.press("Tab");
-  await expect.poll(async () => (await stored(page)).alternatives[0].positions.find((item) => item.instrumentId === "vti")!.targetWeightPct).toBe(50);
-  await saved(page);
-  await page.goto(`${ROUTE}?view=compare`);
+  // Change an input; the old result stays, a new run reflects the change.
+  await changeSteadyMix(page, `${ROUTE}?view=compare`);
   await tab(page, "Saved").click();
   await panel(page).getByRole("button", { name: "Open", exact: true }).click();
   await expect(panel(page)).toContainText("“Steady mix” now has different weights, starting amount or reserve.");
@@ -373,12 +383,7 @@ test("every comparison state fits six widths without sideways scrolling", async 
       name: "stale-saved", phone: 1.69, project: () => fixture(undefined, undefined, [aggHistory()]),
       setup: async (p) => {
         await saveOne(p);
-        await p.goto("/studio/portfolio");
-        const vti = p.getByLabel("VTI target percentage", { exact: true });
-        await vti.fill("50");
-        await vti.press("Tab");
-        await expect.poll(async () => (await stored(p)).alternatives[0].positions.find((item) => item.instrumentId === "vti")!.targetWeightPct).toBe(50);
-        await p.goto(`${ROUTE}?view=compare`);
+        await changeSteadyMix(p, `${ROUTE}?view=compare`);
       },
       show: async (p) => {
         await tab(p, "Saved").click();

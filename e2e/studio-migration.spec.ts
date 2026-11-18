@@ -130,7 +130,6 @@ async function seedLegacyOnly(page: Page) {
 
 /** Each section of the workspace is its own page. */
 const GOALS = "/studio/goals";
-const PORTFOLIO = "/studio/portfolio";
 const RESEARCH = "/studio/research";
 const REVIEW = "/studio/review";
 
@@ -176,10 +175,11 @@ test("a portfolio saved by the previous version opens with its work intact", asy
   // $20,000 less the $4,000 held back is what the weights are a share of.
   await expect(page.getByRole("main")).toContainText("$16,000");
 
-  await page.goto(PORTFOLIO);
-  await expect(page.getByLabel("AAPL target percentage")).toHaveValue("60", { timeout: 15_000 });
-  await expect(page.getByLabel("VXUS target percentage")).toHaveValue("40");
-  await expect(page.getByRole("main")).toContainText("100.0%");
+  // The weights typed in the old version are kept, and step 4 offers to build from them.
+  await page.goto("/studio/portfolio/split");
+  const start = page.getByRole("region", { name: "Start from the weights you typed" });
+  await expect(start).toContainText("AAPL: 60% now, 60% after", { timeout: 15_000 });
+  await expect(start).toContainText("VXUS: 40% now, 40% after");
 
   // Research is the part that changes shape. In the old record it hung off the
   // holding; in the new one it is a candidate keyed by instrument, and it has to

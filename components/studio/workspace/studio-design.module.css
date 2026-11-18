@@ -13,14 +13,13 @@
 .overview :is(a, button):focus-visible { outline: 3px solid #5c4ac7; outline-offset: 4px; }
 .overviewHeading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
 .eyebrow { font-size: 12px; line-height: 1.6; color: #615f6e; font-weight: 500; }
-.overviewHeading h1 { margin-top: 6px; font-size: clamp(36px, 3.4vw, 48px); line-height: 1.1; font-weight: 500; letter-spacing: -.055em; }
+.overviewHeading h1 { margin-top: 6px; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.15; font-weight: 500; letter-spacing: -.025em; }
 .overviewHeading h1 em { font-family: var(--font-display), Georgia, serif; color: #5a48bb; font-weight: 400; }
 .overviewHeading > p { font-size: 13px; line-height: 1.7; color: #62636b; }
 .startGrid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; }
 .nextStep { display: grid; grid-template-columns: minmax(0, 1fr) 150px; position: relative; padding: 26px 26px 0; border: 1px solid #dedbea; border-radius: 24px; background: #ebe8f4; }
 .nextCopy { position: relative; z-index: 1; }
 .nextCopy .eyebrow { display: flex; align-items: center; gap: 8px; }
-.smallDot { width: 6px; height: 6px; border-radius: 50%; background: #7663bd; flex-shrink: 0; }
 .nextCopy h2 { font-size: clamp(24px, 2.3vw, 31px); font-weight: 500; line-height: 1.15; letter-spacing: -.045em; margin-top: 14px; max-width: 300px; }
 .nextCopy > p:not(.eyebrow) { font-size: 13px; line-height: 1.7; color: #595366; margin-top: 12px; max-width: 310px; }
 .primaryLink { display: inline-flex; align-items: center; justify-content: center; gap: 20px; border-radius: 100px; background: #29272f; color: #fff; min-height: 44px; padding: 11px 18px; margin-top: 20px; font-size: 13px; font-weight: 500; transition: background-color 180ms; }
@@ -121,7 +120,8 @@
   .modeSwitch button { padding-inline: 11px; font-size: 13px; min-height: 44px; }
   .overviewHeading { align-items: start; margin-bottom: 12px; }
   .overviewHeading > p { display: none; }
-  .overviewHeading h1 { font-size: 40px; }
+  /* Two lines on a phone ("Good afternoon. What should we work on?"); kept tight so the saved overview stays within 1.5 screens at 390. */
+  .overviewHeading h1 { font-size: 26px; line-height: 1.1; }
   .startGrid { grid-template-columns: 1fr; gap: 16px; }
   .nextStep { grid-template-columns: 1fr; padding: 16px 20px 0; border-radius: 20px; }
   .nextCopy h2 { font-size: 26px; }

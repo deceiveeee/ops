@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import WorkspaceStage from "@/components/studio/workspace/WorkspaceStage";
+import { MixStep } from "@/components/studio/workspace/ConstructionSteps";
 
 export const metadata: Metadata = {
-  title: "Portfolio · Studio — Investing Studio",
-  description: "Decide how much of your money each investment takes, and see the dollar amount behind every percentage.",
+  title: "Your mix · Studio — Investing Studio",
+  description: "Step 3 of 9: choose how much goes to Ready, Steady and Grow, and see whether that mix can reach your goal.",
 };
 
 export default function PortfolioPage() {
-  // No "Portfolio" label: the tabs directly above already say where this is.
-  return <WorkspaceStage stage="build" />;
+  return <MixStep />;
 }

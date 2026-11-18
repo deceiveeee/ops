@@ -85,20 +85,28 @@ export const STUDIO_GUIDANCE: Record<StudioGuidanceKey, StudioGuidance> = {
     ],
   },
   build: {
-    title: "Decide how much each holding gets",
+    title: "Build from the mix down",
     definition:
-      "Allocation divides your portfolio among investments. A weight expresses each holding as a percentage of the whole, including cash. Together those weights account for 100% of your money.",
+      "Allocation divides your portfolio among slices, the parts inside them, and the funds that fill each part. A weight is a holding's share of the whole portfolio, cash included; Studio works each one out from those choices.",
     example:
-      "OPS example: a 25% weight in a $10,000 portfolio assigns $2,500 to that holding. Two funds can own the same company, so adding a second fund can increase the money depending on that company.",
+      "OPS example: of $10,000, Grow at 70% is $7,000. Putting 30% of Grow in international stocks sends $2,100 there and $4,900 to US stocks. One fund for each part takes that part's money, so no fund needs a percentage typed for it.",
     action:
-      "Give each chosen holding a job and a weight. Check the remaining cash and total, then inspect repeated companies, industries and countries. Test the result against your goal and loss limit before accepting the mix.",
+      "Set your mix in step 3, split each slice in step 4 and choose one fund for each part in step 5. Size any picks inside a budget in step 6, then look through every fund to what you own in step 7.",
     terms: [
       { term: "Weight", definition: "A holding's value divided by the whole portfolio value, expressed as a percentage." },
+      { term: "Index fund", definition: "A fund that holds the companies in a published list, called an index, in about the same proportions, instead of choosing among them." },
+      { term: "Pick", definition: "A single company held in place of part of an index fund, because you expect it to do better than that fund." },
       { term: "Diversification", definition: "Spreading exposure across investments whose results can differ. Its effect depends on what you own and how those investments behave together." },
       { term: "Overlap", definition: "Exposure to the same investment through more than one holding, such as a company held directly and inside a fund." },
       { term: "Concentration", definition: "A large part of your money depending on one company, industry, country or other shared source of risk." },
     ],
-    sources: [ALLOCATION_SOURCE],
+    sources: [
+      ALLOCATION_SOURCE,
+      {
+        label: "Vanguard: principles for investing success",
+        url: "https://corporate.vanguard.com/content/corporatesite/us/en/corp/about-our-funds/how-we-invest/principles-for-investing-success.html",
+      },
+    ],
   },
   risk: {
     title: "See what a setback would cost",

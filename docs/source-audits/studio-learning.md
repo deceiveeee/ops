@@ -154,3 +154,38 @@ No current product data or full source-authentic lesson release is claimed here.
 Actual control coverage, fresh-user practice, persistence, numerical engine verification,
 accessibility, themes, all six responsive widths and visual audit remain the implementation
 cycle's release evidence. The Studio must not be marked release-ready from this document.
+
+## 8. The nine-step build, added 17 November 2026
+
+Plan: `docs/design/studio-portfolio-top-down-plan-2026-11-16.md`. Studio's Goals, Portfolio
+and Review now follow the professional order: rules, the return needed, the mix, the split
+inside each slice, one fund per part, picks, a check of the whole, buying, and review. The
+sources below were read on 16 November 2026 (the CFA Institute IPS paper and the Vanguard
+2017 framework in full; the CFA reading's process sections; Vanguard's rebalancing page).
+They have current official-web review, not cache/hash verification.
+
+| Guidance / control | Supporting source | OPS model and prerequisite | Learner action |
+| --- | --- | --- | --- |
+| Steps 1-2: rules before choices; review schedule and drift threshold set on Goals | CFA Institute, *Elements of an IPS for Individual Investors* (2010) §3, §4c; Vanguard 2017 p. 3 and Figure 1 | Drift is defined on the Goals panel before its threshold is asked for | Set how often to check and the drift that calls for action |
+| Step 2: the return a goal needs | Vanguard 2017 p. 2 (required rate of return) | Return above inflation defined in place with 5% vs 2% prices = about 2.9%; OPS timing: monthly additions at month end, today's dollars | Enter an amount in today's dollars; read the yearly return needed |
+| Step 3: the mix first, with ranges | CFA reading (Maginn et al., 3rd ed.) §5.1.4; Mission 5 slices | Slices, targets and ranges are Mission 5's taught vocabulary | Set targets and ranges; compare with up to two other mixes |
+| Step 3: estimates are the learner's assumptions | CFA reading §5.1.3 (long-run estimates are an input); Vanguard Capital Markets Model page (linked, nominal, dated) | Estimate defined as a published ten-year range; Studio bundles no figures | Copy a published range and inflation; read the range against the return needed |
+| Steps 4-5: split, then one broad fund per part | Vanguard 2017 pp. 1-2 (top-down hierarchy; market-cap index funds as a starting point) | Index fund defined in the build guidance; short-term bonds defined as repaid within about a year | Choose a share for each split and a fund for each part |
+| Step 6: picks inside a budget, against the fund they replace | CFA reading §5.1.2 (active holdings differ from the benchmark) | Pick defined in place; the index money each replaces is shown | Set a budget and size picks under the company cap |
+| Step 7: look inside funds; benchmark; extra weight of each pick | Mission 12 holdings data (top positions, coverage stated); CFA reading §5.3.2 | Benchmark = the same mix in the chosen index funds, no picks | Read companies owned through every fund, the benchmark comparison and limits |
+| Step 9: drift by slice first | Vanguard, *Rebalancing your portfolio*; CFA IPS paper §4c | Same drift definition as above | Enter values; compare each slice, then each holding, with its target |
+
+Independent numerical verification (separate scripts, then unit tests written against their
+results in `lib/studio-project/construction.test.ts`; a timing-convention mutation fails two):
+
+| OPS example | Calculation | Result |
+| --- | --- | --- |
+| Return a goal needs | $10,000 now, $200 at each month end for 120 months, target $50,000 | 5.88% a year above inflation; $34,000 with no growth |
+| Same with no monthly additions | 5^(1/10) − 1 | 17.46% |
+| Mix range | 0.05 × 0–1% + 0.25 × 2–4% + 0.70 × 4–8% | 3.3% to 6.65% before inflation; 1.27% to 4.56% above 2% inflation |
+| Scenario on a mix | 0.70 × −30% + 0.25 × −10% | −23.5% |
+| Picks example | $20,000; Grow 70% split 30% international; AAPL and TSM 5% each | VTI $8,800, VXUS $3,200, SGOV $1,000, AGG $4,000, picks $1,000 each |
+
+Gate status: wording, definitions and arithmetic for these steps are mapped. A fresh-learner
+walk-through, the full browser suite and the six-width visual check are the implementation
+cycle's evidence, recorded with that work. Studio is not marked release-ready here.

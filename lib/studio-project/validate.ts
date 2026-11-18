@@ -3,6 +3,7 @@ import { FIGURES } from "./investigate";
 import { validValuationCase } from "./valuation-cases";
 import { validReturnHistory } from "./total-returns";
 import { validLimits } from "./limits";
+import { validBuild, validConstruction } from "./construction";
 import { FIRST_SCENARIO_ID, MAX_SCENARIO_NAME, MAX_SCENARIOS } from "./scenarios";
 import { MAX_SAVED_COMPARISONS, validSavedComparison } from "./return-comparison-saved";
 
@@ -30,7 +31,7 @@ const emptyResearch = { why: "", mainRisk: "", whatWouldChangeMyMind: "", review
 export function validateStudioProject(value: unknown): string[] {
   if (!object(value) || value.schemaVersion !== 2) return ["This is not a supported Studio project."];
   const issues: string[] = [];
-  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom", "valuations", "returnHistories", "limits", "scenarioName", "scenarios", "returnComparisons"])) {
+  if (!keys(value, ["schemaVersion", "id", "createdAt", "updatedAt", "mode", "name", "goal", "candidates", "instruments", "investigations", "alternatives", "selectedAlternativeId", "rules", "stress", "decisions", "migratedFrom", "valuations", "returnHistories", "limits", "scenarioName", "scenarios", "returnComparisons", "construction"])) {
     issues.push("This project contains fields this version does not understand. Keep the original backup.");
   }
   // Goal/rule/position units are unchanged from v1. Reuse that validator rather
@@ -235,7 +236,10 @@ export function validateStudioProject(value: unknown): string[] {
   if (!list(value.alternatives, 100) || value.alternatives.length === 0) issues.push("The project needs between 1 and 100 portfolio alternatives.");
   else for (const alternative of value.alternatives) {
     if (!object(alternative)) { issues.push("A portfolio alternative is invalid."); continue; }
-    if (!keys(alternative, ["id", "name", "createdAt", "updatedAt", "positions", "currentCash", "contributionAmount", "reasoning", "valuationLinks", "comparisonBasis"])
+    if (alternative.build !== undefined && !validBuild(alternative.build)) {
+      issues.push("A portfolio's split, funds or picks contain a value outside 0-100%, a repeated pick, or a field this version does not understand.");
+    }
+    if (!keys(alternative, ["id", "name", "createdAt", "updatedAt", "positions", "currentCash", "contributionAmount", "reasoning", "valuationLinks", "comparisonBasis", "build"])
       || !uniqueId(alternative.id) || !text(alternative.name, 300) || !dated(alternative) || !text(alternative.reasoning)) {
       issues.push("A portfolio alternative contains missing, repeated, or invalid fields.");
     }
@@ -281,6 +285,7 @@ export function validateStudioProject(value: unknown): string[] {
   if (value.valuations !== undefined && (!list(value.valuations, 1000) || !value.valuations.every((v) => validValuationCase(v) && uniqueId(v.id)))) issues.push("A saved valuation contains invalid or repeated fields.");
   if (value.returnHistories !== undefined && (!list(value.returnHistories, 100) || !value.returnHistories.every((v) => validReturnHistory(v) && uniqueId(v.id)))) issues.push("A return history contains invalid dates, adjustments or repeated fields.");
   if (value.limits !== undefined && !validLimits(value.limits)) issues.push("Your limits contain a value outside 0-100%, an impossible date, or a field this version does not understand.");
+  if (value.construction !== undefined && !validConstruction(value.construction)) issues.push("Your target amount, return estimates or compared mixes contain a value out of range, or a field this version does not understand.");
   // Each saved comparison is recomputed from its own data; a result that disagrees makes it invalid.
   if (value.returnComparisons !== undefined && (!list(value.returnComparisons, MAX_SAVED_COMPARISONS) || !value.returnComparisons.every((item) => validSavedComparison(item) && uniqueId(item.id)))) {
     issues.push(`Saved return comparisons must be at most ${MAX_SAVED_COMPARISONS}, each with data that reproduces its results.`);

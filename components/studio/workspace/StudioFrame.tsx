@@ -9,6 +9,7 @@ import { STUDIO_MODES } from "@/lib/studio-mode";
 import { checkPortfolio } from "@/lib/studio-project/limit-checks";
 import { readLimits } from "@/lib/studio-project/limits";
 import { readScenarios } from "@/lib/studio-project/scenarios";
+import { workingAlternative } from "@/lib/studio-project/schema";
 import LimitChecks from "../LimitChecks";
 import { GuidancePanel, Notice, PageIntro, Panel, Stat, downloadFile, pct, usdWhole } from "../shared";
 import ProjectMenu from "./ProjectMenu";
@@ -104,7 +105,7 @@ function LiveFrame({ pathname, children }: { pathname: string; children: ReactNo
     aside = (
       <div className="space-y-4">
         <GuidancePanel guidance={STUDIO_GUIDANCE[guidance]} />
-        <Summary />
+        <Summary labelTargets={pathname === "/studio/review"} />
         <AsideLimits />
       </div>
     );
@@ -497,22 +498,24 @@ function ActionButton({ onClick, children }: { onClick: () => void; children: Re
   );
 }
 
-function Summary() {
-  const { plan, calculation } = useWorkspace();
+function Summary({ labelTargets }: { labelTargets: boolean }) {
+  const { plan, calculation, project } = useWorkspace();
   if (!plan || !calculation) return null;
   const fullyAssigned = Math.abs(calculation.totalWeightPct - 100) <= 0.01;
+  // Built in the nine steps, money not in a fund is Ready's cash by design, not a gap to fill.
+  const built = Boolean(project && workingAlternative(project)?.build);
   return (
     <Panel>
-      <div className="ops-caption text-[12px] text-slate-500">Your portfolio</div>
+      <div className="ops-caption text-[12px] text-slate-500">{labelTargets ? "Target portfolio" : "Your portfolio"}</div>
       <div className="mt-3 space-y-3">
         <Stat label="To invest" value={usdWhole(calculation.investableBudget)} />
         <Stat
           label="Assigned"
           value={pct(calculation.totalWeightPct)}
-          detail={fullyAssigned ? "Fully assigned" : "Needs to total 100%"}
+          detail={fullyAssigned ? "Fully assigned" : built ? "The rest stays as cash" : "Needs to total 100%"}
         />
         <Stat label="Investments" value={String(plan.holdings.length)} />
-        <Stat label="Held as cash" value={usdWhole(calculation.targetCash)} />
+        <Stat label={labelTargets ? "Target cash" : "Held as cash"} value={usdWhole(calculation.targetCash)} />
       </div>
       {calculation.issues.length > 0 ? (
         <ul className="mt-4 space-y-1 border-t border-white/10 pt-3">

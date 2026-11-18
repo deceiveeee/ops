@@ -319,6 +319,12 @@ export interface PortfolioAlternative {
   valuationLinks?: { instrumentId: string; snapshot: import("./valuation-cases").ValuationCase }[];
   /** Goals, limits and scenario used when this weight proposal was saved. */
   comparisonBasis?: { goal: StudioGoal; limits: import("./limits").StudioLimits; stress: StudioStress; scenarioName?: string; scenarios?: StudioScenario[] };
+  /**
+   * Steps 4 to 6 of the top-down build: the split inside each slice, the fund
+   * for each part, and any picks. With a build, the positions' weights are
+   * worked out from it (construction.ts) instead of typed. Absent in older work.
+   */
+  build?: import("./construction").AlternativeBuild;
 }
 
 export interface StudioGoal {
@@ -415,6 +421,8 @@ export interface StudioProject {
   scenarioName?: string;
   /** Up to four more scenarios, each checked like `stress`. Absent in older work, which has one scenario. */
   scenarios?: StudioScenario[];
+  /** The target amount, return estimates and compared mixes of the top-down build. Absent in older work. */
+  construction?: import("./construction").StudioConstruction;
   /** Saved historical comparisons of two allocations, each with its own data. Absent in older work. */
   returnComparisons?: import("./return-comparison-saved").SavedReturnComparison[];
   /**

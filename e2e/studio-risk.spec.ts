@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { seedProject, typedProject } from "./studio-seed";
 
 /**
  * Risk and cost: the loss scenario, the funds' yearly costs and the overlap,
@@ -10,19 +11,10 @@ import { expect, test, type Page } from "@playwright/test";
  * of 20%, so a loss budget of $2,000.
  */
 
-async function addToPortfolio(page: Page, symbol: string) {
-  await page.getByRole("searchbox", { name: "Find an investment" }).fill(symbol);
-  const card = page.getByRole("button", { expanded: false }).filter({ hasText: new RegExp(`^${symbol}`) }).first().locator("xpath=..");
-  await card.getByRole("button", { name: "Add to portfolio" }).click();
-  await expect(card.getByRole("button", { name: "Remove", exact: true })).toBeVisible();
-}
-
+/** Weights typed by hand in an earlier session, saved before the page opens. */
 async function hold(page: Page, weights: [string, string][]) {
-  await page.goto("/studio/research");
-  for (const [symbol] of weights) await addToPortfolio(page, symbol);
-  await page.goto("/studio/portfolio");
-  for (const [symbol, pct] of weights) await page.getByLabel(`${symbol} target percentage`).fill(pct);
-  await expect(page.getByRole("status").filter({ hasText: /^Saved in this browser$/ })).toBeVisible();
+  const id = (symbol: string) => (symbol === "91282CRF0" ? "ust-91282crf0" : symbol.toLowerCase());
+  await seedProject(page, typedProject(weights.map(([symbol, pct]) => [id(symbol), Number(pct)])), "/studio/portfolio/risk");
 }
 
 test("Risk's three tabs move by keyboard, with the scenario first", async ({ page }) => {

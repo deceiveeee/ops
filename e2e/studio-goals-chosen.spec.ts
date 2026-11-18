@@ -65,7 +65,7 @@ test("Goals names the chosen allocation once a limit it was chosen under changes
   await openChosen(page);
   await expect(notice(page)).toHaveCount(0);
 
-  await page.getByRole("tab", { name: /Your mix/ }).click();
+  await page.getByRole("tab", { name: /Your limits/ }).click();
   await page.getByLabel("Cap for one company").fill("4");
   await expect(notice(page)).toHaveText("You chose Lower company concentration on 26 Sep 2026, and your limits have changed since. Check it still fits →");
   await expect(notice(page).getByRole("link", { name: "Check it still fits →" })).toHaveAttribute("href", "/studio/portfolio/weights");
@@ -76,7 +76,7 @@ test("Goals names the chosen allocation once a limit it was chosen under changes
 
   // Put both back: nothing has changed since the choice, so nothing is said.
   await page.getByLabel("Loss you could live with").fill("20");
-  await page.getByRole("tab", { name: /Your mix/ }).click();
+  await page.getByRole("tab", { name: /Your limits/ }).click();
   await page.getByLabel("Cap for one company").fill("5");
   await expect(notice(page)).toHaveCount(0);
   await saved(page);
@@ -115,7 +115,7 @@ test("with two scenarios, Goals names a change to the second, and not a rename",
 test("the notice fits a phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await openChosen(page);
-  await page.getByRole("tab", { name: /Your mix/ }).click();
+  await page.getByRole("tab", { name: /Your limits/ }).click();
   await page.getByLabel("Cap for one company").fill("4");
   await expect(notice(page)).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

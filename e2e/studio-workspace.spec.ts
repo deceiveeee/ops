@@ -4,8 +4,8 @@ import { expect, test, type Page } from "@playwright/test";
  * The workspace's end-to-end baseline.
  *
  * The surface a learner actually builds a portfolio in, walked the way they
- * walk it: the goal, what to buy, how much of each, the rules, and the
- * overview's reading of all of it.
+ * walk it: the goal, the mix, the split, the funds and picks, the rules, and
+ * the overview's reading of all of it.
  *
  * Every assertion here is deliberately blind to how the work is stored. It
  * never reads a storage key, parses a record or names a database: it types what
@@ -30,6 +30,9 @@ const STUDIO = "/studio";
 const GOALS = "/studio/goals";
 const RESEARCH = "/studio/research";
 const PORTFOLIO = "/studio/portfolio";
+const SPLIT = "/studio/portfolio/split";
+const FILL = "/studio/portfolio/fill";
+const PICKS = "/studio/portfolio/picks";
 const REVIEW = "/studio/review";
 
 const PURPOSE = "A deposit on a flat";
@@ -40,6 +43,17 @@ const AAPL_WHY = "It earns more than its capital costs and has done for a decade
 const summary = (page: Page) => page.getByRole("complementary", { name: "About this page" });
 const stat = (page: Page, label: string) =>
   summary(page).getByText(label, { exact: true }).locator("xpath=following-sibling::div[1]");
+
+/** Steps 3 and 4: a mix, and a split inside each slice, typed as a learner types them. */
+async function mixAndSplit(page: Page, mix: [string, string, string], split: [string, string]) {
+  await page.goto(PORTFOLIO);
+  await page.getByLabel("Ready target, % of the whole portfolio").fill(mix[0]);
+  await page.getByLabel("Steady target, % of the whole portfolio").fill(mix[1]);
+  await page.getByLabel("Grow target, % of the whole portfolio").fill(mix[2]);
+  await page.goto(SPLIT);
+  await page.getByLabel("Grow: share in international stocks, % of Grow").fill(split[0]);
+  await page.getByLabel("Steady: share in short-term bonds, % of Steady").fill(split[1]);
+}
 
 /** One of the library's investments, found by its ticker. */
 async function openInvestment(page: Page, symbol: string) {
@@ -105,8 +119,11 @@ test("work entered across the sections survives a reload", async ({ page }) => {
   await page.getByRole("button", { name: "Your record", exact: true }).click();
   await page.getByLabel("Why it belongs").fill(AAPL_WHY);
 
-  await page.goto(PORTFOLIO);
-  await page.getByLabel("AAPL target percentage").fill("100");
+  // $4,000 kept aside of $20,000 is Ready's 20%; the other 80% is Grow, all of it AAPL as a pick.
+  await mixAndSplit(page, ["20", "0", "80"], ["0", "0"]);
+  await page.goto(PICKS);
+  await page.getByLabel("Picks budget, % of the whole portfolio").fill("80");
+  await page.getByLabel("AAPL, % of the whole portfolio").fill("80");
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
   await expect(stat(page, "Held as cash")).toHaveText("$4,000");
 
@@ -130,8 +147,8 @@ test("work entered across the sections survives a reload", async ({ page }) => {
   await page.getByRole("button", { name: "Your record", exact: true }).click();
   await expect(page.getByLabel("Why it belongs")).toHaveValue(AAPL_WHY);
 
-  await page.goto(PORTFOLIO);
-  await expect(page.getByLabel("AAPL target percentage")).toHaveValue("100", { timeout: 15_000 });
+  await page.goto(PICKS);
+  await expect(page.getByLabel("AAPL, % of the whole portfolio")).toHaveValue("80", { timeout: 15_000 });
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
 
   await page.goto(REVIEW);
@@ -148,20 +165,28 @@ test("the overview names one next thing to do, and it changes as the work lands"
   await page.goto(GOALS);
   await page.getByLabel("What is this money for?").fill(PURPOSE);
   await page.goto(STUDIO);
-  // The practice portfolio starts with a budget, so the next gap is holdings.
-  await expect(page.getByRole("heading", { name: "Choose what you might buy" })).toBeVisible({ timeout: 15_000 });
-
-  await page.goto(RESEARCH);
-  await openInvestment(page, "AAPL");
-  await page.getByRole("button", { name: "Add to portfolio" }).click();
-  await page.goto(STUDIO);
-  await expect(page.getByRole("heading", { name: "Decide how much goes where" })).toBeVisible({ timeout: 15_000 });
+  // The rules exist, so the mix comes before any investment.
+  await expect(page.getByRole("heading", { name: "Choose your mix" })).toBeVisible({ timeout: 15_000 });
 
   await page.goto(PORTFOLIO);
-  await page.getByLabel("AAPL target percentage").fill("100");
-  await expect(stat(page, "Assigned")).toHaveText("100.0%");
+  await page.getByLabel("Ready target, % of the whole portfolio").fill("30");
+  await page.getByLabel("Steady target, % of the whole portfolio").fill("0");
+  await page.getByLabel("Grow target, % of the whole portfolio").fill("70");
+  await expect(page.getByRole("status").filter({ hasText: "Saved in this browser" }).first()).toBeVisible();
   await page.goto(STUDIO);
-  // Weights total 100, so what is left is saying how the plan will be followed.
+  await expect(page.getByRole("heading", { name: "Split each slice" })).toBeVisible({ timeout: 15_000 });
+
+  await page.goto(SPLIT);
+  await page.getByLabel("Grow: share in international stocks, % of Grow").fill("0");
+  await expect(page.getByRole("status").filter({ hasText: "Saved in this browser" }).first()).toBeVisible();
+  await page.goto(STUDIO);
+  await expect(page.getByRole("heading", { name: "Fill each part" })).toBeVisible({ timeout: 15_000 });
+
+  await page.goto(FILL);
+  await page.getByRole("radio", { name: /^VTI ·/ }).check();
+  await expect(stat(page, "Assigned")).toHaveText("70.0%");
+  await page.goto(STUDIO);
+  // Every part has its fund, so what is left is saying how the plan will be followed.
   await expect(page.getByRole("heading", { name: "Write the rules you will follow" })).toBeVisible({ timeout: 15_000 });
 
   // The advice is a link, and it goes where it says it goes.
@@ -169,25 +194,23 @@ test("the overview names one next thing to do, and it changes as the work lands"
   await expect(page).toHaveURL(/\/studio\/review$/);
 });
 
-test("a weight change shows its consequence without leaving the page", async ({ page }) => {
+test("a choice shows its consequence without leaving the page", async ({ page }) => {
   test.setTimeout(120_000);
   await openEmpty(page);
+  // Grow 100%, split 70% US and 30% international.
+  await mixAndSplit(page, ["0", "0", "100"], ["30", "0"]);
 
-  await page.goto(RESEARCH);
-  await openInvestment(page, "AAPL");
-  await page.getByRole("button", { name: "Add to portfolio" }).click();
-  await page.getByRole("button", { name: "← All investments", exact: true }).click();
-  await openInvestment(page, "VXUS");
-  await page.getByRole("button", { name: "Add to portfolio" }).click();
-
-  await page.goto(PORTFOLIO);
-  await page.getByLabel("AAPL target percentage").fill("70");
+  await page.goto(FILL);
+  await page.getByRole("tab", { name: "US stocks", exact: true }).click();
+  await page.getByRole("radio", { name: /^VTI ·/ }).check();
   await expect(stat(page, "Assigned")).toHaveText("70.0%");
-  await expect(summary(page)).toContainText("Needs to total 100%");
+  // Built in the steps, money not yet in a fund is cash by design, not an error.
+  await expect(summary(page)).toContainText("The rest stays as cash");
 
   // The panel is the reason the figures sit beside the work rather than under
-  // it: the second weight's effect has to be visible without navigating away.
-  await page.getByLabel("VXUS target percentage").fill("30");
+  // it: the second choice's effect has to be visible without navigating away.
+  await page.getByRole("tab", { name: "International stocks", exact: true }).click();
+  await page.getByRole("radio", { name: /^VXUS ·/ }).check();
   await expect(stat(page, "Assigned")).toHaveText("100.0%");
   await expect(summary(page)).toContainText("Fully assigned");
   await expect(stat(page, "Investments")).toHaveText("2");
