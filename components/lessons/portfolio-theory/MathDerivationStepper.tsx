@@ -81,7 +81,7 @@ export default function MathDerivationStepper({
           })}
         </ol>
         {title !== undefined && (
-          <span className="ml-auto font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">
+          <span className="ml-auto font-sans text-[12px] tracking-[0.01em] text-slate-400">
             {title}
           </span>
         )}
@@ -96,7 +96,7 @@ export default function MathDerivationStepper({
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="font-sans text-[13px] uppercase tracking-[0.18em] text-accent-cyan">
+            <div className="font-sans text-[13px] tracking-[0.01em] text-accent-cyan">
               Step {i + 1} · {step.heading}
             </div>
             <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-ink-950/50 px-5 py-8 text-slate-50">

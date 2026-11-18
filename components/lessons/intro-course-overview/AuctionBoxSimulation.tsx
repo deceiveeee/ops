@@ -39,16 +39,31 @@ export default function AuctionBoxSimulation({
             Mystery Auction · price discovery
           </span>
         </div>
-        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+        <span className="hidden font-sans text-[12px] tracking-[0.01em] text-accent-cyan sm:inline">
           Simulation
         </span>
       </div>
 
+      {/*
+        The bid is the lesson's opening activity, so the question and all five
+        bids have to fit the first screen. While bidding, the box is small on a
+        phone and sits beside the question from 640px; once a bid is in, the
+        result has the full width and the box goes back above it.
+      */}
+      <div
+        className={cn(
+          "mt-4 sm:mt-6",
+          stage === "bid" && "sm:flex sm:items-center sm:gap-6",
+        )}
+      >
       {/* Box visual */}
-      <div className="mt-6 flex justify-center">
+      <div className="flex flex-shrink-0 flex-col items-center">
         <svg
           viewBox="0 0 200 160"
-          className="h-40 w-48"
+          className={cn(
+            "h-20 w-24",
+            stage === "bid" ? "sm:h-32 sm:w-40" : "sm:h-40 sm:w-48",
+          )}
           role="img"
           aria-label="A wrapped mystery box up for auction"
         >
@@ -86,19 +101,17 @@ export default function AuctionBoxSimulation({
             stroke="rgba(34,211,238,0.7)"
             strokeWidth="1.5"
           />
-          <text
-            x="100"
-            y="150"
-            textAnchor="middle"
-            className="fill-slate-400 font-sans"
-            fontSize="9"
-            letterSpacing="1.5"
-          >
-            SEALED · NO INSPECTION
-          </text>
         </svg>
+        {/* The box's label, as page text at the 12px floor. It was drawn
+            inside the picture in capitals at 9px, which shrank further with
+            the box. Left off a phone, where the question says the same thing
+            and the height is needed for the bids. */}
+        <p className="ops-caption -mt-2 hidden text-[12px] sm:block">
+          Sealed · no inspection
+        </p>
       </div>
 
+      <div className="min-w-0 flex-1">
       <AnimatePresence mode="wait">
         {stage === "bid" && (
           <motion.div
@@ -107,18 +120,20 @@ export default function AuctionBoxSimulation({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <p className="ops-body-strong mt-5 text-center text-[16px] text-slate-50">
+            <p className="ops-body-strong mt-3 text-center text-[16px] text-slate-50 sm:mt-0 sm:text-left">
               You are in a finance class. A wrapped box is being auctioned. You
               cannot open it, shake it, or inspect it. What is the highest price
               you would bid?
             </p>
-            <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+            {/* Five equal columns on a phone, so every bid is on one row and
+                each is wide enough to tap. */}
+            <div className="mt-4 grid grid-cols-5 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-2.5">
               {BIDS.map((b) => (
                 <button
                   key={b.id}
                   type="button"
                   onClick={() => submitBid(b.id)}
-                  className="rounded-full border border-white/20 px-5 py-2.5 text-[15px] text-slate-100 transition-colors hover:border-accent-cyan hover:bg-accent-cyan/10 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+                  className="min-h-11 rounded-full border border-white/20 py-2.5 text-[15px] text-slate-100 transition-colors hover:border-accent-cyan hover:bg-accent-cyan/10 hover:text-accent-cyan focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50 sm:px-5"
                 >
                   {b.label}
                 </button>
@@ -256,6 +271,8 @@ export default function AuctionBoxSimulation({
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
+      </div>
     </InteractiveFrame>
   );
 }

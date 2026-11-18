@@ -119,9 +119,9 @@ export default function SecuritizationFactory() {
                     : "border-accent-red/50 bg-accent-red/[0.06]",
                 )}
               >
-                <div className="font-sans text-[14px] text-white">POOL</div>
-                <div className="ops-caption mt-1 text-[11px] text-slate-400">
-                  securitize
+                <div className="font-sans text-[14px] text-white">Pool</div>
+                <div className="ops-caption mt-1 text-[12px] text-slate-400">
+                  Securitize
                 </div>
               </motion.div>
               <motion.div
@@ -188,7 +188,7 @@ export default function SecuritizationFactory() {
                 </span>
                 <span
                   className={cn(
-                    "rounded-full border px-2.5 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em]",
+                    "rounded-full border px-2.5 py-0.5 font-sans text-[12px] tracking-[0.01em]",
                     reqs[r.id]
                       ? "border-accent-green/50 text-accent-green"
                       : "border-accent-red/50 text-accent-red",
@@ -214,7 +214,7 @@ export default function SecuritizationFactory() {
               exit={{ opacity: 0 }}
               className="mt-6 rounded-xl border border-accent-green/40 bg-accent-green/[0.08] p-5"
             >
-              <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-green">
+              <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-green">
                 Running smoothly
               </div>
               <p className="ops-body mt-2 text-[15px] leading-7 text-slate-100">
@@ -230,7 +230,7 @@ export default function SecuritizationFactory() {
               exit={{ opacity: 0 }}
               className="mt-6 rounded-xl border border-accent-red/40 bg-accent-red/[0.08] p-5"
             >
-              <div className="ops-caption text-[11px] uppercase tracking-[0.14em] text-accent-red">
+              <div className="ops-caption text-[12px] tracking-[0.01em] text-accent-red">
                 {offCount} requirement{offCount > 1 ? "s" : ""} violated
               </div>
               <p className="ops-body mt-2 text-[15px] leading-7 text-slate-100">

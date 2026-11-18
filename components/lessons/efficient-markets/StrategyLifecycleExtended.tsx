@@ -39,7 +39,7 @@ export default function StrategyLifecycleExtended() {
 
       {/* Stage selector */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-4 sm:p-5">
-        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Strategy lifecycle
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
@@ -78,7 +78,7 @@ export default function StrategyLifecycleExtended() {
           exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
           transition={{ duration: 0.25 }}
           className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
             Stage {active.n} · {active.label}
           </div>
           <p className="ops-body mt-2 text-[15px] leading-[1.65] text-slate-100">{active.detail}</p>
@@ -89,13 +89,13 @@ export default function StrategyLifecycleExtended() {
       <div className="flex flex-wrap gap-2">
         <button type="button" disabled={stage === 1}
           onClick={() => setStage((s) => Math.max(1, s - 1) as StageKey)}
-          className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+          className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
             stage === 1 ? "border-white/10 text-slate-500 cursor-not-allowed" : "border-white/20 text-slate-200 hover:border-white/40")}>
           ← Previous
         </button>
         <button type="button" disabled={stage === 6}
           onClick={() => setStage((s) => Math.min(6, s + 1) as StageKey)}
-          className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+          className={cn("rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
             stage === 6 ? "border-white/10 text-slate-500 cursor-not-allowed" : "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan hover:bg-accent-cyan/20")}>
           Next →
         </button>
@@ -122,7 +122,7 @@ function Bar({ label, value, tone }: { label: string; value: number; tone: "gree
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">{label}</span>
+        <span className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{label}</span>
         <span className={cn("font-sans text-[13px] tabular-nums", text)}>{value}%</span>
       </div>
       <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-white/8">

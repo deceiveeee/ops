@@ -7,8 +7,12 @@ import ObjectiveTracker from "./ObjectiveTracker";
 import TimeRiskSimulator from "./TimeRiskSimulator";
 import MarketLogicConsole from "./MarketLogicConsole";
 import LessonTakeaway from "./LessonTakeaway";
+import LessonSummary from "./LessonSummary";
 import { Reveal, SectionHeading, Panel } from "./shared";
 import { MODULE_OBJECTIVES } from "./lessonContent";
+
+/** The module objectives this lesson covers, by position in MODULE_OBJECTIVES. */
+const LESSON_OBJECTIVES = [5, 6] as const;
 
 export default function Lesson4() {
   const [covered, setCovered] = useState<boolean[]>(
@@ -19,99 +23,120 @@ export default function Lesson4() {
 
   return (
     <ModuleIntroLayout>
-      <ChapterHero
-        index="04"
-        eyebrow="Lesson 4 · Module 1"
-        title="Time, Risk, and the Logic of Finance"
-        subtitle="Why time and uncertainty make financial decisions difficult, and the six fundamental principles that guide financial analysis."
-        artifacts={[
-          { label: "Time", tone: "amber" },
-          { label: "Risk", tone: "red" },
-          { label: "Principles", tone: "cyan" },
-        ]}
-      />
+      {/*
+        The lesson opens on the three decisions: each asks only which payment
+        the learner would rather have, and explains itself once answered. The
+        section that names time and risk follows, as the account of what the
+        learner just felt. e2e/lesson-first-tap.spec.ts holds the first
+        decision to the first screen.
+      */}
+      <div className="ops-tone-teal">
+        <ChapterHero
+          compact
+          index="04"
+          eyebrow="Lesson 4 · Module 1"
+          title="Time, Risk, and the Logic of Finance"
+        />
 
-      <Reveal className="mt-8">
-        <ObjectiveTracker objectives={MODULE_OBJECTIVES} covered={covered} />
-      </Reveal>
+        <div className="mt-4 sm:mt-6">
+          <TimeRiskSimulator onComplete={() => mark(5)} />
+        </div>
+      </div>
 
-      <Reveal className="mt-12">
-        <SectionHeading
-          index="01"
-          eyebrow="The difficulty"
-          title="Why Time and Risk Make Finance Difficult"
+      <Reveal className="mt-10">
+        <LessonSummary
+          subtitle="Why time and uncertainty make financial decisions difficult, and the six fundamental principles that guide financial analysis."
+          topics={["Time", "Risk", "Principles"]}
         />
       </Reveal>
-      <Reveal delay={0.05} className="mt-5">
-        <Panel>
-          <p className="ops-definition text-[17px]">
-            Two factors make finance challenging:{" "}
-            <strong className="text-white">time</strong> and{" "}
-            <strong className="text-white">risk</strong>.
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/5 p-5">
-              <div className="ops-caption text-[11px] text-accent-amber">
-                Time
-              </div>
-              <p className="ops-body mt-2 text-[14px] text-slate-200">
-                Cash flows now are different from cash flows later. A dollar
-                today is not the same as a dollar next year because money can be
-                invested, interest can be earned, and inflation can change
-                purchasing power.
-              </p>
-            </div>
-            <div className="rounded-xl border border-accent-red/30 bg-accent-red/5 p-5">
-              <div className="ops-caption text-[11px] text-accent-red">
-                Risk
-              </div>
-              <p className="ops-body mt-2 text-[14px] text-slate-200">
-                Risk means the future is uncertain. Under perfect certainty,
-                financial decisions would be much easier. Risk creates the need
-                for probability, statistics, historical data, and models of
-                uncertainty.
-              </p>
-            </div>
-          </div>
-        </Panel>
-      </Reveal>
-      <Reveal delay={0.05} className="mt-6">
-        <TimeRiskSimulator onComplete={() => mark(5)} />
-      </Reveal>
-      <Reveal delay={0.05} className="mt-6">
-        <Panel>
-          <div className="ops-caption text-[11px] text-slate-400">
-            Definition
-          </div>
-          <p className="ops-definition mt-2 text-[17px]">
-            <strong className="text-white">Risk aversion</strong> means that,
-            other things equal, people prefer less risk to more risk when risk
-            is defined properly.
-          </p>
-          <div className="mt-4 rounded-xl border border-white/15 bg-ink-950/60 p-5">
-            <div className="ops-caption text-[11px] text-accent-cyan">
-              Investors must ask
-            </div>
-            <ul className="ops-body mt-3 space-y-2.5 text-[15px] text-slate-200">
-              <li>· When will I receive cash flows?</li>
-              <li>· How uncertain are those cash flows?</li>
-              <li>· What return compensates me for waiting?</li>
-              <li>· What return compensates me for bearing risk?</li>
-            </ul>
-          </div>
-        </Panel>
-      </Reveal>
-
-      <Reveal className="mt-12">
-        <SectionHeading
-          index="02"
-          eyebrow="The logic"
-          title="Six Fundamental Principles of Finance"
+      <Reveal className="mt-5">
+        <ObjectiveTracker
+          objectives={MODULE_OBJECTIVES}
+          covered={covered}
+          inThisLesson={LESSON_OBJECTIVES}
         />
       </Reveal>
-      <Reveal delay={0.05} className="mt-6">
-        <MarketLogicConsole onComplete={() => mark(6)} />
-      </Reveal>
+
+      <div className="ops-tone-blue">
+        <Reveal className="mt-12">
+          <SectionHeading
+            emphasis
+            index="01"
+            eyebrow="The difficulty"
+            title="Why Time and Risk Make Finance Difficult"
+          />
+        </Reveal>
+        <Reveal delay={0.05} className="mt-5">
+          <Panel>
+            <p className="ops-definition text-[17px]">
+              Two factors make finance challenging:{" "}
+              <strong className="text-white">time</strong> and{" "}
+              <strong className="text-white">risk</strong>.
+            </p>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-accent-amber/30 bg-accent-amber/5 p-5">
+                <div className="ops-caption text-[11px] text-accent-amber">
+                  Time
+                </div>
+                <p className="ops-body mt-2 text-[14px] text-slate-200">
+                  Cash flows now are different from cash flows later. A dollar
+                  today is not the same as a dollar next year because money can be
+                  invested, interest can be earned, and inflation can change
+                  purchasing power.
+                </p>
+              </div>
+              <div className="rounded-xl border border-accent-red/30 bg-accent-red/5 p-5">
+                <div className="ops-caption text-[11px] text-accent-red">
+                  Risk
+                </div>
+                <p className="ops-body mt-2 text-[14px] text-slate-200">
+                  Risk means the future is uncertain. Under perfect certainty,
+                  financial decisions would be much easier. Risk creates the need
+                  for probability, statistics, historical data, and models of
+                  uncertainty.
+                </p>
+              </div>
+            </div>
+          </Panel>
+        </Reveal>
+        <Reveal delay={0.05} className="mt-6">
+          <Panel>
+            <div className="ops-caption text-[11px] text-slate-400">
+              Definition
+            </div>
+            <p className="ops-definition mt-2 text-[17px]">
+              <strong className="text-white">Risk aversion</strong> means that,
+              other things equal, people prefer less risk to more risk when risk
+              is defined properly.
+            </p>
+            <div className="mt-4 rounded-xl border border-white/15 bg-ink-950/60 p-5">
+              <div className="ops-caption text-[11px] text-accent-cyan">
+                Investors must ask
+              </div>
+              <ul className="ops-body mt-3 space-y-2.5 text-[15px] text-slate-200">
+                <li>· When will I receive cash flows?</li>
+                <li>· How uncertain are those cash flows?</li>
+                <li>· What return compensates me for waiting?</li>
+                <li>· What return compensates me for bearing risk?</li>
+              </ul>
+            </div>
+          </Panel>
+        </Reveal>
+      </div>
+
+      <div className="ops-tone-ochre">
+        <Reveal className="mt-12">
+          <SectionHeading
+            emphasis
+            index="02"
+            eyebrow="The logic"
+            title="Six Fundamental Principles of Finance"
+          />
+        </Reveal>
+        <Reveal delay={0.05} className="mt-6">
+          <MarketLogicConsole onComplete={() => mark(6)} />
+        </Reveal>
+      </div>
 
       <Reveal className="mt-12">
         <div className="glass-panel p-6">

@@ -44,7 +44,7 @@ function Phase2Adjust() {
       <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {FUNDS.map((f) => (
           <div key={f.id} className="rounded-xl border border-white/12 bg-white/[0.03] p-4">
-            <label className="block font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400" htmlFor={`pb-${f.id}`}>
+            <label className="block font-sans text-[12px] tracking-[0.01em] text-slate-400" htmlFor={`pb-${f.id}`}>
               Fund {f.id} weight <span className="text-slate-500">(β = {f.beta.toFixed(2)})</span>
             </label>
             <div className="relative mt-2 inline-flex w-full items-center">
@@ -161,7 +161,7 @@ export default function PortfolioBetaBuilder() {
       </div>
 
       <div className="border-t border-white/10 pt-8">
-        <div className="mb-4 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+        <div className="mb-4 font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           Part 2 · Reduce beta toward 0.90
         </div>
         <Phase2Adjust />

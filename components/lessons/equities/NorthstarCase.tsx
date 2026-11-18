@@ -315,7 +315,7 @@ function ForecastWorksheet({ onComplete }: { onComplete: () => void }) {
       <div className="mt-5 overflow-x-auto">
         <table className="w-full min-w-[680px] border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-white/10 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-500">
+            <tr className="border-b border-white/10 font-sans text-[12px] tracking-[0.01em] text-slate-500">
               <th className="px-3 py-2">Year</th>
               <th className="px-3 py-2">Begin BVPS</th>
               <th className="px-3 py-2">ROE</th>
@@ -1206,7 +1206,7 @@ function CostOfEquityStressWorksheet({
         <div className="mt-5 overflow-x-auto">
           <table className="w-full min-w-[360px] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10 font-sans text-[11px] uppercase tracking-[0.14em] text-slate-500">
+              <tr className="border-b border-white/10 font-sans text-[12px] tracking-[0.01em] text-slate-500">
                 <th className="px-3 py-2">r</th>
                 <th className="px-3 py-2">P₀</th>
                 <th className="px-3 py-2">Δ vs r=10%</th>

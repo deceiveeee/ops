@@ -32,7 +32,7 @@ export default function ForecastActualDiagnosis() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Classify each variance
         </div>
         <p className="ops-body mt-2 text-[13px] leading-[1.55] text-slate-300">

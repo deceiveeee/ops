@@ -35,7 +35,7 @@ export default function RiskVsUncertaintyUrns() {
           aria-pressed={choice === "A"}
           className={cn("rounded-2xl border p-5 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
             choice === "A" ? "border-accent-cyan/60 bg-accent-cyan/[0.08]" : "border-accent-cyan/25 bg-accent-cyan/[0.04] hover:border-accent-cyan/45")}>
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Urn A · known risk</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Urn A · known risk</div>
           <div className="mt-3 flex items-center justify-center">
             <UrnVisual red={50} black={50} known />
           </div>
@@ -52,7 +52,7 @@ export default function RiskVsUncertaintyUrns() {
           aria-pressed={choice === "B"}
           className={cn("rounded-2xl border p-5 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
             choice === "B" ? "border-accent-purple/60 bg-accent-purple/[0.08]" : "border-accent-purple/25 bg-accent-purple/[0.04] hover:border-accent-purple/45")}>
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-purple">Urn B · uncertainty</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-purple">Urn B · uncertainty</div>
           <div className="mt-3 flex items-center justify-center">
             <UrnVisual red={50} black={50} known={false} />
           </div>
@@ -83,7 +83,7 @@ export default function RiskVsUncertaintyUrns() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4">
             <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-              <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
                 Your reaction
               </div>
               <p className="ops-body mt-2 text-[15px] leading-[1.65] text-slate-100">
@@ -117,7 +117,7 @@ export default function RiskVsUncertaintyUrns() {
 
       {/* Applications */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Where uncertainty shows up in investing
         </div>
         <ul className="mt-3 space-y-2">

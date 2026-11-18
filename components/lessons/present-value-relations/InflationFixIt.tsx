@@ -105,7 +105,7 @@ export default function InflationFixIt() {
                 setChecked(false);
               }}
               className={cn(
-                "rounded-full px-3 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                "rounded-full px-3 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                 world === w
                   ? w === "nominal"
                     ? "bg-accent-cyan/15 text-accent-cyan"
@@ -226,7 +226,7 @@ export default function InflationFixIt() {
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span
                       className={cn(
-                        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em]",
+                        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-sans text-[12px] tracking-[0.01em]",
                         c.cfType === "nominal"
                           ? "border-accent-cyan/30 bg-accent-cyan/10 text-accent-cyan"
                           : "border-accent-amber/30 bg-accent-amber/10 text-accent-amber",
@@ -275,7 +275,7 @@ export default function InflationFixIt() {
                         >
                           <div
                             className={cn(
-                              "font-sans text-[11px] uppercase tracking-[0.14em]",
+                              "font-sans text-[12px] tracking-[0.01em]",
                               r === "nominal"
                                 ? "text-accent-cyan"
                                 : "text-accent-amber",
@@ -353,7 +353,7 @@ export default function InflationFixIt() {
         {checked && (
           <span
             className={cn(
-              "font-sans text-[12px] uppercase tracking-[0.14em]",
+              "font-sans text-[12px] tracking-[0.01em]",
               allConsistent ? "text-accent-green" : "text-slate-400",
             )}
           >

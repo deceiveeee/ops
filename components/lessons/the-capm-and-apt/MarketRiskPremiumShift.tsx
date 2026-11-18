@@ -114,7 +114,7 @@ export default function MarketRiskPremiumShift() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Setup</div>
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Setup</div>
         <p className="mt-2 text-[16px] leading-[1.65] text-slate-200">
           Hold <InlineMath>{String.raw`R_f = 4\%`}</InlineMath> constant. Compare two economies: one with a
           market risk premium of <InlineMath>{String.raw`4\%`}</InlineMath> (calmer markets, lower required
@@ -147,7 +147,7 @@ export default function MarketRiskPremiumShift() {
             {SCENARIOS.map((s) => (
               <div key={s.id} className={cn("rounded-xl border bg-white/[0.03] p-4", s.tone === "purple" ? "border-accent-purple/30" : "border-accent-amber/30")}>
                 <div className="mb-2 flex items-center justify-between">
-                  <span className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", s.tone === "purple" ? "text-accent-purple" : "text-accent-amber")}>{s.label}</span>
+                  <span className={cn("font-sans text-[12px] tracking-[0.01em]", s.tone === "purple" ? "text-accent-purple" : "text-accent-amber")}>{s.label}</span>
                   <span className="font-sans text-[13px] text-slate-300">slope = {s.mrp}%</span>
                 </div>
                 <SMLChart
@@ -169,10 +169,10 @@ export default function MarketRiskPremiumShift() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">β</th>
-                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-purple">A: 4 + β×4%</th>
-                  <th className="py-3 pr-6 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-amber">B: 4 + β×8%</th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-accent-green">Δ required return</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] tracking-[0.01em] text-slate-400">β</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] tracking-[0.01em] text-accent-purple">A: 4 + β×4%</th>
+                  <th className="py-3 pr-6 font-sans text-[13px] tracking-[0.01em] text-accent-amber">B: 4 + β×8%</th>
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-accent-green">Δ required return</th>
                 </tr>
               </thead>
               <tbody className="font-sans tabular-nums text-slate-100">

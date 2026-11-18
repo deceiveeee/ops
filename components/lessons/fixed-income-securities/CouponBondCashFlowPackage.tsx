@@ -51,7 +51,7 @@ export default function CouponBondCashFlowPackage() {
             type="button"
             onClick={() => setBroken((b) => !b)}
             aria-pressed={broken}
-            className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] uppercase tracking-[0.12em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
+            className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] text-accent-cyan transition-colors hover:bg-accent-cyan/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50"
           >
             {broken ? "Recombine" : "Break apart"}
           </button>

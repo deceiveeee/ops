@@ -22,7 +22,7 @@ export default function MarginalStoreTranches() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Declining returns by location block
         </div>
         <div className="mt-4 space-y-3">
@@ -51,7 +51,7 @@ export default function MarginalStoreTranches() {
           })}
         </div>
         <div className="mt-4">
-          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400 mb-2">Select program size</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400 mb-2">Select program size</div>
           <div className="flex gap-2">
             {[1, 2, 3].map((n) => (
               <button key={n} type="button"
@@ -99,7 +99,7 @@ function Readout({ label, value, tone = "neutral" }: { label: string; value: str
   const text = tone === "green" ? "text-accent-green" : tone === "red" ? "text-accent-red" : "text-white";
   return (
     <div className="rounded-xl border border-white/10 bg-ink-950/40 p-3">
-      <div className="font-sans text-[10px] uppercase tracking-[0.16em] text-slate-400">{label}</div>
+      <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{label}</div>
       <div className={cn("mt-1.5 font-sans text-[15px] tabular-nums", text)}>{value}</div>
     </div>
   );

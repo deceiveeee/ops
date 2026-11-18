@@ -427,7 +427,7 @@ function StepChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.1em] transition-colors",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-sans text-[12px] tracking-[0.01em] transition-colors",
         active
           ? "border-accent-cyan/60 bg-accent-cyan/15 text-accent-cyan"
           : done

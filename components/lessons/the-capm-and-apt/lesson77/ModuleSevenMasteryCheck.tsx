@@ -225,7 +225,7 @@ export default function ModuleSevenMasteryCheck() {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Module 7 mastery check</div>
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Module 7 mastery check</div>
         <p className="mt-1 text-[15px] leading-[1.55] text-slate-200">
           A fresh sample of {sample.length} questions drawn across all six categories. Standard: at
           least {PASS_PCT}% overall, with no category entirely wrong. Each retry draws a new sample.
@@ -303,7 +303,7 @@ export default function ModuleSevenMasteryCheck() {
                     catOk ? "border-accent-green/40 bg-accent-green/10" : catWeak ? "border-accent-red/40 bg-accent-red/10" : "border-white/12 bg-white/[0.02]",
                   )}
                 >
-                  <div className="font-sans text-[10px] uppercase tracking-[0.08em] text-slate-400">{c.label}</div>
+                  <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{c.label}</div>
                   <div className="mt-1 font-sans text-[14px] text-slate-100">{r.correct}/{r.total}</div>
                 </div>
               );
@@ -312,7 +312,7 @@ export default function ModuleSevenMasteryCheck() {
 
           {results.weak.length > 0 && (
             <div className="rounded-xl border border-accent-amber/25 bg-accent-amber/[0.05] p-4">
-              <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-accent-amber">Targeted review</div>
+              <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Targeted review</div>
               <ul className="mt-2 space-y-2">
                 {results.weak.map((c) => (
                   <li key={c.id} className="text-[14px] leading-[1.55] text-slate-200">

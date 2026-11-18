@@ -64,7 +64,7 @@ export default function BillionDollarCapitalAllocator() {
       {/* Header */}
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Available capital</span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Available capital</span>
           <span className="font-sans text-[24px] tabular-nums text-white">${fmt(TOTAL_CAPITAL)}M</span>
         </div>
         <div className="mt-2 flex items-center gap-2">
@@ -134,7 +134,7 @@ export default function BillionDollarCapitalAllocator() {
       <div className={cn("rounded-2xl border p-5 sm:p-6",
         totalNPV > 50 ? "border-accent-green/25 bg-accent-green/[0.05]" : totalNPV > 0 ? "border-accent-amber/25 bg-accent-amber/[0.05]" : "border-accent-red/25 bg-accent-red/[0.05]")}>
         <div className="flex items-baseline justify-between">
-          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Estimated total NPV from allocation</span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Estimated total NPV from allocation</span>
           <span className={cn("font-sans text-[28px] tabular-nums", totalNPV > 0 ? "text-accent-green" : "text-accent-red")}>
             {totalNPV >= 0 ? "+" : "−"}${fmt(Math.abs(Math.round(totalNPV)))}M
           </span>

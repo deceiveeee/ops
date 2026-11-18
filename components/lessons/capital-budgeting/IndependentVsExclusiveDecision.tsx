@@ -81,7 +81,7 @@ export default function IndependentVsExclusiveDecision() {
       {/* Rules */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
             Independent investments
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">
@@ -90,7 +90,7 @@ export default function IndependentVsExclusiveDecision() {
           </p>
         </div>
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
             Mutually exclusive investments
           </div>
           <p className="ops-body mt-2 text-[14px] leading-[1.6] text-slate-100">

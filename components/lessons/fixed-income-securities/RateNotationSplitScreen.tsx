@@ -47,7 +47,7 @@ export default function RateNotationSplitScreen() {
             {/* TOP ROW — year-by-year R blocks */}
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-purple">
+                <span className="rounded-full border border-accent-purple/40 bg-accent-purple/10 px-2.5 py-1 font-sans text-[12px] tracking-[0.01em] text-accent-purple">
                   Capital R · one slice each
                 </span>
                 <span className="ops-caption text-[11px] text-slate-400">
@@ -94,7 +94,7 @@ export default function RateNotationSplitScreen() {
             {/* BOTTOM ROW — single r_{0,T} spanning whole timeline */}
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <span className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+                <span className="rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-2.5 py-1 font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
                   Lowercase r · whole interval
                 </span>
                 <span className="ops-caption text-[11px] text-slate-400">

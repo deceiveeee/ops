@@ -124,7 +124,7 @@ function StatementCard({
       </div>
       {resolved && (
         <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 px-3 py-1">
-          <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
             Concept · {s.concept}
           </span>
         </div>
@@ -141,7 +141,7 @@ export default function RiskModelErrorClinic() {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-5">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">
           Find the broken reasoning
         </div>
         <p className="mt-1 text-[15px] leading-[1.55] text-slate-200">

@@ -326,7 +326,7 @@ function FlowToken({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
+        "inline-flex items-center rounded-full border px-2.5 py-1 font-sans text-[12px] tracking-[0.01em]",
         c,
       )}
     >

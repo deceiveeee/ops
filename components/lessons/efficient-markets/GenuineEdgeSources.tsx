@@ -86,11 +86,11 @@ export default function GenuineEdgeSources() {
                       <p className="ops-body text-[15px] leading-[1.6] text-slate-100">{e.definition}</p>
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <div className="rounded-lg border border-accent-green/20 bg-accent-green/[0.04] p-3">
-                          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Example</div>
+                          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">Example</div>
                           <p className="mt-1 text-[13px] leading-[1.55] text-slate-100">{e.example}</p>
                         </div>
                         <div className="rounded-lg border border-accent-red/20 bg-accent-red/[0.04] p-3">
-                          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-red">Limitation</div>
+                          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">Limitation</div>
                           <p className="mt-1 text-[13px] leading-[1.55] text-slate-100">{e.limitation}</p>
                         </div>
                       </div>

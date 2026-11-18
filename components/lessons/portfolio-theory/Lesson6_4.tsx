@@ -402,7 +402,7 @@ function BoundaryBuilder() {
           ))}
         </div>
         <div className="mt-4">
-          <div className="font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">
+          <div className="font-sans text-[13px] tracking-[0.01em] text-slate-400">
             Round {roundIdx + 1} of {BOUNDARY_ROUNDS.length} · Target E[R] ={" "}
             <span className="text-accent-cyan">{current.target.toFixed(2)}%</span>
           </div>
@@ -639,15 +639,15 @@ function FinalCheck() {
               <div className="flex items-center gap-5">
                 <div className="flex gap-5 font-sans tabular-nums text-slate-100">
                   <div>
-                    <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">Port.</div>
+                    <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Port.</div>
                     <div className="text-[16px]">{p.label}</div>
                   </div>
                   <div>
-                    <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">σ %</div>
+                    <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">σ %</div>
                     <div className="text-[16px]">{p.sd.toFixed(2)}</div>
                   </div>
                   <div>
-                    <div className="font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400">E[R] %</div>
+                    <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">E[R] %</div>
                     <div className="text-[16px]">{p.er.toFixed(2)}</div>
                   </div>
                 </div>
@@ -890,7 +890,7 @@ export default function Lesson6_4() {
 
       <Reveal className="mt-8">
         <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-6 sm:p-7">
-          <div className="font-sans text-[12px] uppercase tracking-[0.18em] text-slate-400">Learning objectives</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Learning objectives</div>
           <p className="mt-3 text-[16px] text-slate-300">By the end of this lesson, you should be able to:</p>
           <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {LEARNING_OBJECTIVES.map((o, i) => (
@@ -925,7 +925,7 @@ export default function Lesson6_4() {
         </Reveal>
         <Reveal>
           <InteractiveFrame>
-            <div className="mb-1 font-sans text-[12px] uppercase tracking-[0.18em] text-accent-cyan">
+            <div className="mb-1 font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
               Interaction · Dominance check
             </div>
             <p className="mb-4 max-w-2xl text-[16px] leading-[1.6] text-slate-200">
@@ -950,7 +950,7 @@ export default function Lesson6_4() {
             <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-center">
               <FrontierCanvas stage={stage} />
               <div>
-                <div className="font-sans text-[13px] uppercase tracking-[0.16em] text-accent-cyan">
+                <div className="font-sans text-[13px] tracking-[0.01em] text-accent-cyan">
                   Stage {stage + 1}
                 </div>
                 <h4 className="mt-2 text-[20px] text-white">{stageCopy.title}</h4>
@@ -1031,8 +1031,8 @@ export default function Lesson6_4() {
             <table className="w-full min-w-[360px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Asset</th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">GMV weight</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">Asset</th>
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">GMV weight</th>
                 </tr>
               </thead>
               <tbody className="font-sans tabular-nums text-slate-100">
@@ -1089,9 +1089,9 @@ export default function Lesson6_4() {
             <table className="w-full min-w-[440px] border-collapse text-[16px]">
               <thead>
                 <tr className="border-b border-white/20 text-left">
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">Efficient point</th>
-                  <th className="py-3 pr-8 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">E[R] (%)</th>
-                  <th className="py-3 font-sans text-[13px] uppercase tracking-[0.14em] text-slate-400">σ (%)</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">Efficient point</th>
+                  <th className="py-3 pr-8 font-sans text-[13px] tracking-[0.01em] text-slate-400">E[R] (%)</th>
+                  <th className="py-3 font-sans text-[13px] tracking-[0.01em] text-slate-400">σ (%)</th>
                 </tr>
               </thead>
               <tbody className="font-sans tabular-nums text-slate-100">
@@ -1109,7 +1109,7 @@ export default function Lesson6_4() {
         </Reveal>
         <Reveal>
           <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-6">
-            <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+            <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
               Assumptions and limitations
             </div>
             <ul className="mt-4 space-y-3">

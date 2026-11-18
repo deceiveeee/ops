@@ -30,7 +30,7 @@ function Chip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.12em]",
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-sans text-[12px] tracking-[0.01em]",
         done && "border-accent-green/50 bg-accent-green/10 text-accent-green",
         active && !done && "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan",
         !active && !done && "border-white/12 text-slate-500",
@@ -212,7 +212,7 @@ export default function SecurityMarketLineBuilder() {
 
       {stage >= 1 && stage <= 3 && (
         <div className="space-y-4 rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 2 · Locate the line</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Step 2 · Locate the line</div>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <ChoiceStep
               prompt="Where does the SML cross the vertical axis (β = 0)?"
@@ -242,7 +242,7 @@ export default function SecurityMarketLineBuilder() {
 
       {stage >= 2 && stage <= 3 && (
         <div className="rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="mb-4 font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 3 · Required returns</div>
+          <div className="mb-4 font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Step 3 · Required returns</div>
           <CalculationWorksheet
             submitLabel="Check required returns"
             retryLabel="Clear wrong answers"
@@ -271,7 +271,7 @@ export default function SecurityMarketLineBuilder() {
 
       {stage >= 3 && (
         <div className="space-y-4 rounded-xl border border-white/12 bg-white/[0.03] p-5">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Step 4 · Read the line</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Step 4 · Read the line</div>
           <ChoiceStep
             prompt="Why does a β = 1.5 investment require a 13% expected return?"
             options={[

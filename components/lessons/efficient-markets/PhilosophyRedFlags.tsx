@@ -108,15 +108,15 @@ export default function PhilosophyRedFlags() {
                     className="overflow-hidden">
                     <div className="ops-body px-5 pb-5 space-y-3">
                       <div>
-                        <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">Why it is insufficient</div>
+                        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Why it is insufficient</div>
                         <p className="mt-1 text-[14px] leading-[1.6] text-slate-100">{f.why}</p>
                       </div>
                       <div className="rounded-lg border border-accent-amber/20 bg-accent-amber/[0.05] px-3 py-2.5">
-                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Missing evidence · </span>
+                        <span className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Missing evidence · </span>
                         <span className="text-[13px] leading-[1.55] text-slate-100">{f.missing}</span>
                       </div>
                       <div className="rounded-lg border border-accent-green/25 bg-accent-green/[0.05] px-3 py-2.5">
-                        <span className="font-sans text-[10px] uppercase tracking-[0.14em] text-accent-green">Stronger replacement · </span>
+                        <span className="font-sans text-[12px] tracking-[0.01em] text-accent-green">Stronger replacement · </span>
                         <span className="text-[13px] italic leading-[1.55] text-slate-100">{f.stronger}</span>
                       </div>
                     </div>

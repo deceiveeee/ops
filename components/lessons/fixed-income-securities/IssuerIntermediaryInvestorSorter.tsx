@@ -243,7 +243,7 @@ export default function IssuerIntermediaryInvestorSorter() {
             >
               <div
                 className={cn(
-                  "font-sans text-[12px] uppercase tracking-[0.14em]",
+                  "font-sans text-[12px] tracking-[0.01em]",
                   ROLE_TONE[p.role].text,
                 )}
               >
@@ -294,7 +294,7 @@ function RoleColumn({
     >
       <div
         className={cn(
-          "font-sans text-[12px] uppercase tracking-[0.14em]",
+          "font-sans text-[12px] tracking-[0.01em]",
           ROLE_TONE[role].text,
         )}
       >

@@ -43,7 +43,7 @@ export default function ManagerEvaluationChecklist() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.05] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">Manager evaluation checklist</span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Manager evaluation checklist</span>
           <span className="font-sans text-[12px] text-slate-400">{completed}/{ITEMS.length}</span>
         </div>
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/8">

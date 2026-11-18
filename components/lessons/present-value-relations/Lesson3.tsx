@@ -490,7 +490,7 @@ export default function Lesson3() {
       <Reveal className="mt-12">
         <div className="rounded-2xl border border-accent-red/40 bg-accent-red/[0.07] p-6 sm:p-7">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center rounded-full border border-accent-red/50 bg-accent-red/15 px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em] text-accent-red">
+            <span className="inline-flex items-center rounded-full border border-accent-red/50 bg-accent-red/15 px-2.5 py-1 font-sans text-[12px] tracking-[0.01em] text-accent-red">
               High importance
             </span>
             <span className="ops-caption text-[11px] text-slate-400">

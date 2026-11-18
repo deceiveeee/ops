@@ -13,8 +13,8 @@ export default function EMProgressRail() {
   return (
     <nav aria-label="Module 9 progress" className="glass-panel p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="ops-eyebrow text-[11px] text-slate-400">Module 9</span>
-        <span className="ops-caption text-[10px] text-accent-cyan">
+        <span className="ops-eyebrow text-[12px] text-slate-400">Module 9</span>
+        <span className="ops-caption text-[12px] text-accent-cyan">
           {EM_MODULE_LESSONS.length} lessons
         </span>
       </div>
@@ -39,7 +39,7 @@ export default function EMProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px] tabular-nums",
                     active
                       ? "border-accent-cyan bg-accent-cyan/20 text-accent-cyan"
                       : done
@@ -59,8 +59,8 @@ export default function EMProgressRail() {
                     {l.shortTitle}
                   </span>
                 </span>
-                {done && <span className="ops-caption text-[10px] text-accent-green">✓</span>}
-                {comingSoon && <span className="ops-caption text-[10px] text-slate-500">soon</span>}
+                {done && <span className="ops-caption text-[12px] text-accent-green">✓</span>}
+                {comingSoon && <span className="ops-caption text-[12px] text-slate-500">Soon</span>}
               </Link>
             </li>
           );

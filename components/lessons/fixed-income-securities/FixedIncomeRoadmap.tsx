@@ -112,7 +112,7 @@ export default function FixedIncomeRoadmap() {
                 {s.title}
               </div>
               {s.coveredHere && (
-                <span className="ops-caption mt-1 text-[10px] uppercase tracking-[0.14em] text-accent-cyan">
+                <span className="ops-caption mt-1 text-[12px] tracking-[0.01em] text-accent-cyan">
                   This lesson
                 </span>
               )}

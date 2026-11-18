@@ -144,14 +144,15 @@ export default function DurationShockSimulator() {
           formula={String.raw`\frac{\Delta P}{P} \approx -D_m^* \, \Delta y`}
           meaning="The percentage price change is approximately minus modified duration times the yield change. This is a first-order (linear) approximation."
           substitution={String.raw`\frac{\Delta P}{P} \approx -${modDur.toFixed(2)} \times ${formatPercentTex(deltaY, 2)} = ${formatPercentTex(pctChange, 3)}`}
-          result={`P_new ≈ ${formatMoney(price)} × (1 + ${formatPercent(pctChange, 3)}) = ${formatMoney(newPrice)}`}
-          interpretation="Duration is symmetric and linear — it overestimates gains and underestimates losses for large shocks. Convexity corrects this (see the next interactives)."
+          result={`New price ≈ ${formatMoney(price)} × (1 ${pctChange < 0 ? "−" : "+"} ${formatPercent(Math.abs(pctChange), 3)}) = ${formatMoney(newPrice)}`}
+          interpretation="Duration is symmetric and linear. For large shocks it underestimates gains when yields fall and overestimates losses when yields rise. Convexity corrects this (see the next interactives)."
         />
 
         <p className="ops-body mt-4 rounded-xl border border-accent-red/20 bg-accent-red/[0.04] p-4 text-[14px] leading-6 text-slate-200">
           <span className="text-accent-red">First-order only.</span> The rule
           ignores convexity, so for shocks of 100+ bps the real price will
-          differ — especially the downside.
+          differ. For a bond like this one, the real price ends up higher than
+          this estimate whether yields rise or fall.
         </p>
       </InteractiveFrame>
     </div>

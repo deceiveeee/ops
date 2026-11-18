@@ -111,7 +111,7 @@ export default function InvestorProjectWorkflow() {
         {(Object.keys(PHASES) as (keyof typeof PHASES)[]).map((p) => (
           <div key={p} className="flex items-center gap-2">
             <span className={cn("h-2 w-2 rounded-full", toneDot[PHASES[p].tone])} aria-hidden />
-            <span className={cn("font-sans text-[11px] uppercase tracking-[0.14em]", toneText[PHASES[p].tone])}>
+            <span className={cn("font-sans text-[12px] tracking-[0.01em]", toneText[PHASES[p].tone])}>
               {PHASES[p].label}
             </span>
           </div>

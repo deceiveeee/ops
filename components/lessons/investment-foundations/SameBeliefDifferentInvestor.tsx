@@ -110,7 +110,7 @@ export default function SameBeliefDifferentInvestor() {
                 </h3>
                 <span
                   className={cn(
-                    "font-sans text-[12px] uppercase tracking-[0.14em]",
+                    "font-sans text-[12px] tracking-[0.01em]",
                     accentText[inv.accent],
                   )}
                 >

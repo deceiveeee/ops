@@ -169,7 +169,7 @@ export default function LiquidityStressSimulator() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.14em]",
+              "rounded-full border px-3 py-1 font-sans text-[12px] tracking-[0.01em]",
               regime === "Normal"
                 ? "border-accent-green/50 text-accent-green"
                 : regime === "Cautious"
@@ -231,7 +231,7 @@ export default function LiquidityStressSimulator() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.2 }}
                         className={cn(
-                          "inline-flex items-center rounded-md border px-2.5 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
+                          "inline-flex items-center rounded-md border px-2.5 py-1 font-sans text-[12px] tracking-[0.01em]",
                           LEVEL_CELL[lvl],
                         )}
                       >

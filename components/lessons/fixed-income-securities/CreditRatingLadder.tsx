@@ -136,7 +136,7 @@ export default function CreditRatingLadder() {
                 </div>
                 <div
                   className={cn(
-                    "mt-2 inline-flex items-center rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.14em]",
+                    "mt-2 inline-flex items-center rounded-full border px-3 py-1 font-sans text-[12px] tracking-[0.01em]",
                     isDefault
                       ? "border-accent-red/50 text-accent-red"
                       : current.grade === "IG"
@@ -208,7 +208,7 @@ export default function CreditRatingLadder() {
                   <td className="px-3 py-2.5">
                     <span
                       className={cn(
-                        "inline-flex items-center rounded-md border px-2 py-0.5 font-sans text-[11px] uppercase tracking-[0.14em]",
+                        "inline-flex items-center rounded-md border px-2 py-0.5 font-sans text-[12px] tracking-[0.01em]",
                         r.grade === "IG"
                           ? "border-accent-green/40 text-accent-green"
                           : "border-accent-amber/40 text-accent-amber",

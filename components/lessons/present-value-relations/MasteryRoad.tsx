@@ -140,7 +140,7 @@ export default function MasteryRoad() {
               </div>
               <div
                 className={cn(
-                  "mt-1 font-sans text-[10px] uppercase tracking-[0.14em]",
+                  "mt-1 font-sans text-[12px] tracking-[0.01em]",
                   s.text,
                 )}
               >

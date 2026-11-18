@@ -102,7 +102,7 @@ export default function PurePlayComparableSelector() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-cyan">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
           The analytical problem
         </div>
         <p className="ops-body mt-3 text-[16px] leading-[1.65] text-slate-100">
@@ -151,7 +151,7 @@ export default function PurePlayComparableSelector() {
             className={cn("rounded-2xl border p-5 sm:p-6", tone.border, tone.bg)}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className={cn("font-sans text-[12px] uppercase tracking-[0.16em]", tone.text)}>
+              <span className={cn("font-sans text-[12px] tracking-[0.01em]", tone.text)}>
                 {tone.label}
               </span>
               <span className="font-sans text-[13px] tabular-nums text-slate-300">
@@ -188,7 +188,7 @@ export default function PurePlayComparableSelector() {
       </AnimatePresence>
 
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
           Practical sequence
         </div>
         <ol className="mt-4 space-y-2">
@@ -216,7 +216,7 @@ export default function PurePlayComparableSelector() {
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-ink-950/40 px-3 py-2.5">
-      <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">{label}</div>
+      <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">{label}</div>
       <div className="mt-1 text-[13px] text-slate-100">{value}</div>
     </div>
   );

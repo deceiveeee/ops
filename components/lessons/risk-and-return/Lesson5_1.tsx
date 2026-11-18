@@ -334,16 +334,16 @@ export default function Lesson5_1() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     State
                   </th>
-                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Probability
                   </th>
-                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Return
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Contribution
                   </th>
                 </tr>
@@ -420,19 +420,19 @@ export default function Lesson5_1() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Year
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     1
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     2
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     3
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     4
                   </th>
                 </tr>
@@ -631,16 +631,16 @@ export default function Lesson5_1() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Company
                   </th>
-                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     E[payoff]
                   </th>
-                  <th className="py-2 pr-6 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-6 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Cost of equity
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     P₀ = payoff / (1 + r_e)
                   </th>
                 </tr>

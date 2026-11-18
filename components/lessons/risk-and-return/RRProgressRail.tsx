@@ -14,8 +14,8 @@ export default function RRProgressRail() {
   return (
     <nav aria-label="Module 5 progress" className="glass-panel p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="ops-eyebrow text-[11px] text-slate-400">Module 5</span>
-        <span className="ops-caption text-[10px] text-accent-amber">3 lessons</span>
+        <span className="ops-eyebrow text-[12px] text-slate-400">Module 5</span>
+        <span className="ops-caption text-[12px] text-accent-amber">3 lessons</span>
       </div>
       <div className="ops-body-strong mt-1.5 text-[15px] text-white">Risk and Return</div>
       <ol className="mt-5 space-y-2">
@@ -35,7 +35,7 @@ export default function RRProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px] tabular-nums",
                     active
                       ? "border-accent-amber bg-accent-amber/20 text-accent-amber"
                       : done
@@ -55,7 +55,7 @@ export default function RRProgressRail() {
                     {l.shortTitle}
                   </span>
                 </span>
-                {done && <span className="ops-caption text-[10px] text-accent-green">✓</span>}
+                {done && <span className="ops-caption text-[12px] text-accent-green">✓</span>}
               </Link>
             </li>
           );

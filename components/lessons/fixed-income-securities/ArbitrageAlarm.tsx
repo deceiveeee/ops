@@ -172,7 +172,7 @@ function AlarmPanel({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className={cn("ops-caption text-[11px] uppercase tracking-[0.14em]", config.text)}>
+          <div className={cn("ops-caption text-[12px] tracking-[0.01em]", config.text)}>
             {config.label}
           </div>
           <div className="mt-2 flex items-center gap-4">

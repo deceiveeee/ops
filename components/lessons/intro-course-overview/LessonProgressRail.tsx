@@ -12,8 +12,8 @@ export default function LessonProgressRail() {
   return (
     <nav aria-label="Module progress" className="glass-panel p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="ops-eyebrow text-[11px] text-slate-400">Module 1</span>
-        <span className="ops-caption text-[10px] text-accent-cyan">
+        <span className="ops-eyebrow text-[12px] text-slate-400">Module 1</span>
+        <span className="ops-caption text-[12px] text-accent-cyan">
           5 lessons
         </span>
       </div>
@@ -36,7 +36,7 @@ export default function LessonProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px] tabular-nums",
                     active
                       ? "border-accent-cyan bg-accent-cyan/20 text-accent-cyan"
                       : "border-white/15 text-slate-400 group-hover:border-white/30 group-hover:text-slate-200",

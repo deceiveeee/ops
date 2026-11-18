@@ -268,16 +268,16 @@ export default function Lesson5_2() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Time
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Start
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Return
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     End
                   </th>
                 </tr>
@@ -333,16 +333,16 @@ export default function Lesson5_2() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Time
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Start
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Return
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     End
                   </th>
                 </tr>
@@ -455,16 +455,16 @@ export default function Lesson5_2() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     t
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Rₜ
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Rₜ − R̄
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     (Rₜ − R̄)²
                   </th>
                 </tr>
@@ -739,13 +739,13 @@ export default function Lesson5_2() {
             <table className="w-full border-collapse text-[14px]">
               <thead>
                 <tr className="border-b border-white/15 text-left">
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Monthly σ
                   </th>
-                  <th className="py-2 pr-8 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 pr-8 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     × √12
                   </th>
-                  <th className="py-2 font-sans text-[12px] uppercase tracking-wider text-slate-400">
+                  <th className="py-2 font-sans text-[12px] tracking-[0.01em]r text-slate-400">
                     Annual σ
                   </th>
                 </tr>

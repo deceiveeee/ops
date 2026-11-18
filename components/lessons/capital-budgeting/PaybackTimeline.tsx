@@ -44,7 +44,7 @@ export default function PaybackTimeline() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <label className="flex items-baseline justify-between font-sans text-[12px] tracking-[0.01em] text-slate-400">
           <span>Initial investment</span>
           <span className="text-[14px] tabular-nums text-accent-amber">${initial}</span>
         </label>
@@ -55,7 +55,7 @@ export default function PaybackTimeline() {
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-5">
           {flows.map((f, i) => (
             <div key={i}>
-              <label className="block font-sans text-[10px] uppercase tracking-[0.14em] text-slate-400">
+              <label className="block font-sans text-[12px] tracking-[0.01em] text-slate-400">
                 Year {i + 1}
               </label>
               <input type="range" min={0} max={80} step={5} value={f}
@@ -71,7 +71,7 @@ export default function PaybackTimeline() {
 
       {/* Timeline visualization */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Cumulative cash recovery
         </div>
         <div className="mt-4 space-y-2">
@@ -107,7 +107,7 @@ export default function PaybackTimeline() {
           })}
           {/* Target line indicator */}
           <div className="flex items-center gap-3">
-            <div className="w-16 flex-shrink-0 font-sans text-[10px] uppercase tracking-[0.14em] text-accent-amber">Target</div>
+            <div className="w-16 flex-shrink-0 font-sans text-[12px] tracking-[0.01em] text-accent-amber">Target</div>
             <div className="text-[12px] text-slate-400">Initial investment recovered: ${initial}</div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function PaybackTimeline() {
         paybackYear > 0 ? "border-accent-green/25 bg-accent-green/[0.05]" : "border-accent-red/25 bg-accent-red/[0.05]",
       )}>
         <div className={cn(
-          "font-sans text-[12px] uppercase tracking-[0.16em]",
+          "font-sans text-[12px] tracking-[0.01em]",
           paybackYear > 0 ? "text-accent-green" : "text-accent-red",
         )}>
           Payback period

@@ -14,8 +14,8 @@ export default function PVProgressRail() {
   return (
     <nav aria-label="Module 2 progress" className="glass-panel p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="ops-eyebrow text-[11px] text-slate-400">Module 2</span>
-        <span className="ops-caption text-[10px] text-accent-cyan">4 lessons</span>
+        <span className="ops-eyebrow text-[12px] text-slate-400">Module 2</span>
+        <span className="ops-caption text-[12px] text-accent-cyan">4 lessons</span>
       </div>
       <div className="ops-body-strong mt-1.5 text-[15px] text-white">Present Value Relations</div>
       <ol className="mt-5 space-y-2">
@@ -36,7 +36,7 @@ export default function PVProgressRail() {
               >
                 <span
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[11px] tabular-nums",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border font-sans text-[12px] tabular-nums",
                     active
                       ? "border-accent-cyan bg-accent-cyan/20 text-accent-cyan"
                       : done
@@ -57,10 +57,10 @@ export default function PVProgressRail() {
                   </span>
                 </span>
                 {done && (
-                  <span className="ops-caption text-[10px] text-accent-green">✓</span>
+                  <span className="ops-caption text-[12px] text-accent-green">✓</span>
                 )}
                 {locked && (
-                  <span className="ops-caption text-[10px] text-slate-500">locked</span>
+                  <span className="ops-caption text-[12px] text-slate-500">Locked</span>
                 )}
               </Link>
             </li>

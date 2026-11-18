@@ -294,7 +294,7 @@ function YtmLab() {
               </div>
               <span
                 className={cn(
-                  "rounded-full border px-3 py-1 font-sans text-[11px] uppercase tracking-[0.14em]",
+                  "rounded-full border px-3 py-1 font-sans text-[12px] tracking-[0.01em]",
                   badgeCls,
                 )}
               >

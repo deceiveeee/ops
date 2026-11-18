@@ -17,7 +17,7 @@ export default function StrategyLifecycleDecay() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
+        <label className="flex items-baseline justify-between font-sans text-[12px] tracking-[0.01em] text-slate-400">
           <span>Capital entering the strategy</span>
           <span className="text-[14px] tabular-nums text-accent-amber">{["Minimal", "Growing", "Moderate", "Heavy", "Saturated"][capital]}</span>
         </label>
@@ -30,7 +30,7 @@ export default function StrategyLifecycleDecay() {
 
       {/* Stage display */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Strategy lifecycle</div>
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Strategy lifecycle</div>
         <div className="mt-4 space-y-2">
           {stages.map((s, i) => {
             const active = i === capital;

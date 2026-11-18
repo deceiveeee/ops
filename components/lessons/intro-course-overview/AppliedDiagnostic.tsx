@@ -230,7 +230,7 @@ export default function AppliedDiagnostic({
             <div className="flex items-center gap-2">
               <span
                 className={cn(
-                  "inline-flex items-center rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.14em]",
+                  "inline-flex items-center rounded-full border px-3 py-1 font-sans text-[12px] tracking-[0.01em]",
                   correctCount === QUESTIONS.length
                     ? "border-accent-green/40 bg-accent-green/10 text-accent-green"
                     : "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan",

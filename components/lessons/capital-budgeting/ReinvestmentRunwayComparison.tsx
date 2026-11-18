@@ -35,7 +35,7 @@ export default function ReinvestmentRunwayComparison() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Company A */}
         <div className="rounded-2xl border border-accent-cyan/25 bg-accent-cyan/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-cyan">Company A · high return, small scale</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">Company A · high return, small scale</div>
           <div className="mt-3 space-y-3">
             <Slider label="Incremental return" value={returnA} min={5} max={40} step={1} suffix="%" onChange={setReturnA} />
             <Slider label="Capital deployed / yr" value={capitalA} min={1} max={100} step={1} prefix="$" suffix="M" onChange={setCapitalA} />
@@ -48,7 +48,7 @@ export default function ReinvestmentRunwayComparison() {
         </div>
         {/* Company B */}
         <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.04] p-5">
-          <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-accent-amber">Company B · moderate return, large scale</div>
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Company B · moderate return, large scale</div>
           <div className="mt-3 space-y-3">
             <Slider label="Incremental return" value={returnB} min={5} max={40} step={1} suffix="%" onChange={setReturnB} />
             <Slider label="Capital deployed / yr" value={capitalB} min={100} max={3000} step={50} prefix="$" suffix="M" onChange={setCapitalB} />
@@ -88,7 +88,7 @@ function Slider({ label, value, min, max, step, suffix, prefix, onChange }: {
 }) {
   return (
     <div>
-      <label className="flex items-baseline justify-between font-sans text-[11px] uppercase tracking-[0.14em] text-slate-400">
+      <label className="flex items-baseline justify-between font-sans text-[12px] tracking-[0.01em] text-slate-400">
         <span>{label}</span><span className="text-[14px] tabular-nums text-accent-amber">{prefix}{value}{suffix}</span>
       </label>
       <input type="range" min={min} max={max} step={step} value={value}

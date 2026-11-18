@@ -140,7 +140,7 @@ export default function AllocationVsSelection() {
                     </div>
                     {showFeedback && (
                       <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/40 p-2.5 text-[14px] text-slate-300">
-                        <span className={cn("font-sans text-[12px] uppercase tracking-[0.14em]", picked === c.correct ? "text-accent-green" : "text-accent-amber")}>
+                        <span className={cn("font-sans text-[12px] tracking-[0.01em]", picked === c.correct ? "text-accent-green" : "text-accent-amber")}>
                           {picked === c.correct ? "Correct" : "Review"}
                         </span>
                         <span className="ml-2">{c.feedback}</span>

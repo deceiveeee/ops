@@ -60,7 +60,7 @@ export default function AccountingConsole({
               Mini Lemonade Stand Inc.
             </span>
           </div>
-          <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">
+          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">
             Accounting console
           </span>
         </div>
@@ -162,7 +162,7 @@ export default function AccountingConsole({
                     aria-pressed={picked === "balance"}
                     onClick={() => classify(c.id, "balance")}
                     className={cn(
-                      "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                      "rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                       picked === "balance"
                         ? correct
                           ? "border-accent-green bg-accent-green/15 text-accent-green"
@@ -177,7 +177,7 @@ export default function AccountingConsole({
                     aria-pressed={picked === "income"}
                     onClick={() => classify(c.id, "income")}
                     className={cn(
-                      "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                      "rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                       picked === "income"
                         ? correct
                           ? "border-accent-green bg-accent-green/15 text-accent-green"

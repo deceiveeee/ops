@@ -46,7 +46,7 @@ export default function MeridianCapitalAllocationBoard() {
     <div className="space-y-6">
       <div className="rounded-2xl border border-accent-amber/25 bg-accent-amber/[0.05] p-5 sm:p-6">
         <div className="flex items-baseline justify-between">
-          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">Allocate $600M</span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">Allocate $600M</span>
           <span className={cn("font-sans text-[20px] tabular-nums", remaining < 0 ? "text-accent-red" : "text-white")}>
             {remaining >= 0 ? `${fmt(remaining)} remaining` : `${fmt(Math.abs(remaining))} over`}
           </span>
@@ -91,7 +91,7 @@ export default function MeridianCapitalAllocationBoard() {
         : totalNPV > 0 ? "border-accent-amber/25 bg-accent-amber/[0.05]"
         : "border-accent-red/25 bg-accent-red/[0.05]")}>
         <div className="flex items-baseline justify-between">
-          <span className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">Estimated total NPV</span>
+          <span className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Estimated total NPV</span>
           <span className={cn("font-sans text-[28px] tabular-nums", totalNPV > 0 ? "text-accent-green" : "text-accent-red")}>
             {totalNPV >= 0 ? "+" : "−"}{fmt(Math.abs(totalNPV))}
           </span>

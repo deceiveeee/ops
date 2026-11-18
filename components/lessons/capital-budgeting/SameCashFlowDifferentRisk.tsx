@@ -51,7 +51,7 @@ export default function SameCashFlowDifferentRisk() {
         <div className="mt-5">
           <label
             htmlFor="b-rate"
-            className="flex items-baseline justify-between font-sans text-[12px] uppercase tracking-[0.14em] text-slate-400"
+            className="flex items-baseline justify-between font-sans text-[12px] tracking-[0.01em] text-slate-400"
           >
             <span>Investment B required return</span>
             <span className="text-[15px] tabular-nums text-accent-amber">{bRate}%</span>
@@ -90,7 +90,7 @@ export default function SameCashFlowDifferentRisk() {
       {/* Side-by-side comparison */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-accent-green/25 bg-accent-green/[0.05] p-6">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-green">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-green">
             Investment A · lower risk
           </div>
           <div className="mt-4 space-y-2">
@@ -103,7 +103,7 @@ export default function SameCashFlowDifferentRisk() {
           </div>
         </div>
         <div className="rounded-2xl border border-accent-red/25 bg-accent-red/[0.05] p-6">
-          <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-red">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-accent-red">
             Investment B · higher risk
           </div>
           <div className="mt-4 space-y-2">
@@ -126,7 +126,7 @@ export default function SameCashFlowDifferentRisk() {
             : "border-white/12 bg-white/[0.03]",
         )}
       >
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Price comparison
         </div>
         <div className="mt-3">
@@ -152,7 +152,7 @@ export default function SameCashFlowDifferentRisk() {
 
       {/* Causal chain */}
       <div className="rounded-2xl border border-accent-amber/25 bg-white/[0.03] p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-accent-amber">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-accent-amber">
           The pricing mechanism
         </div>
         <div className="mt-5 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">

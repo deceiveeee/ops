@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { useState, type ReactNode } from "react";
 import { useIFProgress } from "@/lib/if-progress";
+import { cn } from "@/lib/utils";
 import StatementInvestigationShell, {
   DefinitionStrip,
   StatementChoice,
   StatementFeedback,
-  StatementMetric,
   StatementPanel,
   type StatementInvestigationStep,
   type StatementSceneProps,
@@ -147,8 +148,26 @@ function StatementTabs({ onComplete }: StatementSceneProps) {
   );
 }
 
+/*
+ * One credit sale drawn as a step diagram: two events the learner runs (delivery,
+ * then collection) and the two statement entries the first one creates. Each step
+ * carries one label, one line and one value, so the picture reads at a glance; the
+ * explanation lives in the feedback underneath, not inside the steps.
+ */
+type TraceTone = "blue" | "cyan" | "amber" | "green";
+
+const TRACE_TONES: Record<TraceTone, string> = {
+  blue: "bg-st-blue-soft text-st-blue",
+  cyan: "bg-accent-cyan/10 text-accent-cyan",
+  amber: "bg-accent-amber/10 text-accent-amber",
+  green: "bg-accent-green/10 text-accent-green",
+};
+const TRACE_OFF = "bg-white/[0.03] text-slate-500";
+
 function CreditSaleTrace({ onComplete }: StatementSceneProps) {
   const [stage, setStage] = useState(0);
+  const delivered = stage >= 1;
+  const collected = stage >= 2;
   return (
     <div>
       <DefinitionStrip term="accrual accounting">
@@ -157,21 +176,37 @@ function CreditSaleTrace({ onComplete }: StatementSceneProps) {
       <p className="ops-body mt-5 text-[15px] text-slate-300">
         Cedar Works delivers $12m of products on December 20 and lets the customer pay in January. Run the events in order.
       </p>
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <button type="button" onClick={() => setStage(Math.max(stage, 1))} className="rounded-xl border border-accent-amber/30 bg-accent-amber/[0.06] p-4 text-left">
-          <span className="ops-caption text-[12px] text-accent-amber">December 20</span>
-          <span className="mt-1 block text-sm font-semibold text-white">1. Deliver products on credit</span>
-        </button>
-        <button type="button" disabled={stage < 1} onClick={() => setStage(2)} className="rounded-xl border border-accent-cyan/30 bg-accent-cyan/[0.06] p-4 text-left disabled:cursor-not-allowed disabled:opacity-40">
-          <span className="ops-caption text-[12px] text-accent-cyan">January 15</span>
-          <span className="mt-1 block text-sm font-semibold text-white">2. Collect the customer&apos;s cash</span>
-        </button>
+
+      {/* Top to bottom at every width, like a printed step graphic: the lesson
+          column is ~620px beside its file list, too narrow for four steps abreast. */}
+      <div className="mt-5 [container-type:inline-size]" aria-live="polite">
+        <ol className="flex flex-col" aria-label="One credit sale, step by step">
+          <li>
+            <TraceEvent done={delivered} onRun={() => setStage((current) => Math.max(current, 1))} label="Run December 20: deliver products on credit">
+              <TraceStep tone="blue" lit={delivered} icon={<DeliveryIcon />} where="December 20" what="Deliver products on credit" value="$12m of products">
+                {!delivered && <RunPill />}
+              </TraceStep>
+            </TraceEvent>
+          </li>
+          <TraceLink lit={delivered} kind="arrow" />
+          <li>
+            <TraceStep tone="cyan" lit={delivered} delay={0.1} icon={<LedgerIcon />} where="Income statement" what="Revenue is recorded" value={delivered ? "+$12m revenue" : "No event yet"} />
+          </li>
+          <TraceLink lit={delivered} kind="plus" tag="Same day" delay={0.1} />
+          <li>
+            <TraceStep tone="amber" lit={delivered} delay={0.2} icon={<ReceivableIcon />} where="Balance sheet at Dec. 31" what="The customer owes the money" value={delivered ? "+$12m receivable" : "No event yet"} />
+          </li>
+          <TraceLink lit={collected} kind="arrow" />
+          <li>
+            <TraceEvent done={collected} disabled={!delivered} onRun={() => setStage(2)} label="Run January 15: collect the customer's cash">
+              <TraceStep tone="green" lit={collected} icon={<CashIcon />} where="January 15" what="Collect the customer's cash" value={collected ? "$12m receivable → cash" : "$0 in December"}>
+                {!collected && <RunPill disabled={!delivered} />}
+              </TraceStep>
+            </TraceEvent>
+          </li>
+        </ol>
       </div>
-      <div className="mt-5 grid gap-3 sm:grid-cols-3" aria-live="polite">
-        <StatementMetric label="Income statement" value={stage >= 1 ? "+$12m revenue" : "No event yet"} detail="Recognized when the sale is earned" tone="cyan" />
-        <StatementMetric label="Balance sheet at Dec. 31" value={stage >= 1 ? "+$12m receivable" : "No event yet"} detail="A customer claim replaces immediate cash" tone="amber" />
-        <StatementMetric label="Cash collection" value={stage >= 2 ? "+$12m cash" : "$0 in December"} detail={stage >= 2 ? "Receivable falls by the same amount" : "Revenue does not guarantee current-period cash"} tone="green" />
-      </div>
+
       {stage === 2 && (
         <div className="mt-5">
           <StatementFeedback correct>
@@ -181,6 +216,167 @@ function CreditSaleTrace({ onComplete }: StatementSceneProps) {
         </div>
       )}
     </div>
+  );
+}
+
+function TraceStep({
+  tone,
+  lit,
+  icon,
+  where,
+  what,
+  value,
+  delay = 0,
+  children,
+}: {
+  tone: TraceTone;
+  lit: boolean;
+  icon: ReactNode;
+  where: string;
+  what: string;
+  value: string;
+  delay?: number;
+  children?: ReactNode;
+}) {
+  const colour = cn("transition-colors duration-300 motion-reduce:transition-none", lit ? TRACE_TONES[tone] : TRACE_OFF);
+  const style = { transitionDelay: lit ? `${delay}s` : "0s" };
+  return (
+    <span className="flex items-start gap-3.5 [@container(min-width:30rem)]:items-center">
+      <span aria-hidden style={style} className={cn("flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full", colour)}>
+        {icon}
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col gap-2 [@container(min-width:30rem)]:flex-row [@container(min-width:30rem)]:items-center [@container(min-width:30rem)]:justify-between [@container(min-width:30rem)]:gap-4">
+        <span className="block min-w-0">
+          <span className="ops-caption block text-[12px] text-slate-500">{where}</span>
+          <span className="mt-0.5 block text-[15px] font-semibold leading-5 text-white">{what}</span>
+        </span>
+        <span className="flex flex-wrap items-center gap-2 [@container(min-width:30rem)]:flex-shrink-0 [@container(min-width:30rem)]:justify-end">
+          <span style={style} className={cn("rounded-full px-2.5 py-0.5 text-[14px] font-semibold tabular-nums", colour)}>
+            {value}
+          </span>
+          {children}
+        </span>
+      </span>
+    </span>
+  );
+}
+
+/*
+ * An event the learner runs is a button until it has run, then plain content.
+ * Leaving it as a disabled button would fade the finished step: the light theme
+ * dims every `button[disabled]` to 0.55, and a utility cannot outrank that rule.
+ */
+function TraceEvent({
+  done,
+  disabled = false,
+  onRun,
+  label,
+  children,
+}: {
+  done: boolean;
+  disabled?: boolean;
+  onRun: () => void;
+  label: string;
+  children: ReactNode;
+}) {
+  if (done) return <div>{children}</div>;
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onRun}
+      aria-label={label}
+      className="w-full rounded-2xl text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-st-blue"
+    >
+      {children}
+    </button>
+  );
+}
+
+function RunPill({ disabled = false }: { disabled?: boolean }) {
+  return (
+    <span
+      className={cn(
+        "flex w-max items-center rounded-full border px-3.5 py-1 text-[14px] font-semibold",
+        disabled ? "border-white/10 bg-white/[0.03] text-slate-500" : "border-st-blue bg-st-blue-soft text-st-blue",
+      )}
+    >
+      Run this event
+    </span>
+  );
+}
+
+function TraceLink({ lit, kind, tag, delay = 0 }: { lit: boolean; kind: "arrow" | "plus"; tag?: string; delay?: number }) {
+  const reduceMotion = useReducedMotion();
+  const paths = kind === "arrow" ? ["M3 8h20", "M18 3l5 5-5 5"] : ["M7 8h12", "M13 2v12"];
+  return (
+    <li aria-hidden className="flex h-6 items-center gap-3.5">
+      <span className="flex w-12 justify-center">
+        <svg viewBox="0 0 26 16" className={cn("h-4 w-[26px]", kind === "arrow" && "rotate-90")} fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {paths.map((d) => (
+            <path key={d} d={d} className="stroke-slate-300" stroke="currentColor" />
+          ))}
+          {paths.map((d) => (
+            <motion.path
+              key={`ink-${d}`}
+              d={d}
+              className="text-white"
+              stroke="currentColor"
+              initial={false}
+              animate={{ pathLength: lit ? 1 : 0, opacity: lit ? 1 : 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.4, delay: reduceMotion || !lit ? 0 : delay }}
+            />
+          ))}
+        </svg>
+      </span>
+      {tag && <span className="text-[12px] text-slate-500">{tag}</span>}
+    </li>
+  );
+}
+
+const TRACE_ICON = "h-6 w-6";
+
+function DeliveryIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={TRACE_ICON} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3.5 7.5 12 3.2l8.5 4.3v9L12 20.8l-8.5-4.3z" />
+      <path d="M3.5 7.5 12 11.8l8.5-4.3" />
+      <path d="M12 11.8v9" />
+      <path d="m7.7 5.3 8.6 4.4" />
+    </svg>
+  );
+}
+
+function LedgerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={TRACE_ICON} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4.5" y="3" width="15" height="18" rx="2" />
+      <path d="M8 8h8M8 11.5h5" />
+      <path d="M14.5 16.5h3.5M16.25 14.75v3.5" />
+    </svg>
+  );
+}
+
+function ReceivableIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={TRACE_ICON} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5.5 3h9l4 4v6" />
+      <path d="M14.5 3v4h4" />
+      <path d="M5.5 3v18h7" />
+      <path d="M8.5 9h5M8.5 12.5h4" />
+      <circle cx="17" cy="17.5" r="3.6" />
+      <path d="M17 15.6v2l1.3 1" />
+    </svg>
+  );
+}
+
+function CashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={TRACE_ICON} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2.5" y="6.5" width="19" height="11" rx="1.6" />
+      <circle cx="12" cy="12" r="2.6" />
+      <path d="M6 10v4M18 10v4" />
+    </svg>
   );
 }
 

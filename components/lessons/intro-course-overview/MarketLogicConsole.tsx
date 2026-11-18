@@ -131,7 +131,7 @@ export default function MarketLogicConsole({
                         aria-pressed={isPicked}
                         onClick={() => choose(s.id, p.id)}
                         className={cn(
-                          "rounded-full border px-4 py-1.5 font-sans text-[11px] uppercase tracking-[0.14em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
+                          "rounded-full border px-4 py-1.5 font-sans text-[12px] tracking-[0.01em] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                           isPicked
                             ? correct
                               ? "border-accent-green bg-accent-green/15 text-accent-green"

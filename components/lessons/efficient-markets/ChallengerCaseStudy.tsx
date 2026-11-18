@@ -54,7 +54,7 @@ export default function ChallengerCaseStudy() {
     <div className="space-y-6">
       {/* Original timeline (not reproducing the Elsevier chart) */}
       <div className="rounded-2xl border border-white/12 bg-white/[0.03] p-5 sm:p-6">
-        <div className="font-sans text-[12px] uppercase tracking-[0.16em] text-slate-400">
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">
           Original timeline
         </div>
 
@@ -67,7 +67,7 @@ export default function ChallengerCaseStudy() {
                 "flex-1 rounded-lg border p-3 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan/50",
                 step === i ? "border-accent-cyan/50 bg-accent-cyan/10" : "border-white/8 bg-white/[0.02] hover:border-white/20",
               )}>
-              <div className={cn("font-sans text-[9px] uppercase tracking-[0.14em]",
+              <div className={cn("font-sans text-[12px] tracking-[0.01em]",
                 step === i ? "text-accent-cyan" : "text-slate-500")}>
                 {i + 1}
               </div>
@@ -81,7 +81,7 @@ export default function ChallengerCaseStudy() {
 
         {/* Simplified relative reaction visualization */}
         <div className="mt-4">
-          <div className="font-sans text-[10px] uppercase tracking-[0.14em] text-slate-500">
+          <div className="font-sans text-[12px] tracking-[0.01em] text-slate-500">
             Relative stock reaction (simplified, illustrative)
           </div>
           <div className="mt-2 space-y-1.5">
@@ -123,7 +123,7 @@ export default function ChallengerCaseStudy() {
             <span className="flex h-6 w-6 items-center justify-center rounded-full border border-accent-cyan/40 font-sans text-[11px] text-accent-cyan">
               {step + 1}
             </span>
-            <span className="font-sans text-[11px] uppercase tracking-[0.14em] text-accent-cyan">{s.date}</span>
+            <span className="font-sans text-[12px] tracking-[0.01em] text-accent-cyan">{s.date}</span>
           </div>
           <h3 className="ops-section-title mt-3 text-[20px] text-white">{s.title}</h3>
           <p className="ops-body mt-2 text-[16px] leading-[1.65] text-slate-100">{s.text}</p>

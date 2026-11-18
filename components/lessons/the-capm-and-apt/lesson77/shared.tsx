@@ -124,7 +124,7 @@ export function ProgressBadge({ done, label }: { done: boolean; label: string })
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-sans text-[12px] uppercase tracking-[0.12em]",
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-sans text-[12px] tracking-[0.01em]",
         done
           ? "border-accent-green/50 bg-accent-green/10 text-accent-green"
           : "border-white/15 text-slate-400",
@@ -158,7 +158,7 @@ export function CategoryHeader({
         {letter}
       </span>
       <div className="min-w-0 flex-1">
-        <div className="font-sans text-[11px] uppercase tracking-[0.16em] text-slate-400">Category {letter}</div>
+        <div className="font-sans text-[12px] tracking-[0.01em] text-slate-400">Category {letter}</div>
         <h3 className="ops-interactive-title text-[20px] text-white sm:text-[22px]">{title}</h3>
       </div>
       <ProgressBadge done={done} label={done ? "Complete" : "In progress"} />
