@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useRef, useState, type ReactNode } from "react";
+import { countFirstStage } from "@/lib/counts/count";
 import { useIFProgress } from "@/lib/if-progress";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,7 @@ export default function StatementInvestigationShell({
       setCompleted((current) =>
         current.map((done, itemIndex) => (itemIndex === index ? true : done)),
       );
+      if (index === 0) countFirstStage(lessonSlug);
       if (index === steps.length - 1) markComplete(lessonSlug);
     },
     [lessonSlug, markComplete, steps.length],

@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { countFirstStage } from "@/lib/counts/count";
 import { useIFProgress, type PhilosophyDraft } from "@/lib/if-progress";
 import { cn } from "@/lib/utils";
 
@@ -83,6 +84,7 @@ export default function FamilyJourney() {
           itemIndex === index ? true : done,
         ),
       );
+      if (index === 0) countFirstStage(LESSON_SLUG);
       if (index === STEPS.length - 1) markComplete(LESSON_SLUG);
     },
     [markComplete],

@@ -104,7 +104,8 @@ test("a shared result says how it went and never which company it was", async ({
   expect(shared.split(/\r?\n/)[0]).toBe(headline);
   expect(shared).toContain(`Investing Studio daily puzzle #${FIRST.number}: guess a real company from its annual report.`);
   expect(shared).toContain("🟥🟩⬜⬜⬜⬜");
-  expect(shared).toMatch(new RegExp(`/daily/${FIRST.number}$`));
+  // The link says only how it was shared, so an arrival from it can be counted (lib/share.ts).
+  expect(shared).toMatch(new RegExp(`/daily/${FIRST.number}\\?via=link$`));
   expect(shared.toLowerCase()).not.toContain(FIRST.answer.name.toLowerCase());
   expect(shared).not.toContain(FIRST.answer.ticker);
 });
