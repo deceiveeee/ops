@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { forwardRef, useEffect, useState } from "react";
 import { filingIndexUrl } from "@/lib/filings/edgar";
-import { CLUE_COUNT, type GameState } from "@/lib/daily-puzzle/game";
+import type { GameState } from "@/lib/daily-puzzle/game";
 import { longDate } from "@/lib/daily-puzzle/schedule";
-import { shareText } from "@/lib/daily-puzzle/share";
+import { shareHeadline, shareText } from "@/lib/daily-puzzle/share";
 import type { DailyPuzzle } from "@/lib/daily-puzzle/types";
 import { Squares } from "./GuessPanel";
+import ReportExcerpt from "./ReportExcerpt";
 import styles from "./daily.module.css";
 
 type Props = {
@@ -23,8 +24,10 @@ type Props = {
 const STATEMENTS_LESSON = "/lessons/if-4-1-the-three-financial-statements";
 
 /**
- * The answer, and where to go from it: post the result, open the very
- * passage the last clue quoted, or read the whole report in Studio.
+ * The answer, and where to go from it: challenge a friend with the result,
+ * open the very passage the last clue quoted, or read the whole report in
+ * Studio. The message to send is shown first, link and all, so sharing is the
+ * obvious next step and nobody has to guess what will be posted.
  */
 const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({ puzzle, state, shareUrl, solvedThisMonth, isToday }, heading) {
   const router = useRouter();
@@ -35,6 +38,7 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
   const { answer, report, description } = puzzle;
   const reader = `/studio/filings/${answer.cik}/${report.accession}?doc=${encodeURIComponent(report.document)}&ticker=${encodeURIComponent(answer.ticker)}`;
   const text = shareText(puzzle.number, state, shareUrl);
+  const shownLink = shareUrl.replace(/^https?:\/\/(www\.)?/, "");
 
   useEffect(() => {
     setCanShareNatively(typeof navigator !== "undefined" && typeof navigator.share === "function");
@@ -97,21 +101,23 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
       <h2 id="daily-result" ref={heading} tabIndex={-1} className={styles.result}>
         It was {answer.name}.
       </h2>
-      <p className={styles.resultLine}>
-        {state.status === "solved"
-          ? `Solved with ${state.shown} of ${CLUE_COUNT} clues.`
-          : `Not solved this time. All ${CLUE_COUNT} clues are showing now.`}
-      </p>
-      <div className={styles.progressLine}>
-        <Squares state={state} />
-        <span>
-          {solvedThisMonth} solved this month
-        </span>
-      </div>
+      {/*
+        * The result is said once, as the message a friend would receive. It is
+        * set as a quoted note rather than a boxed card: on a phone the box's
+        * padding alone pushed the finished puzzle past a screen and a half.
+        */}
+      <figure className={styles.sharePreview} aria-label="Your result, ready to send">
+        <p className={styles.shareHeadline}>{shareHeadline(state)}</p>
+        <div className={styles.shareMeta}>
+          <Squares state={state} />
+          <span>{solvedThisMonth} solved this month</span>
+        </div>
+        <p className={styles.shareLink}>{shownLink}</p>
+      </figure>
 
       <div className={styles.row}>
         <button type="button" className={styles.button} onClick={share}>
-          Share result
+          Challenge a friend
         </button>
         <button type="button" className={styles.ghost} onClick={openPassage} disabled={opening}>
           {opening ? "Finding it…" : "Open the quote"}
@@ -135,8 +141,24 @@ const ResultPanel = forwardRef<HTMLHeadingElement, Props>(function ResultPanel({
         * Where the clues came from, and where to read more, one tap away: drawn
         * open it took a phone past a screen and a half once the answer showed.
         */}
+      {/*
+        * The report's own lines, open beside the clues on a wide /daily page,
+        * where the panel has room under it; folded into "Where these clues came
+        * from" on a phone and on the homepage, which are near their height limits.
+        * CSS shows one copy or the other, never both.
+        */}
+      {puzzle.excerpt ? (
+        <div className={styles.excerptWide}>
+          <ReportExcerpt puzzle={puzzle} excerpt={puzzle.excerpt} />
+        </div>
+      ) : null}
       <details className={styles.more}>
         <summary>Where these clues came from</summary>
+        {puzzle.excerpt ? (
+          <div className={styles.excerptNarrow}>
+            <ReportExcerpt puzzle={puzzle} excerpt={puzzle.excerpt} />
+          </div>
+        ) : null}
         <p>
           The figures and words are from its annual report (Form 10-K) for the year ending {longDate(report.periodEnd)}, filed{" "}
           {longDate(report.filed)}. The industry is the code the SEC files it under.

@@ -58,6 +58,12 @@ export type DailyPuzzle = {
     /** Where the original words sit in the reader's Business section, to open them there. */
     anchor: { sectionId: "business"; quote: string; prefix: string; suffix: string; offset: number };
   };
+  /**
+   * A picture of the report's own lines behind some clues, shown after the
+   * puzzle ends. Not part of the generated puzzle data: the catalog attaches it
+   * from lib/daily-puzzle/excerpts.ts when a page asks for one puzzle.
+   */
+  excerpt?: import("./excerpts").ReportExcerpt;
 };
 
 /** One company a learner can guess. Answers are always among them, with their ticker. */

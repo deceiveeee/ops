@@ -68,7 +68,10 @@ type Props = {
  *
  * On a wide screen it is the whole page: hidden clues show only their title,
  * so the learner knows what kind of evidence comes next; the newest clue
- * shows the meaning of its term in full and earlier ones keep it one tap away.
+ * shows the meaning of its term in full and earlier ones keep it one tap away,
+ * behind "What this means" at the end of the clue's title line. A row of its
+ * own under each clue took six lines once the puzzle was over, which ran long
+ * pages past a screen and a half.
  *
  * Below 1024px the six rows would run past a screen and a half, so the sheet
  * shows one clue at a time with a numbered button for each: the newest is
@@ -80,6 +83,14 @@ export default function ClueSheet({ clues, shown, finished, fresh, answerName, s
   const [selected, setSelected] = useState(shown - 1);
   // A newly revealed clue is the one to read next, so it takes the narrow view.
   useEffect(() => setSelected(shown - 1), [shown]);
+  /** The clues whose meaning the learner has opened. */
+  const [meanings, setMeanings] = useState<ReadonlySet<string>>(new Set());
+  const toggleMeaning = (id: string) =>
+    setMeanings((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
 
   return (
     <section className={styles.sheet} aria-labelledby="clue-sheet-heading">
@@ -117,7 +128,10 @@ export default function ClueSheet({ clues, shown, finished, fresh, answerName, s
       <ol className={styles.clues}>
         {clues.map((clue, index) => {
           const visible = index < shown;
+          // The clue just revealed says what its term means in full; every other shown clue keeps it one tap away.
           const newest = visible && index === shown - 1 && !finished;
+          const meaningId = `${ids}-${clue.id}-meaning`;
+          const open = meanings.has(clue.id);
           return (
             <li
               key={clue.id}
@@ -130,31 +144,27 @@ export default function ClueSheet({ clues, shown, finished, fresh, answerName, s
               <span className={styles.clueNumber} aria-hidden="true">
                 {index + 1}
               </span>
-              <h3 className={styles.clueTitle}>
-                <span className="sr-only">Clue {index + 1}: </span>
-                {clue.title}
-                {visible ? null : <span className="sr-only"> (not shown yet)</span>}
-              </h3>
+              <div className={styles.clueHead}>
+                <h3 className={styles.clueTitle}>
+                  <span className="sr-only">Clue {index + 1}: </span>
+                  {clue.title}
+                  {visible ? null : <span className="sr-only"> (not shown yet)</span>}
+                </h3>
+                {visible && !newest ? (
+                  <button type="button" className={styles.meaningButton} aria-expanded={open} aria-controls={meaningId} onClick={() => toggleMeaning(clue.id)}>
+                    What this means
+                  </button>
+                ) : null}
+              </div>
               {visible ? (
                 <div className={styles.clueBody}>
                   <Body clue={clue} />
                   {newest ? (
                     <p className={styles.definition}>{clue.definition}</p>
-                  ) : finished ? (
-                    // With the answer showing, the result needs the room more than the definitions do.
-                    <details className={styles.defineToggle}>
-                      <summary>What this means</summary>
-                      {clue.definition}
-                    </details>
                   ) : (
-                    <>
-                      {/* One clue at a time leaves room to say what it means. */}
-                      <p className={`${styles.definition} ${styles.narrowOnly}`}>{clue.definition}</p>
-                      <details className={`${styles.defineToggle} ${styles.wideOnly}`}>
-                        <summary>What this means</summary>
-                        {clue.definition}
-                      </details>
-                    </>
+                    <p id={meaningId} className={styles.definition} hidden={!open}>
+                      {clue.definition}
+                    </p>
                   )}
                 </div>
               ) : (

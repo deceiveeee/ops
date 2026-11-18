@@ -80,7 +80,7 @@ export default function GuessPanel({ state, ready, onGuess, onSkip }: Props) {
         }}
       />
       <p id={`${inputId}-hint`} className="sr-only">
-        Matching companies appear below the box. Enter guesses the first one.
+        Matching companies appear below the box. Press Enter to guess the first one.
       </p>
       <ul id={listId} className={styles.matches} aria-label="Matching companies">
         {matches.map((company) => (
